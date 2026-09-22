@@ -6,7 +6,7 @@ import { Breadcrumbs, type Crumb } from "@/components/breadcrumbs";
 import { Toc } from "@/components/toc";
 import { NoteBar } from "@/components/note-bar";
 import { HtmlNoteFrame } from "@/components/html-note-frame";
-import { getAllNotes, getNote, getTerm, noteAssetBase, noteSourcePath, type Note } from "@/lib/content";
+import { getAllNotes, getNote, getTerm, noteAssetBase, noteDownload, noteSourcePath, type Note } from "@/lib/content";
 import { renderMarkdownFile } from "@/lib/markdown";
 import { renderMdxFile } from "@/lib/mdx";
 import { formatDate, getDict, isLang, pick, weekLabel, withLang, type Lang } from "@/lib/i18n";
@@ -121,7 +121,12 @@ export default async function NotePage({ params }: Props) {
       <NoteBar
         crumbs={[...crumbs, { label: pick(note.title, lang) }]}
         headings={headings}
-        labels={{ onThisPage: t.notes.onThisPage, top: t.notes.backToTop }}
+        labels={{
+          onThisPage: t.notes.onThisPage,
+          top: t.notes.backToTop,
+          export: { export: t.notes.export, md: t.notes.exportMd, mdHint: t.notes.exportMdHint, pdf: t.notes.exportPdf, pdfHint: t.notes.exportPdfHint },
+        }}
+        download={{ href: noteDownload(note), fileName: `${found.course.code.replace(/\s+/g, "")}-${note.slug}.zip` }}
       />
       <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
         <div className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_220px]">
@@ -138,10 +143,12 @@ export default async function NotePage({ params }: Props) {
             ) : (
               <div className="prose mt-8">{rendered.content}</div>
             )}
+            <div className="no-print">
             <PrevNext prev={prev} next={next} lang={lang} />
+          </div>
           </article>
 
-          <aside className="hidden xl:block">
+          <aside className="no-print hidden xl:block">
             <div className="sticky top-32 max-h-[calc(100dvh-10rem)] overflow-y-auto pt-14 pb-8">
               <Toc headings={headings} title={t.notes.onThisPage} />
             </div>

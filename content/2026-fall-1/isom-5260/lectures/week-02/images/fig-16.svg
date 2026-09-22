@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 150" role="img" aria-label="四种基数符号"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <g>
+            <line class="d-line" x1="20" y1="60" x2="130" y2="60"/>
+            <rect class="d-box" x="130" y="32" width="86" height="56"/>
+            <line class="d-sym" x1="118" y1="49" x2="118" y2="71"/>
+            <line class="d-sym" x1="104" y1="49" x2="104" y2="71"/>
+            <text class="d-t sm" x="110" y="112" text-anchor="middle">Mandatory one</text>
+            <text class="d-t sm" x="110" y="132" text-anchor="middle">必须且只有一个</text>
+          </g>
+          <g>
+            <line class="d-line" x1="245" y1="60" x2="355" y2="60"/>
+            <rect class="d-box" x="355" y="32" width="86" height="56"/>
+            <path class="d-sym" d="M 339 60 L 355 48 M 339 60 L 355 60 M 339 60 L 355 72"/>
+            <line class="d-sym" x1="329" y1="49" x2="329" y2="71"/>
+            <text class="d-t sm" x="335" y="112" text-anchor="middle">Mandatory many</text>
+            <text class="d-t sm" x="335" y="132" text-anchor="middle">至少一个，可以多个</text>
+          </g>
+          <g>
+            <line class="d-line" x1="470" y1="60" x2="580" y2="60"/>
+            <rect class="d-box" x="580" y="32" width="86" height="56"/>
+            <line class="d-sym" x1="568" y1="49" x2="568" y2="71"/>
+            <circle class="d-symo" cx="554" cy="60" r="7"/>
+            <text class="d-t sm" x="560" y="112" text-anchor="middle">Optional one</text>
+            <text class="d-t sm" x="560" y="132" text-anchor="middle">零个或一个</text>
+          </g>
+          <g>
+            <line class="d-line" x1="695" y1="60" x2="805" y2="60"/>
+            <rect class="d-box" x="805" y="32" width="86" height="56"/>
+            <path class="d-sym" d="M 789 60 L 805 48 M 789 60 L 805 60 M 789 60 L 805 72"/>
+            <circle class="d-symo" cx="779" cy="60" r="7"/>
+            <text class="d-t sm" x="785" y="112" text-anchor="middle">Optional many</text>
+            <text class="d-t sm" x="785" y="132" text-anchor="middle">零个或多个</text>
+          </g>
+        </svg>

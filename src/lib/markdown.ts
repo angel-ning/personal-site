@@ -4,6 +4,7 @@ import matter from "gray-matter";
 import { unified } from "unified";
 import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
+import remarkCjkFriendly from "remark-cjk-friendly";
 import remarkBreaks from "remark-breaks";
 import remarkRehype from "remark-rehype";
 import rehypeRaw from "rehype-raw";
@@ -67,6 +68,7 @@ export async function renderMarkdownFile(file: string, assetBase: string) {
   const out = await unified()
     .use(remarkParse)
     .use(remarkGfm)
+    .use(remarkCjkFriendly) // **粗体：**后接中文 也能正确闭合
     .use(remarkBreaks)
     .use(remarkRehype, { allowDangerousHtml: true })
     .use(rehypeRaw)

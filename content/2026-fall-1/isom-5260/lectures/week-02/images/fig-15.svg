@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 230" role="img" aria-label="关系上的属性"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <rect class="d-box" x="330" y="20" width="180" height="56"/>
+          <text class="d-attr" x="420" y="53" text-anchor="middle">Date Completed</text>
+          <line class="d-line dash" x1="420" y1="76" x2="420" y2="133"/>
+          <text class="d-note" x="434" y="106">relationship attribute</text>
+
+          <rect class="d-box" x="40" y="100" width="230" height="76"/>
+          <text class="d-name" x="155" y="132" text-anchor="middle">EMPLOYEE</text>
+          <text class="d-t sm" x="155" y="154" text-anchor="middle">Employee ID · Name · Birth Date</text>
+          <rect class="d-box" x="550" y="100" width="230" height="76"/>
+          <text class="d-name" x="665" y="132" text-anchor="middle">COURSE</text>
+          <text class="d-t sm" x="665" y="154" text-anchor="middle">Course ID · Title · {Topic}</text>
+
+          <line class="d-line" x1="270" y1="137" x2="550" y2="137"/>
+          <path class="d-sym" d="M 286 137 L 270 126 M 286 137 L 270 137 M 286 137 L 270 148"/>
+          <line class="d-sym" x1="296" y1="127" x2="296" y2="147"/>
+          <path class="d-sym" d="M 534 137 L 550 126 M 534 137 L 550 137 M 534 137 L 550 148"/>
+          <circle class="d-symo" cx="525" cy="137" r="6.5"/>
+          <text class="d-lbl" x="410" y="163" text-anchor="middle">completes</text>
+          <text class="d-t sm" x="410" y="205" text-anchor="middle">「完成日期」既不属于员工也不属于课程，只属于「这个员工完成这门课」这件事</text>
+        </svg>

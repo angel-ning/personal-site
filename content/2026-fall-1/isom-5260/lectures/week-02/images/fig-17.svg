@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 250" role="img" aria-label="三种一元关系"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <g>
+            <rect class="d-box" x="20" y="120" width="160" height="66"/>
+            <text class="d-name" x="100" y="159" text-anchor="middle">PERSON</text>
+            <path class="d-line" d="M 70 120 L 70 70 L 250 70 L 250 155 L 180 155"/>
+            <circle class="d-symo" cx="70" cy="102" r="6.5"/>
+            <line class="d-sym" x1="60" y1="114" x2="80" y2="114"/>
+            <circle class="d-symo" cx="198" cy="155" r="6.5"/>
+            <line class="d-sym" x1="184" y1="145" x2="184" y2="165"/>
+            <text class="d-lbl" x="160" y="60">is married to</text>
+            <text class="d-t sm ac" x="100" y="212" text-anchor="middle">One-to-one</text>
+            <text class="d-t sm" x="100" y="232" text-anchor="middle">一个人最多一个配偶</text>
+          </g>
+          <g>
+            <rect class="d-box" x="340" y="120" width="160" height="66"/>
+            <text class="d-name" x="420" y="159" text-anchor="middle">EMPLOYEE</text>
+            <path class="d-line" d="M 390 120 L 390 70 L 570 70 L 570 155 L 500 155"/>
+            <path class="d-sym" d="M 390 104 L 380 120 M 390 104 L 390 120 M 390 104 L 400 120"/>
+            <circle class="d-symo" cx="390" cy="95" r="6.5"/>
+            <circle class="d-symo" cx="518" cy="155" r="6.5"/>
+            <line class="d-sym" x1="504" y1="145" x2="504" y2="165"/>
+            <text class="d-lbl" x="480" y="60">manages</text>
+            <text class="d-t sm ac" x="420" y="212" text-anchor="middle">One-to-many</text>
+            <text class="d-t sm" x="420" y="232" text-anchor="middle">一个经理管多名员工</text>
+          </g>
+          <g>
+            <rect class="d-box" x="660" y="120" width="160" height="66"/>
+            <text class="d-name" x="740" y="159" text-anchor="middle">ITEM</text>
+            <path class="d-line" d="M 710 120 L 710 70 L 890 70 L 890 155 L 820 155"/>
+            <path class="d-sym" d="M 710 104 L 700 120 M 710 104 L 710 120 M 710 104 L 720 120"/>
+            <circle class="d-symo" cx="710" cy="95" r="6.5"/>
+            <path class="d-sym" d="M 836 155 L 820 145 M 836 155 L 820 155 M 836 155 L 820 165"/>
+            <circle class="d-symo" cx="845" cy="155" r="6.5"/>
+            <text class="d-lbl" x="800" y="60">contains</text>
+            <text class="d-t sm ac" x="740" y="212" text-anchor="middle">Many-to-many</text>
+            <text class="d-t sm" x="740" y="232" text-anchor="middle">物料清单 BOM</text>
+          </g>
+        </svg>

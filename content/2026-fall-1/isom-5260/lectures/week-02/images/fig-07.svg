@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" role="img" aria-label="实体类型与实体实例"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <text class="d-note" x="40" y="20">ENTITY TYPE · 类型（画在 ER 图上的）</text>
+          <rect class="d-box" x="40" y="32" width="240" height="230"/>
+          <text class="d-name" x="160" y="60" text-anchor="middle">STUDENT</text>
+          <line class="d-div" x1="40" y1="74" x2="280" y2="74"/>
+          <text class="d-attr d-pk" x="60" y="100">ID</text>
+          <text class="d-attr" x="60" y="126">Name</text>
+          <text class="d-attr" x="60" y="152">Email</text>
+          <text class="d-attr" x="60" y="178">Gender</text>
+          <text class="d-attr" x="60" y="204">Home Address</text>
+          <text class="d-attr" x="60" y="230">Major</text>
+
+          <line class="d-line" x1="292" y1="146" x2="376" y2="146" marker-end="url(#ar)"/>
+          <text class="d-note" x="334" y="134" text-anchor="middle">有很多个</text>
+
+          <text class="d-note" x="392" y="20">ENTITY INSTANCES · 实例（存在数据库里的行）</text>
+          <rect class="d-box soft" x="392" y="42" width="468" height="86" rx="3"/>
+          <text class="d-attr" x="414" y="70">ID: 001</text>
+          <text class="d-attr" x="414" y="94">Name: Mary Chan</text>
+          <text class="d-attr" x="414" y="118">Email: mchan@ust.hk</text>
+          <rect class="d-box soft" x="392" y="150" width="468" height="86" rx="3"/>
+          <text class="d-attr" x="414" y="178">ID: 002</text>
+          <text class="d-attr" x="414" y="202">Name: Peter Wong</text>
+          <text class="d-attr" x="414" y="226">Email: pwong@ust.hk</text>
+          <text class="d-t sm" x="392" y="258">…（成千上万行）</text>
+        </svg>

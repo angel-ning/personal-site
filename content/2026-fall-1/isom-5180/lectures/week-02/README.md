@@ -68,7 +68,7 @@ IP 地址长什么样：32 bits = Network 部分 + Host 部分
 
 > **💡 小白理解**
 >
-> IP 地址就像\*\*「街道 + 门牌号」\*\*：Network 部分是街道，Host 部分是门牌号。路由器只看街道（把包送到正确的网络），到了那条街再按门牌号找到具体的房子——正是 Slide 6 那句：**Network ID enables a router to put a packet onto the appropriate network segment. Host ID helps the router deliver the packet to a specific host.**（呼应上周板书「HK → UST → ISOM」的分级地址。）
+> IP 地址就像**「街道 + 门牌号」**：Network 部分是街道，Host 部分是门牌号。路由器只看街道（把包送到正确的网络），到了那条街再按门牌号找到具体的房子——正是 Slide 6 那句：**Network ID enables a router to put a packet onto the appropriate network segment. Host ID helps the router deliver the packet to a specific host.**（呼应上周板书「HK → UST → ISOM」的分级地址。）
 
 ### 🔴 地址属于接口，不属于设备（Slide 5：Dual-Homed Computer）
 
@@ -282,7 +282,7 @@ IP 地址长什么样：32 bits = Network 部分 + Host 部分
 ### 🔴 Public 与 Private（Slide 19–20）
 
 - **Public IP addresses are unique**：连到公网的机器不能有相同 IP
-- 不连 Internet 的私有网络可以用任何有效地址，只要内部唯一——但\*\*「随便抓一个地址」强烈不建议\*\*，因为这个网络以后可能会接到 Internet 上
+- 不连 Internet 的私有网络可以用任何有效地址，只要内部唯一——但**「随便抓一个地址」强烈不建议**，因为这个网络以后可能会接到 Internet 上
 - 所以标准预留了三段 **Private 地址**，而且 **Internet routers immediately discard private addresses**（公网路由器看到私有地址直接丢弃）
 
 ![Private IP Addresses：三段私有地址范围](images/page_20.png)

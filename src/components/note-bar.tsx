@@ -6,6 +6,7 @@ import { ArrowUp, ChevronDown, ChevronRight } from "lucide-react";
 import type { Heading } from "@/lib/markdown";
 import type { Crumb } from "./breadcrumbs";
 import { useActiveHeading } from "./toc";
+import { ExportMenu, type ExportLabels } from "./export-menu";
 
 // Bar pinned under the site header on note pages: where you are (breadcrumbs),
 // which section you're reading, a jump menu for every section, and reading progress.
@@ -13,10 +14,12 @@ export function NoteBar({
   crumbs,
   headings,
   labels,
+  download,
 }: {
   crumbs: Crumb[];
   headings: Heading[];
-  labels: { onThisPage: string; top: string };
+  labels: { onThisPage: string; top: string; export: ExportLabels };
+  download: { href: string | null; fileName?: string };
 }) {
   const items = useMemo(() => headings.filter((h) => h.depth === 2), [headings]);
   const active = useActiveHeading(items);
@@ -55,7 +58,7 @@ export function NoteBar({
 
   const last = crumbs.length - 1;
   return (
-    <div className="sticky top-14 z-30 border-b border-line/70 bg-bg/85 backdrop-blur-md supports-[backdrop-filter]:bg-bg/75">
+    <div className="note-bar sticky top-14 z-30 border-b border-line/70 bg-bg/85 backdrop-blur-md supports-[backdrop-filter]:bg-bg/75">
       <div className="mx-auto flex h-11 max-w-[1120px] items-center justify-between gap-3 px-4 sm:px-6">
         <nav aria-label="Breadcrumb" className="min-w-0 text-[13px] text-fg-3">
           <ol className="flex items-center gap-1 whitespace-nowrap">
@@ -116,6 +119,7 @@ export function NoteBar({
               )}
             </div>
           )}
+          <ExportMenu href={download.href} fileName={download.fileName} labels={labels.export} />
           <button
             type="button"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}

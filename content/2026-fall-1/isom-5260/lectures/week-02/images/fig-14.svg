@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 260" role="img" aria-label="关系类型与关系实例"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <text class="d-note" x="20" y="18">RELATIONSHIP TYPE</text>
+          <rect class="d-box" x="30" y="30" width="200" height="66"/>
+          <text class="d-name" x="130" y="60" text-anchor="middle">EMPLOYEE</text>
+          <text class="d-t sm" x="130" y="80" text-anchor="middle">Employee ID · Name</text>
+          <rect class="d-box" x="30" y="176" width="200" height="66"/>
+          <text class="d-name" x="130" y="206" text-anchor="middle">COURSE</text>
+          <text class="d-t sm" x="130" y="226" text-anchor="middle">Course ID · Title</text>
+          <line class="d-line" x1="130" y1="96" x2="130" y2="176"/>
+          <path class="d-sym" d="M 130 112 L 120 96 M 130 112 L 130 96 M 130 112 L 140 96"/>
+          <line class="d-sym" x1="121" y1="122" x2="139" y2="122"/>
+          <path class="d-sym" d="M 130 160 L 120 176 M 130 160 L 130 176 M 130 160 L 140 176"/>
+          <circle class="d-symo" cx="130" cy="151" r="6.5"/>
+          <text class="d-lbl" x="144" y="140">completes</text>
+
+          <line class="d-line dash" x1="270" y1="20" x2="270" y2="250"/>
+
+          <text class="d-note" x="330" y="18">RELATIONSHIP INSTANCES · 每条线是一个实例</text>
+          <text class="d-attr" x="330" y="66">Chen</text>
+          <text class="d-attr" x="330" y="102">Melton</text>
+          <text class="d-attr" x="330" y="138">Ritchie</text>
+          <text class="d-attr" x="330" y="174">Celko</text>
+          <text class="d-attr" x="330" y="210">Gosling</text>
+          <text class="d-attr" x="826" y="66">C++</text>
+          <text class="d-attr" x="826" y="102">Java</text>
+          <text class="d-attr" x="826" y="138">Python</text>
+          <text class="d-attr" x="826" y="174">Angular</text>
+          <text class="d-attr" x="826" y="210">SQL</text>
+          <g stroke="#5D6C79" stroke-width="1.1" opacity=".78">
+            <line x1="410" y1="62" x2="812" y2="62"/>
+            <line x1="410" y1="62" x2="812" y2="206"/>
+            <line x1="430" y1="98" x2="812" y2="98"/>
+            <line x1="430" y1="98" x2="812" y2="134"/>
+            <line x1="430" y1="98" x2="812" y2="170"/>
+            <line x1="424" y1="134" x2="812" y2="62"/>
+            <line x1="410" y1="170" x2="812" y2="98"/>
+            <line x1="432" y1="206" x2="812" y2="170"/>
+            <line x1="432" y1="206" x2="812" y2="206"/>
+          </g>
+          <text class="d-t sm" x="620" y="242" text-anchor="middle">这里一共 9 个 “completes” 关系实例</text>
+        </svg>

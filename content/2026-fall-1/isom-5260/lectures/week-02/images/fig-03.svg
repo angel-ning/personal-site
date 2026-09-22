@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 340" role="img" aria-label="企业模型与项目模型的关系"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <text class="d-note" x="20" y="20">ENTERPRISE MODEL · 只有实体和关系</text>
+          <rect class="d-box soft" x="20" y="32" width="430" height="288" rx="3"/>
+          <rect class="d-box" x="48" y="60" width="112" height="42"/><text class="d-t" x="104" y="86" text-anchor="middle">CUSTOMER</text>
+          <rect class="d-box" x="48" y="150" width="112" height="42"/><text class="d-t" x="104" y="176" text-anchor="middle">ORDER</text>
+          <rect class="d-box" x="230" y="150" width="112" height="42"/><text class="d-t" x="286" y="176" text-anchor="middle">INVENTORY</text>
+          <rect class="d-box" x="230" y="60" width="112" height="42"/><text class="d-t sm" x="286" y="79" text-anchor="middle">INVENTORY</text><text class="d-t sm" x="286" y="94" text-anchor="middle">PRICING HISTORY</text>
+          <rect class="d-box" x="48" y="248" width="112" height="42"/><text class="d-t" x="104" y="274" text-anchor="middle">BACKORDER</text>
+          <rect class="d-box" x="348" y="248" width="82" height="42"/><text class="d-t sm" x="389" y="274" text-anchor="middle">EMPLOYEE</text>
+          <line class="d-line" x1="104" y1="102" x2="104" y2="150"/>
+          <line class="d-line" x1="160" y1="171" x2="230" y2="171"/>
+          <line class="d-line" x1="286" y1="102" x2="286" y2="150"/>
+          <line class="d-line" x1="104" y1="192" x2="104" y2="248"/>
+          <line class="d-line" x1="160" y1="269" x2="286" y2="269"/><line class="d-line" x1="286" y1="269" x2="286" y2="192"/>
+          <rect x="34" y="46" width="322" height="160" fill="none" stroke="#A03A28" stroke-width="2" stroke-dasharray="7 5"/>
+          <text class="d-note" x="34" y="222" style="fill:#A03A28">这一块要立项</text>
+
+          <line class="d-line" x1="466" y1="176" x2="546" y2="176" marker-end="url(#ara)" style="stroke:#1C4E8A"/>
+          <text class="d-note" x="506" y="162" text-anchor="middle">refines &amp;</text>
+          <text class="d-note" x="506" y="196" text-anchor="middle">expands</text>
+
+          <text class="d-note" x="560" y="20">PROJECT MODEL · 加上属性、business rules</text>
+          <rect class="d-box soft" x="560" y="32" width="420" height="288" rx="3"/>
+          <rect class="d-box" x="586" y="58" width="150" height="94"/>
+          <text class="d-name" x="661" y="80" text-anchor="middle">CUSTOMER</text>
+          <line class="d-div" x1="586" y1="92" x2="736" y2="92"/>
+          <text class="d-attr d-pk" x="600" y="112">Customer ID</text>
+          <text class="d-attr" x="600" y="132">Customer Name</text>
+          <rect class="d-box" x="800" y="58" width="150" height="94"/>
+          <text class="d-name" x="875" y="80" text-anchor="middle">PRODUCT</text>
+          <line class="d-div" x1="800" y1="92" x2="950" y2="92"/>
+          <text class="d-attr d-pk" x="814" y="112">Product ID</text>
+          <text class="d-attr" x="814" y="132">Standard Price</text>
+          <rect class="d-box" x="586" y="204" width="150" height="102"/>
+          <text class="d-name" x="661" y="226" text-anchor="middle">ORDER</text>
+          <line class="d-div" x1="586" y1="238" x2="736" y2="238"/>
+          <text class="d-attr d-pk" x="600" y="258">Order ID</text>
+          <text class="d-attr" x="600" y="278">Customer ID</text>
+          <text class="d-attr" x="600" y="298">Order Date</text>
+          <rect class="d-box" x="800" y="204" width="150" height="102" rx="18"/>
+          <text class="d-name" x="875" y="232" text-anchor="middle">ORDER LINE</text>
+          <line class="d-div" x1="816" y1="244" x2="934" y2="244"/>
+          <text class="d-attr" x="826" y="266">Quantity</text>
+          <line class="d-line" x1="661" y1="152" x2="661" y2="204"/>
+          <line class="d-line" x1="875" y1="152" x2="875" y2="204"/>
+          <line class="d-line" x1="736" y1="255" x2="800" y2="255"/>
+        </svg>

@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 840 190" role="img" aria-label="STUDENT has FACULTY ADVISOR"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <rect class="d-box" x="60" y="72" width="220" height="66"/>
+          <text class="d-name" x="170" y="111" text-anchor="middle">STUDENT</text>
+          <rect class="d-box" x="560" y="72" width="240" height="66"/>
+          <text class="d-name" x="680" y="111" text-anchor="middle">FACULTY ADVISOR</text>
+          <line class="d-line" x1="280" y1="105" x2="560" y2="105"/>
+          <line class="d-sym" x1="534" y1="94" x2="534" y2="116"/>
+          <line class="d-sym" x1="546" y1="94" x2="546" y2="116"/>
+          <text class="d-lbl" x="400" y="98" text-anchor="middle">has</text>
+
+          <rect x="440" y="24" width="60" height="26" rx="3" fill="#DEE8F4" style="stroke:#1C4E8A"/>
+          <text class="d-note" x="470" y="41" text-anchor="middle">must</text>
+          <line class="d-line" x1="490" y1="50" x2="532" y2="90" style="stroke:#1C4E8A"/>
+
+          <rect x="596" y="24" width="52" height="26" rx="3" fill="#DEE8F4" style="stroke:#1C4E8A"/>
+          <text class="d-note" x="622" y="41" text-anchor="middle">one</text>
+          <line class="d-line" x1="600" y1="50" x2="550" y2="90" style="stroke:#1C4E8A"/>
+
+          <text class="d-t sm" x="420" y="170" text-anchor="middle">内侧那一竖 = 最小基数「必须有」；外侧那一竖 = 最大基数「只能一个」</text>
+        </svg>

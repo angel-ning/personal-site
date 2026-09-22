@@ -269,3 +269,30 @@ body {
 .lab-table tbody th { width: 9.5em; white-space: nowrap; vertical-align: top; font-size: .92em; }
 .lab-table code { font-family: var(--font-mono); background: var(--subtle); padding: 0 .3em; border-radius: 4px; }
 @media (max-width: 560px) { .ip-octets { grid-template-columns: repeat(2, 1fr); } .lab-table tbody tr:has(th) { display: flex; flex-direction: column; } .lab-table tbody th { width: auto; border-bottom: 0; padding-bottom: 0; } }
+
+/* ---------- print / Save as PDF ---------- */
+@media print {
+  @page { margin: 16mm 14mm; }
+  html, body { background: #fff !important; }
+  body > header, body > footer, .note-bar, .no-print, nextjs-portal { display: none !important; }
+  main article { max-width: none !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+  .prose { font-size: 11pt; }
+  .prose h2 { break-after: avoid; }
+  .prose h3, .prose h4 { break-after: avoid; }
+  .fig, .prose img, .callout, .qa, .lab, .layer-stack-wrap, .collision-map, .prose pre, .prose tr { break-inside: avoid; }
+  .prose .fig img { max-height: 110mm; }
+  .prose a { color: inherit; text-decoration: none; }
+  .table-wrap, .cm-svg, .layer-stack-wrap, .prose pre { overflow: visible !important; }
+  .prose pre { white-space: pre-wrap; }
+  .qa summary::marker { content: ""; }
+  .lab-controls { display: none !important; }
+  * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+
+/* <Mk> highlights (ER-diagram reading exercises) */
+.mk { font-weight: 600; }
+.mk-e { border: 1.5px solid var(--accent); border-radius: 3px; padding: 0 .3em; }
+.mk-a { font-weight: 500; background: color-mix(in oklab, var(--c-warn) 14%, transparent); box-shadow: 0 0 0 1px color-mix(in oklab, var(--c-warn) 55%, transparent) inset; border-radius: 3px; padding: 0 .25em; }
+.mk-v { text-decoration: underline wavy var(--c-tip); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+.mk-c { color: var(--c-exam); border: 1.5px solid var(--c-exam); border-radius: 44%; padding: 0 .45em; }
+.callout-biz { --c: var(--c-warn); }

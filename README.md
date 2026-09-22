@@ -52,6 +52,15 @@ npm run mdx-to-md -- <笔记目录> --out "<某处>/notes.md" --no-frontmatter  
 
 每个组件都有对应的 Markdown 写法（提示框 → 引用块，交互演示 → 用同一份数据算出的表格）。新增组件时，在 `scripts/mdx-to-md.mjs` 里也加一条。
 
+## 导出笔记
+
+每篇 Markdown / MDX 笔记页面顶部的导航栏有「导出」按钮：
+
+- **Markdown（.zip）**：`npm run build` / `npm run dev` 时由 `scripts/sync-content.mjs` 生成，放在 `public/content/<学期>/<课程>/<类型>/<slug>/<课程>-<类型>-<slug>.zip`，里面是纯 Markdown（MDX 组件已转换）和全部引用到的图片。改了笔记之后要重启 `npm run dev` 才会重新打包。
+- **PDF**：展开所有折叠内容、加载全部图片、切到亮色主题，然后打开浏览器打印窗口，选「存储为 PDF」。打印样式在 `globals.css` 的 `@media print` 里；不想打印的元素加 `no-print` class。
+
+HTML 笔记没有导出按钮（它本身就是一个独立文件，可以在新窗口打开）。
+
 ## 目录结构
 
 ```

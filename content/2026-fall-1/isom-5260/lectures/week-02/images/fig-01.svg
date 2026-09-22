@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1220 210" role="img" aria-label="从三层架构到 ER 图的主线"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <rect class="d-box" x="20" y="55" width="200" height="92"/>
+          <text class="d-name" x="120" y="88" text-anchor="middle">信息系统</text>
+          <text class="d-t sm" x="120" y="110" text-anchor="middle">3-tier client/server</text>
+          <text class="d-t sm" x="120" y="128" text-anchor="middle">architecture</text>
+
+          <rect class="d-box" x="265" y="55" width="200" height="92"/>
+          <text class="d-name" x="365" y="88" text-anchor="middle">Enterprise tier</text>
+          <text class="d-t sm" x="365" y="110" text-anchor="middle">最底层坐着一个 DBMS，</text>
+          <text class="d-t sm" x="365" y="128" text-anchor="middle">全组织的数据都在这</text>
+
+          <rect class="d-box" x="510" y="55" width="200" height="92"/>
+          <text class="d-name" x="610" y="88" text-anchor="middle">企业数据建模</text>
+          <text class="d-t sm" x="610" y="110" text-anchor="middle">哪个部门用哪些数据、</text>
+          <text class="d-t sm" x="610" y="128" text-anchor="middle">要立哪些数据库项目</text>
+
+          <rect class="d-box" x="755" y="55" width="200" height="92"/>
+          <text class="d-name" x="855" y="88" text-anchor="middle">开发方法</text>
+          <text class="d-t sm" x="855" y="110" text-anchor="middle">SDLC 或 Prototyping</text>
+          <text class="d-t sm" x="855" y="128" text-anchor="middle">（两条路，各有取舍）</text>
+
+          <rect class="d-box hi" x="1000" y="55" width="200" height="92"/>
+          <text class="d-name hi" x="1100" y="88" text-anchor="middle">Analysis 阶段</text>
+          <text class="d-t sm ac" x="1100" y="110" text-anchor="middle">Conceptual data modeling</text>
+          <text class="d-t sm ac" x="1100" y="128" text-anchor="middle">产物就是 E-R 图</text>
+
+          <line class="d-line" x1="220" y1="101" x2="257" y2="101" marker-end="url(#ar)"/>
+          <line class="d-line" x1="465" y1="101" x2="502" y2="101" marker-end="url(#ar)"/>
+          <line class="d-line" x1="710" y1="101" x2="747" y2="101" marker-end="url(#ar)"/>
+          <line class="d-line" x1="955" y1="101" x2="992" y2="101" marker-end="url(#ar)"/>
+
+          <text class="d-note" x="238" y="45" text-anchor="middle">数据放哪</text>
+          <text class="d-note" x="483" y="45" text-anchor="middle">先规划</text>
+          <text class="d-note" x="728" y="45" text-anchor="middle">再开发</text>
+          <text class="d-note" x="973" y="45" text-anchor="middle">聚焦</text>
+
+          <text class="d-t sm" x="1100" y="175" text-anchor="middle">↓</text>
+          <text class="d-name hi" x="1100" y="196" text-anchor="middle">Part 2</text>
+        </svg>

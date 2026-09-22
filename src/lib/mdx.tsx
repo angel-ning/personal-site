@@ -4,6 +4,7 @@ import matter from "gray-matter";
 import { evaluate } from "@mdx-js/mdx";
 import * as runtime from "react/jsx-runtime";
 import remarkGfm from "remark-gfm";
+import remarkCjkFriendly from "remark-cjk-friendly";
 import remarkBreaks from "remark-breaks";
 import rehypeSlug from "rehype-slug";
 import { rehypeNote, type Heading } from "./markdown";
@@ -17,7 +18,7 @@ export async function renderMdxFile(file: string, assetBase: string) {
   const headings: Heading[] = [];
   const { default: Content } = await evaluate(content, {
     ...runtime,
-    remarkPlugins: [remarkGfm, remarkBreaks],
+    remarkPlugins: [remarkGfm, remarkCjkFriendly, remarkBreaks],
     rehypePlugins: [rehypeSlug, [rehypeNote, { assetBase, headings }]],
   });
   return { content: <Content components={noteComponents(assetBase)} />, headings };

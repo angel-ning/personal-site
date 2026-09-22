@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 940 250" role="img" aria-label="弱实体示例 EMPLOYEE carries DEPENDENT"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <rect class="d-box" x="40" y="46" width="240" height="106"/>
+          <text class="d-name" x="160" y="74" text-anchor="middle">EMPLOYEE</text>
+          <line class="d-div" x1="40" y1="88" x2="280" y2="88"/>
+          <text class="d-attr d-pk" x="58" y="112">Employee ID</text>
+          <text class="d-attr" x="58" y="136">Employee Name</text>
+
+          <rect class="d-box" x="660" y="46" width="240" height="106"/>
+          <rect class="d-inner" x="666" y="52" width="228" height="94"/>
+          <text class="d-name" x="780" y="74" text-anchor="middle">DEPENDENT</text>
+          <line class="d-div" x1="682" y1="88" x2="878" y2="88"/>
+          <text class="d-attr" x="698" y="112">Dependent Name</text>
+          <line class="d-dbl" x1="698" y1="116" x2="806" y2="116"/>
+          <line class="d-dbl" x1="698" y1="120" x2="806" y2="120"/>
+          <text class="d-attr" x="698" y="142">Date of Birth</text>
+
+          <line class="d-line" x1="280" y1="95" x2="660" y2="95"/>
+          <line class="d-line" x1="280" y1="103" x2="660" y2="103"/>
+          <line class="d-sym" x1="294" y1="85" x2="294" y2="113"/>
+          <line class="d-sym" x1="306" y1="85" x2="306" y2="113"/>
+          <path class="d-sym" d="M 644 99 L 660 88 M 644 99 L 660 99 M 644 99 L 660 110"/>
+          <circle class="d-symo" cx="635" cy="99" r="6.5"/>
+          <text class="d-lbl" x="470" y="82" text-anchor="middle">carries</text>
+          <text class="d-note" x="470" y="128" text-anchor="middle">identifying relationship · 双实线</text>
+
+          <text class="d-note" x="660" y="180">Implicit identifier: Employee ID + Dependent Name</text>
+          <text class="d-t sm" x="40" y="180">强实体这一端必定是</text>
+          <text class="d-t sm" x="40" y="200">mandatory one（‖）</text>
+          <text class="d-t sm" x="40" y="220">—— 见 2.6 节的规律</text>
+        </svg>

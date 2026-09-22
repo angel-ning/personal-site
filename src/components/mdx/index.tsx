@@ -19,6 +19,7 @@ const CALLOUTS = {
   memo: { icon: "🧠", label: "记忆口诀" },
   note: { icon: "📌", label: "注意" },
   todo: { icon: "📝", label: "TODO" },
+  biz: { icon: "💼", label: "业务视角" },
 } as const;
 type CalloutType = keyof typeof CALLOUTS;
 
@@ -144,6 +145,11 @@ export function CollisionMap() {
   );
 }
 
+// Inline highlight for reading exam prompts: e = entity, a = attribute, v = verb (relationship), c = cardinality word.
+export function Mk({ t, children }: { t: "e" | "a" | "v" | "c"; children: ReactNode }) {
+  return <span className={`mk mk-${t}`}>{children}</span>;
+}
+
 export function noteComponents(assetBase: string) {
-  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer };
+  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk };
 }

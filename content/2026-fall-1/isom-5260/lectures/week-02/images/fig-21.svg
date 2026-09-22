@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 160" role="img" aria-label="四轮扫描法"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <g>
+            <rect class="d-box" x="15" y="28" width="250" height="98"/>
+            <text class="d-note" x="35" y="52">ROUND 1</text>
+            <text class="d-name" x="35" y="76">Entity</text>
+            <text class="d-t sm" x="35" y="98">圈名词 → 判 strong /</text>
+            <text class="d-t sm" x="35" y="116">weak / associative</text>
+          </g>
+          <g>
+            <rect class="d-box" x="295" y="28" width="250" height="98"/>
+            <text class="d-note" x="315" y="52">ROUND 2</text>
+            <text class="d-name" x="315" y="76">Attribute</text>
+            <text class="d-t sm" x="315" y="98">每个实体的特性 →</text>
+            <text class="d-t sm" x="315" y="116">五分类 + 标识符</text>
+          </g>
+          <g>
+            <rect class="d-box" x="575" y="28" width="250" height="98"/>
+            <text class="d-note" x="595" y="52">ROUND 3</text>
+            <text class="d-name" x="595" y="76">Relationship</text>
+            <text class="d-t sm" x="595" y="98">找动词 → 连线 +</text>
+            <text class="d-t sm" x="595" y="116">标单数动词短语</text>
+          </g>
+          <g>
+            <rect class="d-box hi" x="855" y="28" width="250" height="98"/>
+            <text class="d-note" x="875" y="52">ROUND 4</text>
+            <text class="d-name hi" x="875" y="76">Cardinality</text>
+            <text class="d-t sm ac" x="875" y="98">先填「白送」的，</text>
+            <text class="d-t sm ac" x="875" y="116">剩下问两个问题</text>
+          </g>
+          <line class="d-line" x1="265" y1="77" x2="288" y2="77" marker-end="url(#ar)"/>
+          <line class="d-line" x1="545" y1="77" x2="568" y2="77" marker-end="url(#ar)"/>
+          <line class="d-line" x1="825" y1="77" x2="848" y2="77" marker-end="url(#ar)"/>
+        </svg>

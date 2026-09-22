@@ -203,3 +203,7 @@ export const noteSourcePath = (n: Note) =>
 
 // Public URL of a file that sync-content copied into public/content.
 export const noteAssetBase = (n: Note) => `/content/${n.term}/${n.course}/${n.type}/${n.slug}/`;
+
+// Download bundle built by scripts/sync-content.mjs for Markdown / MDX notes.
+export const noteDownload = (n: Note) =>
+  n.format === "html" ? null : `${noteAssetBase(n)}${n.course}-${n.type}-${n.slug}.zip`;

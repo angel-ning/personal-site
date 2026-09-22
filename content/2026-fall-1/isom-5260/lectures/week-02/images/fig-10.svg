@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 400" role="img" aria-label="M:N 转换为关联实体"><style>/* svg primitives */
+  .d-box{fill:#FFFFFF;stroke:#131A22;stroke-width:1.6;}
+  .d-box.soft{fill:#F5F7F9;}
+  .d-box.hi{fill:#DEE8F4;stroke:#1C4E8A;stroke-width:2;}
+  .d-inner{fill:none;stroke:#131A22;stroke-width:1.1;}
+  .d-name{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:13px;font-weight:600;fill:#131A22;letter-spacing:.04em;}
+  .d-name.hi{fill:#1C4E8A;}
+  .d-t{font-family:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;font-size:12.5px;fill:#131A22;}
+  .d-t.sm{font-size:11px;fill:#54626E;}
+  .d-t.ac{fill:#1C4E8A;}
+  .d-attr{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12.5px;fill:#131A22;}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:#131A22;stroke-width:1;}
+  .d-div{stroke:#C4CCD4;stroke-width:1;}
+  .d-line{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:#5D6C79;stroke-width:1.6;fill:none;}
+  .d-symo{stroke:#5D6C79;stroke-width:1.6;fill:#FFFFFF;}
+  .d-lbl{font-family:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;font-size:12px;fill:#131A22;}
+  .d-note{font-family:"JetBrains Mono",ui-monospace,Menlo,monospace;font-size:10.5px;fill:#1C4E8A;}
+  .d-note.o{fill:#8E5715;}
+
+  </style><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#5D6C79"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="#1C4E8A"/>
+  </marker>
+</defs><rect width='100%' height='100%' fill='#FFFFFF'/>
+          <text class="d-note" x="30" y="18">① 原始形态：M : N，属性无处安放</text>
+          <rect class="d-box" x="380" y="30" width="180" height="54"/>
+          <text class="d-attr" x="470" y="52" text-anchor="middle">Grade</text>
+          <text class="d-attr" x="470" y="72" text-anchor="middle">Enrol Date</text>
+          <line class="d-line dash" x1="470" y1="84" x2="470" y2="128"/>
+
+          <rect class="d-box" x="40" y="96" width="220" height="64"/>
+          <text class="d-name" x="150" y="133" text-anchor="middle">STUDENT</text>
+          <rect class="d-box" x="700" y="96" width="220" height="64"/>
+          <text class="d-name" x="810" y="133" text-anchor="middle">COURSE</text>
+          <line class="d-line" x1="260" y1="128" x2="700" y2="128"/>
+          <path class="d-sym" d="M 276 128 L 260 117 M 276 128 L 260 128 M 276 128 L 260 139"/>
+          <circle class="d-symo" cx="285" cy="128" r="6.5"/>
+          <path class="d-sym" d="M 684 128 L 700 117 M 684 128 L 700 128 M 684 128 L 700 139"/>
+          <circle class="d-symo" cx="675" cy="128" r="6.5"/>
+          <text class="d-lbl" x="470" y="152" text-anchor="middle">enrolls in</text>
+
+          <line class="d-line" x1="470" y1="180" x2="470" y2="212" marker-end="url(#ara)" style="stroke:#1C4E8A"/>
+          <text class="d-note" x="484" y="200">转换</text>
+
+          <text class="d-note" x="30" y="240">② 转成 associative entity：属性有了家</text>
+          <rect class="d-box" x="40" y="272" width="200" height="64"/>
+          <text class="d-name" x="140" y="309" text-anchor="middle">STUDENT</text>
+          <rect class="d-box" x="380" y="256" width="200" height="96" rx="26" ry="26"/>
+          <text class="d-name" x="480" y="284" text-anchor="middle">ENROLLMENT</text>
+          <line class="d-div" x1="404" y1="296" x2="556" y2="296"/>
+          <text class="d-attr" x="416" y="318">Grade</text>
+          <text class="d-attr" x="416" y="340">Enrol Date</text>
+          <rect class="d-box" x="720" y="272" width="200" height="64"/>
+          <text class="d-name" x="820" y="309" text-anchor="middle">COURSE</text>
+
+          <line class="d-line" x1="240" y1="304" x2="380" y2="304"/>
+          <line class="d-sym" x1="254" y1="294" x2="254" y2="314"/>
+          <line class="d-sym" x1="266" y1="294" x2="266" y2="314"/>
+          <path class="d-sym" d="M 364 304 L 380 293 M 364 304 L 380 304 M 364 304 L 380 315"/>
+          <circle class="d-symo" cx="355" cy="304" r="6.5"/>
+
+          <line class="d-line" x1="580" y1="304" x2="720" y2="304"/>
+          <path class="d-sym" d="M 596 304 L 580 293 M 596 304 L 580 304 M 596 304 L 580 315"/>
+          <circle class="d-symo" cx="605" cy="304" r="6.5"/>
+          <line class="d-sym" x1="706" y1="294" x2="706" y2="314"/>
+          <line class="d-sym" x1="694" y1="294" x2="694" y2="314"/>
+
+          <text class="d-note" x="480" y="384" text-anchor="middle">Implicit identifier: Student ID + Course ID</text>
+        </svg>
