@@ -1,0 +1,372 @@
+---
+title:
+  en: "Lesson 2 · Security Threats & Common Attacks"
+  zh: "第 2 课 · 安全威胁与常见攻击手法"
+summary:
+  en: "Malware, communication intercept, phishing/social engineering, OWASP software weaknesses, DoS/DDoS, supply chain and password attacks, plus emerging LLM threats — all linked back to the CIA triad."
+  zh: "恶意软件、通信截获、钓鱼与社会工程、OWASP 软件弱点、DoS/DDoS、供应链攻击、密码攻击，以及 LLM 新兴威胁——全部对应回 CIA 三要素。"
+week: 2
+date: 2026-08-31
+tags: [Malware, Phishing, OWASP, DoS, DDoS, SupplyChain, PasswordAttack, LLM]
+---
+
+# ISOM 5280 Computer and Internet Security Management — Lesson 2 复习笔记
+
+**主题：Security Threats and Attacks（安全威胁与攻击）— Malware · Communication Intercept · Phishing/Social Engineering · Software Weaknesses (OWASP) · DoS/DDoS · Supply Chain Attack · Password Attack · Emerging Threats (LLM)**
+
+> 优先级标注说明（按考试重要性）：
+> 🔴 **必考核心** — 概念名称、定义、结构必须能背出来
+> 🟡 **需要理解** — 需要懂逻辑关系，能举例说明
+> 🟢 **了解即可** — 背景知识，考试大概率不会细抠
+>
+> **本笔记优先级的判定依据**（你没有指定教授强调了什么，所以按以下信号推断，你可以随时修正）：
+> ① **课件末尾 3 道 MCQ（p.63–65）** 分别考「对 SQL Injection 这类程序缺陷无效的控制手段」「哪种恶意软件能不靠用户交互自我传播（Worm）」「RaaS 生态里不属于其中的角色（Crypto Miner）」——说明这三点必考；
+> ② **课件正文两次 Short Quiz**：p.14 比较三种恶意软件的复制/传播特性；p.37 要求填 SQL Injection / Buffer Overflow / XSS 的 Primary Target 与 Negative Impact——现场留白提问，通常就是考点；
+> ③ **篇幅**：Malware 用了 p.7–14（8 页）、Software Weaknesses 用了 p.29–37（9 页）、DoS/DDoS 用了 p.38–43（6 页），是本课三大重点块；
+> ④ **Discussion 留白题**（p.51「8 位字母数字密码为什么还是会被破解」「什么是 Credential Stuffing」）——教授留给学生填的地方；
+> ⑤ Lec 1 的经验：考试拆成 **Technical (20%) + Management (15%)**，每个概念要准备**技术定义 + 管理含义**两层。
+>
+> 参考教材：**Principles of Information Security, 7th ed. (Whitman & Mattord)，Chapter 1–2**（课件 p.2 明确标注）
+
+---
+
+## 0. 核心地图（先建立整体框架）
+
+这节课的 4 个 Learning Objectives（p.4）说得很直接：**认识常见威胁 → 能复述真实案例 → 能用大白话解释攻击手法 → 把攻击和 CIA（Confidentiality-Integrity-Availability）风险挂钩**。第 4 条是**答题的框架**：不管考哪种攻击，最后都要能说出"它破坏了 CIA 里的哪一项"。
+
+先装一条主线，再把 7 类攻击 + 1 类新兴威胁挂上去——**攻击对象不同，破坏的 CIA 环节也不同**：
+
+| 攻击对象是… | 攻击类别（English） | 主要破坏 CIA 的哪一环 |
+|---|---|---|
+| 人（骗你自己说出秘密） | Phishing / Social Engineering | **C**onfidentiality |
+| 网络传输中的数据 | Communication Intercept（Sniffing / Spoofing / MITM） | **C**onfidentiality |
+| 你的电脑 / 程序本身 | Malware（Virus / Worm / Trojan / Ransomware） | **C + I + A** 都可能 |
+| 写代码时留下的漏洞 | Software Weaknesses（OWASP Top 10：SQLi / Buffer Overflow / XSS…） | **C + I**（注入、越权、脚本执行） |
+| 服务器能处理的"容量" | DoS / DDoS | **A**vailability |
+| 你信任的供应商 / 外包商 | Supply Chain Attack | **C + I + A**（借道进来，什么都能干） |
+| 你的密码本身 | Password Attack | **C**（认证被绕过） |
+| 新技术（LLM / AI Agent） | Emerging Threats | **C + I**（训练数据泄露 / 投毒） |
+
+> 💡 **小白类比**：把公司想象成一栋大楼。Phishing 是骗保安开门；Communication Intercept 是在电梯里装窃听器；Malware 是带了个会自己搬东西的机器人进来；Software Weaknesses 是大楼设计图纸本身有暗门；DoS/DDoS 不偷东西，就是堵住大门让正常人进不来；Supply Chain Attack 是买通了给大楼送水的供应商；Password Attack 是猜大门密码；Emerging Threats 是大楼新装的 AI 门禁本身可能被诱导开门。
+
+---
+
+## 1. 🟡 术语（Terminologies）
+
+<Figure src="images/page_05.png" caption="Match the terms on the left with the explanation" source="Slide 5" />
+
+课件用连线题的形式考这 4 个词的区别，**这组区分很容易考选择题**：
+
+| 术语 | 官方定义 | 中文 / 小白解释 |
+|---|---|---|
+| **Threat** | An intentional or unintentional act that damage or otherwise compromise information and the systems that support it. | 泛指"可能造成伤害的东西"，故意或无意都算——**范围最大** |
+| **Vulnerability** | A potential weakness in an asset or its defensive control system(s). | 资产或防御系统本身的**弱点**（还没被利用） |
+| **Risk** | A potential risk to an asset's loss of value. | 弱点一旦被利用，资产贬值的**可能性/后果** |
+| **Exploit** | A technique used to compromise a system; may also describe a tool, program or script used in the compromise. | 用来**利用**漏洞的具体手法/工具/脚本 |
+| **Attack** | （课件未直接给出独立解释，与 Threat 一起考） | 威胁被**付诸行动**，就是一次 Attack |
+
+> 🎯 **考点口诀**：Vulnerability 是墙上的洞，Threat 是"有人可能会钻这个洞"，Exploit 是钻洞用的工具，Attack 是真的钻进去了。四个词是**一条因果链**，不是四个孤立定义。
+
+---
+
+## 2. 🔴 Malware（恶意软件）
+
+课件開場明确列出本课的 7 大 Common Threat & Attack：Malware → Communication Intercept → Phishing/Social Engineering → Software Weaknesses → DoS/DDoS → Supply Chain Attack → Password Attack，最后再加 Emerging Threats。
+
+### 2.1 四种 Malware 类型
+
+| 类型 | 定义（英文原文关键词） | 中文 / 小白解释 | 需要宿主文件吗？ | 能自己传播吗？ |
+|---|---|---|---|---|
+| **Virus** | replicates by attaching to some executable files; aims to modify files or damage systems | 病毒——**必须寄生**在某个可执行文件上才能复制 | ✅ 需要 | ❌ 不能独立传播 |
+| **Worm** | similar to virus, with the additional "strength" that it can survive and replicate **without the need to attach to something else** | 蠕虫——**不需要寄主**，自己就能复制和探索网络 | ❌ 不需要 | ✅ 能，而且是四者中**传播最快**的 |
+| **Trojan horse** | disguises itself as legitimate, harmless software to trick users into installing it | 木马——**伪装成正常软件**骗你自己装进去 | 自己不复制 | ❌ 靠用户主动安装，不会自我复制 |
+| **Ransomware** | threatens to publish the victim's data or perpetually block access to it unless a ransom is paid | 勒索软件——**加密/锁住数据**，交钱才给密钥 | 不一定 | 取决于投递方式（常搭配 Worm/Phishing） |
+
+<Figure src="images/page_09.png" caption="Worm：不依附任何文件，自己顺着家庭网络里的路由器、打印机、手机等一路探索、复制" source="Slide 9" />
+
+> 🎯 **Short Quiz 1（p.14，我的解答）**：
+> - **哪一个不会自我复制？** → Trojan Horse（它靠"骗你安装"，不是自我复制）
+> - **哪一个能堵塞互联网？** → Worm（大量自我复制的流量会造成拥塞，经典案例如早期蠕虫瘫痪网络）
+> - **哪一个必须"寄生"在其他合法文件上？** → Virus
+> - **哪一个传播最快？** → Worm（不需要人的操作，自动扩散）
+
+<MCQ q="Which one of the following malware can spread without user interactions?" a="Ransomware" b="Back door" c="Trojan Horse" d="Worm" answer="D">
+课件末尾 MCQ 原题。Worm 的定义就是"can survive and replicate on its own **without the need to attach to something else**"——不需要用户点击或运行任何东西，靠网络漏洞自己蔓延（如扫描开放端口后自动感染）。Trojan Horse 恰恰相反，必须**用户主动运行**伪装的程序。
+</MCQ>
+
+### 2.2 Ransomware-as-a-Service（RaaS）—— 勒索软件的"外包产业链"
+
+<Figure src="images/page_13.png" caption="The RaaS Gig Economy: Anatomy of a Ransomware Affiliate Attack" source="Slide 13" />
+
+RaaS 把勒索攻击拆成**三种角色的分工合作**，本质是"网络犯罪的零工经济（gig economy）"：
+
+| 角色 | 中文 | 干什么 | 怎么赚钱 |
+|---|---|---|---|
+| **Initial Access Broker**（开门人） | 访问经纪人 | 专门找网络漏洞、**卖"初始访问权"**给出价最高的人 | 一次性卖断，或按比例分成 |
+| **RaaS Operator / Developer**（开发商） | 勒索软件开发者 | 开发恶意软件、维护"泄露网站"、提供技术支持 | Operator 抽成 30%–40% ransom，或收订阅费（如 $540/月） |
+| **The Affiliate / Executor**（执行者） | 加盟"打工人" | 买访问权 → 实施入侵 → 部署勒索软件 | 与 Operator 按 70/30 分赃 |
+
+> ⚠️ **管理层考点**：RaaS **降低了攻击门槛**——即便技术不高的攻击者，也能靠"租"工具发起高杀伤力的攻击。这解释了为什么近几年勒索攻击数量暴涨：不再需要每个攻击者都会写恶意代码，产业分工让"低技能罪犯"也能下场。
+
+**流程三步**：① Initial Access & Handoff（access broker 卖凭证/漏洞）→ ② Human-Operated Intrusion（affiliate 提权、偷数据、关掉安全工具）→ ③ Double Extortion & Payout（加密 + 窃取数据"双重勒索"，按比例分赃）。
+
+<Callout type="exam" title="防御 Malware 的 7 条对策（p.11，考简答）">
+1. 及时更新 OS 和补丁
+2. 安装杀毒软件
+3. 不从不可信网络/网站下载文件
+4. 浏览器设置为"运行插件/弹窗前先询问权限"
+5. 不打开陌生人（或没理由联系你的人）发来的文件
+6. 定期备份关键数据
+7. 外部存储设备先在隔离机器上扫描
+</Callout>
+
+---
+
+## 3. 🔴 Communication Intercept（通信截获）
+
+数据在网络里是拆成 **packets（数据包）** 传输的——一大块数据会被拆成很多小包，这给了攻击者"半路拦截"的机会。IoT 设备和远程办公的普及**放大了这类风险**（p.17）。
+
+| 手法 | 定义 | 中文 / 小白解释 | 典型场景 |
+|---|---|---|---|
+| **Packet Sniffer**（嗅探） | intercepts data packets traveling across network；"electronic eavesdropping" | 电子窃听：在公共 WiFi / 未加密网络上截获数据包，如捕获 HTTP 明文传输的登录凭证 | 商旅办公时蹭免费 WiFi，屏幕/数据被实时"直播" |
+| **IP Spoofing**（伪装） | a malicious actor disguising themselves as a trusted source to deceive users, steal data, bypass security controls | **假冒**成可信来源（人/设备/网站），骗取信任 | 伪造成"内部服务器"的 IP 发起请求 |
+| **Man-in-the-Middle (MITM)** | attacker places him/herself in the middle of communication between two targets | 攻击者**插在两端通信中间**，两边都以为在跟对方直接说话 | 例：入侵路由器，截获/篡改双方流量 |
+
+<Figure src="images/page_18.png" caption="Packet Sniffing：在公共 WiFi / 未加密网络上，用 Wireshark 这类工具截获经过网络的每一个包" source="Slide 18" />
+<Figure src="images/page_19.png" caption="IP Spoofing：黑客把数据包的 IP source 从 192.168.0.25 改成 10.0.0.80，让防火墙误以为是合法内网流量放行" source="Slide 19" />
+<Figure src="images/page_20.png" caption="Man-in-the-Middle：黑客同时向 Company A 和 Company B 冒充对方，各自交换密钥，实际两头的加密会话都要经过黑客中转、解密、复制、再转发" source="Slide 20" />
+
+> 💡 **小白类比**：Sniffing 是"偷听你打电话"；IP Spoofing 是"冒充你朋友的号码给你打电话"；MITM 是"接线员偷偷把你的电话转接给自己，再转给对方，两头都装聋作哑地转述"——**能顺便篡改内容**，比单纯偷听更危险。
+
+**如何应对（p.22，这节课先留悬念，后续课程详解）**：Firewall / IDPS / VPN（Lesson 3）、Data Encryption（Lesson 4）、防止 Malware 装到端点（Lesson 3）；而 Spoofing 往往和 **Social Engineering**（下一节）配合使用。
+
+---
+
+## 4. 🔴 Phishing & Social Engineering（钓鱼与社会工程）
+
+> **"People are the weakest link!"** —— Kevin Mitnick（传奇黑客）
+
+Social Engineering 的定义很关键：**用欺骗手段操纵人交出机密信息 —— "IT IS NOT TECHNICAL, BUT A SOCIAL ONE!"**（p.26）。四个根因：缺乏/不当培训、经验不足、失误、缺乏安全意识。
+
+### 4.1 AI 时代的钓鱼：从邮件到 Deepfake
+
+<Figure src="images/page_24.png" caption="AI-Driven Phishing & Social Engineering: Fraud Case" source="Slide 24" />
+
+- **AI-Driven Phishing**：攻击者用生成式 AI，仅凭网上找到的**几条个人信息**，就能编出以假乱真的 spear-phishing（定向钓鱼）邮件。
+- **真实案例（管理层必读）：Deepfake CFO 诈骗英国工程公司 Arup**
+  - 2024 年初，员工参加了一场**视频会议**，与会的"CFO"和其他"同事"其实全是 **Deepfake 伪造**。
+  - 该员工被骗做出 **15 笔转账，总计约 2 亿港元（约 2500 万美元）**，转到 5 个香港银行账户。
+  - Arup 全球 CIO 原话："我们经常遭遇各类攻击，包括发票欺诈、钓鱼、WhatsApp 语音伪造和 deepfake——这类攻击的数量和复杂度都在急剧上升。"
+
+> ⚠️ **考点**：这个案例同时踩中 **Deepfake（技术手段）+ Social Engineering（利用"CFO 说的话要听"这种组织权威心理）+ 跨境转账（缺乏二次验证的流程漏洞）**——回答"如何防范"时，**技术方案（AI 检测）和管理方案（转账二次核实制度）都要提**，这正是本课"Technical + Management 两份卷"的典型考法。
+
+**其他手法**：QR Code 钓鱼——在钓鱼邮件里嵌二维码，诱导扫码访问伪装成可信服务的假页面（比传统链接更难被邮件安全网关识别）。
+
+### 4.2 如何应对 Phishing（p.28）
+
+- 定期开展全员钓鱼演练与意识培训
+- 多因素认证（MFA）
+- 网络分段与监控
+- 各用户组/账号坚持最小权限原则（Least Privilege）
+- 移除或禁用不必要、易被滥用的服务
+
+---
+
+## 5. 🔴 Software Weaknesses / Flaws（软件缺陷）—— OWASP Top 10
+
+**定义**：软件设计、编码或配置上的缺陷，导致安全问题。最危险的三类：**(1) 注入类缺陷（injection flaws）(2) 内存损坏类缺陷（memory corruption bugs）(3) 访问控制失效（access control failure）**。常见成因：设计阶段缺少安全参与、人为/机器编码错误、遗留系统。
+
+### 5.1 OWASP Top 10（2025）—— 背下类别名字，考选择题概率高
+
+OWASP（Open Worldwide Application Security Project）成立于 2001 年，是致力于帮助组织构建可信软件的非营利组织。
+
+| 编号 | 类别（English） |
+|---|---|
+| A01 | Broken Access Control |
+| A02 | Security Misconfiguration |
+| A03 | Software Supply Chain Failures |
+| A04 | Cryptographic Failures |
+| A05 | Injection |
+| A06 | Insecure Design |
+| A07 | Authentication Failures |
+| A08 | Software or Data Integrity Failures |
+| A09 | Security Logging and Alerting Failures |
+| A10 | Mishandling of Exceptional Conditions |
+
+> 🟢 **了解即可**：具体排名每年会变（对照 2021/2023 版会发现顺序和名称都有调整），**考试大概率只考"知道 OWASP 是什么、它列出行业公认的十大 Web 安全风险"**，而不会细抠 A06 和 A08 的先后顺序。
+
+### 5.2 三个最具体的软件漏洞
+
+<Figure src="images/page_33.png" caption="Buffer Overflow：把 &quot;excessive&quot; 塞进 8 字节的缓冲区，多出来的 'e' 溢出到相邻内存" source="Slide 33" />
+
+| 漏洞 | 定义 | Primary Target（攻击目标） | Negative Impact（危害） |
+|---|---|---|---|
+| **SQL Injection** | 开发者没有正确校验用户输入，就直接拼接到数据库查询里 | **数据库层**——存有用户/业务数据的关系型数据库 | 攻击者可能获取未授权信息（读取、篡改甚至删除数据） |
+| **Buffer Overflow** | 塞进固定长度缓冲区的数据超过其容量，多余数据溢出到相邻内存，覆盖/破坏数据 | **内存/运行时环境**——尤其 C/C++、Assembly 等能直接访问内存的语言（Python/Java/COBOL 相对不易受影响） | 系统崩溃 → 甚至被攻击者**接管系统**；或利用溢出运行任意代码 |
+| **Cross-Site Scripting (XSS)** | 攻击者向可信网站注入恶意脚本，在受害者浏览器（客户端）执行的代码注入攻击 | **网站访问者的浏览器**——通过一个本身可信的网站作跳板 | 读取用户网页历史、Cookie、Session Token，甚至存储的密码 |
+
+<Figure src="images/page_35.png" caption="XSS 攻击流程：① 发现漏洞 → ② 注入偷 Cookie 的脚本 → ③ 访客触发脚本 → ④ Session Cookie 被发送给攻击者" source="Slide 35" />
+
+**XSS 防御（Prevention/Mitigation）**：避免直接展示用户提交的 HTML、校验输入（Validate Input）、清洗数据（Sanitizing Data）、Cookie 保护、部署 WAF（Web Application Firewall）规则。
+
+> 🎯 **Short Quiz 2（p.37，我的解答，见上表 Primary Target / Negative Impact 两列）**——课件把这道题做成空表格现场提问，说明**这张对照表本身就是考点**，务必能默写。
+
+<QA q="为什么 Python / Java / COBOL 比 C / C++ / Assembly 更不容易受 Buffer Overflow 影响？">
+因为 C/C++ 和 Assembly **允许程序直接访问内存地址**（指针操作），程序员必须自己管理缓冲区大小，一旦少做边界检查就会溢出；而 Python/Java 等语言的运行时环境（如 JVM）**自动做边界检查和内存管理**，越界写入会直接抛异常而不是真的覆盖相邻内存。
+</QA>
+
+<MCQ q="What type of control is ineffective against Program Flaw (e.g. SQL injection)?" a="Hire better IT team" b="Better plan and more users testing" c="Principle of least user privilege" d="Increase IT budget" answer="D">
+课件末尾 MCQ 原题。SQL Injection 属于**代码层面的具体缺陷**，需要"输入校验、代码审查、安全测试、最小权限"这类**技术性、流程性**的控制手段来堵住；单纯"增加 IT 预算"（D）不直接改变代码是否被正确校验，是最不对症的选项——这也呼应了本课"Technical vs Management"两层备考的思路：砸钱是 Management 层面的资源投入，但不等于 Technical 层面的漏洞被修复。
+</MCQ>
+
+---
+
+## 6. 🔴 DoS / DDoS（拒绝服务攻击）
+
+### 6.1 先复习 TCP 三次握手，再看 SYN Flood 怎么"钻空子"
+
+正常建立一个 TCP 连接需要 **3 步握手**：**SYN**（我要连接）→ **SYN-ACK**（好，我准备好了）→ **ACK**（收到，开始传输）。DoS 的很多手法，本质是**故意不完成这个握手**，把服务器的"半开连接队列（backlog）"占满，让真正的用户连不进来——这正是 Variation of Attacks 里 **Protocol Attacks**（利用 TCP/IP 状态表，而非单纯拼带宽）的原理。
+
+下面这个互动小实验，把 p.40「Common Types of DoS」那张手绘握手图变成可以自己点的过程：
+
+<SynFloodLab />
+
+<Figure src="images/page_39.png" caption="Common Types of DoS：上——恶意客户端反复 SYN 却不回 ACK；下——用伪造 IP 发 SYN，SYN-ACK 根本送不到真实主机" source="Slide 39" />
+
+<Callout type="tip" title="对照课件板书（p.40）">
+课件画了两种情况：① 恶意客户端**收到 SYN-ACK 后故意不回 ACK**（上面的 SYN/SYN-ACK 来回箭头）；② 用**伪造的源 IP** 发 SYN，服务器的 SYN-ACK 根本到不了真实主机，自然也等不到 ACK（下面那个带问号的箭头）。两种情况的共同结果，都是服务器留下了一个**半开连接（half-open）**，占着队列位置——这正是上面互动组件里"⏳ 半开"状态的来源。
+</Callout>
+
+### 6.2 什么是 DDoS？三种攻击类型
+
+**定义与目标**：由成千上万到数百万台被入侵设备组成的**僵尸网络（botnet）**，同时对目标（服务器/网络/应用）发起洪水攻击，耗尽其处理能力，让正常用户无法访问。
+
+<Figure src="images/page_42.png" caption="Distributed DoS：Attacker 通过 Controller 遥控大量 Zombies 同时向 Victim Server 发送 HTTP Request，正常用户的请求被淹没" source="Slide 42" />
+
+| 攻击类型 | 攻击层（OSI，第 3 课细讲） | 原理 | 常见手法 |
+|---|---|---|---|
+| **Volumetric Attacks** | Layer 3/4 · 带宽 | 用海量流量**淹没带宽**，让网络管道饱和，无法响应正常用户 | UDP flood、**ICMP flood**、DNS amplification |
+| **Protocol Attacks** | Layer 3/4 · 状态表 | 利用 TCP/IP 协议栈弱点，**耗尽服务器连接状态表**和防火墙会话容量——不只是带宽问题 | **SYN flood**（见上方互动组件）、Smurf DDoS、分片攻击 |
+| **Application Layer Attacks (L7)** | Layer 7 · 应用层 | 针对特定 Web 服务发起**模仿正常流量**的请求，极难在不做深度检测的情况下识别过滤 | HTTP flood、Slowloris（专打 Web 服务器）、cache bypass |
+
+> ⚠️ **管理层数字**：DDoS 攻击平均每次造成 **$234,000** 损失（Source: Zayo 2024），瞄准的是企业的 uptime（正常运行时间）、revenue（收入）和 reputation（声誉）——**这是一道"能不能只靠技术防"的题**：Protocol/Application 层攻击"极难被检测过滤"，说明纯技术手段有极限，**管理层的应急响应流程（如自动限流、云端清洗、事先演练）同样重要**。
+
+DDoS 常从"僵尸（zombies）"发出，更复杂的攻击会用**分布式**的僵尸网络——这就是"Distributed"这个词的来源。
+
+---
+
+## 7. 🟡 Supply Chain Attack（供应链攻击）
+
+**全球趋势**：外包/离岸模式帮企业降低了周边业务成本，也让企业能低成本获得原本经济上不划算自建的技术能力（如云托管）——但这也意味着**攻击者不必直接攻击目标网络**，只要渗透进有权限访问目标网络资产的**第三方供应商**系统即可。
+
+<Figure src="images/page_45.png" caption="Holistic Assessment on dependencies：Core Operational Systems 被 Business Partners / Data Providers / Outsourcing Vendors / Public Cloud / SaaS / Industry Platforms 等多方环绕" source="Slide 45" />
+
+> 💡 **管理层考点（四个自问）**：Single point of failure at scale?（规模化后的单点故障？）Sub-contractor opacity?（分包商是否透明？）Concentration at service level?（服务层面是否过度集中？）No provider-impairment scenarios tested?（有没有演练过供应商失效的场景？）—— **这四个问题本身就是一份"供应链风险自查清单"，很适合拿来答简答题。**
+
+### 7.1 真实案例：SolarWinds 攻击
+
+时间线跨度长达 **6 个月**，利用了不够安全的供应链，最终渗透进下游数千家组织：
+
+| 时间 | 事件 |
+|---|---|
+| 2019 年 9 月 | 黑客侵入 SolarWinds 网络 |
+| 2019 年 10 月 | 开始在 Orion 产品中测试代码注入 |
+| 约 4 个月后 | 向 Orion 注入名为 **Sunburst** 的恶意代码 |
+| 2020 年 3 月 | SolarWinds 开始分发**包含恶意代码的 Orion 更新** |
+
+数千家 SolarWinds 客户安装了这个被投毒的更新，恶意软件随之扩散，攻击者由此获得客户 IT 系统的访问权限。
+
+### 7.2 金融业的应对建议（HKMA，考简答）
+
+1. 在第三方管理全生命周期中**识别、评估、缓解**网络风险
+2. 评估支持关键业务的第三方所带来的**供应链风险**
+3. **扩展威胁情报监测**，覆盖关键第三方，并与同业机构主动共享情报
+4. 制定**基于场景的应急响应策略**并定期演练
+
+---
+
+## 8. 🟡 Password Attack（密码攻击）
+
+| 手法 | 定义 | 中文 / 小白解释 |
+|---|---|---|
+| **Guessing**（猜测） | birthday, ID, name, etc. | 猜生日、身份证号、名字等个人信息 |
+| **Dictionary attack**（字典攻击） | repeatedly try dictionary words until access is granted | 用一份常见词/常见密码列表反复尝试 |
+| **Brute force attack**（暴力破解） | exhaustively try all combinations of characters | 穷举所有字符组合；成功率主要取决于——**密码长度和字符集大小（复杂度）** |
+| **Rainbow table**（彩虹表） | if an attacker is able to steal a system's encrypted password file | 前提是**已经偷到了系统的加密密码文件**，用预先算好的哈希对照表反查明文密码 |
+
+<Figure src="images/page_51.png" caption="Different level：从 Poor（123456/qwerty）→ Fair（密码+SMS/Voice）→ Better（Authenticator/OTP/Passwordless）→ Best（Passwordless + phishing-resistant：FIDO2 安全密钥、Passkey、证书多因子）" source="Slide 51" />
+
+<QA q="为什么一个 8 位字母数字密码，就算看起来很复杂，依然可能被破解？（p.51 Discussion）">
+8 位字母数字（大小写+数字）的组合空间虽然有 62^8 ≈ 2×10^14 种，但：① **现代 GPU/云算力**可以每秒尝试数十亿次哈希，把"理论上很大"的空间在可接受时间内穷举完；② 大多数人的"随机密码"其实**并不随机**（常见替换如 a→@、o→0），大幅缩小了实际搜索空间，字典攻击/规则攻击能优先命中；③ 如果网站的密码哈希**没有加盐（salt）**，攻击者可以用预先算好的彩虹表直接查表，等于跳过了穷举过程。
+</QA>
+
+<QA q="什么是 Credential Stuffing？（p.51 Discussion）">
+攻击者拿着**从别的网站数据泄露事件中偷来的"用户名+密码"组合**，批量拿去尝试登录其他网站——利用的是**很多人在不同网站重复使用同一套密码**这个习惯，而不是去破解密码本身。防御重点因此不是"密码强度"，而是**MFA + 唯一密码（每个网站不同）+ 监测异常登录**。
+</QA>
+
+---
+
+## 9. 🟢 Emerging Threats（新兴威胁）
+
+<Figure src="images/page_53.png" caption="Top 5 Cyber Threat to Enterprise in 2026（HKCERT）" source="Slide 53" />
+
+**HKCERT 2026 五大信息安全风险**：① 供应链漏洞与第三方安全缺口 ② 企业 AI 治理薄弱增加数据泄露风险 ③ AI 驱动的网络攻击与 Agentic AI 风险 ④ 过度依赖云基础设施造成单点故障 ⑤ AI 赋能设备带来的新兴威胁。
+
+### LLM 的两种主要数据安全失效模式
+
+<Figure src="images/page_57.png" caption="Data Leakage & Poisoning in LLM：真实案例 M&S 因第三方外包被黑客攻击；ShadowLeak——利用 ChatGPT Deep Research 的零点击漏洞窃取 Gmail 数据" source="Slide 57" />
+
+Data Leakage（数据泄露，破坏 **Confidentiality**）和 Data Poisoning（数据投毒，破坏 **Integrity**）是 LLM 的两大数据安全失效模式：
+
+| 类型 | 说明 |
+|---|---|
+| **Training Data Memorization** | LLM 可能一字不差地记住训练数据片段，攻击者用定向 prompt 提取技术套出其中的 PII、专有源代码或内部凭证 |
+| **Context and RAG Exfiltration** | RAG（检索增强生成）或多租户系统里，隔离没做好的上下文窗口会把内部文档暴露给未授权用户，通过 prompt injection 泄露 |
+| **Dataset Contamination** | 攻击者向公开爬取数据/开放数据集/微调数据集里灌入恶意记录，扭曲模型的基线逻辑、分类准确率或事实准确性 |
+| **Backdoor (Trojan) Attacks** | 攻击者在训练数据里嵌入特定触发词/短语；模型平时正常，触发词一出现就执行恶意指令、绕过安全护栏 |
+
+**如何防御**：
+- **Data Leakage**：脱敏（Redaction）、文件访问控制（Security Badges）、输出扫描器（Guardrails）、数学模糊化（Mathematical Blurring）
+- **Data Poisoning**：审查数据供应商、数据清洗（Spotting Odd Data）、用大量异常输入做压力测试（Stress-Testing for Trapdoors）、**把外部文本当作数据而非指令**（Treating External Text as Data, Not Orders —— 这正是防 prompt injection 的核心原则）
+
+> 🎯 **这条防 Data Poisoning 的最后一条原则，本身就是我们在使用任何 AI 工具时都要守住的底线**：无论是网页、文档还是邮件里的文字，只要不是你本人下的指令，就该当成"数据"去谨慎对待，而不是当成"命令"去执行。
+
+---
+
+## 🔴 综合速查表
+
+| 攻击类别 | 一句话定义 | 主要破坏 CIA | 关键防御 |
+|---|---|---|---|
+| Virus / Worm / Trojan / Ransomware | 依附/自我复制/伪装/加密勒索的恶意软件 | C+I+A | 补丁、杀毒软件、备份、不点未知文件 |
+| RaaS | 勒索软件的"外包"产业链（Broker/Operator/Affiliate） | C+I+A | 同上 + 供应链式防御思维 |
+| Sniffing / IP Spoofing / MITM | 截获、伪装、插入通信中间 | C | 加密（VPN/TLS）、避免公共 WiFi |
+| Phishing / Social Engineering / Deepfake | 骗人交出机密信息 | C | 培训、MFA、最小权限、转账二次核实 |
+| OWASP Top 10（SQLi / Buffer Overflow / XSS） | 软件设计/编码/配置缺陷 | C+I | 输入校验、代码审查、WAF、最小权限 |
+| DoS / DDoS（Volumetric / Protocol / Application） | 耗尽带宽/状态表/应用容量，拒绝服务 | A | 流量清洗、限流、状态表容量规划、应急演练 |
+| Supply Chain Attack | 借道第三方供应商渗透 | C+I+A | 第三方风险评估、威胁情报共享、场景演练 |
+| Password Attack（Guessing/Dictionary/BruteForce/Rainbow Table/Credential Stuffing） | 猜测/穷举/查表/撞库破解认证 | C | 长且唯一的密码、加盐哈希、MFA、Passwordless |
+| LLM Data Leakage / Poisoning | 训练数据泄露 / 恶意数据污染模型 | C+I | 脱敏、访问控制、数据清洗、外部文本当数据不当指令 |
+
+---
+
+## 模拟自测题
+
+<MCQ q="Which one of the following of malware can spread without user interactions?" a="Ransomware" b="Back door" c="Trojan Horse" d="Worm" answer="D">
+Worm 不需要依附宿主文件，也不需要用户交互，靠网络漏洞自动扩散；Trojan Horse 必须靠用户主动运行。
+</MCQ>
+
+<MCQ q="Which of the following is NOT a key component under Ransomware-as-a-Service (&quot;RaaS&quot;) ecosystem?" a="RaaS Operators/ Developers" b="The Affiliates / Attackers" c="The Crypto Miner" d="Initial Access Brokers" answer="C">
+RaaS 生态的三个角色是 Operator（开发者）、Affiliate（执行者）、Initial Access Broker（开门人），"Crypto Miner"（加密货币挖矿者）不属于这个分工体系，是干扰项。
+</MCQ>
+
+<MCQ q="What type of control is ineffective against Program Flaw (e.g. SQL injection)?" a="Hire better IT team" b="Better plan and more users testing" c="Principle of least user privilege" d="Increase IT budget" answer="D">
+程序缺陷（如 SQL Injection）需要输入校验、代码审查、测试、最小权限这类技术/流程手段，单纯"增加 IT 预算"不直接修复代码层面的漏洞。
+</MCQ>
+
+<QA q="用一句话说明：为什么 Buffer Overflow 和 SQL Injection 都属于 OWASP Top 10 说的“软件弱点”，但攻击目标不一样？">
+两者都源于代码没有正确处理输入/边界，但 Buffer Overflow 攻击的是**内存/运行时环境**（数据溢出到相邻内存，可能被用来执行任意代码或让系统崩溃），而 SQL Injection 攻击的是**数据库层**（未校验的输入被拼进 SQL 语句，让攻击者读写不该访问的数据）——考试如果问 "Primary Target"，一定要分清是"内存"还是"数据库"。
+</QA>
+
+<QA q="SYN Flood 属于 DoS 三种攻击类型中的哪一种？为什么？">
+属于 **Protocol Attacks**。它不是靠海量流量堵满带宽（那是 Volumetric），也不是模仿正常用户请求打应用层（那是 Application/L7），而是利用 TCP 三次握手的机制漏洞：不完成握手，让服务器的半开连接队列（backlog，属于 TCP/IP 状态表）被占满，从而拒绝新的正常连接——对应上面互动组件里"队列被打满"的那一刻。
+</QA>

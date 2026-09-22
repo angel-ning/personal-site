@@ -1,7 +1,7 @@
 # 课程笔记工作流（给 Claude 的说明书）
 
 > 每次做课程笔记前先读这份文件。它总结了 ISOM 5180 第 1–2 周笔记的做法，目标是：**新的 session 不需要重新解释，就能做出同样质量的笔记。**
-> 这份文件优先于 `slides-to-study-notes` skill 里「把 .md 写在 PDF 旁边」的默认做法：笔记的正本是网站里的 **MDX**，PDF 和 .md 只是从它导出的副本。
+> 这份文件优先于 `slides-to-study-notes` skill 里「把 .md 写在 PDF 旁边」的默认做法：笔记的正本是网站里的 **MDX**，`README.md` 只是从它导出的阅读版，本地不再生成 PDF。
 
 ---
 
@@ -11,8 +11,9 @@
 |---|---|---|
 | **笔记正本** | `content/<学期>/<课程>/lectures/week-NN/index.mdx` + `images/` | 手写 MDX |
 | GitHub 阅读版 | 同目录 `README.md` | `npm run mdx-to-md -- <笔记目录>` |
-| 本地 Markdown + PDF | 课件文件夹，例如 `2026 Fall 1st/ISOM 5180/lectures/lec2/ISOM5180_Week2_复习笔记.{md,pdf}` | `mdx-to-md --out … --no-frontmatter`，再用 skill 的 `md_to_pdf.py --toc` |
 | 网站下载包 | `public/content/…/*.zip` | 构建时自动生成，不用管 |
+
+> 本地课件文件夹里不再生成 `.md`/`.pdf` 副本——这一步已省略，正本只有网站里的 MDX 和它旁边的 `README.md`。
 
 **不要**再写 `index.md` 或独立 `index.html`：`.md` 不能用组件；HTML 笔记在 Vercel 上会 404（ISOM 5260 第 2 周就是这样被转成 MDX 的）。
 
@@ -97,7 +98,7 @@ tags: [IPv4, NAT, DHCP]
 1. **逻辑写成纯函数**放在 `*.mjs`（例：`switch-logic.mjs`、`ip-logic.mjs`），数据放 `data/*.json`。
 2. 界面写成 `"use client"` 组件，只调用这些纯函数；样式复用 `globals.css` 里的 `.lab`、`.lab-head`、`.lab-controls`、`.lab-table`、`.lab-decision`。
 3. 在 `src/components/mdx/index.tsx` 的 `noteComponents` 里注册。
-4. **在 `scripts/lib/mdx-core.mjs` 里加一个同名映射**，用同一套纯函数算出一张静态表格，这样 README / PDF / 下载包里也有内容。没有映射的组件在导出时会丢失并打印警告。
+4. **在 `scripts/lib/mdx-core.mjs` 里加一个同名映射**，用同一套纯函数算出一张静态表格，这样 README / 下载包里也有内容。没有映射的组件在导出时会丢失并打印警告。
 5. 需要示意图时优先画成 SVG（参考 `collision-map.mjs`）：颜色写成 `var(--token, #亮色值)`，网页能跟随暗色模式，导出时自动替换成亮色值。
 
 ## 5. 容易踩的坑
@@ -112,7 +113,7 @@ tags: [IPv4, NAT, DHCP]
 
 1. 启动预览（`.claude/launch.json` 里的 `site`），打开笔记页：检查没有坏图、互动组件能用、手机宽度不溢出、暗色模式可读。
 2. `npx tsc --noEmit`、`npm run lint`、`npm run build` 全部通过。
-3. 生成 README 和课件文件夹里的 md + pdf（见第 1 节），打开 PDF 抽查一页。
+3. 生成 README（见第 1 节）。
 4. **先本地测试，等用户说了再 commit / push。**
 
 ---

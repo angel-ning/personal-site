@@ -21,6 +21,7 @@ import { EER_SCENARIOS, constraintInfo, discriminatorName, HIERARCHY, inheritanc
 import { computeFair, FAIR_PRESETS, fmtM as fmtFairM } from "../../src/components/mdx/fair-logic.mjs";
 import { computeControlRoi, ROI_PRESETS, fmtM as fmtRoiM, fmtPct } from "../../src/components/mdx/control-roi-logic.mjs";
 import { computeInsurance, INSURANCE_PRESETS, fmtM as fmtInsM } from "../../src/components/mdx/insurance-logic.mjs";
+import { CAPACITY, HALFOPEN_TIMEOUT, runScript } from "../../src/components/mdx/syn-flood-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
@@ -231,6 +232,19 @@ const components = {
     return [
       note("（网页版此处可以自己调 Loss / Retention / Limit / Uncovered / Premium；下表是预设场景的结果）"),
       table(["场景", "Insurance Recovery", "Net Retained Loss"], rows),
+    ];
+  },
+  SynFloodLab() {
+    const STATUS = { established: "✅ 已建立", "half-open": "⏳ 半开" };
+    const rows = runScript().map((s, i) => [
+      String(i + 1),
+      s.action,
+      `${s.backlog.length}/${CAPACITY}`,
+      s.backlog.map((e) => STATUS[e.status]).join(", ") || "（空）",
+    ]);
+    return [
+      note(`（网页版此处可交互：自己发正常连接 / 伪造 SYN，看队列如何被打满；下表是同一套规则跑一遍的脚本，半开连接超时阈值 = ${HALFOPEN_TIMEOUT} tick）`),
+      table(["#", "动作", "队列", "队列内容"], rows),
     ];
   },
 };
