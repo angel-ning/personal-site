@@ -1,0 +1,597 @@
+---
+title:
+  en: "Week 1 · Database Fundamentals & DBMS Architecture"
+  zh: "第 1 周 · 数据库基础与 DBMS 分层架构"
+week: 1
+date: 2026-08-29
+---
+# ISOM 5260 Fundamentals of Database Management — Week 1 复习笔记
+
+**主题：Data / Information / Metadata · Flat File 的问题 · DBMS & Data Models · Relational Model（Keys、Constraints、σ Π ⋈）· SQL 与 Logical/Physical Plan · ⭐ DBMS 分层架构（Layers）· Page / Index / Buffer Pool / Storage Hierarchy**
+
+> 优先级标注说明（按考试重要性）：
+> 🔴 **必考核心** — 定义、分类、顺序必须能认出来
+> 🟡 **需要理解** — 懂逻辑，能在选项里判断对错
+> 🟢 **了解即可** — 背景知识
+
+> 📝 **本讲的考法：MC（选择题）**。Quiz（Week 5）和 Exam（Week 8）都是 **closed-note、纸笔**考试（p.58）。本讲全是概念，所以笔记重点放在「**选项里容易混的地方**」。
+> ⭐ **老师上课提到的重点：layer 的问题** → 见 **第 10 节「DBMS 分层架构专题」**，是全篇最重的一块。
+
+---
+
+## 0. 核心地图（先建立整体框架）
+
+这节课回答一个问题：**为什么要用 DBMS，而且 DBMS 内部是怎么一层层工作的？**
+
+```
+数据是什么（Data / Information / Metadata / Database）
+   → 自己用 CSV 管数据会出什么问题（Flat file：Integrity / Implementation / Durability）
+   → 所以需要 DBMS + Data Model（关系模型为主，NoSQL 为辅）
+   → 关系模型：Relation、Schema、PK / FK、Constraints、σ Π ⋈
+   → SQL：只说 WHAT，不说 HOW（declarative）
+   → DBMS 怎么把 WHAT 变成 HOW：Logical plan → Physical plan
+   → ⭐ DBMS 分层架构（从上到下 6 层 + 2 个 cross-cutting）
+        SQL Client → Query Parsing & Planning → Operator Execution
+        → Files & Index Mgmt → Buffer Mgmt → Disk Mgmt → Database
+   → 下层细节：Page / Slotted page / Record ID / Index / Storage hierarchy / Buffer pool
+```
+
+**一句话**：前半节讲「**关系模型长什么样**」，后半节讲「**DBMS 内部怎么分层把它跑起来**」。后半节的每个概念（page、index、buffer……）都挂在某一层上，MC 最爱考「**某个功能属于哪一层**」。
+
+---
+
+# Part A 知识点总结
+
+## 1. 🟢 开场：为什么数据库重要（p.2–5）
+
+- p.2 YouTube：数十亿视频和用户，同时有大量 **Read operations**（看视频）和 **Write operations**（上传、评论）
+- p.3–4：每分钟产生海量数据；Big Data 应用在医疗、金融、零售、物流、制造、教育、营销、媒体、政府等行业
+- p.5 **Databases & AI**：*AI is only as good as the data that feeds it.* AI 需要的数据必须 **fast、resilient、at scale**；掌握 data-infrastructure layer 的公司成为 AI 革命的 front-line enablers
+
+## 2. 🔴 Data、Information、Metadata、Database（p.6–8）
+
+![Data vs Information](images/page_06.png)
+
+| 术语 | 英文定义（原文） | 小白解释 |
+|---|---|---|
+| **Data 数据** | Stored representations of meaningful objects and events | 原始记录，比如一张学生名单 |
+| ├ Structured data | numbers, text, dates | 能放进表格的 |
+| └ Unstructured data | images, video, documents, etc. | 放不进规整表格的 |
+| **Information 信息** | Data processed to be useful in decision making — by **putting data in a context** or **summarizing data** | 加工过的数据，比如「各专业人数占比饼图」「招生人数预测」 |
+| **Metadata 元数据** | Descriptions of the properties or characteristics of the data, including **data types, field sizes, allowable values, and data context** | 「关于数据的数据」，比如 GPA 字段：Decimal、长度 3、最小 0.0、最大 4.0、来源 Academic Unit |
+| **Database 数据库** | An organized collection of **logically related** data that models some aspect of the real world | 有组织、有关联的数据集合 |
+
+> **MC 易混点**：
+> - 名单（原始行）= **data**；饼图 / 趋势图 = **information**（加了 context 或做了汇总）
+> - Metadata 描述的是**数据的属性**（类型、长度、取值范围、来源），**不是**数据本身的值
+> - 视频、图片、文档 = **unstructured**；数字、文本、日期 = **structured**
+
+## 3. 🔴 Flat File Strawman：自己用 CSV 管数据的问题（p.9–13）
+
+做法：每个实体一个 CSV 文件（Artist.csv、Album.csv），应用程序每次读写都要**自己解析文件**（p.10 那段 `for line in file` 的 Python 代码）。
+
+问题分**三类**（这是课件的分类方式，MC 可能让你把问题归类）：
+
+| 类别 | 课件里的问题 |
+|---|---|
+| **Data Integrity 数据完整性**（p.11） | ① 同一个歌手名字写法不一致（"Wu-Tang Clan" vs "WuTang Clan"）② 有人把年份改成非法字符串 ③ 一张专辑有多个歌手怎么办（mixtape）④ 删掉一个还有专辑的歌手会怎样 |
+| **Implementation 实现**（p.12） | ① 怎么找到某一条记录 ② 新应用想用同一份数据、甚至在另一台机器上跑怎么办 ③ 两个应用同时写同一个文件怎么办 |
+| **Durability 持久性**（p.13） | ① 程序改记录时电脑崩溃怎么办 ② 想把数据库复制到多台机器上做 high availability 怎么办 |
+
+**记忆口诀**：**「对不对」= Integrity；「怎么做」= Implementation；「会不会丢」= Durability**。
+
+> **MC 易混点**：「两个程序同时写一个文件」属于 **Implementation**，不是 Integrity；「崩溃」「复制到多台机器」属于 **Durability**。
+
+## 4. 🔴 DBMS 与 Data Model（p.14–19）
+
+### 4.1 定义
+
+| 术语 | 英文定义（原文） |
+|---|---|
+| **DBMS** | Software that allows applications to **store and analyze** information in a database. Supports the **definition, creation, querying, update, and administration** of databases in accordance with some data model. 例：Oracle、MySQL、MongoDB、Snowflake |
+| **Data model 数据模型** | A **collection of concepts** for describing the data in a database. Rules that define the types of things that could exist and how they relate. |
+
+p.15：**Same data, different models**。同一份歌手数据可以存成 Flat file（CSV）、Relational（表）、Document（JSON）三种模型。
+
+### 4.2 🔴 Data model 分类（p.16）
+
+![Data Models](images/page_16.png)
+
+| 分组 | 包含 |
+|---|---|
+| **Relational** | **Most DBMSs; the focus of this course** |
+| **NoSQL**（红框） | Key/Value、Graph、Document / JSON / XML / Object、Wide-Column / Column-family |
+| 单独一项 | Array (Vector, Matrix, Tensor) |
+| **Obsolete / Legacy / Rare** | Hierarchical、Network、Semantic、Flat file |
+
+- **Hierarchical** = 树状（每个节点只有一个父节点）；**Network** = 网状（节点可以有多个连接）
+
+> **MC 易混点**：**Hierarchical 和 Network 是「旧的」**，不是 NoSQL；**Array 不在 NoSQL 框里**；Document / JSON / XML / Object 是同一类。
+
+### 4.3 🟡 技术演进时间线（p.17）
+
+![Evolution](images/page_17.png)
+
+| 技术 | 大致时间 | 现状 |
+|---|---|---|
+| Flat files | 1960 起 | 约 1985 后变 legacy（仍在用） |
+| Hierarchical | 约 1967 起 | 约 1990 后 legacy（仍在用） |
+| Network | 约 1967 起 | 约 1988 后 legacy，**约 2000 年后基本不再使用** |
+| **Relational** | **1980 起** | **至今仍在积极发展（实线到 2026）** |
+| Object-oriented / Object-relational | 1980 起 | 约 2015 后 legacy |
+| NoSQL | **2000 起** | 积极发展 |
+| Hybrid databases、Blockchain / Distributed ledger | 约 2010 起 | 积极发展 |
+
+实线 = under active development；虚线 = legacy systems still used。
+
+### 4.4 🟢 市场格局（p.18–19，DB-Engines 2026 年 8 月）
+
+- 排名：1 Oracle、2 MySQL、3 Microsoft SQL Server、4 PostgreSQL（都是 Relational）、5 MongoDB（Document）
+- 前 10 里有 5 个**开源**：MySQL、PostgreSQL、MongoDB、Redis、Apache Cassandra
+- 按类别的流行度占比：**Relational 71%**、Document 10.9%、Key-value 4.7%、Search engines 3.9%、Vector 2.8%、Wide column 2.4%、Graph 1.6%、Time series 1.2%、Spatial 0.5%、RDF 0.3%
+
+> 可能的 MC：「哪类 DBMS 占绝对主导？」→ Relational（约 71%）；「MongoDB 是什么模型？」→ Document；「Redis？」→ Key-value；「Cassandra？」→ Wide column。
+
+## 5. 🟡 前关系型数据库的问题（p.20–21）
+
+![Pre-relational](images/page_21.png)
+
+- 数据用**指针串成树**（客户 → 订单 → 商品），**写查询就像手写循环去遍历数据结构**
+- 查「某客户的所有订单」很方便（顺着树往下走）；查「**所有买过苹果的客户**」就很痛苦（要把整棵树遍历一遍）
+- **Data dependencies**：*If your data changed, your application broke.* 程序依赖数据的物理组织方式，数据结构一改，程序就挂
+
+→ 这正是关系模型要解决的问题（见 §6.5 Physical Data Independence）。
+
+## 6. 🔴 Relational Model 关系模型（p.22–28）
+
+### 6.1 三个组成部分（p.22，Edgar F. Codd 提出，获图灵奖）
+
+| 组成 | 英文原文 | 解释 |
+|---|---|---|
+| **Structure** | The definition of the database's relations and their contents are **independent of their physical representation** | 表的定义与物理存储无关 |
+| **Integrity** | Ensure the database's contents **satisfy constraints** | 数据要满足约束 |
+| **Manipulation** | **Declarative API** for accessing and modifying a database's contents via relations | 用声明式语言（SQL）操作 |
+
+> 注意和 Week 4 p.4 的说法对应：Data structure / Data integrity / Data manipulation，是同一个三分法。
+
+### 6.2 Relation、Tuple、Schema（p.23）
+
+| 术语 | 定义（原文） |
+|---|---|
+| **Relation** | An **unordered set** of records, each with a fixed set of named attributes |
+| **Record / Tuple** | One row: a collection of attribute values that conforms to the relation's schema |
+| **Schema** | The **"blueprint"** (actual structure) of a particular database, defined using a **data model (architectural style)** |
+| Relational schema 的核心组件 | relation names、attribute names、data types、keys、constraints |
+
+**小白类比**：Data model 是「建筑风格」（比如中式、欧式），Schema 是按这个风格画出来的**某栋楼的具体图纸**。
+
+### 6.3 🔴 Primary Key / Foreign Key（p.24–26）
+
+- **Primary key**：Every record in a relation is unique；主键 **uniquely identifies a single record**
+- **Foreign key**：An attribute or attribute set whose values **reference a primary key in another relation**
+- p.25 的问题：专辑 St.Ides Mix Tape 有**多个歌手**，Album 表的 ArtistID 填什么？→ 关系数据库要求 **each attribute in each row has only one value**，所以填不了
+- p.26 的解法：拆出一张 **ArtistAlbum(ArtistID, AlbumID)** 关联表，一行记一对「歌手—专辑」，专辑 22 可以对应 101、102、103 三行
+
+### 6.4 🔴 Constraints 约束（p.27）
+
+- **User-defined conditions** that must hold for any instance of the database
+- 可以检查**单条记录内**，也可以跨**整张表 / 多张表**
+- **DBMS prevents modifications that violate any constraint**
+- 最常见的两种：**Unique key** 和 **referential (foreign key)** constraints
+- SQL 例子里出现的约束：`NOT NULL`、`PRIMARY KEY`、`CHECK (Year > 1900)`
+
+### 6.5 🔴 Physical Data Independence 物理数据独立性（p.28）
+
+![Physical Data Independence](images/page_28.png)
+
+- Relations vs. Files & pointers
+- **Relationships are implicit: No pointers anymore**（关系靠相同的值来连，比如 ArtistID，不靠指针）
+- **Isolate the user/application from low-level data representation.** 用户只关心高层的应用逻辑
+
+> **MC 易混点**：Physical data independence 的意思是「**物理存储变了，应用不用改**」。它正好解决了 §5 前关系型数据库「数据一改程序就坏」的问题。
+
+## 7. 🔴 Relational Operations 关系运算（p.29–34）
+
+![Relational Operations](images/page_29.png)
+
+**共同性质**：Each operator takes **one or more relations as input** and **outputs a new relation**（输入是表，输出还是表，所以可以一层层嵌套）。
+
+| 运算 | 符号 | 作用 | 课件例子 |
+|---|---|---|---|
+| **Selection 选择** | **σ** | 选**行**：只保留满足 predicate 的 records；可以用 AND / OR 组合多个条件 | `σ year=1990 (Artist)` → Warren G、GZA |
+| **Projection 投影** | **Π** | 选**列**：去掉不要的属性、调整列的顺序、生成 derived attributes | `Π Year, ArtistName (σ Year=1990 (Artist))` |
+| **Join 连接** | **⋈** | 把两张表里在共同属性上取值相同的记录拼成一行 | `ArtistAlbum ⋈ Artist` |
+| 其他 | — | Aggregate、Union、Difference、Cross product 等 | — |
+
+后面 logical plan 里还会出现：**τ = sort 排序**，**γ = group by / aggregate 分组聚合**。
+
+> **MC 易混点（最常考）**：**σ 选行（横着切），Π 选列（竖着切）**。名字很像，不要记反：Selection 挑**哪些记录**，Projection 挑**哪些字段**。
+
+### 查询计划顺序（p.33–34）
+
+问题：Who released albums in 1994? 两个方案：
+- Plan A：`Π ArtistName( σ Year=1994 (Artist) ⋈ ArtistAlbum ⋈ Album )` —— **先 σ 再 join**
+- Plan B：`Π ArtistName( σ Year=1994 (Artist ⋈ ArtistAlbum ⋈ Album) )` —— **先 join 再 σ**
+
+课件只提了问题，没给答案。一般的道理是：**先做 selection 可以让参与 join 的行变少**，所以通常更快。两个方案结果相同、速度不同，这正是后面「optimizer 选计划」要做的事。
+
+> ⚠️ 另外注意：Year 是 **Artist** 表的属性（歌手成立/单飞的年份），不是 Album 的 ReleaseYear。严格来说这两个表达式按课件原样写的是 `σ Year=1994`，考试时如果出现，看清是对哪张表的哪一列做 σ。
+
+## 8. 🔴 SQL：Declarative Language（p.35–37）
+
+- **Declarative languages abstract the "HOW" away from the "WHAT"**：你只说要什么结果，DBMS 决定怎么算
+- 对比：flat file 要写 `for line in file ...`（procedural，写的是怎么做）；SQL 只要 `SELECT year FROM artists WHERE name = 'GZA';`
+- SQL = **Structured Query Language**，是和关系数据库交互的 **de facto standard**
+
+| 历史节点 | 内容 |
+|---|---|
+| **ANSI 标准 1986**，**ISO 标准 1987** | — |
+| SQL:1999 | Regular expressions, Triggers |
+| SQL:2003 | XML, Windows, Sequences |
+| SQL:2008 | Truncation, Fancy sorting |
+| SQL:2011 | Temporal DBs, Pipelined DML |
+| SQL:2016 | JSON, Polymorphic tables |
+| SQL:2023 | Property graph queries, Multi-dimensional arrays |
+
+- DBMS 声称支持 SQL 的**最低要求是 SQL:92（entry level）**
+- 有很多厂商方言（dialects）：Oracle SQL、**T-SQL（Microsoft SQL Server）**、PostgreSQL 等
+
+> **MC 易混点**：T-SQL 是 **SQL Server** 的方言，不是 Oracle 的；「最低标准」是 **SQL:92**，不是 1986。
+
+## 9. 🔴 Logical Plan vs. Physical Plan（p.39–43）
+
+例子（p.39–40）：Rating / User / Movie 三张表，SQL 是「按年份统计 5 星评分数量，降序排列」。
+
+### 9.1 Logical plan（p.40）
+
+- DBMS **parses** the SQL statement，**checks its syntax**，**validates table and column references**，然后 produces a **logical query plan**
+- 计划是一棵运算符树，**Executed from the bottom up**（从下往上执行）
+- **Operators can also be arranged in a different order**（运算顺序可以调整）
+
+树（从下往上）：`Rating → σ Stars=5`、`Movie → Π MID, Year` → `⋈ R.MID = M.MID` → `γ M.Year; COUNT(*)→NumBest` → `τ NumBest DESC` → `Π M.Year, NumBest`
+
+### 9.2 Physical plan（p.41）
+
+![Physical Plan](images/page_41.png)
+
+- Each relational operator has **"physical" implementation alternatives**
+- RDBMS **chooses exact algorithm/code** to run for each logical operator
+- **Goal: find faster plans that compute the same result**
+- **Same logical plan, different physical plans**：
+
+| 逻辑运算 | Physical Plan 1 | Physical Plan 2 |
+|---|---|---|
+| 读 Rating | Indexed Access（use index on Stars） | File scan（read index leaf pages） |
+| 读 Movie | File Scan（read heap file） | File Scan（read heap file） |
+| Join | **Index-Nested Loop Join** | **Hash Join** |
+| Aggregate | **Sort-based** Aggregate | **Hash-based** Aggregate |
+| Sort | External Merge-Sort | External Merge-Sort |
+
+### 9.3 🔴 Logical–Physical Separation（p.42–43）
+
+![Logical vs Physical](images/page_42.png)
+
+| | Logical | Physical |
+|---|---|---|
+| 回答什么 | **"what" is computed** | **"how" it is computed** |
+| 内容 | 关系运算符 σ Π ⋈ γ τ | 具体算法：Hash Join、Index-Nested Loop Join、File Scan、External Merge-Sort…… |
+
+- Logical-physical separation is **a key system design principle** behind relational DBMS
+- 好处：**Declarativity improves user productivity**；**enables behind-the-scenes performance optimizations**
+- 这个原则在其他领域也被「重新发现」：**MapReduce/Hadoop、networking、large-scale ML**
+
+> **MC 易混点**：「Hash Join」「Index-Nested Loop Join」「External Merge-Sort」是 **physical**；「⋈」「σ」「γ」是 **logical**。同一个 logical plan 可以对应**多个** physical plan，结果相同、速度不同。
+
+---
+
+# Part B ⭐ DBMS 分层架构专题（老师强调的 layer 问题）
+
+## 10. 🔴🔴 Architecture of a Relational DBMS（p.38、44、55、56）
+
+![DBMS layers + cross-cutting](images/DBMS_LAYERS_CROSS_CUTTING.png)
+
+### 10.1 课件原话：为什么分层（p.38 / p.44）
+
+- **Organized in layers**
+- **Each layer abstracts the layer below**（每一层把**下面**那层的细节藏起来）
+- **Manage complexity**
+- **Example of good systems design**
+
+### 10.2 🔴 六层，从上到下（要能排序）
+
+| 顺序 | 层（p.44 起的名字） | p.38 的旧名字 | 这一层负责什么 | 课件里挂在这一层的概念 |
+|---|---|---|---|---|
+| 顶 | **SQL Client** | 同 | 发出 **SQL commands** | SQL、declarative（§8） |
+| 1 | **Query Parsing & Planning** | Query Parsing & **Optimization** | 解析 SQL、检查语法、验证表名列名、生成 **logical plan**，并选出更快的 **physical plan** | Logical plan、physical plan、查询优化（§9） |
+| 2 | **Operator Execution** | **Relational Operators** | 真正执行各个运算符（σ Π ⋈ γ τ 的具体算法） | Hash Join、Index-Nested Loop Join、Sort-based / Hash-based Aggregate、External Merge-Sort；p.52 的 **Execution Engine** |
+| 3 | **Files and Index Management** | 同 | 把 relation 组织成**由 page 组成的文件**，管理记录和**索引** | Page、slotted page、slot array、**record ID**、**index（B+ tree）**（§11） |
+| 4 | **Buffer Management** | 同 | 在**内存**里管理 page：把 page 从磁盘读进 **buffer pool**，在内存中修改，脏页写回 | Buffer pool、frames、in-memory copies、**buffer manager**（§12） |
+| 5 | **Disk Management** | **Disk Space** Management | 在**磁盘**上管理 page：把 page 读 / 写到物理磁盘或文件 | Database file、directory、pages on disk、**disk manager** |
+| 底 | **Database** | 同 | 数据在非易失存储上的实际位置 | Non-volatile storage（§12.1） |
+
+**记忆口诀**（从上到下）：**客 → 解 → 执 → 文 → 缓 → 盘**
+（Client → Parsing & Planning → Execution → Files & Index → Buffer → Disk）
+
+**两种命名都要认识**：p.38 用的是 Query Parsing & **Optimization** / **Relational Operators** / **Disk Space** Management；p.44 之后用的是 Query Parsing & **Planning** / **Operator Execution** / **Disk** Management。**层数和顺序完全一样，只是名字不同**，MC 选项里可能出现任意一种。
+
+### 10.3 🔴 两个 Cross-cutting 问题（p.56）
+
+- **Concurrency Control** 和 **Recovery**
+- 课件原话：***Two cross-cutting issues related to storage and memory management***
+- 图上它们**不是单独的一层**，而是用括号**横跨在 Files and Index Management、Buffer Management、Disk Management 这三层旁边**
+- 对应 §3 flat file 的问题：两个应用同时写同一个文件 → **concurrency control**；写到一半崩溃 → **recovery**
+- 课程后面的 Transaction management（ACID、concurrency control、crash recovery）会细讲（p.57）
+
+> **MC 易混点**：「Concurrency control 是第几层？」→ **哪一层都不是**，它是 **cross-cutting**（跨层的），和存储、内存管理相关。
+
+### 10.4 🔴 一条 SQL 怎么走完这几层
+
+```
+SQL Client            发出：SELECT M.Year, COUNT(*) ... WHERE R.Stars = 5 ...
+   ↓
+Query Parsing &       解析 + 语法检查 + 验证表/列 → logical plan（σ Π ⋈ γ τ 树）
+Planning              → 选出 physical plan（例如 Index-Nested Loop Join + Sort-based Aggregate）
+   ↓
+Operator Execution    执行引擎按 physical plan 跑算法，需要数据时向下要 page
+   ↓
+Files & Index Mgmt    通过 index（Stars 上的索引）找到 record ID = (Page ID, Slot #)
+   ↓
+Buffer Mgmt           page 已经在 buffer pool？直接用；不在？向下要
+   ↓
+Disk Mgmt             从磁盘上的 database file 读出这个 page，交给 buffer pool
+   ↓
+Database
+```
+
+更新时反过来：在 buffer pool 里改内存中的副本（page 变成 **dirty**），之后再由下层**写回磁盘**。
+
+### 10.5 🔴「这属于哪一层？」速查表（MC 直接对照）
+
+| 选项里出现的东西 | 属于哪一层 |
+|---|---|
+| 写 SQL 语句、发送 SQL commands | SQL Client |
+| 检查 SQL 语法、验证表名 / 列名是否存在 | Query Parsing & Planning |
+| 生成 logical query plan、调整运算顺序 | Query Parsing & Planning |
+| 在多个 physical plan 中选更快的（查询优化） | Query Parsing & Planning（p.38 叫 Optimization） |
+| 执行 Hash Join / Index-Nested Loop Join / Merge-Sort / 聚合 | Operator Execution（Relational Operators） |
+| 把一张表组织成 fixed-size pages 的文件 | Files and Index Management |
+| Slotted page、slot array、record ID (File, Page, Slot#) | Files and Index Management |
+| 建索引 / 用索引把 key 映射到 record ID | Files and Index Management |
+| Buffer pool、frames、把 page 放进内存、内存中修改 page | Buffer Management |
+| 高层**通过谁**请求 page | 通过 **buffer manager** |
+| 把 page 读 / 写到物理磁盘或文件 | Disk Management（disk manager） |
+| 多个用户同时改数据不出错 | Concurrency Control（**cross-cutting**，不是一层） |
+| 崩溃后恢复数据 | Recovery（**cross-cutting**，不是一层） |
+
+### 10.6 分层架构的 MC 陷阱汇总
+
+1. **"Each layer abstracts the layer below"**：是 **below**（下面那层），不是 above
+2. 上层**不直接碰磁盘**：*Higher DBMS layers request pages through the buffer manager and operate on their in-memory copies*
+3. **层与层之间传的单位是 page**，不是一条 record，也不是整张表（p.55）
+4. **Buffer manager 管内存里的 page**，**disk manager 管磁盘上的 page**，别对调
+5. Query **Planning** = Query **Optimization**（两个版本的名字），Operator Execution = Relational Operators
+6. Index 属于 **Files and Index Management**，不属于 Buffer 或 Disk
+7. Concurrency control / Recovery 是 **cross-cutting**，和 **storage and memory management**（下面三层）相关
+
+## 11. 🔴 Files & Index 层的细节（p.45–49）
+
+### 11.1 表是怎么存的（p.45）
+
+![Internal structures](images/page_45.png)
+
+- **A relation (table) is treated as a file of fixed-size pages**
+- File → 多个 Page → 每个 Page 里有多条 Record
+- 每条 record 在底层是一串字节：**record header + 各字段的值**（INT、VARCHAR、CHAR……）
+
+### 11.2 Slotted Pages（p.46–47）
+
+![Page layout](images/page_47.png)
+
+- 最常见的页面布局：**slotted pages**
+- **Slot array** 记录每个 slot 对应的记录的**起始偏移量（offset）和长度**
+- **Page header** 还记录：**slot 总数**、**最后一个已用 slot 的起始偏移量**
+- **Slot array 和 record 数据区从两头向中间增长**，碰到一起就说明页满了 → **页满后 DBMS 不再往这一页插入新记录**
+- **Record ID**：DBMS 给每条记录一个唯一 ID，代表它的**物理位置**，例：**File ID, Page ID, Slot #**
+
+### 11.3 Index 索引（p.48–49）
+
+- **Tables are inherently unsorted**：不建索引就要**扫描全部记录**
+- **Index**：a data structure that **maps key values to record IDs**，enabling fast lookup and modification
+- 例：`CREATE INDEX idx_patient_age ON Patient (Age);` 之后查 `WHERE age = 17` 很快
+- p.49（Optional）B+ tree 示意：root & interior nodes 导航；**leaf entries are sorted**；每个 leaf entry 是 key → record ID 的 key-value pair
+- 🔴 **No free lunch**：*Maintaining indexes adds overhead whenever indexed data is inserted, deleted, or updated.*
+
+> **MC 易混点**：索引**加快查询**，但会**拖慢插入 / 删除 / 更新**（因为索引也要跟着改）。选项说「索引没有任何代价」是错的。
+
+## 12. 🔴 Buffer & Disk 层的细节（p.50–55）
+
+### 12.1 Storage Hierarchy 存储层级（p.50）
+
+![Storage hierarchy](images/STORAGE_HIERARCHY.png)
+
+| 层级（从上到下） | 容量 | 易失性 |
+|---|---|---|
+| CPU Registers | A few bytes | Volatile |
+| CPU Caches | Tens of KB – tens of MB | Volatile |
+| **RAM（Memory）** | Single-digit – dozens of GB | **Volatile** |
+| ─ ─ ─ ─ 分界线 ─ ─ ─ ─ | | |
+| **SSD / HDD（Disk）** | Hundreds of GB – multiple TB | **Non-volatile** |
+| Network Storage | Effectively unlimited | Non-volatile |
+
+- 往上：**Small, Fast, Expensive**；往下：**Big, Slow, Cheap**
+- **Volatile / Non-volatile 的分界在 RAM 和 SSD/HDD 之间**：断电后 RAM 里的东西会丢，磁盘上的不会
+
+### 12.2 Disk-Based Architecture（p.51）
+
+- 数据库的**主要存储位置在 non-volatile storage 上**
+- 用 volatile memory 加速访问：① 先把目标 record **拷贝进内存** ② **在内存里执行写操作** ③ 把 **dirty records 写回磁盘**
+
+延迟对比（Latency numbers，把 1 ns 放大成 1 秒来感受）：
+
+| 访问 | 实际延迟 | 放大后 |
+|---|---|---|
+| L1 cache | 1 ns | 1 秒 |
+| L2 cache | 4 ns | 4 秒 |
+| RAM | 100 ns | 100 秒 |
+| SSD | 16,000 ns | 4.4 小时 |
+| HDD | 2,000,000 ns | 3.3 周 |
+| Network storage | ~50,000,000 ns | 1.5 年 |
+
+→ 磁盘比内存慢好几个数量级，所以 DBMS 要尽量在内存（buffer pool）里干活。
+
+### 12.3 Buffer Pool 工作流程（p.52–54）
+
+![Buffer pool update](images/page_54.png)
+
+按图的方向：
+1. **Execution Engine** 发出 **Get Page #2** → 请求送到 **Buffer Pool**（内存，由若干 **frames** 组成）
+2. Buffer pool 里没有 → 从磁盘上的 **Database File**（由 **directory** + 多个带 header 的 **pages** 组成）把 directory 和 **page 2 拷进** buffer pool 的 frame
+3. Execution Engine 发出 **Update Page #2** → 修改的是 **buffer pool 里的内存副本**
+4. 修改后的 page 2 **写回**磁盘上的 page 2
+
+### 12.4 🔴 Buffer Manager vs. Disk Manager（p.55）
+
+- 🔴 **The unit of data transfer is a page.**
+- **A page is the sweet spot**：不会大到内存装不下，也不会小到访问开销太高
+- Pages are managed：
+  - **On disk：by the disk manager** → pages read/written to physical disk/files
+  - **In memory：by the buffer manager** → higher DBMS layers request pages through the buffer manager and operate on their in-memory copies
+
+---
+
+# Part C 考点总结
+
+## 13. 🔴 MC 高频考点清单（按出题可能性排）
+
+| # | 考点 | 一句话答案 |
+|---|---|---|
+| 1 | DBMS 分层的**顺序** | Client → Parsing & Planning → Operator Execution → Files & Index → Buffer → Disk |
+| 2 | 某功能**属于哪一层** | 对照 §10.5 速查表 |
+| 3 | 为什么分层 | organized in layers；each layer abstracts the layer **below**；manage complexity；good systems design |
+| 4 | Concurrency control / Recovery | **cross-cutting**，related to storage and memory management，不是一层 |
+| 5 | 数据传输单位 | **page** |
+| 6 | Buffer manager vs. disk manager | 内存 vs. 磁盘；高层通过 buffer manager 请求 page |
+| 7 | Logical vs. physical plan | **what** vs. **how**；同一逻辑计划可以有多个物理计划 |
+| 8 | SQL 是什么语言 | **Declarative**，说 what 不说 how |
+| 9 | σ vs. Π | σ 选行，Π 选列 |
+| 10 | 关系运算的性质 | 输入一个或多个 relation，输出新的 relation |
+| 11 | Data vs. information vs. metadata | 原始 / 加工后（context、summary）/ 关于数据的描述 |
+| 12 | Flat file 问题归类 | Integrity / Implementation / Durability |
+| 13 | Data model 分类 | NoSQL = key-value、graph、document、wide-column；Hierarchical / Network = legacy |
+| 14 | Relational model 三部分 | Structure、Integrity、Manipulation（Codd） |
+| 15 | Physical data independence | 无指针，关系靠值连；应用不受物理表示影响 |
+| 16 | Index 的代价 | 加速查找，拖慢 insert / delete / update |
+| 17 | Record ID | 物理位置：File ID, Page ID, Slot # |
+| 18 | Volatile / non-volatile 分界 | RAM 以上 volatile，SSD/HDD 以下 non-volatile |
+| 19 | SQL 标准 | ANSI 1986、ISO 1987；最低 SQL:92 entry level；T-SQL = SQL Server |
+| 20 | 市场 | Relational 约 71%；MongoDB = document，Redis = key-value，Cassandra = wide column |
+
+## 14. 🔴 术语速查表
+
+| 缩写 / 符号 | 全称 / 含义 |
+|---|---|
+| DBMS / RDBMS | (Relational) Database Management System |
+| SQL | Structured Query Language |
+| T-SQL | Transact-SQL，Microsoft SQL Server 的 SQL 方言 |
+| ANSI / ISO | American National Standards Institute / International Organization for Standardization |
+| CSV | Comma-Separated Values（flat file 的格式） |
+| NoSQL | 非关系型数据库的统称 |
+| PK / FK | Primary Key / Foreign Key |
+| σ | Selection（选行） |
+| Π | Projection（选列） |
+| ⋈ | Join |
+| γ | Grouping / Aggregation |
+| τ | Sort（排序） |
+| RAM / SSD / HDD | Random Access Memory / Solid-State Drive / Hard Disk Drive |
+| Record ID | 记录的物理地址 (File ID, Page ID, Slot #) |
+| Dirty page / record | 在内存里被改过、还没写回磁盘的 page / record |
+
+---
+
+## 15. MC 模拟自测题（自查用，非押题）
+
+**1.** Which is the correct top-to-bottom order of layers in a relational DBMS?
+A. SQL Client → Operator Execution → Query Parsing & Planning → Buffer Mgmt → Files & Index Mgmt → Disk Mgmt
+B. SQL Client → Query Parsing & Planning → Operator Execution → Files & Index Mgmt → Buffer Mgmt → Disk Mgmt
+C. SQL Client → Query Parsing & Planning → Files & Index Mgmt → Operator Execution → Disk Mgmt → Buffer Mgmt
+D. SQL Client → Buffer Mgmt → Query Parsing & Planning → Operator Execution → Files & Index Mgmt → Disk Mgmt
+
+**2.** Checking whether the table and column names in a SQL statement exist happens in which layer?
+A. SQL Client　B. Query Parsing & Planning　C. Files and Index Management　D. Disk Management
+
+**3.** Choosing between a Hash Join and an Index-Nested Loop Join is a decision about the ___ plan.
+A. logical　B. physical　C. conceptual　D. external
+
+**4.** Which layer is responsible for slotted pages and record IDs?
+A. Operator Execution　B. Buffer Management　C. Files and Index Management　D. Disk Management
+
+**5.** Higher DBMS layers obtain pages by:
+A. reading the disk directly　B. requesting them through the buffer manager　C. asking the SQL client　D. scanning the index
+
+**6.** Concurrency control and recovery in the DBMS architecture are best described as:
+A. the top layer　B. part of Query Parsing　C. cross-cutting issues related to storage and memory management　D. part of the SQL Client
+
+**7.** The unit of data transfer between disk and memory in a DBMS is a:
+A. record　B. attribute　C. page　D. table
+
+**8.** "Each layer abstracts the layer ___." Fill in the blank.
+A. above　B. below　C. beside　D. at the top
+
+**9.** Which statement about logical-physical separation is FALSE?
+A. Logical tells what is computed　B. Physical tells how it is computed　C. One logical plan maps to exactly one physical plan　D. It enables behind-the-scenes optimizations
+
+**10.** `σ Year=1990 (Artist)` returns:
+A. only the Year column　B. only rows where Year = 1990　C. all rows sorted by Year　D. a join of Artist with Year
+
+**11.** Which of the following is NOT a NoSQL data model per the lecture?
+A. Key/Value　B. Graph　C. Hierarchical　D. Wide-column
+
+**12.** A pie chart of "percent enrollment by major" is an example of:
+A. data　B. information　C. metadata　D. schema
+
+**13.** "The computer crashes while our program is updating a record" is a flat-file problem of:
+A. Data integrity　B. Implementation　C. Durability　D. Normalization
+
+**14.** Which is true about indexes?
+A. They make inserts faster　B. They map key values to record IDs　C. They sort the table physically　D. They have no maintenance cost
+
+**15.** Which storage is non-volatile?
+A. CPU cache　B. RAM　C. CPU register　D. SSD
+
+**16.** SQL is described in the lecture as a ___ language.
+A. procedural　B. declarative　C. object-oriented　D. assembly
+
+**17.** The minimum SQL standard a DBMS must support to claim SQL support is:
+A. SQL-86　B. SQL:92 (entry level)　C. SQL:1999　D. SQL:2023
+
+**18.** In the buffer pool example, when the execution engine updates Page #2, it modifies:
+A. page 2 on disk directly　B. the in-memory copy of page 2 in the buffer pool　C. the directory only　D. the SQL client cache
+
+### 答案
+
+| 题 | 答案 | 解析 |
+|---|---|---|
+| 1 | **B** | 客 → 解 → 执 → 文 → 缓 → 盘 |
+| 2 | **B** | parse、check syntax、validate table/column references |
+| 3 | **B** | 具体算法 = physical（how） |
+| 4 | **C** | page 内部组织和 record ID 在 Files and Index Management |
+| 5 | **B** | request pages through the buffer manager |
+| 6 | **C** | cross-cutting，不是一层 |
+| 7 | **C** | The unit of data transfer is a page |
+| 8 | **B** | abstracts the layer **below** |
+| 9 | **C** | 同一 logical plan 可有多个 physical plan |
+| 10 | **B** | σ 选行 |
+| 11 | **C** | Hierarchical 属于 obsolete / legacy |
+| 12 | **B** | 汇总后 = information |
+| 13 | **C** | 崩溃 / 复制 = Durability |
+| 14 | **B** | key → record ID；且维护有开销 |
+| 15 | **D** | RAM 及以上都是 volatile |
+| 16 | **B** | 说 what 不说 how |
+| 17 | **B** | SQL:92 entry level |
+| 18 | **B** | 在内存副本上修改，之后写回磁盘 |
+
+## 16. 🟢 课程概览与评分（p.57–58）
+
+- 课程内容：Database fundamentals → E-R diagram → Logical design（mapping、normalization）→ SQL（DDL、DML、DCL、queries）→ Transaction management（ACID、concurrency control、crash recovery）→ Database administration（backup、disaster recovery）→ Security（encryption、SQL injection）
+- 评分：**Homework 46%**（5 次：9%、9%、9%、9%、10%）、**Quiz 25%（Week 5，1.5 小时）**、**Exam 29%（Week 8，2 小时）**
+- Quiz 和 Exam 都是 **closed-note, paper-based**
