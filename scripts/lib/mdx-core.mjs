@@ -16,11 +16,19 @@ import { visit, SKIP } from "unist-util-visit";
 import { switchFrame, toMin } from "../../src/components/mdx/switch-logic.mjs";
 import { collisionRows, collisionSvgStatic } from "../../src/components/mdx/collision-map.mjs";
 import { analyzeIp, IP_PRESETS } from "../../src/components/mdx/ip-logic.mjs";
+import { ARTIST, ALBUM, ARTIST_ALBUM, runQuery, emptyPool, poolStep, POOL_SCRIPT } from "../../src/components/mdx/db-logic.mjs";
+import { EER_SCENARIOS, constraintInfo, discriminatorName, HIERARCHY, inheritance } from "../../src/components/mdx/eer-logic.mjs";
+import { computeFair, FAIR_PRESETS, fmtM as fmtFairM } from "../../src/components/mdx/fair-logic.mjs";
+import { computeControlRoi, ROI_PRESETS, fmtM as fmtRoiM, fmtPct } from "../../src/components/mdx/control-roi-logic.mjs";
+import { computeInsurance, INSURANCE_PRESETS, fmtM as fmtInsM } from "../../src/components/mdx/insurance-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
 const osi = readJson("src/components/mdx/data/osi.json");
 const lab = readJson("src/components/mdx/data/switch-lab.json");
+const dbLayers = readJson("src/components/mdx/data/dbms-layers.json");
+const note = (t) => para({ type: "emphasis", children: [text(t)] });
+const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
 // ---------- mdast helpers ----------
 const text = (value) => ({ type: "text", value });
@@ -120,8 +128,110 @@ const components = {
       table(["地址", "Class", "二进制", "Network address", "Broadcast", "可用主机 / 说明", "范围"], rows),
     ];
   },
+  MCQ(node, a) {
+    const opts = ["a", "b", "c", "d", "e"].filter((k) => a[k]).map((k) => ({
+      type: "listItem",
+      spread: false,
+      children: [para(text(`${k.toUpperCase()}. ${a[k]}`))],
+    }));
+    return [
+      para(strong(a.q)),
+      { type: "list", ordered: false, spread: false, children: opts },
+      { type: "blockquote", children: [para(strong(`答案：${a.answer}`)), ...node.children] },
+    ];
+  },
+  LayerQuiz() {
+    const name = (id) => dbLayers.layers.find((l) => l.id === id).en;
+    return [
+      note("（网页版此处是「这属于哪一层」的点选练习；下表是全部题目和答案）"),
+      table(["功能 / 概念", "属于", "理由"], dbLayers.items.map((it) => [it.text, strong(name(it.layer)), it.why])),
+    ];
+  },
+  RelAlgebraLab() {
+    const ex = [
+      { where: "Year=1990", cols: [] },
+      { where: "Year=1990", cols: ["Year", "ArtistName"] },
+      { joinAlbums: true, where: "ReleaseYear=1994", cols: ["ArtistName"] },
+    ].map(runQuery);
+    return [
+      note("（网页版此处可以自己组合 σ / Π / ⋈；下面是课件的三张表和三个例子的结果）"),
+      para(strong("Artist")), relTable(ARTIST),
+      para(strong("Album")), relTable(ALBUM),
+      para(strong("ArtistAlbum")), relTable(ARTIST_ALBUM),
+      ...ex.flatMap((q) => [para({ type: "inlineCode", value: q.expr }), relTable(q.result)]),
+    ];
+  },
+  BufferPoolLab() {
+    let st = emptyPool();
+    const rows = POOL_SCRIPT.map((r, i) => {
+      const out = poolStep(st, r);
+      st = out.state;
+      const req = r.op === "flush" ? "Flush" : `${r.op === "update" ? "Update" : "Get"} Page #${r.page}`;
+      const frames = st.frames.map((f) => `${f.page}${f.dirty ? "*" : ""}`).join(", ");
+      return [String(i + 1), req, out.steps.filter((x) => x.layer !== "exec").map((x) => x.text).join("；"), frames];
+    });
+    return [
+      note("（网页版此处是可操作的 buffer pool，3 个 frame；下表是示例步骤，* = dirty）"),
+      table(["#", "请求", "发生了什么", "之后的 frames"], rows),
+    ];
+  },
+  EerConstraintLab() {
+    const combos = [
+      { total: true, overlap: false }, { total: true, overlap: true },
+      { total: false, overlap: false }, { total: false, overlap: true },
+    ].map((c) => {
+      const i = constraintInfo(c);
+      return [c.total ? "Yes" : "No", c.overlap ? "Yes" : "No", i.line, i.letter, i.membership, i.discriminator];
+    });
+    const sc = EER_SCENARIOS.map((s) => {
+      const i = constraintInfo(s.answer);
+      return [s.text, `${s.answer.total ? "双线" : "单线"} + ${i.letter}`, discriminatorName(s, s.answer.overlap), s.why];
+    });
+    return [
+      note("（网页版此处可以选场景、回答两个问题，自动画出图和 discriminator）"),
+      table(["Q1 必须属于某子类？", "Q2 能同时属于多个？", "线", "圆圈", "每个实例属于", "Discriminator"], combos),
+      table(["场景", "标记", "Discriminator", "理由"], sc),
+    ];
+  },
+  HierarchyExplorer() {
+    const rows = Object.keys(HIERARCHY).map((n) => {
+      const [own, ...up] = inheritance(n);
+      return [strong(n), own.attrs.join(", "), up.map((u) => `${u.attrs.join(", ")}（${u.entity}）`).join("；") || "—（root）"];
+    });
+    return [note("（网页版此处可以点实体看继承路径）"), table(["实体", "自己的属性", "继承的属性"], rows)];
+  },
   FcsDemo() {
     return [para({ type: "emphasis", children: [text("（网页版此处可交互：改发送的比特、选择被干扰的位，观察接收方重算的 FCS 是否一致）")] })];
+  },
+  FairCalculator() {
+    const rows = FAIR_PRESETS.map((p) => {
+      const { lef, lm, risk } = computeFair(p);
+      return [p.label, `${p.tef} × ${p.vuln}% = ${lef.toFixed(3)}`, fmtFairM(lm), strong(fmtFairM(risk))];
+    });
+    return [
+      note("（网页版此处可以自己调 TEF / Vulnerability / Primary / Secondary；下表是预设场景的结果）"),
+      table(["场景", "LEF = TEF × Vulnerability", "LM", "Risk（年化预期损失）"], rows),
+    ];
+  },
+  ControlRoiCalculator() {
+    const rows = ROI_PRESETS.map((p) => {
+      const { benefit, net, roi } = computeControlRoi(p);
+      return [p.label, fmtRoiM(benefit), fmtRoiM(net), strong(fmtPct(roi))];
+    });
+    return [
+      note("（网页版此处可以自己调 Baseline / Residual / Cost；下表是预设场景的结果）"),
+      table(["场景", "Expected Benefit", "Net Benefit", "ROI"], rows),
+    ];
+  },
+  InsuranceCalculator() {
+    const rows = INSURANCE_PRESETS.map((p) => {
+      const { recovery, netRetained } = computeInsurance(p);
+      return [p.label, fmtInsM(recovery), strong(fmtInsM(netRetained))];
+    });
+    return [
+      note("（网页版此处可以自己调 Loss / Retention / Limit / Uncovered / Premium；下表是预设场景的结果）"),
+      table(["场景", "Insurance Recovery", "Net Retained Loss"], rows),
+    ];
   },
 };
 

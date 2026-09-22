@@ -1,0 +1,444 @@
+---
+title:
+  en: "Week 3 · Enhanced E-R Diagram: Supertypes & Subtypes"
+  zh: "第 3 周 · 增强 E-R 图：超类与子类"
+summary:
+  en: "Supertypes and subtypes, generalization vs specialization, the two constraint questions (total/partial, disjoint/overlap), subtype discriminators, and hierarchies."
+  zh: "超类与子类、泛化与特化、两个约束问题（total / partial、disjoint / overlap）、子类判别属性与层级。"
+week: 3
+date: 2026-09-12
+tags: [EER, Supertype, Subtype, Discriminator]
+---
+# ISOM 5260 Fundamentals of Database Management — Week 3 复习笔记
+
+**主题：Enhanced E-R Diagram（EER 增强 E-R 图）· Supertype / Subtype（超类/子类）· Generalization vs. Specialization · Completeness & Disjointness Constraints（两类约束）· Subtype Discriminator（子类判别属性）· Hierarchy（层级）**
+
+> 优先级标注说明（按考试重要性；🔴 部分以你上课记下的老师强调点为准）：  
+> 🔴 **必考核心** — 规则、符号必须能背出来，并能动手画图  
+> 🟡 **需要理解** — 懂逻辑，能举例说明  
+> 🟢 **了解即可** — 背景知识
+
+> **📌 你记下的三个重点（全篇围绕它们展开）**
+>
+> 1. **Disjoint → discriminator 用 simple attribute；Overlap → 用 composite attribute**（组成部分是 Y/N 布尔值）
+> 2. **Discriminator 必须和 diagram 上的标记完全一致**（属性名、取值、d/o、单线/双线都要对得上）
+> 3. **同一对 supertype/subtype 只问两个问题**，就能定出 specialization（total/partial）和 disjointness（d/o）两个约束
+
+---
+
+## 0. 核心地图（先建立整体框架）
+
+这节课只讲一件事：**当一类实体里的"成员"不完全一样时，ERD 怎么画？**
+
+```
+为什么需要 EER（basic ERD 表达不了"同类但有差异"）
+   → Supertype / Subtype 是什么 + 继承（属性继承、关系继承）
+   → 为什么要拆开（避免一张大表里一堆 null）
+   → 怎么得到它们：Generalization（自下而上）/ Specialization（自上而下）
+   → ⭐ 两个约束 = 两个问题
+        Q1 必须属于至少一个子类吗？ → Total（双线）/ Partial（单线）
+        Q2 能同时属于多个子类吗？   → Overlap（o）/ Disjoint（d）
+   → ⭐ Subtype Discriminator：d 配 simple，o 配 composite，且要和图上标记一致
+   → Hierarchy：属性放在"最通用"的那一层，逐层继承到 root
+```
+
+**一句话**：画一张 EER 图 = 定好上下层 + 回答两个问题（线数 + 圆圈字母）+ 写对 discriminator。下周（Week 4 p.27）会接着讲怎么把它映射成表。
+
+---
+
+## 1. 🟢 为什么要 Enhanced E-R Diagram（p.2）
+
+![Basic vs Enhanced ERD](images/page_02.png)
+
+*Basic vs Enhanced ERD（Slide 2）*
+
+- Business data is now more complex → basic E-R diagram 不够用
+- EER = **extending the basic E-R diagram with new modeling constructs**（加新的建模符号），提升表达灵活性
+- 左图：DEPARTMENT has EMPLOYEE（普通 1:M）；右图：EMPLOYEE 下面再分 ACADEMIC / NON ACADEMIC，用 `Staff Type = "A" / "N"` 区分
+
+## 2. 🟡 本课五个组成部分（p.3）
+
+![EER overview](images/page_03.png)
+
+*EER overview（Slide 3）*
+
+| 课件原文                                           | 中文      | 本笔记位置 |
+| ---------------------------------------------- | ------- | ----- |
+| Supertype/subtype relationships                | 超类/子类关系 | §3–4  |
+| Developed by generalization and specialization | 两种建立方式  | §5    |
+| Constraints in supertype/subtype relationships | 约束      | §6    |
+| Subtype discriminators                         | 子类判别属性  | §7    |
+| Supertype/subtype hierarchy                    | 层级      | §8    |
+
+> 图里有个细节值得看：**STAFF → ACADEMIC/NON\_ACADEMIC 是双线 + d**，而 **ACADEMIC → FACULTY/TA 是单线 + d**，两层的 discriminator 分别是 `Staff_Type` 和 `A_Type`——**每一层都要单独回答两个问题、单独写 discriminator**。
+
+---
+
+## 3. 🔴 EER 图的符号组成（p.4）
+
+![Components of EER](images/page_04.png)
+
+*Components of EER（Slide 4）*
+
+| 图上元素           | 英文原文                                                             | 含义                                                                    |
+| -------------- | ---------------------------------------------------------------- | --------------------------------------------------------------------- |
+| 上方方框           | **SUPERTYPE** — General entity type                              | 放 **attributes shared by all entities (including identifier)**，主键只放这里 |
+| 下方方框           | **Subtype** — Specialized versions of supertype                  | 只放 **attributes unique to** 这个子类                                      |
+| 中间圆圈 + 连线      | **Supertype/subtype relationship**                               | 圆圈里写 d 或 o（§6）                                                        |
+| 子类连线上的 `⊂` 形小弧 | **Subset symbols**                                               | 表示"子类是超类的子集"，开口朝向超类                                                   |
+| 连在超类上的关系       | Relationships in which **all instances** participate             | 所有子类都继承                                                               |
+| 连在子类上的关系       | Relationships in which **only specialized versions** participate | 只有该子类参与                                                               |
+
+**🔴 规则（原话要记）**：*Each subtype must have **unique attributes**, **unique relationships**, or both, compared with the rest.*
+
+> **⚠️ 踩坑提醒**
+>
+> 一个子类如果既没有独有属性、也没有独有关系，就**不应该**画成子类——见 §5 的 Motorcycle。
+
+---
+
+## 4. 🔴 Supertype、Subtype 与继承（p.5–8）
+
+### 4.1 定义 + 属性继承（p.5）
+
+![Attribute inheritance](images/page_05.png)
+
+*Attribute inheritance（Slide 5）*
+
+| 术语                             | 英文定义（原文）                                                                                                                               | 小白解释                                                         |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| **Supertype 超类**               | A generic entity type that has a supertype/subtype relationship with one or more subtypes                                              | "通用版"实体，比如 PATIENT                                           |
+| **Subtype 子类**                 | A subgroup of the supertype; meaningful to the organization; has unique attribute or unique relationship distinct from other subgroups | "特殊版"，比如 OUTPATIENT、RESIDENT PATIENT                         |
+| **Attribute inheritance 属性继承** | Because an instance of a subtype is also an instance of the supertype, subtype entities inherit all attributes of the supertype        | 门诊病人也是病人，所以自动拥有 Patient ID / Name / Admit Date，**不用在子类里重复写** |
+
+### 4.2 关系继承（p.6）
+
+![Relationship inheritance](images/page_06.png)
+
+*Relationship inheritance（Slide 6）*
+
+| 关系画在哪               | 含义                                            | 例子                                             |
+| ------------------- | --------------------------------------------- | ---------------------------------------------- |
+| **Supertype level** | all subtypes will participate, by inheritance | PATIENT *is cared for* PHYSICIAN：门诊和住院病人都有主治医生 |
+| **Subtype level**   | only instances of that subtype participate    | RESIDENT PATIENT *is assigned* BED：只有住院病人才分床位  |
+
+> **🎯 考点**
+>
+> 给一段业务描述，问某个关系应该连在超类还是子类上。判断标准：**是不是所有成员都有这个关系**。
+
+### 4.3 为什么要拆开（p.7–8）
+
+![One table](images/page_07.png)
+
+*One table（Slide 7）*
+
+![Separated](images/page_08.png)
+
+*Separated（Slide 8）*
+
+- 不拆：一张 PATIENT 大表同时有 CheckbackDate 和 DateDischarged，**每行总有一列是空的**（门诊病人没有出院日，住院病人没有复诊日）
+- 拆开：公共属性留在 PATIENT，CheckbackDate 放 OUTPATIENT 表，DateDischarged 放 RESIDENT PATIENT 表，**用 PatientID 关联**，没有空值
+
+> **🧠 记忆锚点**
+>
+> 拆超类/子类 = **消灭"只对部分行有意义"的列所产生的 null**。
+
+---
+
+## 5. 🔴 两种建立方式：Generalization vs. Specialization（p.9–13）
+
+![Two ways](images/page_09.png)
+
+*Two ways（Slide 9）*
+
+|        | **Generalization 泛化**                                  | **Specialization 特化**                                   |
+| ------ | ------------------------------------------------------ | ------------------------------------------------------- |
+| 方向     | **Bottom-up** 自下而上                                     | **Top-down** 自上而下                                       |
+| 定义（原文） | Define a **supertype** for a given set of entity types | Define one or more **subtypes** for a given entity type |
+| 起点     | 已有几个相似的实体                                              | 已有一个实体，发现有些属性只对部分实例适用                                   |
+| 课件例子   | CAR / TRUCK / MOTORCYCLE → VEHICLE                     | PART → MANUFACTURED PART / PURCHASED PART               |
+
+### 5.1 Generalization 例子（p.10–11）
+
+![Generalization before](images/page_10.png)
+
+*Generalization before（Slide 10）*
+
+![Generalization after](images/page_11.png)
+
+*Generalization after（Slide 11）*
+
+- 三种车都有 Vehicle ID、Price、Engine Displacement、Vehicle Name (Make, Model) → 提到 **VEHICLE** 超类
+- CAR 独有 No of Passengers；TRUCK 独有 Capacity、Cab Type
+- 🔴 **Note: no subtype for motorcycle, since it has no unique attributes** —— 摩托车直接当成普通 VEHICLE 实例
+
+### 5.2 Specialization 例子（p.12–13）
+
+![Specialization before](images/page_12.png)
+
+*Specialization before（Slide 12）*
+
+![Specialization after](images/page_13.png)
+
+*Specialization after（Slide 13）*
+
+- PART 里 **Routing Number 只对自制件有意义**，**{Supplier (Supplier ID, Unit Price)} 只对外购件有意义**（`{}` = 多值，`()` = 复合）
+- → 拆成 MANUFACTURED PART（Routing Number）和 PURCHASED PART（{Supplier(...)}）
+
+> **💡 小白类比**
+>
+> Generalization 是"把几个抽屉里相同的东西拿出来放进一个公共柜子"；Specialization 是"发现一个柜子里有些东西只有部分人用，于是分出小抽屉"。
+
+---
+
+## 6. 🔴🔴 两个约束 = 两个问题（p.14–19，本课最大考点）
+
+**你的笔记重点 3**：面对**同一对** supertype/subtype，永远只问这两个问题，答案直接决定图上的两个标记。
+
+![Constraint matrix](images/CONSTRAINT_MATRIX.png)
+
+*Constraint matrix*
+
+|                                      | 问题（课件原文）                                                                                 | Yes                                   | No                                      | 画在哪       |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------- | --------------------------------------- | --------- |
+| **Q1 Completeness Constraint 完整性约束** | Is an instance of a supertype **must also be a member of at least one subtype**?         | **Total Specialization** → **双线** `‖` | **Partial Specialization** → **单线** `│` | 超类到圆圈的那段线 |
+| **Q2 Disjointness Constraint 不相交约束** | Can an instance of a supertype **simultaneously be a member of two (or more) subtypes**? | **Overlap** → 圆圈写 **o**               | **Disjoint** → 圆圈写 **d**                | 圆圈里的字母    |
+
+> **⚠️ 踩坑提醒**
+>
+> Q2 是 **Yes → o、No → d**。"能同时属于多个吗？能 = overlap"。别被 "disjoint" 这个词带偏以为 Yes 对应 d。
+
+### 6.1 课件四个例子（p.15–18）
+
+![Total](images/page_15.png)
+
+*Total（Slide 15）*
+
+![Partial](images/page_16.png)
+
+*Partial（Slide 16）*
+
+![Disjoint](images/page_17.png)
+
+*Disjoint（Slide 17）*
+
+![Overlap](images/page_18.png)
+
+*Overlap（Slide 18）*
+
+| 页         | 例子                                      | Q1 必须属于某子类？     | Q2 能同时属于多个？               | 标记         |
+| --------- | --------------------------------------- | --------------- | ------------------------- | ---------- |
+| p.15 / 17 | PATIENT → OUTPATIENT / RESIDENT PATIENT | Yes（病人必是其一）     | No（不能既门诊又住院）              | **双线 + d** |
+| p.16      | VEHICLE → CAR / TRUCK                   | No（摩托车哪个都不是）    | —                         | **单线**     |
+| p.18      | PART → MANUFACTURED / PURCHASED         | Yes（p.20 图上是双线） | Yes（Circuit Board 既自制又外购） | **双线 + o** |
+
+### 6.2 四种组合（p.19 的 2×2 矩阵）
+
+|                          | **Disjoint (d)** 只能一个 | **Overlap (o)** 可以多个 |
+| ------------------------ | --------------------- | -------------------- |
+| **Partial（单线）** 可以一个都不属于 | 0 或 1 个子类             | 0、1 或多个子类            |
+| **Total（双线）** 至少属于一个     | **恰好 1 个**子类          | 1 个或多个子类             |
+
+> **🧠 记忆口诀**
+>
+> **线数管"有没有"，字母管"多不多"**。双线 = 必有一个；o = 可以多个。
+
+> **🎯 考点 / 英文模范答句**
+>
+> （论述题可以直接套）：  
+> *"Two questions determine the constraints. First, must every instance of the supertype belong to at least one subtype? If yes, it is total specialization (double line); if no, partial (single line). Second, can an instance belong to more than one subtype at the same time? If yes, the overlap rule applies ('o'); if no, the disjoint rule ('d')."*
+
+### 🔴 自己练：选场景 → 答两个问题 → 看图
+
+下面五个场景是课件的三个例子加上自测题 3、4。先自己回答 Q1、Q2，点「检查答案」；答完会自动画出对应的 EER 图（线数、圆圈字母、每条子类连线上的 discriminator 标签），并列出 discriminator **所有允许的取值**——这正好把 §7 的两条重点也一起练了。
+
+*（网页版此处可以选场景、回答两个问题，自动画出图和 discriminator）*
+
+| Q1 必须属于某子类？ | Q2 能同时属于多个？ | 线                           | 圆圈 | 每个实例属于    | Discriminator                                 |
+| ----------- | ----------- | --------------------------- | -- | --------- | --------------------------------------------- |
+| Yes         | No          | 双线 ‖ Total specialization   | d  | 恰好 1 个子类  | Simple attribute：一个值指明是哪个子类                   |
+| Yes         | Yes         | 双线 ‖ Total specialization   | o  | 1 个或多个子类  | Composite attribute：每个子类一个 Boolean 组成部分 (Y/N) |
+| No          | No          | 单线 │ Partial specialization | d  | 0 或 1 个子类 | Simple attribute：一个值指明是哪个子类                   |
+| No          | Yes         | 单线 │ Partial specialization | o  | 0、1 或多个子类 | Composite attribute：每个子类一个 Boolean 组成部分 (Y/N) |
+
+| 场景                                                                               | 标记     | Discriminator                         | 理由                                       |
+| -------------------------------------------------------------------------------- | ------ | ------------------------------------- | ---------------------------------------- |
+| PATIENT 分为 OUTPATIENT 和 RESIDENT PATIENT。每个病人一定是其中一种，但不可能既是门诊病人又是住院病人。           | 双线 + d | Patient Type                          | 病人必是其一 → total；不能两者都是 → disjoint         |
+| VEHICLE 分为 CAR 和 TRUCK。摩托车也是 VEHICLE，但它没有独有属性，所以不画成子类；一辆车不会既是轿车又是卡车。             | 单线 + d | Vehicle Type                          | 摩托车哪个子类都不属于 → partial；不能同时是两种 → disjoint |
+| PART 分为 MANUFACTURED PART 和 PURCHASED PART。每个零件至少是其中一种，Circuit Board 这类零件既自制又外购。 | 双线 + o | Part Type (Manufactured?, Purchased?) | 至少是一种 → total；可以两种都是 → overlap           |
+| 银行的 ACCOUNT 分为 SAVINGS 和 CHECKING。每个账户必须是其中一种，且不能同时是两种。                          | 双线 + d | Account Type                          | 必须是一种 → total；不能两种都是 → disjoint          |
+| EMPLOYEE 可以是 MANAGER、ENGINEER，也可以两者都是，还有些员工两者都不是。                                | 单线 + o | Employee Type (Manager?, Engineer?)   | 有人两者都不是 → partial；可以两者都是 → overlap       |
+
+---
+
+## 7. 🔴🔴 Subtype Discriminator 子类判别属性（p.20–21）
+
+**定义（原文）**：*An attribute of the supertype that determines the target subtype(s).* Can be either **simple** or **composite** attribute.
+
+p.21 原话：*The subtype discriminator is the **bridge** between the supertype and its subtypes. It tells us where to find the subtype-specific attributes. Its form depends on the disjointness constraint.*
+
+### 7.1 🔴 你的笔记重点 1：d → simple，o → composite
+
+| 约束               | Discriminator 形式                                     | 为什么                                  | 课件例子                                    |
+| ---------------- | ---------------------------------------------------- | ------------------------------------ | --------------------------------------- |
+| **Disjoint (d)** | **Simple attribute** 简单属性，一个值                        | 每个实例最多属于一个子类，一个值就能指明是哪个              | `Patient Type`，取 "O" / "R"              |
+| **Overlap (o)**  | **Composite attribute** 复合属性，组成部分是 **Boolean (Y/N)** | 一个实例可能同时属于多个子类，一个值装不下，需要**每个子类一个开关** | `Part Type (Manufactured?, Purchased?)` |
+
+**Disjoint + simple：**
+
+![Simple discriminator for disjoint](images/DISCRIMINATOR_SIMPLE_DISJOINT.png)
+
+*Simple discriminator for disjoint*
+
+**Overlap + composite：**
+
+![Composite discriminator for overlap](images/DISCRIMINATOR_COMPOSITE_OVERLAP.png)
+
+*Composite discriminator for overlap*
+
+> **💡 小白理解**
+>
+> d 就像单选题，填一个选项字母（"O" 或 "R"）就够了；o 就像多选题，要给每个选项一个勾（Manufactured? = Y、Purchased? = Y），所以 discriminator 必须拆成多个 Y/N 组成部分。P3055 Circuit Board 两个都是 Y，就是"两个子类都属于"。
+
+### 7.2 🔴 你的笔记重点 2：Discriminator 必须和 diagram 标记一致
+
+画图/改图时逐条对照：
+
+| 检查项                       | Disjoint 例子（PATIENT）                    | Overlap 例子（PART）                                                              |
+| ------------------------- | --------------------------------------- | ----------------------------------------------------------------------------- |
+| ① 超类方框里**真的有这个属性**        | PATIENT 里写了 `Patient Type`              | PART 里写了 `Part Type (Manufactured?, Purchased?)`                              |
+| ② 圆圈旁标注的**属性名 = 方框里的属性名** | `Patient Type =`                        | `Part Type:`                                                                  |
+| ③ 每条子类连线上都有**取值标签**       | "O" → OUTPATIENT，"R" → RESIDENT PATIENT | `Manufactured? = "Y"` → MANUFACTURED PART，`Purchased? = "Y"` → PURCHASED PART |
+| ④ **形式和圆圈字母匹配**           | 圆圈是 **d** → simple                      | 圆圈是 **o** → composite                                                         |
+| ⑤ 组成部分和子类**一一对应**         | —                                       | 两个子类 ↔ 两个 Boolean 组成部分，名字对应                                                   |
+| ⑥ 表中数据的取值**只用图上出现的值**     | PatientType 列只有 O / R                   | 两列只有 Y / N                                                                    |
+
+> **⚠️ 踩坑提醒**
+>
+> （常见扣分）：圆圈写了 **o** 却给了一个 simple 的 `Part Type = "M"/"P"`——那 Circuit Board 这种两个都是的零件就没法表示，**图和 discriminator 自相矛盾**。反过来，圆圈写 **d** 却用了 Y/N composite，意味着允许两个都是 Y，也和 d 矛盾。
+
+> **➕ 补充规则（课件没有明写，由两个约束直接推出）**
+>
+> 线数也会限制 discriminator 的取值——**双线（total）时不应出现"不指向任何子类"的值**（d：不能有 O/R 以外的值或空值；o：不能有全是 N 的行）；单线（partial）时则允许，比如 VEHICLE 里摩托车的判别值不对应任何子类。
+
+---
+
+## 8. 🟡 Supertype/Subtype Hierarchy 层级（p.22）
+
+![Hierarchy](images/page_22.png)
+
+*Hierarchy（Slide 22）*
+
+**两条规则（原文）**：
+
+1. *Put each attribute at the **most general level** where it applies to all instances* —— SSN 所有 PERSON 都有，放 PERSON；Date Hired 只有 EMPLOYEE 有，放 EMPLOYEE
+2. *Subtypes lower in the hierarchy **inherit attributes from their supertypes up to the root*** (entity type at top of hierarchy)
+
+图的结构（按原图方向）：
+
+```
+PERSON (SSN, Name, Address, Gender, Date Of Birth)        ← root
+  ‖ o   （total + overlap：一个人可同时是员工、校友、学生）
+  ├── EMPLOYEE (Salary, Date Hired)
+  │     ‖ d  （total + disjoint）
+  │     ├── FACULTY (Rank)
+  │     └── STAFF (Position)
+  ├── ALUMNUS ({Degree (Year, Designation, Date)})
+  └── STUDENT (Major Dept)
+        ‖ d  （total + disjoint）
+        ├── GRADUATE STUDENT (Test Score)
+        └── UNDERGRAD STUDENT (Class Standing)
+```
+
+点任意一个实体，看它最终有哪些属性、分别从哪一层继承来的：
+
+*（网页版此处可以点实体看继承路径）*
+
+| 实体                    | 自己的属性                                     | 继承的属性                                                                          |
+| --------------------- | ----------------------------------------- | ------------------------------------------------------------------------------ |
+| **PERSON**            | SSN, Name, Address, Gender, Date Of Birth | —（root）                                                                        |
+| **EMPLOYEE**          | Salary, Date Hired                        | SSN, Name, Address, Gender, Date Of Birth（PERSON）                              |
+| **ALUMNUS**           | {Degree (Year, Designation, Date)}       | SSN, Name, Address, Gender, Date Of Birth（PERSON）                              |
+| **STUDENT**           | Major Dept                                | SSN, Name, Address, Gender, Date Of Birth（PERSON）                              |
+| **FACULTY**           | Rank                                      | Salary, Date Hired（EMPLOYEE）；SSN, Name, Address, Gender, Date Of Birth（PERSON） |
+| **STAFF**             | Position                                  | Salary, Date Hired（EMPLOYEE）；SSN, Name, Address, Gender, Date Of Birth（PERSON） |
+| **GRADUATE STUDENT**  | Test Score                                | Major Dept（STUDENT）；SSN, Name, Address, Gender, Date Of Birth（PERSON）          |
+| **UNDERGRAD STUDENT** | Class Standing                            | Major Dept（STUDENT）；SSN, Name, Address, Gender, Date Of Birth（PERSON）          |
+
+> **🎯 考点**
+>
+> 问 GRADUATE STUDENT 有哪些属性 → 自己的 Test Score + STUDENT 的 Major Dept + PERSON 的 SSN、Name、Address、Gender、Date Of Birth（一路继承到 root）。  
+> 再对照 §7：如果要给这张图补 discriminator，PERSON 那层是 **o → composite**（如 `Person Type (Employee?, Alumnus?, Student?)`），EMPLOYEE 和 STUDENT 那层是 **d → simple**。
+
+---
+
+## 9. 🔴 符号 & 术语速查表
+
+| 符号 / 术语                              | 含义                                   |
+| ------------------------------------ | ------------------------------------ |
+| 双线 `‖`（超类→圆圈）                        | **Total specialization**：必须属于至少一个子类  |
+| 单线 `│`                               | **Partial specialization**：可以不属于任何子类 |
+| 圆圈 **d**                             | **Disjoint rule**：最多属于一个子类           |
+| 圆圈 **o**                             | **Overlap rule**：可同时属于多个子类           |
+| `⊂` 小弧                               | Subset symbol，子类是超类的子集               |
+| `Attr = "X"` 标在连线上                   | Subtype discriminator 的取值            |
+| `{ }`                                | 多值属性 multivalued attribute           |
+| `( )`                                | 复合属性 composite attribute             |
+| Generalization                       | Bottom-up，从多个实体抽出超类                  |
+| Specialization                       | Top-down，从一个实体分出子类                   |
+| Attribute / Relationship inheritance | 子类自动继承超类所有属性和关系                      |
+| Root                                 | 层级最顶端的实体                             |
+
+---
+
+## 10. 模拟自测题
+
+> 以下是**自测题**，按笔记顺序排列，**不是押题**。点开看参考答案。
+
+**1. Generalization 和 Specialization 分别是 top-down 还是 bottom-up？各给一个课件例子。**
+
+> Generalization 是 **bottom-up**：从已有的几个相似实体里抽出超类（CAR / TRUCK / MOTORCYCLE → VEHICLE）。Specialization 是 **top-down**：从一个实体里分出子类（PART → MANUFACTURED PART / PURCHASED PART）。
+
+**2. 在 VEHICLE 例子里，为什么 MOTORCYCLE 不画成子类？这对 completeness constraint 意味着什么？**
+
+> MOTORCYCLE 没有独有属性，也没有独有关系（*each subtype must have unique attributes, unique relationships, or both*），所以不画成子类。这说明存在不属于任何子类的车 → **partial specialization（单线）**。
+
+**3. 判断两个约束并写出图上的标记：一家银行的 ACCOUNT 分为 SAVINGS 和 CHECKING，每个账户必须是其中一种，且不能同时是两种。**
+
+> Q1 Yes → **双线**（total）；Q2 No → **d**（disjoint）。图上是 **双线 + d**。
+
+**4. 同上：EMPLOYEE 可以是 MANAGER、ENGINEER，也可以两者都是，还有些员工两者都不是。**
+
+> Q1 No（有人两者都不是）→ **单线**（partial）；Q2 Yes（可以两者都是）→ **o**（overlap）。图上是 **单线 + o**。
+
+**5. 第 4 题的 discriminator 应该用 simple 还是 composite？请写出属性名和每条子类连线上的标签。**
+
+> **Composite**，因为是 overlap。例如 `Employee Type (Manager?, Engineer?)`，两条连线分别标 `Manager? = "Y"`、`Engineer? = "Y"`。因为是 partial，允许出现 (N, N) 的员工。
+
+**6. 某同学画了 PART 圆圈里写 o，discriminator 写 Part Type = “M“ / “P“。指出问题并改正。**
+
+> 圆圈 **o** 表示一个零件可以同时属于两个子类，但 simple 的 `Part Type = "M" / "P"` 只能填一个值，Circuit Board 这种「两个都是」的零件无法表示——图和 discriminator 自相矛盾。改为 composite：`Part Type (Manufactured?, Purchased?)`，连线标 `Manufactured? = "Y"` / `Purchased? = "Y"`。
+
+**7. 一个关系“RESIDENT PATIENT is assigned BED“应该连在 PATIENT 还是 RESIDENT PATIENT 上？为什么？**
+
+> 连在 **RESIDENT PATIENT** 上。只有住院病人才分床位，门诊病人没有这个关系；关系画在子类上 = only instances of that subtype participate。判断标准：是不是**所有**成员都有这个关系。
+
+**8. 不拆分超类/子类、把所有属性放在一张 PATIENT 表里，会有什么问题？**
+
+> 每一行总有一些列是空的：门诊病人没有 DateDischarged，住院病人没有 CheckbackDate。大量 null 浪费空间，也让「哪些列对哪类病人有意义」这个业务规则只能靠人记。拆成超类 + 子类后，公共属性留在 PATIENT，特有属性放各自子类，用 PatientID 关联，就没有这些空值。
+
+**9. 在 p.22 的层级图里，UNDERGRAD STUDENT 共有哪些属性？**
+
+> Class Standing（自己）+ Major Dept（STUDENT）+ SSN、Name、Address、Gender、Date Of Birth（PERSON）。
+
+**10. 把第 3 题的 discriminator 连同一张三行的示例数据表写出来，保证和图上的标记一致。**
+
+> `Account Type = "S" / "C"`；ACCOUNT 方框里要有 Account Type，两条连线分别标 "S"、"C"。示例数据：
+>
+> | AccountNo | Balance | AccountType |
+> | --------- | ------- | ----------- |
+> | A001      | 5,000   | S           |
+> | A002      | 12,300  | C           |
+> | A003      | 800     | S           |
+>
+> AccountType 列只能出现 S 或 C，**不能为空**（total），也不能一行同时是两种（disjoint）。

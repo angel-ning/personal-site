@@ -3,6 +3,15 @@ import osi from "./data/osi.json";
 import { SwitchLab } from "./switch-lab";
 import { FcsDemo } from "./fcs-demo";
 import { IpAnalyzer } from "./ip-analyzer";
+import { MCQ } from "./mcq";
+import { LayerQuiz } from "./layer-quiz";
+import { RelAlgebraLab } from "./rel-algebra-lab";
+import { BufferPoolLab } from "./buffer-pool-lab";
+import { EerConstraintLab } from "./eer-constraint-lab";
+import { HierarchyExplorer } from "./hierarchy-explorer";
+import { FairCalculator } from "./fair-calculator";
+import { ControlRoiCalculator } from "./control-roi-calculator";
+import { InsuranceCalculator } from "./insurance-calculator";
 import { collisionRows, collisionSvg } from "./collision-map.mjs";
 
 // Components available inside .mdx notes. scripts/mdx-to-md.mjs knows how to turn
@@ -151,5 +160,5 @@ export function Mk({ t, children }: { t: "e" | "a" | "v" | "c"; children: ReactN
 }
 
 export function noteComponents(assetBase: string) {
-  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk };
+  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator };
 }

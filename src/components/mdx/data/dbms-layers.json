@@ -1,0 +1,28 @@
+{
+  "layers": [
+    { "id": "client", "en": "SQL Client", "zh": "客", "alt": "" },
+    { "id": "plan", "en": "Query Parsing & Planning", "zh": "解", "alt": "p.38：Query Parsing & Optimization" },
+    { "id": "exec", "en": "Operator Execution", "zh": "执", "alt": "p.38：Relational Operators" },
+    { "id": "files", "en": "Files and Index Management", "zh": "文", "alt": "" },
+    { "id": "buffer", "en": "Buffer Management", "zh": "缓", "alt": "" },
+    { "id": "disk", "en": "Disk Management", "zh": "盘", "alt": "p.38：Disk Space Management" },
+    { "id": "cross", "en": "Cross-cutting（不是一层）", "zh": "跨", "alt": "Concurrency Control · Recovery" }
+  ],
+  "items": [
+    { "text": "写 SQL 语句、发送 SQL commands", "layer": "client", "why": "SQL Client 是发出 SQL commands 的地方" },
+    { "text": "检查 SQL 语法、验证表名 / 列名是否存在", "layer": "plan", "why": "parse → check syntax → validate table and column references" },
+    { "text": "生成 logical query plan（σ Π ⋈ γ τ 树）", "layer": "plan", "why": "解析之后产出 logical plan" },
+    { "text": "在多个 physical plan 中挑更快的（查询优化）", "layer": "plan", "why": "p.38 这一层就叫 Query Parsing & Optimization" },
+    { "text": "执行 Hash Join / Index-Nested Loop Join", "layer": "exec", "why": "具体算法由执行层（Relational Operators）运行" },
+    { "text": "执行 External Merge-Sort、Hash-based Aggregate", "layer": "exec", "why": "physical plan 里的算法都在 Operator Execution 跑" },
+    { "text": "把一张表组织成 fixed-size pages 的文件", "layer": "files", "why": "A relation is treated as a file of fixed-size pages" },
+    { "text": "Slotted page、slot array", "layer": "files", "why": "page 内部布局归 Files and Index Management" },
+    { "text": "Record ID = (File ID, Page ID, Slot #)", "layer": "files", "why": "记录的物理地址由文件 / 页组织决定" },
+    { "text": "用索引（B+ tree）把 key 映射到 record ID", "layer": "files", "why": "Index 属于 Files and Index Management，不属于 Buffer 或 Disk" },
+    { "text": "Buffer pool、frames、在内存中修改 page", "layer": "buffer", "why": "内存里的 page 由 buffer manager 管" },
+    { "text": "高层要一个 page，请求交给谁", "layer": "buffer", "why": "Higher layers request pages through the buffer manager" },
+    { "text": "把 page 读 / 写到物理磁盘或文件", "layer": "disk", "why": "磁盘上的 page 由 disk manager 管" },
+    { "text": "多个用户同时改数据也不出错", "layer": "cross", "why": "Concurrency control 是 cross-cutting issue，跨 storage 与 memory 管理" },
+    { "text": "系统崩溃后把数据恢复到一致状态", "layer": "cross", "why": "Recovery 同样是 cross-cutting，不是单独一层" }
+  ]
+}

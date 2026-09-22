@@ -74,6 +74,12 @@ tags: [IPv4, NAT, DHCP]
 | `<FcsDemo />` | FCS 差错检测 |
 | `<CollisionMap />` | Hub 冲突 vs 交换机防冲突示意图 |
 | `<IpAnalyzer />` | IPv4 地址分析（class、network / broadcast、主机范围） |
+| `<MCQ q="…" a="…" b="…" c="…" d="…" answer="B">解析</MCQ>` | 可点选的选择题（MC 考试的课一律用它做自测题） |
+| `<LayerQuiz />` | DBMS 分层「这属于哪一层」练习（数据在 `data/dbms-layers.json`） |
+| `<RelAlgebraLab />` | σ / Π / ⋈ 在课件的 Artist / Album 表上组合 |
+| `<BufferPoolLab />` | Buffer pool：hit / miss、dirty、LRU 替换、写回 |
+| `<EerConstraintLab />` | EER 两个约束问题 → 自动画图 + discriminator 取值 |
+| `<HierarchyExplorer />` | 超类 / 子类层级的属性继承 |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 
@@ -82,6 +88,8 @@ tags: [IPv4, NAT, DHCP]
 - 交换机逐帧学习 MAC 表 → `SwitchLab`（按板书一帧帧走 + 自己发帧 + 老化）
 - FCS 校验 → `FcsDemo`（改比特、选干扰位）
 - IP 分类与保留地址 → `IpAnalyzer`（输入任意地址）
+- 关系代数 → `RelAlgebraLab`；buffer pool → `BufferPoolLab`；EER 约束 → `EerConstraintLab`
+- 考选择题的课（如 ISOM 5260）→ 自测题用 `<MCQ>`，分类记忆题做成 `LayerQuiz` 这样的点选练习
 
 以后可能用得上的：子网划分计算器、路由表逐跳查表、ARP 请求/应答动画、DHCP DORA 时序、NAT/PAT 表、加密算法演示、风险矩阵计算……
 
