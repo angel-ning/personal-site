@@ -3,16 +3,15 @@
 import { useEffect, useMemo, useState } from "react";
 import type { Heading } from "@/lib/markdown";
 
-// Sticky "On this page" list that tracks the section currently in view.
-export function Toc({ headings, title }: { headings: Heading[]; title: string }) {
-  const items = useMemo(() => headings.filter((h) => h.depth === 2), [headings]);
+// Id of the h2 currently at the top of the viewport (below the sticky header + note bar).
+export function useActiveHeading(items: Heading[]) {
   const [active, setActive] = useState<string | null>(items[0]?.id ?? null);
 
   useEffect(() => {
     const els = items.map((h) => document.getElementById(h.id)).filter((e): e is HTMLElement => !!e);
     if (!els.length) return;
     const onScroll = () => {
-      const y = 120;
+      const y = 130;
       let current = els[0].id;
       for (const el of els) {
         if (el.getBoundingClientRect().top - y <= 0) current = el.id;
@@ -24,6 +23,14 @@ export function Toc({ headings, title }: { headings: Heading[]; title: string })
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [items]);
+
+  return active;
+}
+
+// Sticky "On this page" list that tracks the section currently in view.
+export function Toc({ headings, title }: { headings: Heading[]; title: string }) {
+  const items = useMemo(() => headings.filter((h) => h.depth === 2), [headings]);
+  const active = useActiveHeading(items);
 
   if (!items.length) return null;
   return (

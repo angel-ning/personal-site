@@ -48,6 +48,7 @@ const dict = {
     week: { en: "Week", zh: "第" },
     weekSuffix: { en: "", zh: "周" },
     onThisPage: { en: "On this page", zh: "本页目录" },
+    backToTop: { en: "Back to top", zh: "回到顶部" },
     prev: { en: "Previous", zh: "上一篇" },
     next: { en: "Next", zh: "下一篇" },
     openRaw: { en: "Open full page", zh: "新窗口打开" },

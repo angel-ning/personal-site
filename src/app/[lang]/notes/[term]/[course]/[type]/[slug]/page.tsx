@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, ArrowRight, ExternalLink } from "lucide-react";
 import { Breadcrumbs, type Crumb } from "@/components/breadcrumbs";
 import { Toc } from "@/components/toc";
+import { NoteBar } from "@/components/note-bar";
 import { HtmlNoteFrame } from "@/components/html-note-frame";
 import { getAllNotes, getNote, getTerm, noteAssetBase, noteSourcePath, type Note } from "@/lib/content";
 import { renderMarkdownFile } from "@/lib/markdown";
@@ -116,48 +117,37 @@ export default async function NotePage({ params }: Props) {
   const { headings } = rendered;
 
   return (
-    <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
-      <div className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_220px]">
-        <article className="mx-auto w-full max-w-[740px] min-w-0 pt-10 pb-20 sm:pt-14">
-          <Breadcrumbs items={crumbs} />
-          <header className="mt-8 border-b border-line pb-8">
-            <p className="font-mono text-[12.5px] tracking-wide text-fg-3">{found.course.code}</p>
-            <h1 className="mt-2 font-serif text-[32px] leading-[1.15] tracking-[-0.015em] sm:text-[42px]">{pick(note.title, lang)}</h1>
-            {meta && <p className="mt-4 font-mono text-[12px] whitespace-pre text-fg-3">{meta}</p>}
-            {lang === "en" && <p className="mt-2 text-[13px] text-fg-3 italic">{t.notes.contentLangNote}</p>}
-          </header>
+    <>
+      <NoteBar
+        crumbs={[...crumbs, { label: pick(note.title, lang) }]}
+        headings={headings}
+        labels={{ onThisPage: t.notes.onThisPage, top: t.notes.backToTop }}
+      />
+      <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
+        <div className="grid gap-12 xl:grid-cols-[minmax(0,1fr)_220px]">
+          <article className="mx-auto w-full max-w-[740px] min-w-0 pt-10 pb-20 sm:pt-14">
+            <header className="border-b border-line pb-8">
+              <p className="font-mono text-[12.5px] tracking-wide text-fg-3">{found.course.code}</p>
+              <h1 className="mt-2 font-serif text-[32px] leading-[1.15] tracking-[-0.015em] sm:text-[42px]">{pick(note.title, lang)}</h1>
+              {meta && <p className="mt-4 font-mono text-[12px] whitespace-pre text-fg-3">{meta}</p>}
+              {lang === "en" && <p className="mt-2 text-[13px] text-fg-3 italic">{t.notes.contentLangNote}</p>}
+            </header>
 
-          {headings.some((h) => h.depth === 2) && (
-            <details className="mt-6 rounded-xl border border-line px-4 py-3 xl:hidden">
-              <summary className="cursor-pointer text-[13.5px] text-fg-2 select-none">{t.notes.onThisPage}</summary>
-              <ol className="mt-3 space-y-1.5 text-[13.5px]">
-                {headings
-                  .filter((h) => h.depth === 2)
-                  .map((h) => (
-                    <li key={h.id}>
-                      <a href={`#${h.id}`} className="text-fg-2 hover:text-accent">
-                        {h.text}
-                      </a>
-                    </li>
-                  ))}
-              </ol>
-            </details>
-          )}
+            {"html" in rendered ? (
+              <div className="prose mt-8" dangerouslySetInnerHTML={{ __html: rendered.html }} />
+            ) : (
+              <div className="prose mt-8">{rendered.content}</div>
+            )}
+            <PrevNext prev={prev} next={next} lang={lang} />
+          </article>
 
-          {"html" in rendered ? (
-            <div className="prose mt-8" dangerouslySetInnerHTML={{ __html: rendered.html }} />
-          ) : (
-            <div className="prose mt-8">{rendered.content}</div>
-          )}
-          <PrevNext prev={prev} next={next} lang={lang} />
-        </article>
-
-        <aside className="hidden xl:block">
-          <div className="sticky top-24 max-h-[calc(100dvh-8rem)] overflow-y-auto pt-14 pb-8">
-            <Toc headings={headings} title={t.notes.onThisPage} />
-          </div>
-        </aside>
+          <aside className="hidden xl:block">
+            <div className="sticky top-32 max-h-[calc(100dvh-10rem)] overflow-y-auto pt-14 pb-8">
+              <Toc headings={headings} title={t.notes.onThisPage} />
+            </div>
+          </aside>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

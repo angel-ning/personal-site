@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import osi from "./data/osi.json";
 import { SwitchLab } from "./switch-lab";
 import { FcsDemo } from "./fcs-demo";
+import { collisionRows, collisionSvg } from "./collision-map.mjs";
 
 // Components available inside .mdx notes. scripts/mdx-to-md.mjs knows how to turn
 // each of them back into plain Markdown — add a case there when adding one here.
@@ -109,6 +110,38 @@ export function LayerStack() {
   );
 }
 
+export function CollisionMap() {
+  return (
+    <figure className="collision-map">
+      <div className="cm-svg" dangerouslySetInnerHTML={{ __html: collisionSvg }} />
+      <div className="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>标记</th>
+              <th>冲突在哪里发生（Hub）</th>
+              <th>交换机怎么防</th>
+              <th>位置</th>
+            </tr>
+          </thead>
+          <tbody>
+            {collisionRows.map((r) => (
+              <tr key={r.mark}>
+                <td>
+                  <b>{r.mark}</b>
+                </td>
+                <td>{r.where}</td>
+                <td>{r.fix}</td>
+                <td className="whitespace-nowrap">{r.place}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </figure>
+  );
+}
+
 export function noteComponents(assetBase: string) {
-  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo };
+  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap };
 }

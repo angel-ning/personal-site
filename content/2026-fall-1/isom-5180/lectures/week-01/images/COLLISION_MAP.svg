@@ -1,0 +1,48 @@
+<svg viewBox="0 0 760 340" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hub 上的冲突与交换机的四种防冲突机制">
+<style>
+.cm-panel{fill:#f3f2ee}
+.cm-box{fill:#ffffff;stroke:#cfccc4;stroke-width:1.2}
+.cm-dev{fill:#ffffff;stroke:#8b8b93;stroke-width:1.3}
+.cm-wire{stroke:#8b8b93;stroke-width:1.5;fill:none}
+.cm-path{stroke:#067647;stroke-width:1.8;fill:none;stroke-dasharray:5 4}
+.cm-arrowhead{fill:#8b8b93}
+.cm-burst{fill:#b42318;fill-opacity:.14;stroke:#b42318;stroke-width:1.3}
+.cm-q{fill:#5b4bc4;fill-opacity:.3;stroke:#5b4bc4;stroke-width:1}
+.cm-bad{fill:#b42318}
+.cm-good{fill:#067647}
+.cm-t{fill:#16161a;font-family:system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;font-size:12px;font-weight:500}
+.cm-h{fill:#16161a;font-family:system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;font-size:13px;font-weight:600}
+.cm-s{fill:#8b8b93;font-family:system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;font-size:11.5px}
+.cm-bt{fill:#ffffff;font-family:system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;font-size:11px;font-weight:700}
+</style>
+<defs><marker id="cm-arr" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L8,4 L0,8 z" class="cm-arrowhead"/></marker></defs>
+
+<rect x="8" y="8" width="344" height="324" rx="12" class="cm-panel"/>
+<text x="24" y="34" class="cm-h">Hub / 共享介质 — 所有端口 = 1 个冲突域</text>
+<polygon points="180.0,127.0 188.8,144.2 205.0,133.7 204.0,153.0 223.3,152.0 212.8,168.2 230.0,177.0 212.8,185.8 223.3,202.0 204.0,201.0 205.0,220.3 188.8,209.8 180.0,227.0 171.2,209.8 155.0,220.3 156.0,201.0 136.7,202.0 147.2,185.8 130.0,177.0 147.2,168.2 136.7,152.0 156.0,153.0 155.0,133.7 171.2,144.2" class="cm-burst"/>
+<line x1="70" y1="100" x2="150" y2="160" class="cm-wire"/>
+<line x1="290" y1="100" x2="210" y2="160" class="cm-wire"/>
+<line x1="70" y1="250" x2="150" y2="194" class="cm-wire"/>
+<line x1="290" y1="250" x2="210" y2="194" class="cm-wire"/>
+<rect x="140" y="160" width="80" height="34" rx="6" class="cm-box"/>
+<text x="180" y="182" class="cm-t" text-anchor="middle">Hub</text>
+<rect x="40" y="70" width="60" height="30" rx="6" class="cm-dev"/><text x="70" y="90" class="cm-t" text-anchor="middle">PC1</text><rect x="260" y="70" width="60" height="30" rx="6" class="cm-dev"/><text x="290" y="90" class="cm-t" text-anchor="middle">PC2</text><rect x="40" y="250" width="60" height="30" rx="6" class="cm-dev"/><text x="70" y="270" class="cm-t" text-anchor="middle">PC3</text><rect x="260" y="250" width="60" height="30" rx="6" class="cm-dev"/><text x="290" y="270" class="cm-t" text-anchor="middle">PC4</text>
+<circle cx="238" cy="150" r="10" class="cm-bad"/><text x="238" y="154" class="cm-bt" text-anchor="middle">A</text><circle cx="122" cy="130" r="10" class="cm-bad"/><text x="122" y="134" class="cm-bt" text-anchor="middle">B</text>
+<text x="180" y="314" class="cm-s" text-anchor="middle">两台同时发 → 信号在共享线路上叠加 = collision</text>
+
+<rect x="368" y="8" width="384" height="324" rx="12" class="cm-panel"/>
+<text x="384" y="34" class="cm-h">Switch — 每个端口 = 1 个独立冲突域</text>
+<rect x="480" y="90" width="160" height="190" rx="8" class="cm-box"/>
+<text x="560" y="112" class="cm-h" text-anchor="middle">Switch</text>
+<line x1="485" y1="140" x2="635" y2="230" class="cm-path"/>
+<line x1="485" y1="230" x2="635" y2="140" class="cm-path"/>
+<rect x="600" y="150" width="6" height="12" class="cm-q"/><rect x="609" y="150" width="6" height="12" class="cm-q"/><rect x="618" y="150" width="6" height="12" class="cm-q"/>
+<text x="490" y="130" class="cm-s">E0</text><text x="490" y="252" class="cm-s">E1</text>
+<text x="630" y="130" class="cm-s" text-anchor="end">E2</text><text x="630" y="252" class="cm-s" text-anchor="end">E3</text>
+<rect x="515" y="244" width="90" height="28" rx="5" class="cm-dev"/>
+<text x="560" y="262" class="cm-t" text-anchor="middle">MAC table</text>
+<line x1="444" y1="136" x2="480" y2="136" class="cm-wire" marker-end="url(#cm-arr)"/><line x1="480" y1="144" x2="444" y2="144" class="cm-wire" marker-end="url(#cm-arr)"/><line x1="444" y1="226" x2="480" y2="226" class="cm-wire" marker-end="url(#cm-arr)"/><line x1="480" y1="234" x2="444" y2="234" class="cm-wire" marker-end="url(#cm-arr)"/><line x1="676" y1="136" x2="640" y2="136" class="cm-wire" marker-end="url(#cm-arr)"/><line x1="640" y1="144" x2="676" y2="144" class="cm-wire" marker-end="url(#cm-arr)"/><line x1="676" y1="226" x2="640" y2="226" class="cm-wire" marker-end="url(#cm-arr)"/><line x1="640" y1="234" x2="676" y2="234" class="cm-wire" marker-end="url(#cm-arr)"/>
+<rect x="384" y="125" width="60" height="30" rx="6" class="cm-dev"/><text x="414" y="145" class="cm-t" text-anchor="middle">PC1</text><rect x="384" y="215" width="60" height="30" rx="6" class="cm-dev"/><text x="414" y="235" class="cm-t" text-anchor="middle">PC2</text><rect x="676" y="125" width="60" height="30" rx="6" class="cm-dev"/><text x="706" y="145" class="cm-t" text-anchor="middle">PC3</text><rect x="676" y="215" width="60" height="30" rx="6" class="cm-dev"/><text x="706" y="235" class="cm-t" text-anchor="middle">PC4</text>
+<circle cx="560" cy="172" r="10" class="cm-good"/><text x="560" y="176" class="cm-bt" text-anchor="middle">A</text><circle cx="462" cy="118" r="10" class="cm-good"/><text x="462" y="122" class="cm-bt" text-anchor="middle">B</text><circle cx="613" cy="176" r="10" class="cm-good"/><text x="613" y="180" class="cm-bt" text-anchor="middle">C</text><circle cx="517" cy="244" r="10" class="cm-good"/><text x="517" y="248" class="cm-bt" text-anchor="middle">D</text>
+<text x="560" y="314" class="cm-s" text-anchor="middle">独占端口 · 全双工 · 内部独立通路 · 缓冲 · 查表定向转发</text>
+</svg>

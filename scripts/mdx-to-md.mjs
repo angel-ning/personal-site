@@ -18,6 +18,7 @@ import remarkBreaks from "remark-breaks";
 import remarkStringify from "remark-stringify";
 import { visit, SKIP } from "unist-util-visit";
 import { switchFrame, toMin } from "../src/components/mdx/switch-logic.mjs";
+import { collisionRows, collisionSvgStatic } from "../src/components/mdx/collision-map.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
@@ -102,6 +103,18 @@ const components = {
     return [
       para({ type: "emphasis", children: [text("（网页版此处是可交互的交换机演示；下表是同一套规则算出的结果）")] }),
       table(["#", "时间", "帧", "学习", "决策"], rows),
+    ];
+  },
+  CollisionMap() {
+    // The diagram is written next to the note's other images so both README.md and exports can reference it.
+    fs.mkdirSync(path.join(srcDir, "images"), { recursive: true });
+    fs.writeFileSync(path.join(srcDir, "images", "COLLISION_MAP.svg"), collisionSvgStatic);
+    return [
+      para({ type: "image", url: "images/COLLISION_MAP.svg", alt: "Hub 上的冲突与交换机的防冲突机制" }),
+      table(
+        ["标记", "冲突在哪里发生（Hub）", "交换机怎么防", "位置"],
+        collisionRows.map((r) => [strong(r.mark), r.where, r.fix, r.place]),
+      ),
     ];
   },
   FcsDemo() {

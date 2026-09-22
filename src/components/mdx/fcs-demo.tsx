@@ -47,7 +47,7 @@ export function FcsDemo() {
             </button>
           ))}
         </span>
-        <span />
+        <span className="fcs-calc" />
 
         <span className="fcs-label">接收方 bits</span>
         <span className="flex gap-1.5">{received.map((v, i) => bit(i, v, undefined, i === noise))}</span>

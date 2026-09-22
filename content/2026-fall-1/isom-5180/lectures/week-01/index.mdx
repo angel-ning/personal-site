@@ -17,17 +17,18 @@ tags: [OSI, TCP/IP, Switching, MAC]
 > 🟡 **需要理解** — 需要懂逻辑关系，能举例说明
 > 🟢 **了解即可** — 背景知识，考试大概率不会细抠
 >
-> **优先级是我推断的**（课件没写考试形式，你也还没告诉我老师强调了什么，可以随时改）：
-> ① **篇幅**：交换机相关内容占了 p.43–67 共 25 页，OSI 七层占 p.28–41 共 14 页，是本课两大块；
-> ② **老师的课堂手写补充（M1 Supplementary）**：10 页里有 6 页在画「帧怎么走」——MAC 表、封装、FCS、冲突、广播地址。老师愿意现场画的，通常就是他要考的；
-> ③ 课件 p.21 自己点题：*"The study of network security starts with a clear understanding of the underlying switching and routing infrastructure."* ——这门课是安全课，但第一周先打网络底子。
+> **优先级依据**：
+> ① **你确认的课堂重点**：老师重点讲了 **Networking Devices** 这条线——Repeater → Hub（flood + collision）→ Switch（MAC address table、time stamp、dynamic learning、flood / forward / filter、防冲突机制）→ Router（routing table、static / dynamic、forward / discard、serial 接口）→ MAC 地址与单播 / 广播 / 组播。第 11–14 节按这条线写，是本周最核心的部分；
+> ② **篇幅**：交换机相关内容占了 p.43–67 共 25 页，OSI 七层占 p.28–41 共 14 页；
+> ③ **老师的课堂手写补充（M1 Supplementary）**：10 页里有 6 页在画「帧怎么走」——MAC 表、封装、FCS、冲突、路由器、广播地址；
+> ④ 课件 p.21 自己点题：*"The study of network security starts with a clear understanding of the underlying switching and routing infrastructure."* ——这门课是安全课，但第一周先打网络底子。
 
 <Callout type="note" title="本笔记里的几种标记">
 
 - **✍️ 老师板书** — 来自 *M1 Supplementary Completed*（老师上课手写的讲解图），放在对应课件内容旁边。
 - **➕ 课外补充** — 课件没写、但理解或答题会用到的背景知识，考试优先级按 🟢 处理。
 - **🎯 考点 / ⚠️ 踩坑提醒 / 🧠 记忆口诀** — 答题时该怎么写、容易丢分的地方。
-- 网页版里有两个可以点的小实验（交换机 MAC 表、FCS 差错检测），打印版会变成等价的表格。
+- 网页版里有一张冲突示意图和两个可以点的小实验（交换机 MAC 表、FCS 差错检测），打印版会变成等价的图和表格。
 
 </Callout>
 
@@ -45,9 +46,11 @@ tags: [OSI, TCP/IP, Switching, MAC]
    → 一条线路能跑多少数据 (Bandwidth)
    → 大家说同一种语言 (Protocols) + 把复杂问题拆成层 (OSI 7 层 / TCP/IP 4 层)
    → 数据下楼时一层层打包 (Encapsulation)，上楼时一层层拆包 (De-encapsulation)
-   → 每一层有自己的设备：Hub = L1 · Switch = L2 · Router = L3
-   → 交换机的核心动作：学 MAC 表 → Flood / Forward / Filter
-   → MAC 地址长什么样 · 单播 / 广播 / 组播
+   → 每一层有自己的设备：Repeater / Hub = L1 → Switch = L2 → Router = L3   ★ 本周重点
+        Hub：什么都 flood → collision
+        Switch：MAC address table（MAC · Port · Time stamp），用 Source 学，Flood / Forward / Filter，四招防冲突
+        Router：routing table（IP · Interface），static / dynamic，只有 Forward / Discard
+   → MAC 地址长什么样 · 单播 / 广播（全 1）/ 组播
    → 把所有东西串起来：Data Flow Through a Network
 ```
 
@@ -498,7 +501,16 @@ tags: [OSI, TCP/IP, Switching, MAC]
 
 ---
 
-## 11. 🔴 Networking Devices（按层区分的网络设备）
+## 11. 🔴 Networking Devices：从 Repeater 到 Switch（为什么需要交换机）
+
+这一块是老师上课反复强调的重点。设备是按一条**演化线**讲的，每一代都在解决上一代的问题：
+
+```
+Repeater（信号会衰减 → 重新生成信号）
+   → Hub（多端口的 Repeater，但所有端口一起收 → collision）
+      → Switch（用 MAC address table 定向转发 → 基本消灭 collision）
+         → Router（跨网络：用 IP address + routing table 选路）
+```
 
 <Figure src="images/page_43.png" caption="课件里的设备图标：Repeater、Hub、Bridge、Workgroup Switch、Router、Network Cloud" source="Slide 43" />
 
@@ -511,9 +523,10 @@ tags: [OSI, TCP/IP, Switching, MAC]
 - **Interpreted the incoming signal as 1's and 0's, sent a regenerated clean signal out the other port**
 - 它**只认识比特**，不看任何地址 → **Layer 1 device**
 
-### 🟡 Hub 集线器 — Layer 1（Slide 48–49）
+### 🔴 Hub 集线器 — Layer 1：什么都往外发，于是会撞
 
 - **Regenerate signals** · **Used as network concentration points** · **Multiport repeater**（多端口的中继器）· **Layer 1 device**
+- Hub 不看地址，**从一个口收到信号，就从其他所有口发出去**——相当于每一帧都 flood 给所有人。
 
 <Figure src="images/page_49.png" caption="Hub Operation：「我在 0 号口收到信号——从其他所有口发出去！」" source="Slide 49" />
 
@@ -530,7 +543,7 @@ tags: [OSI, TCP/IP, Switching, MAC]
 
 **Data collision 数据冲突**：如果 PC2 → PC4 **同时**发送，两路电信号（在 +5V 和 −5V 之间摆动）在线上**叠加**，变成一团乱码波形，谁都收不到。信号跑得很快（老师类比「200 km/h」），但只要两台同时发就会撞上。
 
-→ 所以 Hub / Bus 上**所有设备处在同一个 collision domain（冲突域）**，设备越多冲突越频繁。这正是交换机要解决的问题。
+→ Hub / Bus 上**所有设备处在同一个 collision domain（冲突域）**，设备越多冲突越频繁。**这就是交换机出现的原因。**
 
 </Callout>
 
@@ -542,62 +555,51 @@ tags: [OSI, TCP/IP, Switching, MAC]
 
 </Callout>
 
-### 🔴 Switch 交换机 — Layer 2（Slide 50–51）
+---
+
+## 12. 🔴 Switch 交换机 — Layer 2 与 MAC Address Table
 
 <Figure src="images/page_50.png" caption="Switches filter traffic by looking at MAC addresses" source="Slide 50" />
 
 > A **Layer 2 device** designed to create two or more LAN segments, **each of which is a separate collision domain**. Switches **filter traffic by looking at MAC addresses**.
 
+- 交换机是 **Data Link Layer（第 2 层）** 设备 → 所以它认的是 **MAC address（物理地址）**，不看 IP。
 - Filter traffic on a LAN to **keep local traffic local** yet allow connectivity to other parts
 - Keep track of which MAC addresses are on each side and make forwarding decisions based on the **MAC address table**
-- 收到帧后，查**目的 MAC** 决定 **filter, flood or forward**（详见第 12 节）
 
-### 🔴 Router 路由器 — Layer 3（Slide 62）
+### 🔴 MAC Address Table 的三列
 
-- **Layer 3 device**；**Use logical address (network layer address)**，即 IP 地址
-- **Can connect different layer 2 technologies**（例如一边是以太网、一边是串行 WAN 线路）
-- **Examine incoming packet (layer 3 data), choose the best path, and switch them to the proper outgoing port**
+这张表有好几个名字，**说的是同一个东西**：**MAC address table = switching table = CAM table**（CAM = Content Addressable Memory，是 Cisco 的叫法，Slide 58）。
 
-<Figure board src="images/BOARD_ROUTERS.png" caption="三台路由器 A、B、C：以太网接口 E0/E1 连 PC，串行接口 S0/S1 连其他路由器；路由表 = IP → Interface" source="M1 Supplementary p.6" />
+| MAC address | Port | Time stamp |
+|---|---|---|
+| 这台主机的物理地址 | 从交换机哪个端口能找到它 | 最后一次看到它**作为源地址**发帧的时间 |
+| MAC-F | E0 | 4:50 |
+| MAC-Q | E1 | 4:45 |
 
-<Callout type="board" title="老师板书：路由器的接口与路由表">
+### 🔴 为什么需要 Time stamp（老化 aging）
 
-- 每台路由器有好几个 **interface**：**E0、E1 = Ethernet** 接口（连本地 PC），**S0、S1 = Serial** 接口（路由器之间的 **serial connection**，通常是 WAN 链路）。例如 A 的 S0 连 B 的 S0，B 的 S1 连 C 的 S0。
-- **Routing table 路由表** 只有两列核心信息：**目的网络 (IP) → 从哪个 Interface 发出去**。
-- 路由表可以手工写，也可以由 **routing protocol（路由协议）** 自动学习和更新：**RIP、EIGRP、OSPF**（都在 TCP/IP 图的 Internet 层里）。
-- 板书右下角是拓扑图常用符号：**Media（线）、PC、Network Cloud（云 = 不关心内部细节的一片网络，例如 Internet 或运营商 WAN）**。
+每次交换机看到某个 MAC **作为源地址**发帧，就把它的时间戳**刷新**成当前时间；**一条记录超过 aging time（板书写 5 分钟，Cisco 默认 300 秒）没被刷新，就会被删除**。为什么要这样：
 
-</Callout>
+1. **主机会移动、关机、换网卡**：笔记本从 E0 拔下来插到 E3，或者直接关机走人。如果旧记录永远留着，发给它的帧会一直被送到**错误的端口**（等于被黑洞吞掉）。有了老化，旧记录自动过期；下一帧找不到记录就 flood，对方一回复就重新学到正确端口。
+2. **表的容量有限**：CAM 是专用高速内存，条目数有上限。不删不活跃的记录，表会被塞满，新主机学不进去。
+3. **只保留「活着的」信息**：时间戳让交换机知道哪条记录是最近还在用的，表永远反映网络的当前状态。
 
-### 🔴 设备对比总表（高频考点）
+<Callout type="tip">
 
-| | **Repeater / Hub** | **Switch (Bridge)** | **Router** |
-|---|---|---|---|
-| OSI 层 | **Layer 1** | **Layer 2** | **Layer 3** |
-| 看什么 | 只看**比特**（电信号） | **MAC 地址**（物理地址） | **IP 地址**（逻辑地址） |
-| 怎么转发 | 从**所有其他端口**发出去 | 查 **MAC 表**：flood / forward / filter | 查**路由表**：选最佳路径 |
-| 冲突域 | 所有端口共 **1 个** | **每个端口 1 个** | 每个接口 1 个 |
-| 广播域 | 1 个 | 所有端口共 **1 个**（广播会被泛洪） | **每个接口 1 个**（默认不转发广播） |
-
-<Callout type="exam">
-
-**口诀：Hub 分不开冲突，Switch 分开冲突域但分不开广播，Router 两个都分开。** 这类「哪种设备能隔离 collision domain / broadcast domain」的题几乎是网络课必考。
+把 MAC 表想成前台的**访客登记本**：每次有人从某个门进来就登记「谁 · 哪个门 · 几点」；再次出现就更新时间；很久没出现的就划掉。时间戳就是用来判断「这条登记还算不算数」的。
 
 </Callout>
 
----
+### 🔴 表是动态学出来的：用 Source 学，用 Destination 决策
 
-## 12. 🔴 How a Switch Works：Learn → Flood / Forward / Filter
-
-这是本周篇幅最大的一块（Slide 51–67），也是老师板书最详细的地方。
-
-### 🔴 两条黄金规则
+MAC 表是 **dynamic** 的：交换机刚开机时表是空的，**不需要人去配置**，它在每次通信时**一点点自己补全**。
 
 > **用源 MAC 学习，用目的 MAC 决策。**
 > - **Learn（学习）**：Examine the **source MAC address** of the frame and the **interface on which it was received** → add them to the table（Slide 54）
 > - **Decide（决策）**：Look up the **destination MAC address** in the switching table → filter, flood or forward（Slide 51）
 
-### 🔴 三种决策
+为什么是用 **Source** 学？因为帧是从哪个端口**进来**的，交换机是亲眼看到的——「MAC-F 从 E0 进来」说明 F 就在 E0 那一侧。目的地址它没法这样确认，所以只用来**查表**。
 
 | 决策 | 什么时候 | 做法 |
 |---|---|---|
@@ -605,7 +607,11 @@ tags: [OSI, TCP/IP, Switching, MAC]
 | **Forward 转发** | 目的 MAC 在表里，且对应端口**不是**进来的端口 | 只从**那一个正确端口**发出 |
 | **Filter 过滤** | 目的 MAC 在表里，且对应端口**就是**进来的端口 | **不转发**（对方和发送方在同一网段，已经收到了） |
 
-### 🟡 课件的四个场景
+<Callout type="memo">
+
+**不在 → Flood；知道 → Forward；同一个口 → Filter。** 学习只看 Source，决策只看 Destination。
+
+</Callout>
 
 <Figure src="images/page_53.png" caption="Flooding Unknown Unicasts：CAM 表一开始是空的 → Fred 从 1 号口发帧 → 交换机记下 0200.1111.1111 在 1 号口 → 不知道 Barney 在哪，只能泛洪" source="Slide 53" />
 
@@ -627,7 +633,7 @@ Slide 55 的关键：**在 SW2 眼里，Fred 在 3 号口**——交换机只记
 
 交换机 E0 口外接一段共享线路（上面有 F、L 两台主机），E1 口外接另一段（上面有 Q、V）。表一开始是空的，依次发送 5 帧：
 
-| # | 时间 | 帧 MAC (S, D) | 学到了什么 | 查目的 MAC | 决策 |
+| # | 时间 | 帧 MAC (S, D) | 学到了什么（看 Source） | 查目的 MAC（看 Destination） | 决策 |
 |---|---|---|---|---|---|
 | 1 | 4:41 | (MAC-F, MAC-Q) | **新增** MAC-F → E0 | Q 不在表里 | **Flood**（发往 E1、E2、E3） |
 | 2 | 4:45 | (MAC-Q, MAC-F) | **新增** MAC-Q → E1 | F 在 E0 ≠ 进来的 E1 | **Forward**（只发 E0） |
@@ -635,7 +641,7 @@ Slide 55 的关键：**在 SW2 眼里，Fred 在 3 号口**——交换机只记
 | 4 | 4:49 | (MAC-V, MAC-L) | **新增** MAC-V → E1 | L 在 E0 ≠ 进来的 E1 | **Forward**（只发 E0） |
 | 5 | 4:50 | (MAC-F, MAC-L) | MAC-F 已存在 → **时间戳从 4:41 刷新为 4:50** | L 在 E0 = 进来的 E0 | **Filter** |
 
-**Time stamp 与 5 分钟老化 (aging)**：每条记录都有时间戳，每次再看到这个源 MAC 就刷新；**超过 5 分钟没再出现就删掉**（Cisco 交换机默认 300 秒）。板书里 MAC-Q 被划掉，是在演示老化：主机关机、挪走或长时间不发帧，它的记录就会被删除，MAC 表不会一直保留过期信息（下面的小实验可以点「过 5 分钟」看效果）。
+第 5 帧同时演示了两件事：**时间戳刷新**（F 又出现了，记录继续有效）和 **Filter**。板书里 MAC-Q 被划掉，是在演示**老化**：主机长时间不发帧，它的记录就会被删除（下面的小实验可以点「过 5 分钟」看效果）。
 
 <SwitchLab />
 
@@ -647,21 +653,16 @@ Slide 55 的关键：**在 SW2 眼里，Fred 在 3 号口**——交换机只记
 4. If the destination is a unicast and the address **is in the table**, and the associated interface is **not** the incoming interface, forward the frame out **the one correct port**.（已知 + 不同口 → 转发）
 5. **Otherwise, filter** (do not forward) the frame.（已知 + 同一个口 → 过滤）
 
-<Callout type="extra" title="课外补充：MAC flooding 攻击（安全课会回来讲）">
+### 🔴 交换机怎么避免 Collision：四种机制
 
-MAC 表（CAM 表）容量有限。攻击者用工具**伪造大量不同的源 MAC** 狂发帧，把表塞满；合法主机的记录挤不进去，交换机只能对它们 **flood**——此时交换机退化成 Hub，攻击者就能**嗅探**本来不该看到的流量。防御：**Port Security**（限制每个端口能学的 MAC 数量）。这就是 Slide 21 说「安全要从理解交换和路由开始」的一个例子。
+MAC 表只是其中一种。交换机一共有四个办法，**有的在交换机内部起作用，有的在端口 / 链路上起作用**。下图左边是 Hub 上冲突会发生的地方，右边是交换机在同样位置用的办法（字母一一对应）：
 
-</Callout>
+<CollisionMap />
 
----
-
-## 13. 🟡 LAN Switch 的好处：微分段、全双工、缓冲
-
-<Figure src="images/page_59.png" caption="Before：共享网段上所有流量对所有人可见；After：交换机内部给每对主机独立通路" source="Slide 59" />
+<Figure src="images/page_59.png" caption="Dedicated paths / microsegmentation — Before：共享网段上所有流量对所有人可见；After：交换机内部给每对主机独立通路" source="Slide 59" />
 
 **LAN Switches**（Slide 58）：
-- **Layer 2 device**；用 **table of MAC addresses (switching table)** 决定帧该发往哪个网段
-- Cisco 把 switching table 称为 **CAM (Content Addressable Memory)** table
+- 用 **table of MAC addresses (switching table)** 决定帧该发往哪个网段
 - **Give each host the medium's full bandwidth (microsegmentation)** —— 每台主机独享一个端口的全部带宽（不再和别人分）
 - **Improve network performance: speed and bandwidth**
 
@@ -670,19 +671,28 @@ MAC 表（CAM 表）容量有限。攻击者用工具**伪造大量不同的源 
 <Callout type="board" title="老师板书：Bus / Hub vs Switch">
 
 1. **Bus 和 Hub**：PC1→PC3 和 PC2→PC4 同时发 → **Collision**（都在同一个冲突域）。
-2. **Switch**：PC1→PC3 走 E0→E2，PC2→PC4 走 E1→E3，交换机内部是**不同的通路**，互不干扰 → **没有冲突**。
+2. **Switch — dedicated paths**：PC1→PC3 走 E0→E2，PC2→PC4 走 E1→E3，交换机内部是**不同的通路**，互不干扰 → **没有冲突**。
 3. **Full duplex（全双工）= send and receive at the same time**：像双向车道，PC1→PC3 和 PC3→PC1 可以同时进行。（Hub 只能 half duplex，同一时间只能一个方向。）
-4. 真正会「撞」的情况：**PC1→PC3 和 PC2→PC3 同时发给同一台**——两条车道并入一条。交换机的办法是像红绿灯一样**先把一帧存起来 (buffering)**，一帧一帧地放行。
-5. 交换机 E4 口接上一台 **Router**，Router 后面是 PC5–PC8 的另一个网络：跨网络就要靠路由器。
+4. **Buffering**：真正会「撞」的情况是 **PC1→PC3 和 PC2→PC3 同时发给同一台**——两条车道并入一条。交换机像红绿灯一样**先把一帧存起来**，一帧一帧地放行。
+5. 交换机 E4 口接上一台 **Router**，Router 后面是 PC5–PC8 的另一个网络：跨网络就要靠路由器（第 13 节）。
 
 </Callout>
 
 <Figure src="images/page_60.png" caption="Switch Buffering Example：Wilma 发给 Fred 的同时，Barney 和 Betty 也发给 Fred → 先存进 Frame Buffers，再逐个转发" source="Slide 60" />
 
-**Preventing Collisions with Switch Buffering**（Slide 61）：
-- Switches prevent collisions by **buffering frames**
-- If several PCs send frames to the **same address at the same time**, the switch **holds the frames in memory** — a process called **buffering**
-- The switch then **forwards the frames one at a time**
+**Preventing Collisions with Switch Buffering**（Slide 61）：Switches prevent collisions by **buffering frames**. If several PCs send frames to the **same address at the same time**, the switch **holds the frames in memory** — a process called **buffering** — and then **forwards the frames one at a time**.
+
+### 🟡 所以 Switch 是「最好」的 LAN 设备
+
+四个机制加在一起：**每台主机独占端口 + 全双工 + 内部独立通路 + 缓冲 + 查表定向转发** → 在「一台主机一个端口、全双工」的正常接法下，**collision 不会再发生**，每台主机都能用满端口带宽。这就是 Switch 取代 Hub 的原因。
+
+<Callout type="warn">
+
+两个细节，答题时写上会更完整：
+- 交换机消灭的是**端口之间**的冲突。如果某个端口外面接的是一个 **Hub 或共享线路**（比如板书里 E0 外面挂着 F 和 L），那一段内部**照样会冲突**——交换机只是把冲突**限制在那一个端口里**（每个端口 = 一个冲突域）。
+- 交换机**隔离冲突域，但不隔离广播域**：广播帧（目的 MAC 全 F）还是会被 flood 到所有端口。隔离广播要靠 **Router**。
+
+</Callout>
 
 <Figure src="images/page_66.png" caption="Switch Modes 页：交换机表记录 Interface ↔ MAC Address（E0 后面两台，E1 后面两台）" source="Slide 66" />
 
@@ -698,9 +708,136 @@ Slide 66 标题是 *Switch Modes*，但图里只画了 MAC 表。教科书里的
 
 </Callout>
 
+<Callout type="extra" title="课外补充：MAC flooding 攻击（安全课会回来讲）">
+
+MAC 表（CAM 表）容量有限。攻击者用工具**伪造大量不同的源 MAC** 狂发帧，把表塞满；合法主机的记录挤不进去，交换机只能对它们 **flood**——此时交换机退化成 Hub，攻击者就能**嗅探**本来不该看到的流量。防御：**Port Security**（限制每个端口能学的 MAC 数量）。这就是 Slide 21 说「安全要从理解交换和路由开始」的一个例子。
+
+</Callout>
+
 ---
 
-## 14. 🔴 MAC Address 与单播 / 广播 / 组播
+## 13. 🔴 Router 路由器 — Layer 3 与 Routing Table
+
+交换机解决的是**同一个网络里**怎么送；要把数据送到**另一个网络**，就轮到路由器。
+
+**Routers**（Slide 62）：
+- **Layer 3 device**（Network layer）
+- **Use logical address (network layer address)** → 看的是 **IP address**，不是 MAC
+- **Can connect different layer 2 technologies**（例如一边是以太网 Ethernet，一边是串行 Serial WAN 线路）
+- **Examine incoming packet (layer 3 data), choose the best path, and switch them to the proper outgoing port**
+
+<Figure board src="images/BOARD_ROUTERS.png" caption="三台路由器 A、B、C：以太网接口 E0/E1 连 PC，串行接口 S0/S1 连其他路由器；路由表 = IP → Interface；路由协议 RIP / EIGRP / OSPF" source="M1 Supplementary p.6" />
+
+### 🔴 Routing Table：目的 IP 网络 → 出口 Interface
+
+板书上的路由表只有两列：**IP | Interface**——「要去这个 IP 网络，就从这个接口发出去」。
+
+| | **MAC address table（Switch）** | **Routing table（Router）** |
+|---|---|---|
+| 层 | Layer 2 Data Link | Layer 3 Network |
+| 记录什么 | **MAC address → Port** | **目的 IP 网络 → Interface**（真实设备还会记下一跳 next hop） |
+| 一条记录代表 | **一台主机** | **一整个网络**（很多台主机） |
+| 怎么来的 | **自己从 Source MAC 学** | **Static**：管理员手工配置；**Dynamic**：路由协议学 |
+| Time stamp | **有**，靠它老化 | **没有 MAC 表那种时间戳** |
+| 查不到怎么办 | **Flood** | **Discard**（或走 default route） |
+
+### 🟡 为什么 Routing table 不需要 time stamp（good to know）
+
+1. **记录的是网络，不是主机**：MAC 表的一条记录是一台随时可能关机、挪位置的电脑；路由表的一条记录是「10.1.1.0 这个网段在 S0 那边」，网络本身很少会移动。
+2. **Static route 本来就是永久的**：管理员配上去就一直有效，直到管理员自己删掉，不需要过期。
+3. **Dynamic route 的「新鲜度」由路由协议负责**：路由器之间会定期交换路由信息（例如 RIP 每 30 秒发一次更新）；某条路由长时间收不到更新（RIP 默认 180 秒），协议就会把它判定为失效并删除。所以过期机制是**协议里的计时器**，而不是 MAC 表那种「每看到一个帧就刷新一次时间戳」。
+
+> 严格说，真实路由器用 `show ip route` 查看时，动态路由也会显示「这条路由学到多久了」，但那是路由协议自己的状态。按本课的讲法：**MAC 表靠时间戳老化，路由表不靠**。
+
+### 🔴 Static vs Dynamic：路由表怎么「学」
+
+| | **Static routing 静态路由** | **Dynamic routing 动态路由** |
+|---|---|---|
+| 怎么来 | 管理员**手工**一条条写进去 | **Routing protocol** 自动学习：**RIP、EIGRP、OSPF**（TCP/IP 图的 Internet 层） |
+| 网络变化时 | 不会自己变，要人去改 | 自动更新，某条线断了会自动找别的路 |
+| 适合 | 小网络、固定的出口 | 大网络、有多条路径 |
+
+<Callout type="warn" title="踩坑提醒：Dynamic 学习和交换机的学法「不一样」">
+
+交换机是**被动**学习：看路过帧的 **Source MAC** 记下来。
+路由器的动态路由是**主动交换信息**：路由器之间通过 RIP / EIGRP / OSPF 互相通告「我能到达哪些网络」，再把这些信息写进自己的路由表。**路由器不会去看数据包的 Source IP 来学路由。**
+另外，路由器**自己接口直连的网络**会自动出现在路由表里（directly connected），不需要配置也不需要学。
+
+</Callout>
+
+### 🔴 路由器怎么做决策：看 Destination IP，只有 Forward 或 Discard
+
+1. 包从某个接口进来 → 拆掉帧头，读出 **destination IP address**；
+2. 在路由表里查这个 IP 属于哪个网络；
+3. **查到** → 从对应的 interface **forward** 出去；
+4. **查不到**（而且没有 default route 默认路由）→ **discard** 丢弃（通常还会给发送方回一个 ICMP「目的不可达」消息）。
+
+<Callout type="exam">
+
+**路由器不会 flood。** 交换机不知道目的在哪时可以「全发一遍」，因为它只管一个局域网；路由器连着的是不同的网络甚至整个 Internet，如果查不到就泛洪，会把流量洪水般灌进所有网络。所以路由器的决策只有 **Forward** 和 **Discard**。同理，路由器**默认不转发广播**（255.255.255.255），所以**路由器隔离广播域**。
+
+</Callout>
+
+<Callout type="extra" title="课外补充：Default route 与最长匹配">
+
+- **Default route（默认路由，0.0.0.0/0）**：「表里其他都查不到的，统统往这个接口送」，一般指向通往 Internet 的出口。家里路由器基本就靠这一条。
+- 如果一个 IP 同时匹配好几条记录，路由器选**最具体（掩码最长）**的那条，叫 **longest prefix match**。后面讲 IP 地址和子网时会用到。
+
+</Callout>
+
+### 🔴 Interface：Ethernet vs Serial
+
+路由器有好几个接口，板书上分两种：
+
+| 接口 | 名字 | 连什么 | 特点 |
+|---|---|---|---|
+| **Ethernet** | **E0、E1**（新设备叫 Gi0/0 等） | **本地 LAN**：PC、交换机 | 以太网，用 MAC 地址 |
+| **Serial** | **S0、S1** | **另一台路由器**，通常是 **WAN** 链路（例如租用的专线） | **点对点 (point-to-point)**：线的另一头只有一台设备；常用 **PPP / HDLC** 封装；需要一端提供时钟 (clock rate) |
+
+板书连法：**A 的 S0 ↔ B 的 S0**，**B 的 S1 ↔ C 的 S0**；每台路由器的 E0、E1 各接一台 PC。这正好对应课件说的 **Router can connect different layer 2 technologies**：包从 A 的 E0（Ethernet）进来，从 S0（Serial）出去——路由器在中间把帧头换掉了。
+
+### 🟡 例子：用板书拓扑走一遍
+
+为了说明，给板书里的网络编上（假设的）地址：A 的 E0 = 10.1.1.0（PC1），E1 = 10.1.2.0（PC2）；B 的 E0 = 10.2.3.0（PC3），E1 = 10.2.4.0（PC4）；C 的 E0 = 10.3.5.0（PC5），E1 = 10.3.6.0（PC6）。**Router B** 的路由表：
+
+| 目的网络 (IP) | Interface | 怎么来的 |
+|---|---|---|
+| 10.2.3.0（PC3） | E0 | 直连 directly connected |
+| 10.2.4.0（PC4） | E1 | 直连 |
+| 10.1.1.0（PC1） | S0 | 通往 Router A（static 或 dynamic） |
+| 10.1.2.0（PC2） | S0 | 通往 Router A |
+| 10.3.5.0（PC5） | S1 | 通往 Router C |
+| 10.3.6.0（PC6） | S1 | 通往 Router C |
+| 其他任何地址 | — | 查不到 → **Discard** |
+
+**PC1 → PC5**：A 查到 10.3.5.x 要走 S0 → 送到 B；B 查表 → 走 S1 → 送到 C；C 发现 10.3.5.0 是直连在 E0 上的 → 交给 PC5。**PC1 → 99.9.9.9**：一路查不到（也没有 default route）→ **Discard**。
+
+<Callout type="exam">
+
+每经过一台路由器：**IP 地址（源、目的）不变，MAC 地址（帧头）每一跳都换**。路由器收到帧 → 拆掉旧帧头 → 按目的 IP 选路 → 用出口接口的 Layer 2 格式**重新封装新帧**。这就是第 15 节 Data Flow 图里 R1 做的事。一句话：**IP 管终点，MAC 管下一站。**
+
+</Callout>
+
+### 🔴 设备对比总表（高频考点）
+
+| | **Repeater / Hub** | **Switch (Bridge)** | **Router** |
+|---|---|---|---|
+| OSI 层 | **Layer 1** | **Layer 2** | **Layer 3** |
+| 看什么 | 只看**比特**（电信号） | **MAC 地址**（物理地址） | **IP 地址**（逻辑地址） |
+| 用什么表 | 没有表 | **MAC address table**（MAC · Port · Time stamp） | **Routing table**（IP · Interface） |
+| 怎么转发 | 从**所有其他端口**发出去 | **Flood / Forward / Filter** | **Forward / Discard**（不会 flood） |
+| 冲突域 | 所有端口共 **1 个** | **每个端口 1 个** | 每个接口 1 个 |
+| 广播域 | 1 个 | 所有端口共 **1 个**（广播会被泛洪） | **每个接口 1 个**（默认不转发广播） |
+
+<Callout type="exam">
+
+**口诀：Hub 分不开冲突，Switch 分开冲突域但分不开广播，Router 两个都分开。** 这类「哪种设备能隔离 collision domain / broadcast domain」的题几乎是网络课必考。
+
+</Callout>
+
+---
+
+## 14. 🔴 MAC Address 与三种通信方式
 
 ### 🔴 MAC 地址结构（Slide 63）
 
@@ -727,21 +864,37 @@ Slide 66 标题是 *Switch Modes*，但图里只画了 MAC 表。教科书里的
 
 | 类型 | 课件定义 | 发送方 : 接收方 | 例子 |
 |---|---|---|---|
-| **Unicast 单播** | A frame is sent from one host addressed to **a specific destination** | 1 : 1 | 访问网页、发邮件；**LAN 和 Internet 上最主要的传输方式** |
+| **Unicast 单播** | A frame is sent from one host addressed to **a specific destination** | 1 : 1 | 访问网页、发邮件；**LAN 和 Internet 上最主要的传输方式 (predominant form)** |
 | **Broadcast 广播** | A frame is sent from one address to **all other devices**, using a **universal broadcast address** | 1 : 全部 | ARP 请求「谁是 192.168.1.1？」、DHCP 请求 |
 | **Multicast 组播** | The destination address is **a specific group** of devices, or clients | 1 : 一组 | 视频会议、IPTV、路由协议更新 |
+
+### 🔴 广播地址：约定俗成的「全是 1」
 
 <Figure board src="images/BOARD_BROADCAST.png" caption="广播：目的地址不是把每个 IP 列出来，而是一个「全 1」的特殊地址" source="M1 Supplementary p.7" />
 
 <Callout type="board" title="老师板书：广播地址长什么样">
 
 PC1 想发给同网段的 PC2 + PC3 + PC4 + PC5：
-- ✗ 不是写成 `IP (S, D) = (IP-1, IP-2 + IP-3 + IP-4 + IP-5)`（老师打了红叉）
-- ✓ 而是 `IP (S, D) = (IP-1, 255.255.255.255)`
+- ✗ 不是写成 `IP (S, D) = (IP-1, IP-2 + IP-3 + IP-4 + IP-5)`（老师打了红叉：不能把所有地址「加起来」或列出来）
+- ✓ 而是用一个**约定好的特殊地址**：`IP (S, D) = (IP-1, 255.255.255.255)`
 
-**IPv4 broadcast address**：IPv4 地址 32 位**全部是 1** → 每 8 位一组 `11111111` = 255 → **255.255.255.255**
-**MAC broadcast address**：48 位**全部是 1** → 每 4 位 `1111` = F → **12 个 F**：`FF-FF-FF-FF-FF-FF`
+| | 位数 | 全部是 1 | 写出来 |
+|---|---|---|---|
+| **IPv4 broadcast** | 32 bits | `11111111.11111111.11111111.11111111` | 每 8 个 1 = 255 → **255.255.255.255** |
+| **MAC broadcast** | 48 bits | 48 个 1 | 每 4 个 1 = F → **12 个 F**：**FF-FF-FF-FF-FF-FF** |
+
 所以一个广播帧写作 `MAC (S, D) = (MAC-1, FF-FF-FF-FF-FF-FF)`。
+
+</Callout>
+
+<Callout type="warn" title="踩坑提醒：「全 1」不是把地址加起来算出来的">
+
+广播地址是**标准里保留 (reserved) 的一个约定**，不是任何计算的结果。为什么偏偏选「全 1」：
+- **它永远不会分配给任何一台设备**：MAC 第一个字节的最低位（I/G 位）是 1 就表示「组地址」，厂商给网卡分配的单播地址这一位一定是 0；IP 那边主机部分全 1 也被保留给广播。所以「全 1」不会和任何真实主机撞车。
+- **每块网卡出厂就被设定为「收自己的 MAC + 收全 F」**：所以所有人都会收下这一帧，正好实现「发给所有人」。
+- 老师的红叉就是在强调：广播不是「把所有目标地址写在一起」，而是**一个人人都认的统一地址**（universal broadcast address）。
+
+**记忆**：全 1 = 「所有位都举手」= 所有人。
 
 </Callout>
 
@@ -792,6 +945,7 @@ PC1 想发给同网段的 PC2 + PC3 + PC4 + PC5：
 | EIGRP | Enhanced Interior Gateway Routing Protocol | 路由协议 |
 | FCS | Frame Check Sequence | L2 帧尾（差错检测） |
 | FTP / TFTP | File Transfer Protocol / Trivial FTP | 应用层 |
+| HDLC | High-Level Data Link Control | Serial 链路封装 |
 | HTTP | Hypertext Transfer Protocol | 应用层 |
 | IAB | Internet Architecture Board | 互联网组织 |
 | ICANN | Internet Corporation for Assigned Names and Numbers | 互联网组织 |
@@ -885,13 +1039,37 @@ Hub = Layer 1，Switch = Layer 2，Router = Layer 3。Switch 和 Router 都能�
 
 </QA>
 
-<QA q="11. 一个 MAC 地址有多少位？OUI 是什么？MAC 广播地址和 IPv4 广播地址分别是什么？">
+<QA q="11. MAC address table 为什么需要 Time stamp？如果没有会出什么问题？">
 
-48 bits，写成 12 个十六进制数。**OUI (Organizationally Unique Identifier)** 是前 3 字节（24 bits），由 IEEE 分配给厂商；后 3 字节由厂商保证唯一。MAC 广播地址 = **FF-FF-FF-FF-FF-FF**（48 个 1）；IPv4 广播地址 = **255.255.255.255**（32 个 1）。
+每次看到某 MAC 作为**源地址**就刷新时间戳，超过 aging time（板书 5 分钟 / Cisco 默认 300 秒）没刷新就删除。原因：① 主机会移动、关机、换网卡，旧记录会把帧送到错误端口；② CAM 表容量有限，不删不活跃记录会被塞满；③ 让表只反映网络当前状态。记录被删后，下一帧会被 flood，对方回复时重新学习。
 
 </QA>
 
-<QA q="12. 在「Data Flow Through a Network」中，数据从 Fred 经过 SW1、R1、H1 到达 Barney。每个设备分别处理到第几层？">
+<QA q="12. 交换机有哪些防止 collision 的机制？分别在交换机的哪里起作用？">
+
+① **Microsegmentation / dedicated paths**：每台主机独占一个端口，交换机内部每对端口之间有独立通路（端口 + 内部）；② **Full duplex**：收发同时进行，链路上不会撞（端口 / 链路）；③ **Buffering**：多台同时发往同一目的时先存进内存、逐帧转发（内部）；④ **MAC address table**：只向目的端口转发、同端口过滤，不再像 Hub 一样全发（内部）。
+
+</QA>
+
+<QA q="13. 比较 MAC address table 和 routing table：层、记录内容、如何建立、查不到时怎么办。">
+
+MAC 表：Layer 2，记录 **MAC → Port（+ Time stamp）**，交换机从**源 MAC 自动学习**（dynamic），查不到就 **flood**。路由表：Layer 3，记录**目的 IP 网络 → Interface**，由管理员**手工配置 (static)** 或**路由协议 RIP / EIGRP / OSPF 学习 (dynamic)**，查不到（且无默认路由）就 **discard**，路由器不会 flood。
+
+</QA>
+
+<QA q="14. 路由器的 Serial 接口和 Ethernet 接口有什么不同？为什么说路由器能连接不同的 Layer 2 技术？">
+
+Ethernet 接口（E0、E1）连本地 LAN 的主机或交换机；Serial 接口（S0、S1）是**点对点**链路，通常用来连接**另一台路由器**（WAN 专线），使用 PPP / HDLC 等封装。路由器收到帧后拆掉旧的 Layer 2 帧头，按目的 IP 选路，再用出口接口的 Layer 2 格式重新封装，所以可以从 Ethernet 进、从 Serial 出；**IP 地址不变，MAC / 帧头每一跳都换**。
+
+</QA>
+
+<QA q="15. 一个 MAC 地址有多少位？OUI 是什么？MAC 广播地址和 IPv4 广播地址分别是什么？">
+
+48 bits，写成 12 个十六进制数。**OUI (Organizationally Unique Identifier)** 是前 3 字节（24 bits），由 IEEE 分配给厂商；后 3 字节由厂商保证唯一。MAC 广播地址 = **FF-FF-FF-FF-FF-FF**（48 个 1）；IPv4 广播地址 = **255.255.255.255**（32 个 1）。全 1 是标准保留的约定地址，不会分配给任何设备，所有网卡都会接收它。
+
+</QA>
+
+<QA q="16. 在「Data Flow Through a Network」中，数据从 Fred 经过 SW1、R1、H1 到达 Barney。每个设备分别处理到第几层？">
 
 Fred：7→1 全部封装；SW1：L1–L2（根据以太网帧头的 MAC 决定转发）；R1：L1–L3（拆出 IP 包，根据 IP 地址选路，再重新封装）；H1：只有 L1（接收、再生、发送信号）；Barney：1→7 全部解封装，交给应用。
 

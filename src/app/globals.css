@@ -86,7 +86,7 @@ body {
   overflow-wrap: anywhere;
 }
 .prose > * + * { margin-top: 1.1em; }
-.prose h2, .prose h3, .prose h4 { scroll-margin-top: 88px; font-weight: 600; letter-spacing: -.01em; line-height: 1.35; }
+.prose h2, .prose h3, .prose h4 { scroll-margin-top: 124px; font-weight: 600; letter-spacing: -.01em; line-height: 1.35; }
 .prose h2 {
   font-size: 1.45em;
   margin-top: 2.6em;
@@ -253,3 +253,7 @@ body {
   .fcs-calc { grid-column: 1 / -1; }
   .lab-ports { grid-template-columns: repeat(2, 1fr); }
 }
+.collision-map { margin-left: 0; margin-right: 0; }
+.cm-svg { border: 1px solid var(--line); border-radius: 12px; padding: .4em; background: var(--surface); overflow-x: auto; }
+.cm-svg svg { display: block; width: 100%; min-width: 560px; height: auto; }
+.collision-map .table-wrap { margin-top: .8em; }
