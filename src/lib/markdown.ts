@@ -19,7 +19,7 @@ const isRelative = (u: string) => !/^(https?:|data:|mailto:|#|\/)/i.test(u);
 
 // Resolve relative image URLs against the note's public folder, lazy-load images,
 // wrap tables for horizontal scroll, and drop the leading H1 (the page renders its own title).
-function rehypeNote(opts: { assetBase: string; headings: Heading[] }) {
+export function rehypeNote(opts: { assetBase: string; headings: Heading[] }) {
   return (tree: Root) => {
     const first = tree.children.find((n) => n.type === "element");
     if (first && first.type === "element" && first.tagName === "h1") {

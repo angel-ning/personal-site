@@ -1,10 +1,10 @@
 #!/usr/bin/env node
-// Copy a note (Markdown or standalone HTML) from anywhere on disk into content/.
+// Copy a note (Markdown, MDX or standalone HTML) from anywhere on disk into content/.
 //
 //   npm run add-note -- <source file> <term>/<course>/<type>/<slug> [--week N] [--zh "中文标题"] [--en "English title"]
 //
-// Markdown: only images the note actually references are copied, into ./images/,
-// and the links are rewritten. HTML: the file is copied as index.html together with
+// Markdown / MDX: only images the note actually references are copied, into ./images/,
+// and the links are rewritten (including <Figure src="..."> in MDX). HTML: the file is copied as index.html together with
 // any local src/href assets it references.
 import fs from "node:fs";
 import path from "node:path";
@@ -20,7 +20,7 @@ for (let i = 0; i < args.length; i++) {
 }
 const [src, dest] = pos;
 if (!src || !dest || dest.split("/").length !== 4) {
-  console.error('usage: npm run add-note -- <file.md|file.html> <term>/<course>/<type>/<slug> [--week N] [--zh ".."] [--en ".."]');
+  console.error('usage: npm run add-note -- <file.md|file.mdx|file.html> <term>/<course>/<type>/<slug> [--week N] [--zh ".."] [--en ".."]');
   process.exit(1);
 }
 
@@ -47,7 +47,7 @@ function copyAsset(ref) {
 
 const title = flags.en || flags.zh ? { en: flags.en ?? flags.zh, zh: flags.zh ?? flags.en } : null;
 
-if (ext === ".md") {
+if (ext === ".md" || ext === ".mdx") {
   let md = fs.readFileSync(srcAbs, "utf8");
   let copied = 0;
   md = md.replace(/!\[([^\]]*)\]\(([^)\s]+)([^)]*)\)/g, (m, alt, ref, rest) => {
@@ -57,12 +57,12 @@ if (ext === ".md") {
     copied++;
     return `![${alt}](${to}${rest})`;
   });
-  md = md.replace(/<img([^>]*?)src="([^"]+)"/g, (m, pre, ref) => {
+  md = md.replace(/<(img|Figure)\b([^>]*?)\bsrc="([^"]+)"/g, (m, tag, pre, ref) => {
     if (isRemote(ref)) return m;
     const to = copyAsset(ref);
     if (!to) return m;
     copied++;
-    return `<img${pre}src="${to}"`;
+    return `<${tag}${pre}src="${to}"`;
   });
   if (!md.startsWith("---")) {
     const h1 = md.match(/^#\s+(.+)$/m)?.[1]?.trim() ?? path.basename(srcAbs, ext);
@@ -79,8 +79,8 @@ if (ext === ".md") {
     ].filter((l) => l !== null);
     md = fm.join("\n") + md;
   }
-  fs.writeFileSync(path.join(outDir, "index.md"), md);
-  console.log(`✓ ${dest}/index.md (${copied} images)`);
+  fs.writeFileSync(path.join(outDir, `index${ext}`), md);
+  console.log(`✓ ${dest}/index${ext} (${copied} images)`);
 } else if (ext === ".html" || ext === ".htm") {
   let html = fs.readFileSync(srcAbs, "utf8");
   html = html.replace(/(src|href)="([^"]+)"/g, (m, attr, ref) => {
@@ -97,6 +97,6 @@ if (ext === ".md") {
   }
   console.log(`✓ ${dest}/index.html`);
 } else {
-  console.error("Only .md and .html notes are supported.");
+  console.error("Only .md, .mdx and .html notes are supported.");
   process.exit(1);
 }

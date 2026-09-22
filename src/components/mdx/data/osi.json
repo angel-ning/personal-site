@@ -1,0 +1,9 @@
+[
+  { "n": 7, "en": "Application", "zh": "应用层", "role": "Network process to applications", "roleZh": "给用户的应用程序提供网络服务", "pdu": "Data", "tcpip": "Application", "examples": "HTTP, FTP, SMTP, DNS, Telnet", "devices": "—" },
+  { "n": 6, "en": "Presentation", "zh": "表示层", "role": "Data representation", "roleZh": "数据格式、编码、压缩、加密", "pdu": "Data", "tcpip": "Application", "examples": "ASCII, JPEG, TLS 加密", "devices": "—" },
+  { "n": 5, "en": "Session", "zh": "会话层", "role": "Interhost communication", "roleZh": "建立、管理、终止两台主机之间的会话", "pdu": "Data", "tcpip": "Application", "examples": "NetBIOS, RPC", "devices": "—" },
+  { "n": 4, "en": "Transport", "zh": "传输层", "role": "End-to-end connection", "roleZh": "端到端传输：可靠(TCP) 或不可靠(UDP)", "pdu": "Segment", "tcpip": "Transport", "examples": "TCP, UDP", "devices": "(防火墙会看端口)" },
+  { "n": 3, "en": "Network", "zh": "网络层", "role": "Address and best path", "roleZh": "逻辑地址(IP) + 选最佳路径", "pdu": "Packet", "tcpip": "Internet", "examples": "IP, ICMP, RIP, OSPF", "devices": "Router 路由器" },
+  { "n": 2, "en": "Data Link", "zh": "数据链路层", "role": "Access to media", "roleZh": "物理地址(MAC) 访问介质 + 差错检测", "pdu": "Frame", "tcpip": "Network Access", "examples": "Ethernet, PPP", "devices": "Switch / Bridge 交换机/网桥" },
+  { "n": 1, "en": "Physical", "zh": "物理层", "role": "Binary transmission", "roleZh": "在设备之间传送比特(电、光、电磁波)", "pdu": "Bits", "tcpip": "Network Access", "examples": "网线、光纤、无线电", "devices": "Repeater / Hub 中继器/集线器" }
+]

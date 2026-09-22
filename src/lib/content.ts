@@ -5,10 +5,10 @@ import { cache } from "react";
 import matter from "gray-matter";
 import type { L10n } from "./i18n";
 
-// content/<term>/<course>/<type>/<slug>/index.{md,html}
+// content/<term>/<course>/<type>/<slug>/index.{md,mdx,html}
 //   term.json   → { title, subtitle?, order? }
 //   course.json → { code, title, instructor?, description? }
-//   notes carry metadata as Markdown frontmatter, or meta.json next to index.html.
+//   notes carry metadata as Markdown/MDX frontmatter, or meta.json next to index.html.
 
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
@@ -29,7 +29,7 @@ export type Note = {
   course: string;
   type: string;
   slug: string;
-  format: "md" | "html";
+  format: "md" | "mdx" | "html";
   title: L10n;
   summary?: L10n;
   week?: number;
@@ -89,11 +89,15 @@ const toDate = (v: unknown) =>
 
 function readNote(term: string, course: string, courseCode: string, type: string, slug: string): Note | null {
   const dir = path.join(CONTENT_DIR, term, course, type, slug);
+  const mdxFile = path.join(dir, "index.mdx");
   const mdFile = path.join(dir, "index.md");
   const htmlFile = path.join(dir, "index.html");
   let format: Note["format"];
   let meta: Record<string, unknown> = readJson(path.join(dir, "meta.json"));
-  if (fs.existsSync(mdFile)) {
+  if (fs.existsSync(mdxFile)) {
+    format = "mdx";
+    meta = { ...meta, ...matter(fs.readFileSync(mdxFile, "utf8")).data };
+  } else if (fs.existsSync(mdFile)) {
     format = "md";
     meta = { ...meta, ...matter(fs.readFileSync(mdFile, "utf8")).data };
   } else if (fs.existsSync(htmlFile)) {
@@ -195,7 +199,7 @@ export function getNote(term: string, course: string, type: string, slug: string
 }
 
 export const noteSourcePath = (n: Note) =>
-  path.join(CONTENT_DIR, n.term, n.course, n.type, n.slug, n.format === "md" ? "index.md" : "index.html");
+  path.join(CONTENT_DIR, n.term, n.course, n.type, n.slug, `index.${n.format}`);
 
 // Public URL of a file that sync-content copied into public/content.
 export const noteAssetBase = (n: Note) => `/content/${n.term}/${n.course}/${n.type}/${n.slug}/`;

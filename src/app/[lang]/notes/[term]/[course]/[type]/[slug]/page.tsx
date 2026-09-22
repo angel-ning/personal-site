@@ -7,6 +7,7 @@ import { Toc } from "@/components/toc";
 import { HtmlNoteFrame } from "@/components/html-note-frame";
 import { getAllNotes, getNote, getTerm, noteAssetBase, noteSourcePath, type Note } from "@/lib/content";
 import { renderMarkdownFile } from "@/lib/markdown";
+import { renderMdxFile } from "@/lib/mdx";
 import { formatDate, getDict, isLang, pick, weekLabel, withLang, type Lang } from "@/lib/i18n";
 
 type Params = { lang: string; term: string; course: string; type: string; slug: string };
@@ -107,8 +108,12 @@ export default async function NotePage({ params }: Props) {
     );
   }
 
-  // ---------- Markdown note ----------
-  const { html, headings } = await renderMarkdownFile(noteSourcePath(note), noteAssetBase(note));
+  // ---------- Markdown / MDX note ----------
+  const rendered =
+    note.format === "mdx"
+      ? await renderMdxFile(noteSourcePath(note), noteAssetBase(note))
+      : await renderMarkdownFile(noteSourcePath(note), noteAssetBase(note));
+  const { headings } = rendered;
 
   return (
     <div className="mx-auto max-w-[1120px] px-4 sm:px-6">
@@ -139,7 +144,11 @@ export default async function NotePage({ params }: Props) {
             </details>
           )}
 
-          <div className="prose mt-8" dangerouslySetInnerHTML={{ __html: html }} />
+          {"html" in rendered ? (
+            <div className="prose mt-8" dangerouslySetInnerHTML={{ __html: rendered.html }} />
+          ) : (
+            <div className="prose mt-8">{rendered.content}</div>
+          )}
           <PrevNext prev={prev} next={next} lang={lang} />
         </article>
 

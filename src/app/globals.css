@@ -168,3 +168,88 @@ body {
 .prose [style*="solid #000"], .prose [style*="dashed #000"] { border-bottom-color: currentColor !important; }
 .prose [style*="color:#555"] { color: var(--fg-3) !important; }
 [data-theme="dark"] .prose img { filter: brightness(.88); }
+
+/* ---------- MDX note components ---------- */
+:root { --c-exam: #b42318; --c-warn: #b54708; --c-tip: #067647; --c-board: #5b4bc4; --c-extra: #1f4e8c; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) { --c-exam: #f97066; --c-warn: #fdb022; --c-tip: #47cd89; --c-board: #a99cf7; --c-extra: #8db6ef; }
+}
+:root[data-theme="dark"] { --c-exam: #f97066; --c-warn: #fdb022; --c-tip: #47cd89; --c-board: #a99cf7; --c-extra: #8db6ef; }
+
+.callout {
+  --c: var(--fg-3);
+  border: 1px solid var(--line);
+  border-left: 3px solid var(--c);
+  border-radius: 10px;
+  background: color-mix(in oklab, var(--c) 5%, var(--surface));
+  padding: .8em 1.1em;
+}
+.callout-exam { --c: var(--c-exam); }
+.callout-warn { --c: var(--c-warn); }
+.callout-tip, .callout-memo { --c: var(--c-tip); }
+.callout-board { --c: var(--c-board); }
+.callout-extra, .callout-note { --c: var(--c-extra); }
+.callout-title { font-size: .86em; font-weight: 600; color: var(--c); letter-spacing: .01em; }
+.callout-body { margin-top: .35em; }
+.callout-body > * + * { margin-top: .55em; }
+
+.fig { margin-left: 0; margin-right: 0; }
+.prose .fig img { width: auto; max-width: 100%; max-height: 560px; margin: 0 auto; }
+.fig figcaption { text-align: center; margin-top: .55em; font-size: .86em; color: var(--fg-2); line-height: 1.55; }
+.fig-source { display: inline-block; margin-left: .6em; font-family: var(--font-mono); font-size: .88em; color: var(--fg-3); }
+.fig-board img { background: #fff; border-color: color-mix(in oklab, var(--c-board) 35%, var(--line)); }
+[data-theme="dark"] .fig-board img { filter: none; }
+
+.qa { border: 1px solid var(--line); border-radius: 10px; padding: .6em 1em; }
+.qa + .qa { margin-top: .6em; }
+.qa summary { cursor: pointer; font-weight: 500; list-style-position: outside; }
+.qa summary::marker { color: var(--fg-3); }
+.qa[open] summary { color: var(--accent); }
+.qa-body { margin-top: .6em; padding-top: .6em; border-top: 1px dashed var(--line); color: var(--fg-2); }
+.qa-body > * + * { margin-top: .5em; }
+
+.layer-stack-wrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 10px; }
+.layer-stack { display: grid; grid-template-columns: 2.2em 8.5em minmax(12em, 1fr) 6.4em 9em 7.5em; min-width: 660px; font-size: .88em; line-height: 1.45; }
+.layer-stack > span { padding: .55em .7em; border-bottom: 1px solid var(--line); }
+.layer-stack small { display: block; color: var(--fg-3); font-size: .86em; margin-top: .1em; }
+.layer-stack .ls-head { background: var(--subtle); font-weight: 600; font-size: .92em; }
+.ls-n { font-family: var(--font-mono); color: var(--fg-3); text-align: center; }
+.ls-pdu { font-family: var(--font-mono); font-weight: 600; color: var(--accent); }
+.ls-dev { color: var(--fg-2); }
+.ls-tcpip { display: flex; align-items: center; justify-content: center; text-align: center; font-weight: 600; background: var(--accent-wash); border-left: 1px solid var(--line); color: var(--accent); }
+.ls-l3, .ls-l2, .ls-l1 { background: color-mix(in oklab, var(--c-tip) 5%, transparent); }
+
+.lab { border: 1px solid var(--line-strong); border-radius: 12px; padding: 1em 1.1em; background: var(--surface); font-size: .94em; }
+.lab-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1em; flex-wrap: wrap; }
+.lab-kicker { font-family: var(--font-mono); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+.lab-ports { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5em; margin-top: .9em; }
+.lab-port { border: 1px solid var(--line); border-radius: 8px; padding: .4em .6em; display: flex; flex-direction: column; font-size: .92em; transition: all .2s; }
+.lab-port small { color: var(--fg-3); }
+.lab-port-in { border-color: var(--c-board); background: color-mix(in oklab, var(--c-board) 10%, transparent); }
+.lab-port-out { border-color: var(--c-tip); background: color-mix(in oklab, var(--c-tip) 10%, transparent); }
+.lab-controls { display: flex; flex-wrap: wrap; gap: .5em .8em; align-items: center; margin-top: .9em; }
+.lab-select { border: 1px solid var(--line); border-radius: 6px; background: var(--bg); padding: .1em .3em; font-family: var(--font-mono); }
+.lab-decision { margin-top: .9em; border-radius: 8px; padding: .6em .8em; display: flex; flex-direction: column; gap: .2em; font-size: .95em; }
+.lab-decision span { color: var(--fg-2); }
+.lab-flood { background: color-mix(in oklab, var(--c-warn) 10%, transparent); }
+.lab-flood b { color: var(--c-warn); }
+.lab-forward { background: color-mix(in oklab, var(--c-tip) 10%, transparent); }
+.lab-forward b { color: var(--c-tip); }
+.lab-filter { background: color-mix(in oklab, var(--c-extra) 10%, transparent); }
+.lab-filter b { color: var(--c-extra); }
+.lab-table { width: 100%; margin-top: .9em; border-collapse: collapse; font-size: .92em; }
+.lab-table th, .lab-table td { text-align: left; padding: .35em .6em; border-bottom: 1px solid var(--line); }
+.lab-table th { background: var(--subtle); font-weight: 600; }
+.lab-hot td { background: var(--mark); }
+
+.fcs-grid { display: grid; grid-template-columns: auto auto 1fr; gap: .7em 1em; align-items: center; margin-top: .9em; }
+.fcs-label { font-size: .88em; color: var(--fg-2); white-space: nowrap; }
+.fcs-calc { font-family: var(--font-mono); font-size: .85em; color: var(--fg-2); }
+.fcs-bit { width: 2em; height: 2em; border: 1px solid var(--line-strong); border-radius: 6px; font-family: var(--font-mono); font-weight: 600; background: var(--bg); }
+.fcs-bit:not(:disabled):hover { border-color: var(--accent); }
+.fcs-flip { border-color: var(--c-exam); color: var(--c-exam); background: color-mix(in oklab, var(--c-exam) 10%, transparent); }
+@media (max-width: 560px) {
+  .fcs-grid { grid-template-columns: auto 1fr; }
+  .fcs-calc { grid-column: 1 / -1; }
+  .lab-ports { grid-template-columns: repeat(2, 1fr); }
+}

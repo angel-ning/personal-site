@@ -1,0 +1,17 @@
+{
+  "agingMinutes": 5,
+  "hosts": [
+    { "id": "F", "mac": "MAC-F", "port": "E0" },
+    { "id": "L", "mac": "MAC-L", "port": "E0" },
+    { "id": "Q", "mac": "MAC-Q", "port": "E1" },
+    { "id": "V", "mac": "MAC-V", "port": "E1" }
+  ],
+  "ports": ["E0", "E1", "E2", "E3"],
+  "script": [
+    { "src": "F", "dst": "Q", "time": "4:41" },
+    { "src": "Q", "dst": "F", "time": "4:45" },
+    { "src": "L", "dst": "V", "time": "4:47" },
+    { "src": "V", "dst": "L", "time": "4:49" },
+    { "src": "F", "dst": "L", "time": "4:50" }
+  ]
+}
