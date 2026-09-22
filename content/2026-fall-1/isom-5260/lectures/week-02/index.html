@@ -1,0 +1,1846 @@
+<title>Week 2 · ERD 复习笔记</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<style>
+  :root{
+    --paper:#ECEFF3; --surface:#FFFFFF; --surface-2:#E2E7EC; --surface-3:#F5F7F9;
+    --ink:#131A22; --ink-2:#54626E; --ink-3:#7F8D99;
+    --line:#C4CCD4; --line-strong:#5D6C79;
+    --accent:#1C4E8A; --accent-wash:#DEE8F4;
+    --ochre:#8E5715; --ochre-wash:#F5E9D6;
+    --flag:#A03A28; --flag-wash:#F6E2DD;
+    --ok:#33684A; --ok-wash:#DEEBE1;
+    --serif:"Source Serif 4","Songti SC","Noto Serif SC",Georgia,serif;
+    --sans:"Archivo","PingFang SC","Hiragino Sans GB",-apple-system,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --paper:#101720; --surface:#18212B; --surface-2:#212C37; --surface-3:#1C2630;
+      --ink:#E6ECF2; --ink-2:#9FADBA; --ink-3:#76848F;
+      --line:#32404C; --line-strong:#8195A3;
+      --accent:#82B4EC; --accent-wash:#17263A;
+      --ochre:#D6A55F; --ochre-wash:#2E2415;
+      --flag:#E28E77; --flag-wash:#38201A;
+      --ok:#7FB78D; --ok-wash:#1A2B1F;
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#101720; --surface:#18212B; --surface-2:#212C37; --surface-3:#1C2630;
+    --ink:#E6ECF2; --ink-2:#9FADBA; --ink-3:#76848F;
+    --line:#32404C; --line-strong:#8195A3;
+    --accent:#82B4EC; --accent-wash:#17263A;
+    --ochre:#D6A55F; --ochre-wash:#2E2415;
+    --flag:#E28E77; --flag-wash:#38201A;
+    --ok:#7FB78D; --ok-wash:#1A2B1F;
+  }
+
+  body{background:var(--paper);color:var(--ink);font-family:var(--serif);font-size:16px;line-height:1.72;}
+  .shell{max-width:1220px;margin:0 auto;padding:40px 24px 110px;display:grid;grid-template-columns:196px minmax(0,1fr);gap:52px;align-items:start;}
+
+  /* ---------- masthead ---------- */
+  .mast{grid-column:1/-1;border-bottom:2px solid var(--ink);padding-bottom:24px;display:flex;flex-direction:column;gap:12px;}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);}
+  h1{font-family:var(--sans);font-weight:700;font-size:clamp(30px,4.2vw,44px);line-height:1.08;margin:0;letter-spacing:-.02em;text-wrap:balance;}
+  .sub{margin:0;color:var(--ink-2);font-size:17px;max-width:62ch;}
+  .taglegend{display:flex;flex-wrap:wrap;gap:10px;margin-top:6px;}
+
+  .tag{font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;padding:2.5px 8px;border-radius:2px;font-weight:500;white-space:nowrap;vertical-align:2px;}
+  .tag.exam{background:var(--flag-wash);color:var(--flag);}
+  .tag.und{background:var(--accent-wash);color:var(--accent);}
+  .tag.fyi{background:var(--surface-2);color:var(--ink-2);}
+
+  /* ---------- toc ---------- */
+  nav.toc{position:sticky;top:24px;font-family:var(--sans);font-size:13px;line-height:1.5;}
+  nav.toc .tt{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;}
+  nav.toc ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px;}
+  nav.toc a{display:block;padding:3px 0 3px 11px;border-left:2px solid var(--line);color:var(--ink-2);text-decoration:none;}
+  nav.toc a:hover,nav.toc a:focus-visible{color:var(--accent);border-left-color:var(--accent);}
+  nav.toc .grp{margin-top:14px;padding:3px 0 3px 11px;border-left:2px solid var(--ink);color:var(--ink);font-weight:600;font-size:12px;letter-spacing:.04em;text-transform:uppercase;}
+  nav.toc .grp:first-child{margin-top:0;}
+
+  /* ---------- body ---------- */
+  main{min-width:0;display:flex;flex-direction:column;gap:8px;}
+  section{scroll-margin-top:24px;padding-top:26px;}
+  .part{border-top:2px solid var(--ink);margin-top:34px;padding-top:22px;}
+  .part-no{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;}
+  h2{font-family:var(--sans);font-weight:700;font-size:30px;line-height:1.15;margin:4px 0 0;letter-spacing:-.018em;}
+  h3{font-family:var(--sans);font-weight:600;font-size:21px;line-height:1.25;margin:0 0 12px;letter-spacing:-.012em;display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  h3 .no{font-family:var(--mono);font-size:13px;color:var(--accent);font-weight:500;}
+  h4{font-family:var(--sans);font-weight:600;font-size:16px;margin:26px 0 8px;letter-spacing:-.005em;}
+  p{margin:0 0 14px;max-width:70ch;}
+  main ul,main ol.body{margin:0 0 16px;padding-left:22px;max-width:70ch;}
+  main li{margin-bottom:7px;}
+  b,strong{font-weight:600;}
+  .en{font-family:var(--sans);font-size:.93em;color:var(--ink-2);}
+  code{font-family:var(--mono);font-size:.84em;background:var(--surface-2);padding:1.5px 5px;border-radius:2px;}
+
+  /* ---------- callouts ---------- */
+  .box{background:var(--surface);border:1px solid var(--line);padding:16px 18px;margin:0 0 18px;max-width:74ch;}
+  .box > :last-child{margin-bottom:0;}
+  .box .bt{font-family:var(--sans);font-weight:600;font-size:14px;margin:0 0 7px;display:flex;align-items:center;gap:8px;}
+  .box .bt::before{content:"";width:5px;height:15px;background:var(--line-strong);flex:none;border-radius:1px;}
+  .box.biz{background:var(--ochre-wash);border-color:var(--ochre);}
+  .box.biz .bt{color:var(--ochre);} .box.biz .bt::before{background:var(--ochre);}
+  .box.rule{background:var(--accent-wash);border-color:var(--accent);}
+  .box.rule .bt{color:var(--accent);} .box.rule .bt::before{background:var(--accent);}
+  .box.trap{background:var(--flag-wash);border-color:var(--flag);}
+  .box.trap .bt{color:var(--flag);} .box.trap .bt::before{background:var(--flag);}
+  .box code{background:var(--surface);}
+
+  /* ---------- figures ---------- */
+  figure{margin:6px 0 22px;}
+  .fig-canvas{background:var(--surface);border:1px solid var(--line);padding:14px 16px;overflow-x:auto;}
+  .fig-canvas svg{display:block;width:100%;height:auto;}
+  figcaption{font-family:var(--sans);font-size:12.5px;color:var(--ink-2);margin-top:7px;line-height:1.5;}
+  figcaption b{color:var(--ink);font-weight:600;}
+
+  /* svg primitives */
+  .d-box{fill:var(--surface);stroke:var(--ink);stroke-width:1.6;}
+  .d-box.soft{fill:var(--surface-3);}
+  .d-box.hi{fill:var(--accent-wash);stroke:var(--accent);stroke-width:2;}
+  .d-inner{fill:none;stroke:var(--ink);stroke-width:1.1;}
+  .d-name{font-family:var(--sans);font-size:13px;font-weight:600;fill:var(--ink);letter-spacing:.04em;}
+  .d-name.hi{fill:var(--accent);}
+  .d-t{font-family:var(--sans);font-size:12.5px;fill:var(--ink);}
+  .d-t.sm{font-size:11px;fill:var(--ink-2);}
+  .d-t.ac{fill:var(--accent);}
+  .d-attr{font-family:var(--serif);font-size:12.5px;fill:var(--ink);}
+  .d-pk{text-decoration:underline;text-underline-offset:3px;}
+  .d-dbl{stroke:var(--ink);stroke-width:1;}
+  .d-div{stroke:var(--line);stroke-width:1;}
+  .d-line{stroke:var(--line-strong);stroke-width:1.6;fill:none;}
+  .d-line.dash{stroke-dasharray:5 4;}
+  .d-sym{stroke:var(--line-strong);stroke-width:1.6;fill:none;}
+  .d-symo{stroke:var(--line-strong);stroke-width:1.6;fill:var(--surface);}
+  .d-lbl{font-family:var(--serif);font-size:12px;fill:var(--ink);}
+  .d-note{font-family:var(--mono);font-size:10.5px;fill:var(--accent);}
+  .d-note.o{fill:var(--ochre);}
+
+  /* ---------- description markup ---------- */
+  .mk-e{border:1.5px solid var(--accent);border-radius:2px;padding:1px 5px;font-weight:600;}
+  .mk-a{background:var(--ochre-wash);box-shadow:0 0 0 1px var(--ochre) inset;border-radius:2px;padding:1px 4px;}
+  .mk-v{text-decoration:underline wavy var(--ok);text-underline-offset:4px;text-decoration-thickness:1.5px;font-weight:600;}
+  .mk-c{border:1.5px solid var(--flag);border-radius:44%;padding:1px 8px;color:var(--flag);font-weight:600;}
+
+  /* ---------- tables ---------- */
+  .tw{overflow-x:auto;border:1px solid var(--line);background:var(--surface);margin:0 0 20px;}
+  table{border-collapse:collapse;width:100%;font-size:14px;font-family:var(--serif);}
+  th{text-align:left;font-family:var(--mono);font-size:10.5px;letter-spacing:.11em;text-transform:uppercase;color:var(--ink-2);font-weight:500;padding:10px 13px;background:var(--surface-2);border-bottom:1px solid var(--line-strong);white-space:nowrap;}
+  td{padding:10px 13px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.55;}
+  tr:last-child td{border-bottom:none;}
+  tr.bad td{background:var(--flag-wash);}
+  td.k{font-family:var(--sans);font-weight:600;font-size:13.5px;white-space:nowrap;}
+  td.m{font-family:var(--mono);font-size:12.5px;white-space:nowrap;}
+  table small{color:var(--ink-2);font-size:12.5px;}
+
+  /* matrix table */
+  table.matrix{font-size:12.5px;}
+  table.matrix th.rot{writing-mode:vertical-rl;text-orientation:mixed;transform:rotate(180deg);height:96px;padding:6px 4px;text-align:left;letter-spacing:.04em;}
+  table.matrix td{text-align:center;padding:7px 6px;font-family:var(--mono);color:var(--accent);font-weight:500;}
+  table.matrix td.rl{text-align:left;font-family:var(--sans);font-weight:600;font-size:12.5px;color:var(--ink);white-space:nowrap;}
+
+  @media (max-width:1000px){
+    .shell{grid-template-columns:1fr;gap:26px;}
+    nav.toc{position:static;border:1px solid var(--line);background:var(--surface);padding:16px 18px;}
+    nav.toc ol{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:1px 20px;}
+    nav.toc .grp{grid-column:1/-1;}
+  }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <marker id="ar" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="var(--line-strong)"/>
+  </marker>
+  <marker id="ara" viewBox="0 0 10 10" refX="9.5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)"/>
+  </marker>
+</defs></svg>
+
+<div class="shell">
+
+  <div class="mast">
+    <div class="kicker">ISOM 5260 · Lecture 2 · Week 2</div>
+    <h1>数据库分析与 E-R 图</h1>
+    <p class="sub">从「信息系统长什么样」一路推到「怎么画一张 ER 图」，最后附一套以 Assignment 1 为例的四轮扫描做题法。全部图示按 lecture 的记法重绘。</p>
+    <div class="taglegend">
+      <span class="tag exam">考点 · 会考的规则与记法</span>
+      <span class="tag und">理解 · 想通了就不用背</span>
+      <span class="tag fyi">了解 · 知道有这回事</span>
+    </div>
+  </div>
+
+  <nav class="toc">
+    <div class="tt">目录</div>
+    <ol>
+      <li class="grp">Part 1 · 开发流程</li>
+      <li><a href="#s0">主线：一张图串起来</a></li>
+      <li><a href="#s11">1.1 三层架构</a></li>
+      <li><a href="#s12">1.2 企业数据建模</a></li>
+      <li><a href="#s13">1.3 企业模型 vs 项目模型</a></li>
+      <li><a href="#s14">1.4 SDLC vs 原型法</a></li>
+      <li><a href="#s15">1.5 SDLC 五阶段</a></li>
+      <li><a href="#s16">1.6 原型法流程</a></li>
+      <li><a href="#s17">1.7 参与的人</a></li>
+      <li class="grp">Part 2 · E-R 图</li>
+      <li><a href="#s20">2.0 为什么要画图</a></li>
+      <li><a href="#s21">2.1 实体 Entity</a></li>
+      <li><a href="#s22">2.2 三种实体类型</a></li>
+      <li><a href="#s23">2.3 属性 Attributes</a></li>
+      <li><a href="#s24">2.4 标识符 Identifiers</a></li>
+      <li><a href="#s25">2.5 关系 Relationships</a></li>
+      <li><a href="#s26">2.6 基数约束</a></li>
+      <li><a href="#s27">2.7 关系的度</a></li>
+      <li><a href="#s28">2.8 多重关系</a></li>
+      <li class="grp">Part 3 · 做题技巧</li>
+      <li><a href="#s30">四轮扫描法</a></li>
+      <li><a href="#s31">3.1 找 Entity</a></li>
+      <li><a href="#s32">3.2 找 Attribute</a></li>
+      <li><a href="#s33">3.3 找 Relationship</a></li>
+      <li><a href="#s34">3.4 定 Cardinality</a></li>
+      <li><a href="#s35">3.5 交卷前</a></li>
+      <li class="grp">附录</li>
+      <li><a href="#ref">记法总表</a></li>
+      <li><a href="#trap">易错清单</a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+  <section id="s0">
+    <div class="part"><div class="part-no">Part 1</div><h2>数据库开发流程</h2></div>
+    <h3 style="margin-top:22px">主线：这节课在讲什么</h3>
+    <p>Lecture 2 前半段看上去是五六个互不相干的话题，其实是一条链子。先把这条链子记住，后面每一节就都有位置可放。</p>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 1220 210" role="img" aria-label="从三层架构到 ER 图的主线">
+          <rect class="d-box" x="20" y="55" width="200" height="92"/>
+          <text class="d-name" x="120" y="88" text-anchor="middle">信息系统</text>
+          <text class="d-t sm" x="120" y="110" text-anchor="middle">3-tier client/server</text>
+          <text class="d-t sm" x="120" y="128" text-anchor="middle">architecture</text>
+
+          <rect class="d-box" x="265" y="55" width="200" height="92"/>
+          <text class="d-name" x="365" y="88" text-anchor="middle">Enterprise tier</text>
+          <text class="d-t sm" x="365" y="110" text-anchor="middle">最底层坐着一个 DBMS，</text>
+          <text class="d-t sm" x="365" y="128" text-anchor="middle">全组织的数据都在这</text>
+
+          <rect class="d-box" x="510" y="55" width="200" height="92"/>
+          <text class="d-name" x="610" y="88" text-anchor="middle">企业数据建模</text>
+          <text class="d-t sm" x="610" y="110" text-anchor="middle">哪个部门用哪些数据、</text>
+          <text class="d-t sm" x="610" y="128" text-anchor="middle">要立哪些数据库项目</text>
+
+          <rect class="d-box" x="755" y="55" width="200" height="92"/>
+          <text class="d-name" x="855" y="88" text-anchor="middle">开发方法</text>
+          <text class="d-t sm" x="855" y="110" text-anchor="middle">SDLC 或 Prototyping</text>
+          <text class="d-t sm" x="855" y="128" text-anchor="middle">（两条路，各有取舍）</text>
+
+          <rect class="d-box hi" x="1000" y="55" width="200" height="92"/>
+          <text class="d-name hi" x="1100" y="88" text-anchor="middle">Analysis 阶段</text>
+          <text class="d-t sm ac" x="1100" y="110" text-anchor="middle">Conceptual data modeling</text>
+          <text class="d-t sm ac" x="1100" y="128" text-anchor="middle">产物就是 E-R 图</text>
+
+          <line class="d-line" x1="220" y1="101" x2="257" y2="101" marker-end="url(#ar)"/>
+          <line class="d-line" x1="465" y1="101" x2="502" y2="101" marker-end="url(#ar)"/>
+          <line class="d-line" x1="710" y1="101" x2="747" y2="101" marker-end="url(#ar)"/>
+          <line class="d-line" x1="955" y1="101" x2="992" y2="101" marker-end="url(#ar)"/>
+
+          <text class="d-note" x="238" y="45" text-anchor="middle">数据放哪</text>
+          <text class="d-note" x="483" y="45" text-anchor="middle">先规划</text>
+          <text class="d-note" x="728" y="45" text-anchor="middle">再开发</text>
+          <text class="d-note" x="973" y="45" text-anchor="middle">聚焦</text>
+
+          <text class="d-t sm" x="1100" y="175" text-anchor="middle">↓</text>
+          <text class="d-name hi" x="1100" y="196" text-anchor="middle">Part 2</text>
+        </svg>
+      </div>
+      <figcaption><b>一句话版本：</b>信息系统最底层是个 DBMS → 这个 DBMS 不能拍脑袋建，要先做企业级数据规划 → 规划出来的项目按 SDLC 或原型法开发 → SDLC 的 Analysis 阶段做概念数据建模 → 概念数据建模的产物就是 E-R 图。</figcaption>
+    </figure>
+  </section>
+
+  <section id="s11">
+    <h3><span class="no">1.1</span> 三层客户端／服务器架构 <span class="en">3-tier Client/Server Architecture</span> <span class="tag fyi">了解</span></h3>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 900 356" role="img" aria-label="三层架构">
+          <text class="d-note" x="16" y="46">TIER 1</text>
+          <text class="d-name" x="16" y="68">Client tier</text>
+          <rect class="d-box soft" x="180" y="20" width="700" height="86" rx="4"/>
+          <text class="d-name" x="200" y="50">浏览器 · Browser</text>
+          <text class="d-t sm" x="200" y="74">会计、分析师、客服各用各的界面。本地基本不存数据，</text>
+          <text class="d-t sm" x="200" y="92">最多缓存一点点。换台电脑登录，看到的东西一模一样。</text>
+
+          <text class="d-note" x="16" y="181">TIER 2</text>
+          <text class="d-name" x="16" y="203">App / Web tier</text>
+          <rect class="d-box soft" x="180" y="135" width="700" height="86" rx="4"/>
+          <text class="d-name" x="200" y="165">应用／Web 服务器</text>
+          <text class="d-t sm" x="200" y="189">业务逻辑集中在这里：A/P、A/R、订单处理、库存控制；</text>
+          <text class="d-t sm" x="200" y="207">负责连接 DBMS、生成动态页面、管理会话 (session)。</text>
+
+          <text class="d-note" x="16" y="296">TIER 3</text>
+          <text class="d-name" x="16" y="318">Enterprise tier</text>
+          <rect class="d-box hi" x="180" y="250" width="700" height="86" rx="4"/>
+          <text class="d-name hi" x="200" y="280">Enterprise server + DBMS</text>
+          <text class="d-t sm ac" x="200" y="304">全组织的交易数据库，或各部门服务器上的数据汇总。</text>
+          <text class="d-t sm ac" x="200" y="322">这一层就是本课程要设计的东西。</text>
+
+          <line class="d-line" x1="530" y1="106" x2="530" y2="131" marker-end="url(#ar)" marker-start="url(#ar)"/>
+          <line class="d-line" x1="530" y1="221" x2="530" y2="246" marker-end="url(#ar)" marker-start="url(#ar)"/>
+        </svg>
+      </div>
+      <figcaption>三层的分工：<b>界面</b>在客户端、<b>逻辑</b>在中间层、<b>数据</b>在企业层。</figcaption>
+    </figure>
+
+    <div class="box biz">
+      <p class="bt">业务上为什么要分三层</p>
+      <p>如果每台客户端都自己存一份数据，同一个客户的地址在会计那台机器和客服那台机器上会不一样，改了一处另一处不知道。把数据集中到最底层，就只有一个「真相来源」。中间层再把业务逻辑集中起来，改一次规则全公司生效，而不是给每个部门的程序都改一遍。</p>
+      <p style="margin-bottom:0">这也直接引出课程的问题：<span class="d-t" style="font-family:var(--serif)">既然全公司都靠这一个数据库，它该怎么设计？</span></p>
+    </div>
+  </section>
+
+  <section id="s12">
+    <h3><span class="no">1.2</span> 企业数据建模 <span class="en">Enterprise Data Modeling</span> <span class="tag und">理解</span></h3>
+    <p><b>目标：</b>为整个组织的数据画出一张总览图（<span class="en">create an overall picture or explanation of organizational data</span>）。它发生在 <b>IS planning</b> 阶段，是<b>自上而下</b>（top-down）的，产出往往是若干个待立项的数据库开发项目。</p>
+    <p>最典型的产物是一张<b>业务职能 × 数据实体</b>矩阵：行是业务职能，列是数据实体类型，打 X 表示这个职能会用到这类数据。</p>
+
+    <div class="tw">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th style="min-width:150px">Business Function ＼ Data Entity</th>
+            <th class="rot">Customer</th><th class="rot">Product</th><th class="rot">Raw Material</th><th class="rot">Order</th>
+            <th class="rot">Work Center</th><th class="rot">Work Order</th><th class="rot">Invoice</th><th class="rot">Equipment</th><th class="rot">Employee</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="rl">Business Planning</td><td>X</td><td>X</td><td></td><td></td><td></td><td></td><td></td><td>X</td><td>X</td></tr>
+          <tr><td class="rl">Product Development</td><td></td><td>X</td><td>X</td><td></td><td>X</td><td></td><td></td><td>X</td><td></td></tr>
+          <tr><td class="rl">Materials Management</td><td></td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td></td><td>X</td><td></td></tr>
+          <tr><td class="rl">Order Fulfillment</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td></tr>
+          <tr><td class="rl">Order Shipment</td><td>X</td><td>X</td><td></td><td>X</td><td>X</td><td></td><td>X</td><td></td><td>X</td></tr>
+          <tr><td class="rl">Sales Summarization</td><td>X</td><td>X</td><td></td><td>X</td><td></td><td></td><td>X</td><td></td><td>X</td></tr>
+          <tr><td class="rl">Production Operations</td><td></td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td></td><td>X</td><td>X</td></tr>
+          <tr><td class="rl">Finance and Accounting</td><td>X</td><td>X</td><td>X</td><td>X</td><td>X</td><td></td><td>X</td><td>X</td><td>X</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box biz">
+      <p class="bt">这张矩阵在业务上有什么用</p>
+      <ul style="margin-bottom:0">
+        <li><b>定权限。</b>一眼看出「Finance 需要读 Customer，但 Product Development 不需要」，权限设计有了依据，而不是全公司都给全表读权限。</li>
+        <li><b>防重复建库。</b>Order Fulfillment 几乎用到所有实体——说明它是跨部门的核心流程，不能让它自己单独建一个库，否则会和别的部门的数据打架。</li>
+        <li><b>定优先级。</b>被最多职能引用的实体（Product、Order）就是最该先建、先建好的核心数据。</li>
+        <li><b>划项目边界。</b>某几行几列聚成一块，那一块就可以立成一个独立的数据库开发项目。</li>
+      </ul>
+    </div>
+  </section>
+
+  <section id="s13">
+    <h3><span class="no">1.3</span> 企业模型 vs 项目模型 <span class="en">Enterprise Model vs Project Model</span> <span class="tag und">理解</span></h3>
+    <p>Slides 上只给了一句结论——<span class="en">“The project model refines and expands the relevant part of the enterprise model.”</span>——没给定义。把定义补上：</p>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:110px"></th><th>Enterprise Data Model</th><th>Project Data Model</th></tr></thead>
+        <tbody>
+          <tr><td class="k">范围</td><td>整个组织</td><td>单个项目／单个业务职能</td></tr>
+          <tr><td class="k">粒度</td><td>宏观。通常只有<b>实体名</b>和主要关系，<b>不含属性</b></td><td>细致。所有实体、关系、<b>属性</b>、business rules 全都要有</td></tr>
+          <tr><td class="k">产生于</td><td>IS planning / Enterprise modeling</td><td>SDLC 的 Analysis 阶段（conceptual data modeling）</td></tr>
+          <tr><td class="k">用途</td><td>规划：决定要立哪些项目、边界在哪</td><td>建造：直接作为 relational schema 的蓝图</td></tr>
+          <tr><td class="k">关系</td><td colspan="2">项目模型 = 把企业模型中<b>相关的那一块</b>取出来，细化 + 扩展。两者必须保持一致（slides 里 Analysis 阶段有一条就是 “Compare preliminary conceptual data model with enterprise data model”）。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 1000 340" role="img" aria-label="企业模型与项目模型的关系">
+          <text class="d-note" x="20" y="20">ENTERPRISE MODEL · 只有实体和关系</text>
+          <rect class="d-box soft" x="20" y="32" width="430" height="288" rx="3"/>
+          <rect class="d-box" x="48" y="60" width="112" height="42"/><text class="d-t" x="104" y="86" text-anchor="middle">CUSTOMER</text>
+          <rect class="d-box" x="48" y="150" width="112" height="42"/><text class="d-t" x="104" y="176" text-anchor="middle">ORDER</text>
+          <rect class="d-box" x="230" y="150" width="112" height="42"/><text class="d-t" x="286" y="176" text-anchor="middle">INVENTORY</text>
+          <rect class="d-box" x="230" y="60" width="112" height="42"/><text class="d-t sm" x="286" y="79" text-anchor="middle">INVENTORY</text><text class="d-t sm" x="286" y="94" text-anchor="middle">PRICING HISTORY</text>
+          <rect class="d-box" x="48" y="248" width="112" height="42"/><text class="d-t" x="104" y="274" text-anchor="middle">BACKORDER</text>
+          <rect class="d-box" x="348" y="248" width="82" height="42"/><text class="d-t sm" x="389" y="274" text-anchor="middle">EMPLOYEE</text>
+          <line class="d-line" x1="104" y1="102" x2="104" y2="150"/>
+          <line class="d-line" x1="160" y1="171" x2="230" y2="171"/>
+          <line class="d-line" x1="286" y1="102" x2="286" y2="150"/>
+          <line class="d-line" x1="104" y1="192" x2="104" y2="248"/>
+          <line class="d-line" x1="160" y1="269" x2="286" y2="269"/><line class="d-line" x1="286" y1="269" x2="286" y2="192"/>
+          <rect x="34" y="46" width="322" height="160" fill="none" stroke="var(--flag)" stroke-width="2" stroke-dasharray="7 5"/>
+          <text class="d-note" x="34" y="222" style="fill:var(--flag)">这一块要立项</text>
+
+          <line class="d-line" x1="466" y1="176" x2="546" y2="176" marker-end="url(#ara)" style="stroke:var(--accent)"/>
+          <text class="d-note" x="506" y="162" text-anchor="middle">refines &amp;</text>
+          <text class="d-note" x="506" y="196" text-anchor="middle">expands</text>
+
+          <text class="d-note" x="560" y="20">PROJECT MODEL · 加上属性、business rules</text>
+          <rect class="d-box soft" x="560" y="32" width="420" height="288" rx="3"/>
+          <rect class="d-box" x="586" y="58" width="150" height="94"/>
+          <text class="d-name" x="661" y="80" text-anchor="middle">CUSTOMER</text>
+          <line class="d-div" x1="586" y1="92" x2="736" y2="92"/>
+          <text class="d-attr d-pk" x="600" y="112">Customer ID</text>
+          <text class="d-attr" x="600" y="132">Customer Name</text>
+          <rect class="d-box" x="800" y="58" width="150" height="94"/>
+          <text class="d-name" x="875" y="80" text-anchor="middle">PRODUCT</text>
+          <line class="d-div" x1="800" y1="92" x2="950" y2="92"/>
+          <text class="d-attr d-pk" x="814" y="112">Product ID</text>
+          <text class="d-attr" x="814" y="132">Standard Price</text>
+          <rect class="d-box" x="586" y="204" width="150" height="102"/>
+          <text class="d-name" x="661" y="226" text-anchor="middle">ORDER</text>
+          <line class="d-div" x1="586" y1="238" x2="736" y2="238"/>
+          <text class="d-attr d-pk" x="600" y="258">Order ID</text>
+          <text class="d-attr" x="600" y="278">Customer ID</text>
+          <text class="d-attr" x="600" y="298">Order Date</text>
+          <rect class="d-box" x="800" y="204" width="150" height="102" rx="18"/>
+          <text class="d-name" x="875" y="232" text-anchor="middle">ORDER LINE</text>
+          <line class="d-div" x1="816" y1="244" x2="934" y2="244"/>
+          <text class="d-attr" x="826" y="266">Quantity</text>
+          <line class="d-line" x1="661" y1="152" x2="661" y2="204"/>
+          <line class="d-line" x1="875" y1="152" x2="875" y2="204"/>
+          <line class="d-line" x1="736" y1="255" x2="800" y2="255"/>
+        </svg>
+      </div>
+      <figcaption>左边企业模型只知道「有这些东西、它们相关」；右边项目模型才知道「每个东西具体记什么、怎么关联」。右下角圆角的 ORDER LINE 是 associative entity，第 2.2 节会讲。</figcaption>
+    </figure>
+  </section>
+
+  <section id="s14">
+    <h3><span class="no">1.4</span> 两条开发路线：SDLC vs 原型法 <span class="tag exam">考点</span></h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:104px"></th><th>Systems Development Life Cycle (SDLC)</th><th>Prototyping</th></tr></thead>
+        <tbody>
+          <tr><td class="k">一句话</td><td>细致、计划周密的开发过程</td><td>快速应用开发 <span class="en">(RAD)</span></td></tr>
+          <tr><td class="k">建模投入</td><td>完整做概念数据建模</td><td><b>cursory attempt</b> —— 只草草做一遍概念建模</td></tr>
+          <tr><td class="k">数据库何时定</td><td>Analysis / Design 阶段就定下来</td><td>在做第一版原型的过程中边做边定</td></tr>
+          <tr><td class="k">节奏</td><td>周期长、耗时，但<b>comprehensive</b></td><td>不断出新版本，重复「实现 + 维护」两个动作</td></tr>
+          <tr><td class="k">代价</td><td>慢；需求早期就要说清楚</td><td>数据模型欠考虑，后期可能推倒重来；原型效率不够时要 convert to operational system</td></tr>
+          <tr><td class="k">适合</td><td>需求稳定、跨部门、数据是核心资产（银行核心系统、ERP）</td><td>需求模糊、要先看到东西才知道要什么（内部工具、创新业务）</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box biz">
+      <p class="bt">怎么选</p>
+      <p style="margin-bottom:0">看「改错的代价」。核心交易系统上线后改表结构要停机、要迁数据、要改所有下游报表 —— 这种就值得用 SDLC 把时间花在前面。反过来，一个部门内部用的看板，需求本来就是想出来的，用原型法先跑起来再说更划算。</p>
+    </div>
+  </section>
+
+  <section id="s15">
+    <h3><span class="no">1.5</span> SDLC 五阶段与对应的数据库活动 <span class="tag exam">考点</span></h3>
+    <p>SDLC 是个<b>循环</b>，不是一条直线：维护阶段发现新需求，又回到规划。每个阶段都有一项（Design 有两项）对应的数据库活动。</p>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 900 500" role="img" aria-label="SDLC 五阶段循环及对应的数据库活动">
+          <line class="d-line" x1="538" y1="88" x2="694" y2="172" marker-end="url(#ar)"/>
+          <line class="d-line" x1="772" y1="253" x2="702" y2="366" marker-end="url(#ar)"/>
+          <line class="d-line" x1="558" y1="416" x2="348" y2="416" marker-end="url(#ar)"/>
+          <line class="d-line" x1="200" y1="370" x2="134" y2="259" marker-end="url(#ar)"/>
+          <line class="d-line" x1="140" y1="164" x2="358" y2="92" marker-end="url(#ar)"/>
+
+          <rect class="d-box" x="362" y="24" width="176" height="88"/>
+          <text class="d-name" x="450" y="50" text-anchor="middle">Planning</text>
+          <line class="d-div" x1="378" y1="62" x2="522" y2="62"/>
+          <text class="d-note" x="450" y="82" text-anchor="middle">Enterprise modeling</text>
+          <text class="d-t sm" x="450" y="100" text-anchor="middle">分析现状、论证要不要建</text>
+
+          <rect class="d-box hi" x="690" y="165" width="176" height="88"/>
+          <text class="d-name hi" x="778" y="191" text-anchor="middle">Analysis</text>
+          <line class="d-div" x1="706" y1="203" x2="850" y2="203"/>
+          <text class="d-note" x="778" y="223" text-anchor="middle">Conceptual data modeling</text>
+          <text class="d-t sm ac" x="778" y="241" text-anchor="middle">← 本课重点，产出 E-R 图</text>
+
+          <rect class="d-box" x="560" y="372" width="176" height="88"/>
+          <text class="d-name" x="648" y="398" text-anchor="middle">Design</text>
+          <line class="d-div" x1="576" y1="410" x2="720" y2="410"/>
+          <text class="d-note" x="648" y="430" text-anchor="middle">Logical DB design</text>
+          <text class="d-note" x="648" y="448" text-anchor="middle">Physical DB design</text>
+
+          <rect class="d-box" x="172" y="372" width="176" height="88"/>
+          <text class="d-name" x="260" y="398" text-anchor="middle">Implementation</text>
+          <line class="d-div" x1="188" y1="410" x2="332" y2="410"/>
+          <text class="d-note" x="260" y="430" text-anchor="middle">DB implementation</text>
+          <text class="d-t sm" x="260" y="448" text-anchor="middle">建库、写程序、迁旧数据</text>
+
+          <rect class="d-box" x="34" y="165" width="176" height="88"/>
+          <text class="d-name" x="122" y="191" text-anchor="middle">Maintenance</text>
+          <line class="d-div" x1="50" y1="203" x2="194" y2="203"/>
+          <text class="d-note" x="122" y="223" text-anchor="middle">DB maintenance</text>
+          <text class="d-t sm" x="122" y="241" text-anchor="middle">调优、修错、恢复</text>
+
+          <text class="d-t sm" x="440" y="240" text-anchor="middle">五个阶段各自的目的（Purpose）</text>
+          <text class="d-t sm" x="440" y="262" text-anchor="middle">和数据库活动是两条并行的线，</text>
+          <text class="d-t sm" x="440" y="284" text-anchor="middle">考试常考「哪个阶段做哪件事」。</text>
+        </svg>
+      </div>
+      <figcaption>顺时针一圈：Planning → Analysis → Design → Implementation → Maintenance → 回到 Planning。</figcaption>
+    </figure>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:126px">阶段</th><th>阶段目的 Purpose</th><th>对应的数据库活动</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Planning</td><td>对业务处境形成初步理解，看信息系统能不能解决问题或创造机会</td><td><b>Enterprise modeling：</b>分析现有数据处理、分析各业务职能的数据库需求、论证新建数据库的必要性</td></tr>
+          <tr><td class="k">Analysis</td><td>彻底分析业务处境以确定需求、结构化这些需求、在若干候选功能中做取舍</td><td><b>Conceptual data modeling</b>（见下方展开）</td></tr>
+          <tr><td class="k">Design</td><td>把所有信息需求引出并结构化，形成全部技术与组织规格</td><td><b>Logical database design：</b>细化事务、表单、报表等数据库视图，把视图整合进概念模型，确定完整性与安全需求<br><b>Physical database design：</b>面向具体 DBMS 定义、决定数据的物理组织、设计数据库处理程序</td></tr>
+          <tr><td class="k">Implementation</td><td>写程序、建数据库、测试安装、培训用户、完成文档</td><td><b>Database implementation：</b>编码测试数据库处理程序、完成文档与培训材料、安装数据库并从旧系统转换数据</td></tr>
+          <tr><td class="k">Maintenance</td><td>监控系统的运行与有用性，修复和增强系统</td><td><b>Database maintenance：</b>确保演进中的需求仍被满足、性能调优、修错与恢复被污染的数据库</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box rule">
+      <p class="bt">Analysis → Conceptual data modeling 具体做七件事</p>
+      <ol class="body" style="margin-bottom:0">
+        <li>确定数据库需求的<b>范围</b>（scope）</li>
+        <li>分析所支持业务职能的<b>整体数据需求</b></li>
+        <li>开发<b>初步</b>概念数据模型 —— 只含实体和关系</li>
+        <li>把初步模型与<b>企业数据模型对照</b>（呼应 1.3 节）</li>
+        <li>开发<b>详细</b>概念数据模型 —— 全部实体、关系、<b>属性</b>、business rules</li>
+        <li>使其与信息系统的其他模型保持一致</li>
+        <li>把全部概念数据库规格写入 repository</li>
+      </ol>
+    </div>
+    <p>注意第 3 步和第 5 步的差别：先只画实体和关系（相当于企业模型那种粒度），确认无误后再补属性。<b>Assignment 1 要交的就是第 5 步的产物。</b></p>
+  </section>
+
+  <section id="s16">
+    <h3><span class="no">1.6</span> 用原型法开发数据库 <span class="tag fyi">了解</span></h3>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 880 350" role="img" aria-label="原型法开发流程">
+          <rect class="d-box" x="40" y="30" width="190" height="70"/>
+          <text class="d-name" x="135" y="62" text-anchor="middle">Identify problem</text>
+          <text class="d-t sm" x="135" y="82" text-anchor="middle">识别问题</text>
+
+          <rect class="d-box" x="360" y="30" width="190" height="70"/>
+          <text class="d-name" x="455" y="56" text-anchor="middle">Develop initial</text>
+          <text class="d-name" x="455" y="74" text-anchor="middle">prototype</text>
+          <text class="d-t sm" x="455" y="92" text-anchor="middle">做出第一版原型</text>
+
+          <rect class="d-box" x="360" y="230" width="190" height="70"/>
+          <text class="d-name" x="455" y="256" text-anchor="middle">Implement and</text>
+          <text class="d-name" x="455" y="274" text-anchor="middle">use prototype</text>
+          <text class="d-t sm" x="455" y="292" text-anchor="middle">让用户真正用起来</text>
+
+          <rect class="d-box" x="650" y="230" width="190" height="70"/>
+          <text class="d-name" x="745" y="256" text-anchor="middle">Revise and</text>
+          <text class="d-name" x="745" y="274" text-anchor="middle">enhance prototype</text>
+          <text class="d-t sm" x="745" y="292" text-anchor="middle">修改增强</text>
+
+          <rect class="d-box soft" x="40" y="230" width="190" height="70"/>
+          <text class="d-name" x="135" y="256" text-anchor="middle">Convert to</text>
+          <text class="d-name" x="135" y="274" text-anchor="middle">operational system</text>
+          <text class="d-t sm" x="135" y="292" text-anchor="middle">转为正式系统</text>
+
+          <line class="d-line" x1="230" y1="65" x2="352" y2="65" marker-end="url(#ar)"/>
+          <text class="d-note" x="291" y="46" text-anchor="middle">Initial requirements</text>
+
+          <line class="d-line" x1="455" y1="100" x2="455" y2="222" marker-end="url(#ar)"/>
+          <text class="d-note" x="466" y="168">Working prototype</text>
+
+          <line class="d-line" x1="550" y1="252" x2="642" y2="252" marker-end="url(#ar)"/>
+          <text class="d-note" x="596" y="240" text-anchor="middle">Problems</text>
+          <line class="d-line" x1="642" y1="284" x2="550" y2="284" marker-end="url(#ar)"/>
+          <text class="d-note" x="596" y="308" text-anchor="middle">Next version</text>
+
+          <line class="d-line" x1="745" y1="180" x2="745" y2="222" marker-end="url(#ar)"/>
+          <text class="d-note" x="745" y="168" text-anchor="middle">New requirements</text>
+
+          <line class="d-line dash" x1="352" y1="278" x2="238" y2="278" marker-end="url(#ar)"/>
+          <text class="d-note" x="295" y="248" text-anchor="middle">If prototype is</text>
+          <text class="d-note" x="295" y="262" text-anchor="middle">inefficient</text>
+
+          <text class="d-note o" x="40" y="20">Conceptual data modeling</text>
+          <text class="d-note o" x="560" y="20">Logical / Physical DB design · DB implementation</text>
+          <text class="d-note o" x="40" y="332">Database maintenance</text>
+        </svg>
+      </div>
+      <figcaption>关键在中间那个 <b>Implement ⇄ Revise</b> 的环：原型法不是「做完就完」，而是在这个环里转很多圈；只有当原型本身效率不够时，才向左「转为正式系统」。橙色标注的是每一步对应的数据库活动。</figcaption>
+    </figure>
+    <div class="box trap">
+      <p class="bt">对比时容易混的一点</p>
+      <p style="margin-bottom:0">原型法里 <b>Database maintenance 出现了两次</b>（Convert 之后一次，Revise 循环里一次）—— 因为它把「实现」和「维护」当成反复执行的动作。SDLC 里这两件事各自只在自己的阶段发生一次。</p>
+    </div>
+  </section>
+
+  <section id="s17">
+    <h3><span class="no">1.7</span> 参与数据库开发的人 <span class="tag fyi">了解</span></h3>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:190px">角色</th><th>他们贡献什么</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Business / Systems analysts</td><td>和管理层、用户一起分析<b>信息需求</b>。他们负责把业务语言翻译成需求。</td></tr>
+          <tr><td class="k">Database analysts</td><td>专注数据库本身的<b>需求与设计</b>。ER 图主要出自这个角色。</td></tr>
+          <tr><td class="k">Users</td><td>提供对自己信息需求的<b>评估</b>。business rules 的真正来源。</td></tr>
+          <tr><td class="k">Programmers</td><td>把设计变成可运行的程序。</td></tr>
+          <tr><td class="k">Database / Data administrators</td><td>管理数据库的运行、权限、备份、标准。</td></tr>
+          <tr><td class="k">Other technical experts</td><td>系统程序员、网络管理员、测试、技术文档写作。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box biz">
+      <p class="bt">为什么强调「协作」</p>
+      <p style="margin-bottom:0">数据库设计的正确与否，判定标准不在技术上而在业务上。「一个 course 能不能有多个 syllabus」这种问题，database analyst 自己是答不了的，只有 user 知道。同理，analyst 画出来的图必须能被 user 读懂并确认 —— 这就是为什么 slides 强调 business rules 要 <span class="en">“express in terms familiar to end users”</span>。开发失败最常见的原因不是技术，是<b>没人去问那个知道答案的人</b>。</p>
+    </div>
+  </section>
+
+  <section id="s20">
+    <div class="part"><div class="part-no">Part 2</div><h2>实体关系图 E-R Diagram</h2></div>
+
+    <h3 style="margin-top:22px"><span class="no">2.0</span> 为什么非要画图 <span class="tag und">理解</span></h3>
+    <p>Analysis 阶段要产出的是 <b>business rules</b>：<span class="en">statements that define or constrain some aspect of the business</span>。它包含两部分——实体类型／属性／关系的<b>名称与定义</b>，以及施加在它们身上的<b>约束</b>。</p>
+    <p>问题在于，自然语言写出来的 business rule 是含糊的。看这一句：</p>
+
+    <div class="box">
+      <p style="font-size:18px;margin-bottom:10px"><span class="en" style="color:var(--ink);font-size:1em">Every <b style="color:var(--flag)">student</b> in the university <b style="color:var(--flag)">must have</b> a <b style="color:var(--flag)">faculty advisor</b>.</span></p>
+      <p style="margin-bottom:0">红色的三处分别是：<b>实体名</b>（student）、<b>约束</b>（must have）、<b>实体名</b>（faculty advisor）。这已经是一句写得相当规整的 business rule 了，但它仍然没说清：一个 student 能有<b>几个</b> advisor？一个 advisor 能带<b>几个</b> student？有没有 advisor 一个学生都不带？</p>
+    </div>
+
+    <p>同一句话，画成图就没有解释空间了：</p>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 840 190" role="img" aria-label="STUDENT has FACULTY ADVISOR">
+          <rect class="d-box" x="60" y="72" width="220" height="66"/>
+          <text class="d-name" x="170" y="111" text-anchor="middle">STUDENT</text>
+          <rect class="d-box" x="560" y="72" width="240" height="66"/>
+          <text class="d-name" x="680" y="111" text-anchor="middle">FACULTY ADVISOR</text>
+          <line class="d-line" x1="280" y1="105" x2="560" y2="105"/>
+          <line class="d-sym" x1="534" y1="94" x2="534" y2="116"/>
+          <line class="d-sym" x1="546" y1="94" x2="546" y2="116"/>
+          <text class="d-lbl" x="400" y="98" text-anchor="middle">has</text>
+
+          <rect x="440" y="24" width="60" height="26" rx="3" fill="var(--accent-wash)" style="stroke:var(--accent)"/>
+          <text class="d-note" x="470" y="41" text-anchor="middle">must</text>
+          <line class="d-line" x1="490" y1="50" x2="532" y2="90" style="stroke:var(--accent)"/>
+
+          <rect x="596" y="24" width="52" height="26" rx="3" fill="var(--accent-wash)" style="stroke:var(--accent)"/>
+          <text class="d-note" x="622" y="41" text-anchor="middle">one</text>
+          <line class="d-line" x1="600" y1="50" x2="550" y2="90" style="stroke:var(--accent)"/>
+
+          <text class="d-t sm" x="420" y="170" text-anchor="middle">内侧那一竖 = 最小基数「必须有」；外侧那一竖 = 最大基数「只能一个」</text>
+        </svg>
+      </div>
+      <figcaption>E-R Diagram 就是 business rules 的 <b>graphical representation</b>。</figcaption>
+    </figure>
+
+    <div class="box trap">
+      <p class="bt">但图不是万能的</p>
+      <p style="margin-bottom:0">Slides 明确写了：<span class="en">some business rules cannot be represented in E-R diagram; instead they are stated in natural language.</span> 比如「学生一学期最多修 18 学分」「折扣不得超过 30%」这类规则，ER 图上没有地方画。<b>所以作业里写 assumptions / business rules 的文字说明是答案的一部分，不是附赠品。</b></p>
+    </div>
+  </section>
+
+  <section id="s21">
+    <h3><span class="no">2.1</span> 实体 Entity <span class="tag exam">考点</span></h3>
+    <p><b>定义：</b>an entity is a <b>person, place, object, event, or concept</b> about which users wish to maintain data. —— 人、地点、物、事件、概念，只要用户想为它保存数据，它就是一个实体。</p>
+    <p><b>命名：</b>每个实体类型有一个名字，必须是<b>单数名词</b>（singular noun）。写 <code>STUDENT</code> 不写 <code>STUDENTS</code>。</p>
+
+    <h4>Entity type vs Entity instance</h4>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 900 300" role="img" aria-label="实体类型与实体实例">
+          <text class="d-note" x="40" y="20">ENTITY TYPE · 类型（画在 ER 图上的）</text>
+          <rect class="d-box" x="40" y="32" width="240" height="230"/>
+          <text class="d-name" x="160" y="60" text-anchor="middle">STUDENT</text>
+          <line class="d-div" x1="40" y1="74" x2="280" y2="74"/>
+          <text class="d-attr d-pk" x="60" y="100">ID</text>
+          <text class="d-attr" x="60" y="126">Name</text>
+          <text class="d-attr" x="60" y="152">Email</text>
+          <text class="d-attr" x="60" y="178">Gender</text>
+          <text class="d-attr" x="60" y="204">Home Address</text>
+          <text class="d-attr" x="60" y="230">Major</text>
+
+          <line class="d-line" x1="292" y1="146" x2="376" y2="146" marker-end="url(#ar)"/>
+          <text class="d-note" x="334" y="134" text-anchor="middle">有很多个</text>
+
+          <text class="d-note" x="392" y="20">ENTITY INSTANCES · 实例（存在数据库里的行）</text>
+          <rect class="d-box soft" x="392" y="42" width="468" height="86" rx="3"/>
+          <text class="d-attr" x="414" y="70">ID: 001</text>
+          <text class="d-attr" x="414" y="94">Name: Mary Chan</text>
+          <text class="d-attr" x="414" y="118">Email: mchan@ust.hk</text>
+          <rect class="d-box soft" x="392" y="150" width="468" height="86" rx="3"/>
+          <text class="d-attr" x="414" y="178">ID: 002</text>
+          <text class="d-attr" x="414" y="202">Name: Peter Wong</text>
+          <text class="d-attr" x="414" y="226">Email: pwong@ust.hk</text>
+          <text class="d-t sm" x="392" y="258">…（成千上万行）</text>
+        </svg>
+      </div>
+      <figcaption>ER 图上画的<b>永远是类型</b>，不是实例。这是下面「什么不能当实体类型」的判据来源。</figcaption>
+    </figure>
+
+    <h4>做题技巧：从描述里找实体</h4>
+    <p>业务描述里的<b>名词</b>——尤其是句子的<b>主语和宾语</b>——通常就是实体。回到那句话：</p>
+    <p style="padding-left:18px;border-left:3px solid var(--accent);"><span class="en">Every <b>student</b> in the university must have a <b>faculty advisor</b>.</span><br><span class="d-t sm" style="font-family:var(--serif);color:var(--ink-2)">主语 student → 实体；宾语 faculty advisor → 实体；谓语 must have → 关系 + 约束。</span></p>
+
+    <h4>什么该是实体类型，什么不该 <span class="tag exam">考点</span></h4>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:96px"></th><th>规则</th><th>怎么理解</th></tr></thead>
+        <tbody>
+          <tr><td class="k" style="color:var(--ok)">该是</td><td>有<b>很多个实例</b><br><span class="en">a thing that has many instances</span></td><td>只有一个实例的东西不值得建一张表。「本公司」只有一个，不是实体。</td></tr>
+          <tr><td class="k" style="color:var(--ok)">该是</td><td>由<b>多个属性</b>描述<br><span class="en">described by multiple attributes</span></td><td>如果只有一个属性，它多半是别人的属性，不是独立实体。</td></tr>
+          <tr><td class="k" style="color:var(--ok)">该是</td><td>数据库<b>确实需要建模</b>它<br><span class="en">the database needs to model</span></td><td>业务上不关心的东西不进模型，哪怕它客观存在。</td></tr>
+          <tr><td class="k" style="color:var(--flag)">不该是</td><td>某个实体类型的<b>具体实例</b></td><td><code>MICHELLE BRADY</code> 是 <code>EMPLOYEE</code> 的一行数据，不是一个类型。</td></tr>
+          <tr><td class="k" style="color:var(--flag)">不该是</td><td>数据库系统<b>生成的输出</b>（如报表）</td><td>见下方展开。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box biz">
+      <p class="bt">为什么「系统生成的输出」不能是实体类型</p>
+      <p>报表（EXPENSE REPORT）里的每一个数字，都是从已经存在的数据算出来的 —— 每一笔 EXPENSE 都在库里，报表只是把它们按某个条件汇总。把报表也建成一张表，会带来三个具体问题：</p>
+      <ul>
+        <li><b>数据重复。</b>同一笔支出既在 EXPENSE 里，又在报表里，存了两份。</li>
+        <li><b>更新异常。</b>有人事后修改了一笔支出金额，报表那份不会自动跟着变，两边对不上，而你无法判断哪一份是对的。</li>
+        <li><b>没有独立存在性。</b>报表是「看数据的一种方式」，不是「一件事实」。换一个筛选条件就是另一张报表，难道每换一次就建一张表？</li>
+      </ul>
+      <p style="margin-bottom:0">正确做法：报表在需要时<b>由查询实时生成</b>。这和第 2.3 节的 <b>derived attribute</b>（派生属性不存，用时算）是<b>同一个原则在不同尺度上的体现</b> —— 凡是能从已有数据算出来的，就不要再存一份。</p>
+    </div>
+
+    <div class="box trap">
+      <p class="bt">Concept Check（slides 上的题）</p>
+      <p style="margin-bottom:0">四个框里哪些是无效的实体类型？<br>
+      ✗ <code>PETER LEE, THE TREASURER</code> —— 具体实例，应该是 <code>EMPLOYEE</code> 或 <code>TREASURER</code>（类型）。<br>
+      ✗ <code>EXPENSE REPORT</code> —— 系统生成的输出，可由 <code>EXPENSE</code> 汇总得到。<br>
+      ✓ <code>ACCOUNT</code>、<code>EXPENSE</code> —— 有效。</p>
+    </div>
+  </section>
+
+  <section id="s22">
+    <h3><span class="no">2.2</span> 三种实体类型 <span class="tag exam">考点</span></h3>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 900 140" role="img" aria-label="强实体、弱实体、关联实体的画法">
+          <rect class="d-box" x="50" y="34" width="200" height="60"/>
+          <text class="d-name" x="150" y="70" text-anchor="middle">Strong</text>
+          <text class="d-t sm" x="150" y="118" text-anchor="middle">单线矩形</text>
+
+          <rect class="d-box" x="350" y="34" width="200" height="60"/>
+          <rect class="d-inner" x="356" y="40" width="188" height="48"/>
+          <text class="d-name" x="450" y="70" text-anchor="middle">Weak</text>
+          <text class="d-t sm" x="450" y="118" text-anchor="middle">双线矩形</text>
+
+          <rect class="d-box" x="650" y="34" width="200" height="60" rx="26" ry="26"/>
+          <text class="d-name" x="750" y="70" text-anchor="middle">Associative</text>
+          <text class="d-t sm" x="750" y="118" text-anchor="middle">圆角矩形</text>
+        </svg>
+      </div>
+      <figcaption>三种形状必须记牢，画错形状是最容易被扣分的地方。</figcaption>
+    </figure>
+
+    <h4>Strong entity type <span class="tag fyi">记法 · 单线矩形</span></h4>
+    <ul>
+      <li><b>独立存在</b>（exists independently of other types of entities）</li>
+      <li>有<b>自己完整的标识符</b>，用<b>单下划线</b>标出</li>
+    </ul>
+
+    <h4>Weak entity type 弱实体 <span class="tag fyi">记法 · 双线矩形 ＋ 双实线关系 ＋ 双下划线</span></h4>
+    <ul>
+      <li><b>依赖</b>于某个强实体，这个强实体叫 <b>identifying owner</b></li>
+      <li><b>没有自己完整的标识符</b>（does not have a full identifier of its own）</li>
+      <li><b>实体框和 partial identifier 都用双线</b>（entity box and partial identifier have double lines）</li>
+      <li>连接它和 owner 的关系叫 <b>identifying relationship</b>，用<b>双实线</b>画</li>
+    </ul>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 940 250" role="img" aria-label="弱实体示例 EMPLOYEE carries DEPENDENT">
+          <rect class="d-box" x="40" y="46" width="240" height="106"/>
+          <text class="d-name" x="160" y="74" text-anchor="middle">EMPLOYEE</text>
+          <line class="d-div" x1="40" y1="88" x2="280" y2="88"/>
+          <text class="d-attr d-pk" x="58" y="112">Employee ID</text>
+          <text class="d-attr" x="58" y="136">Employee Name</text>
+
+          <rect class="d-box" x="660" y="46" width="240" height="106"/>
+          <rect class="d-inner" x="666" y="52" width="228" height="94"/>
+          <text class="d-name" x="780" y="74" text-anchor="middle">DEPENDENT</text>
+          <line class="d-div" x1="682" y1="88" x2="878" y2="88"/>
+          <text class="d-attr" x="698" y="112">Dependent Name</text>
+          <line class="d-dbl" x1="698" y1="116" x2="806" y2="116"/>
+          <line class="d-dbl" x1="698" y1="120" x2="806" y2="120"/>
+          <text class="d-attr" x="698" y="142">Date of Birth</text>
+
+          <line class="d-line" x1="280" y1="95" x2="660" y2="95"/>
+          <line class="d-line" x1="280" y1="103" x2="660" y2="103"/>
+          <line class="d-sym" x1="294" y1="85" x2="294" y2="113"/>
+          <line class="d-sym" x1="306" y1="85" x2="306" y2="113"/>
+          <path class="d-sym" d="M 644 99 L 660 88 M 644 99 L 660 99 M 644 99 L 660 110"/>
+          <circle class="d-symo" cx="635" cy="99" r="6.5"/>
+          <text class="d-lbl" x="470" y="82" text-anchor="middle">carries</text>
+          <text class="d-note" x="470" y="128" text-anchor="middle">identifying relationship · 双实线</text>
+
+          <text class="d-note" x="660" y="180">Implicit identifier: Employee ID + Dependent Name</text>
+          <text class="d-t sm" x="40" y="180">强实体这一端必定是</text>
+          <text class="d-t sm" x="40" y="200">mandatory one（‖）</text>
+          <text class="d-t sm" x="40" y="220">—— 见 2.6 节的规律</text>
+        </svg>
+      </div>
+      <figcaption>为什么 <code>Dependent Name</code> 只是 partial identifier：两个不同员工的家属都可能叫「张伟」，只有配上 <code>Employee ID</code> 才唯一。</figcaption>
+    </figure>
+
+    <div class="box biz">
+      <p class="bt">用业务理解弱实体</p>
+      <p style="margin-bottom:0">公司的员工福利包含家属保险，所以公司需要记录每位员工<b>以及他的每一位家属</b>。但家属的数据在公司系统里没有独立意义 —— 这个员工一旦离职，他家属的记录立刻失去价值，也没有任何其他业务会引用它。同时公司也从不给家属编号（不会有「家属工号」），所以家属只能靠「哪位员工的 + 叫什么名字」来定位。这两点合起来就是弱实体：<b>存在依赖 owner</b>，<b>标识依赖 owner</b>。</p>
+    </div>
+
+    <h4>Associative entity 关联实体 <span class="tag fyi">记法 · 圆角矩形</span></h4>
+    <ul>
+      <li>一个 <b>many-to-many 关系会被转换成一个 associative entity</b></li>
+      <li>它成为两个实体类型之间的<b>桥</b>（bridge）</li>
+      <li>它<b>可以有自己的属性</b>，也<b>可能有、也可能没有</b>自己的标识符</li>
+    </ul>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 960 400" role="img" aria-label="M:N 转换为关联实体">
+          <text class="d-note" x="30" y="18">① 原始形态：M : N，属性无处安放</text>
+          <rect class="d-box" x="380" y="30" width="180" height="54"/>
+          <text class="d-attr" x="470" y="52" text-anchor="middle">Grade</text>
+          <text class="d-attr" x="470" y="72" text-anchor="middle">Enrol Date</text>
+          <line class="d-line dash" x1="470" y1="84" x2="470" y2="128"/>
+
+          <rect class="d-box" x="40" y="96" width="220" height="64"/>
+          <text class="d-name" x="150" y="133" text-anchor="middle">STUDENT</text>
+          <rect class="d-box" x="700" y="96" width="220" height="64"/>
+          <text class="d-name" x="810" y="133" text-anchor="middle">COURSE</text>
+          <line class="d-line" x1="260" y1="128" x2="700" y2="128"/>
+          <path class="d-sym" d="M 276 128 L 260 117 M 276 128 L 260 128 M 276 128 L 260 139"/>
+          <circle class="d-symo" cx="285" cy="128" r="6.5"/>
+          <path class="d-sym" d="M 684 128 L 700 117 M 684 128 L 700 128 M 684 128 L 700 139"/>
+          <circle class="d-symo" cx="675" cy="128" r="6.5"/>
+          <text class="d-lbl" x="470" y="152" text-anchor="middle">enrolls in</text>
+
+          <line class="d-line" x1="470" y1="180" x2="470" y2="212" marker-end="url(#ara)" style="stroke:var(--accent)"/>
+          <text class="d-note" x="484" y="200">转换</text>
+
+          <text class="d-note" x="30" y="240">② 转成 associative entity：属性有了家</text>
+          <rect class="d-box" x="40" y="272" width="200" height="64"/>
+          <text class="d-name" x="140" y="309" text-anchor="middle">STUDENT</text>
+          <rect class="d-box" x="380" y="256" width="200" height="96" rx="26" ry="26"/>
+          <text class="d-name" x="480" y="284" text-anchor="middle">ENROLLMENT</text>
+          <line class="d-div" x1="404" y1="296" x2="556" y2="296"/>
+          <text class="d-attr" x="416" y="318">Grade</text>
+          <text class="d-attr" x="416" y="340">Enrol Date</text>
+          <rect class="d-box" x="720" y="272" width="200" height="64"/>
+          <text class="d-name" x="820" y="309" text-anchor="middle">COURSE</text>
+
+          <line class="d-line" x1="240" y1="304" x2="380" y2="304"/>
+          <line class="d-sym" x1="254" y1="294" x2="254" y2="314"/>
+          <line class="d-sym" x1="266" y1="294" x2="266" y2="314"/>
+          <path class="d-sym" d="M 364 304 L 380 293 M 364 304 L 380 304 M 364 304 L 380 315"/>
+          <circle class="d-symo" cx="355" cy="304" r="6.5"/>
+
+          <line class="d-line" x1="580" y1="304" x2="720" y2="304"/>
+          <path class="d-sym" d="M 596 304 L 580 293 M 596 304 L 580 304 M 596 304 L 580 315"/>
+          <circle class="d-symo" cx="605" cy="304" r="6.5"/>
+          <line class="d-sym" x1="706" y1="294" x2="706" y2="314"/>
+          <line class="d-sym" x1="694" y1="294" x2="694" y2="314"/>
+
+          <text class="d-note" x="480" y="384" text-anchor="middle">Implicit identifier: Student ID + Course ID</text>
+        </svg>
+      </div>
+      <figcaption>注意转换后两端<b>都变成 mandatory one</b>（一条选课记录必属于一个学生、一门课），而 many 跑到了关联实体这一侧。</figcaption>
+    </figure>
+
+    <div class="box biz">
+      <p class="bt">为什么「关联实体」真的是一个实体</p>
+      <p>「张三选了 ISOM5260」这件事本身带着属性：<b>成绩、选课日期、退课状态</b>。现在问：这个成绩属于谁？</p>
+      <ul>
+        <li>放进 STUDENT？不行 —— 张三有很多门课，每门一个成绩，一个学生行放不下。</li>
+        <li>放进 COURSE？也不行 —— ISOM5260 有很多学生，每人一个成绩。</li>
+      </ul>
+      <p>这个成绩<b>只属于「张三 × ISOM5260」这一对组合</b>。既然存在一类只属于「组合」的属性，那么「组合」本身就是一种值得记录的东西 —— 它有很多个实例（每一次选课就是一个实例），有多个属性，业务上确实要为它保存数据。<b>三条「该是实体类型」的标准全部满足。</b></p>
+      <p style="margin-bottom:0">还有一个更硬的理由：关系数据库里<b>没有办法直接实现 M:N</b>。一行只能存一个值，你无法在 STUDENT 表的一个格子里塞进 40 门课。M:N 落地时必定变成第三张表，associative entity 就是在概念层提前把这张表画出来。</p>
+    </div>
+
+    <div class="box rule">
+      <p class="bt">三种实体类型速查</p>
+      <div class="tw" style="margin:6px 0 0;border:none">
+        <table>
+          <thead><tr><th>类型</th><th>画法</th><th>标识符</th><th>什么时候用</th></tr></thead>
+          <tbody>
+            <tr><td class="k">Strong</td><td>单线矩形</td><td>自有完整标识符，单下划线</td><td>默认情况</td></tr>
+            <tr><td class="k">Weak</td><td>双线矩形</td><td>partial identifier，<b>双下划线</b></td><td>存在与标识都依赖 owner</td></tr>
+            <tr><td class="k">Associative</td><td>圆角矩形</td><td>可有可无；没有时用两端标识符组合</td><td>拆解 M:N，或关系本身带属性</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section id="s23">
+    <h3><span class="no">2.3</span> 属性 Attributes <span class="tag exam">考点</span></h3>
+    <p><b>定义：</b>a property or characteristic of an entity <b>or relationship</b> type that is of interest to the user. 注意「or relationship」—— 关系本身也可以有属性（见 2.5 节）。</p>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 830 320" role="img" aria-label="属性记法总览">
+          <rect class="d-box" x="280" y="20" width="280" height="282"/>
+          <text class="d-name" x="420" y="46" text-anchor="middle">ENTITY NAME</text>
+          <line class="d-div" x1="280" y1="62" x2="560" y2="62"/>
+          <text class="d-attr d-pk" x="300" y="94">Identifier</text>
+          <text class="d-attr" x="300" y="126">Simple attribute</text>
+          <text class="d-attr" x="300" y="158">Composite (1, 2, 3)</text>
+          <text class="d-attr" x="300" y="190">{Multivalued}</text>
+          <text class="d-attr" x="300" y="222">[Derived]</text>
+          <text class="d-attr" x="300" y="258">Partial identifier</text>
+          <line class="d-dbl" x1="300" y1="262" x2="404" y2="262"/>
+          <line class="d-dbl" x1="300" y1="266" x2="404" y2="266"/>
+
+          <text class="d-note" x="250" y="98" text-anchor="end">单下划线</text>
+          <line class="d-line" x1="256" y1="94" x2="276" y2="94" style="stroke:var(--accent)"/>
+          <text class="d-note" x="250" y="130" text-anchor="end">无标记</text>
+          <line class="d-line" x1="256" y1="126" x2="276" y2="126" style="stroke:var(--accent)"/>
+          <text class="d-note" x="250" y="162" text-anchor="end">圆括号 ( )</text>
+          <line class="d-line" x1="256" y1="158" x2="276" y2="158" style="stroke:var(--accent)"/>
+
+          <text class="d-note" x="590" y="194">花括号 { } · 多值</text>
+          <line class="d-line" x1="564" y1="190" x2="584" y2="190" style="stroke:var(--accent)"/>
+          <text class="d-note" x="590" y="226">方括号 [ ] · 派生</text>
+          <line class="d-line" x1="564" y1="222" x2="584" y2="222" style="stroke:var(--accent)"/>
+          <text class="d-note" x="590" y="262">双下划线 · 部分标识符</text>
+          <line class="d-line" x1="564" y1="258" x2="584" y2="258" style="stroke:var(--accent)"/>
+        </svg>
+      </div>
+      <figcaption>六种属性分类的记法。<b>所有特殊标记的存在理由都是一样的：让未来的业务使用变方便。</b>设计时多花的这点心思，是替以后写查询的人省事。</figcaption>
+    </figure>
+
+    <h4><span class="no">①</span> Required vs Optional <span class="tag fyi">不画在图上</span></h4>
+    <p>记录一个人时，有些特性是必须有的（姓名、学号），有些可有可无（MBTI、家庭住址）。这个区分在 slides 里明确说了：<b><span class="en">No need to show this distinction directly in E-R diagrams.</span></b> 它属于后续做逻辑设计时才落实的东西。</p>
+    <div class="box trap">
+      <p class="bt">这里有个说法要拧清楚</p>
+      <p style="margin-bottom:0"><b>Required 的意思是「不允许为空」</b>（落到 DBMS 上就是 <code>NOT NULL</code> 约束），而不是「为空时给个默认值」。反过来 <b>Optional 才是允许 NULL 的那一类</b>。这一点和 2.4 节标识符的第一条规则 <span class="en">“will not be null”</span> 是同一件事——标识符必然是 required 的。</p>
+    </div>
+
+    <h4><span class="no">②</span> Simple / Atomic attribute</h4>
+    <p>不能再被<b>有意义地</b>拆分，也不带任何特殊规则的普通属性。<code>Gender</code>、<code>Birth Date</code>、<code>Standard Price</code> 都是。它是默认形态 —— 其余五种都是在它之上加了一条额外的规则。</p>
+
+    <h4><span class="no">③</span> Composite attribute 复合属性 <span class="en">( … )</span></h4>
+    <p>可以被拆成<b>有意义的组成部分</b>（meaningful component parts），用圆括号把组件括起来。</p>
+    <ul>
+      <li><code>Name (First Name, Last Name)</code></li>
+      <li><code>Home Address (Street Address, City, State, Postal Code)</code></li>
+    </ul>
+    <div class="box biz">
+      <p class="bt">关键在「meaningful」是谁定的</p>
+      <p>电话号码也能拆成一位一位的数字，为什么它不是复合属性？因为<b>拆开之后每一位数字在业务上没有任何用处</b>。「有没有意义」不是客观事实，是<b>设计者根据业务需要做的决定</b>。</p>
+      <p>决策标准只有一条：<b>未来会不会单独用到某个组件？</b></p>
+      <ul>
+        <li>会 —— 客服要按姓氏排序、要发「陈先生您好」的邮件；营销要按 City 做区域销售分析。那就拆，标成 composite。</li>
+        <li>不会 —— 只是为了打印在快递单上整块用。那就当 simple 存一个字符串。</li>
+      </ul>
+      <p style="margin-bottom:0"><b>代价是不对称的：</b>一开始就拆了，以后想合起来很容易（拼接就行）；一开始没拆，只存了一个 <code>Name = "陈大文"</code>，以后想按姓氏统计就<b>拿不回来了</b>（谁知道复姓怎么切？外国人的名字怎么办？）。所以拿不准的时候倾向于拆。</p>
+    </div>
+
+    <h4><span class="no">④</span> Multivalued attribute 多值属性 <span class="en">{ … }</span></h4>
+    <p>同一个实例上，这个属性<b>可以同时取多个值</b>（may take on more than one value for a given instance），用花括号标出。</p>
+    <ul>
+      <li><code>EMPLOYEE {Skills}</code> —— 一个员工会多项技能</li>
+      <li><code>COURSE {Available Languages}</code> —— 一门课有多种授课语言</li>
+      <li><code>COURSE {Topic}</code> —— 一门课涵盖多个主题</li>
+    </ul>
+    <div class="box biz">
+      <p class="bt">业务上为什么必须标出来</p>
+      <p>假设 HR 系统里有 200 名员工，现在项目组要找「会 Python 且会 SQL」的人。</p>
+      <p>如果当初把技能当成一个普通字符串存成 <code>"Python, SQL, 项目管理"</code>，你只能用模糊匹配去搜 —— 搜 <code>%Java%</code> 会把 <code>JavaScript</code> 也搜出来；想统计「公司里会 Python 的有几个人」得先自己切字符串；某个技能改名（<code>ML</code> → <code>Machine Learning</code>）要逐行改文本。</p>
+      <p style="margin-bottom:0">标成 <code>{Skills}</code> 就等于告诉后面做逻辑设计的人：<b>这个属性最终要落成一张单独的表</b>（员工号 + 技能），一行一个技能。那样上面每一个查询都变成一句普通 SQL。同样的道理：Mario Education 的 <code>{Available Languages}</code> 标出来，学生才能按「有中文授课」筛课。</p>
+    </div>
+
+    <h4><span class="no">⑤</span> Derived attribute 派生属性 <span class="en">[ … ]</span></h4>
+    <p>值可以<b>从其他相关属性算出来</b>（values can be calculated from related attribute values），用方括号标出。</p>
+    <ul>
+      <li><code>[Years Employed]</code> ← <code>Date Employed</code> 和当前日期</li>
+      <li><code>[Duration]</code> ← <code>Start Time</code> 和 <code>End Time</code></li>
+      <li><code>[Number of Years Launched]</code> ← <code>First Launch Date</code></li>
+    </ul>
+    <div class="box biz">
+      <p class="bt">为什么标出来、又为什么不存</p>
+      <p><b>不存的理由：</b><code>[Years Employed]</code> 是会随时间自己变的。如果在表里建一列存「3 年」，明年这个值就错了，你得写一个定时任务每天把全表刷一遍 —— 而只要有一次任务失败，数据就和事实不符，且没人会发现。<b>凡是能算出来的就不要存</b>，这和 2.1 节「报表不能当实体」是同一条原则。</p>
+      <p style="margin-bottom:0"><b>标出来的理由：</b>正因为不存，如果不在 ER 图上标一笔，后面的开发根本不知道业务需要这个值。标成 <code>[…]</code> 相当于一条交接说明：<span class="d-t" style="font-family:var(--serif)">「业务上要用这个数，但别给它建列；到时候在查询里算，或者做成视图／计算列。」</span>实际项目里通常就是代码中一个 <code>getYearsEmployed()</code> 之类的函数，或者 SQL 里的一句 <code>DATEDIFF</code>。</p>
+    </div>
+  </section>
+
+  <section id="s24">
+    <h3><span class="no">2.4</span> 标识符 Identifiers <span class="tag exam">考点</span></h3>
+    <p><b>定义：</b>an attribute (or combination of attributes) that <b>uniquely identifies individual instances</b> of an entity type. 可以先粗略地理解成 primary key。</p>
+
+    <div class="box biz">
+      <p class="bt">业务上为什么非要有标识符</p>
+      <p style="margin-bottom:0">没有标识符，你就<b>无法指认任何一条特定记录</b>。同名同姓的两个「陈大文」，客服要改其中一个人的电话 —— 改哪一个？更严重的是<b>没法被别的实体引用</b>：订单要记录「这张单是谁下的」，它只能存一个值，这个值必须能唯一地指回一个客户。ER 图里所有的关系，落地时都是靠标识符连起来的。<b>没有标识符，实体之间就无法建立任何关系。</b></p>
+    </div>
+
+    <h4>选标识符的三条规则</h4>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:170px">规则</th><th>业务上为什么</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="k">Will not be null<br><span class="en" style="font-weight:400">不能为空</span></td>
+            <td>空值无法定位记录。slides 的反问很直白：<span class="en">“Can one’s student ID be [null]?”</span> —— 学号为空的学生，成绩要记到谁头上？而且如果允许为空，两条都为空的记录就无法区分。</td>
+          </tr>
+          <tr>
+            <td class="k">Will not change in value<br><span class="en" style="font-weight:400">值不会变</span></td>
+            <td>标识符一旦改变，<b>所有引用它的地方都要跟着改</b> —— 成绩单、缴费记录、图书借阅、每一张外键表。漏改一处就是一条孤儿记录。slides 举的 HKUST 例子正是这个用意：<span class="en">UG student ID = PG student ID = Staff ID</span>，同一个人本科毕业读研、读完留校当职员，<b>身份换了三次，编号始终不变</b>，历史记录才能连起来。</td>
+          </tr>
+          <tr>
+            <td class="k">No intelligent identifiers<br><span class="en" style="font-weight:400">不要有含义的编号</span></td>
+            <td>不要把业务含义编进标识符里。<span class="en">“LSK4066Samuel”</span> 把办公室楼号房号和名字都编了进去 —— 这个人换了办公室、或者改了英文名，编号就必须改，<b>直接违反第二条</b>。同理，把入学年份编进学号（<code>2024001</code>）看着方便，但学生延毕、转学院时就会产生「事实与编号不符」的尴尬。<b>标识符的唯一职责是唯一，不是携带信息。</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h4>标识符的几种形态</h4>
+    <p><b>a. Simple identifier</b> —— 单个属性，单下划线。最常见。</p>
+
+    <p><b>b. Composite identifier 复合标识符</b> —— 需要<b>多个属性组合</b>才能唯一。两种写法：</p>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 860 200" role="img" aria-label="复合标识符的两种写法">
+          <rect class="d-box" x="40" y="30" width="300" height="126"/>
+          <text class="d-name" x="190" y="56" text-anchor="middle">FLIGHT</text>
+          <line class="d-div" x1="40" y1="70" x2="340" y2="70"/>
+          <text class="d-attr d-pk" x="62" y="98">Flight Number</text>
+          <text class="d-attr d-pk" x="62" y="124">Flight Date</text>
+          <text class="d-attr" x="62" y="148">. . .</text>
+          <text class="d-note" x="40" y="180">两个属性各自下划线</text>
+
+          <line class="d-line" x1="366" y1="93" x2="454" y2="93" marker-end="url(#ara)" style="stroke:var(--accent)"/>
+          <text class="d-note" x="410" y="80" text-anchor="middle">改造</text>
+
+          <rect class="d-box" x="480" y="30" width="300" height="126"/>
+          <text class="d-name" x="630" y="56" text-anchor="middle">FLIGHT</text>
+          <line class="d-div" x1="480" y1="70" x2="780" y2="70"/>
+          <text class="d-attr d-pk" x="502" y="98">Flight ID</text>
+          <text class="d-attr" x="520" y="124">(Flight Number, Flight Date)</text>
+          <text class="d-attr" x="502" y="148">. . .</text>
+          <text class="d-note" x="480" y="180">新造一个简单标识符，原来两个降为复合属性</text>
+        </svg>
+      </div>
+      <figcaption>实例：<code>CX888, 27-APR-2020</code> / <code>CX888, 29-MAY-2020</code> / <code>AC007, 1-AUG-2020</code>。同一个航班号每天飞一班，光靠 Flight Number 区分不开。</figcaption>
+    </figure>
+    <div class="box rule">
+      <p class="bt">Slides 的建议</p>
+      <p style="margin-bottom:0"><span class="en">Substitute new, simple identifiers for long, composite identifiers.</span> —— 业务理由：复合标识符<b>每一张引用它的表都要复制这几列</b>，列多了容易写错连接条件、索引也更大更慢；而且只要其中一个组件的业务规则变了，全部引用都要动。造一个没有含义的 <code>Flight ID</code>，反而更稳（顺便也满足了第三条「no intelligent identifiers」）。</p>
+    </div>
+
+    <p><b>c. Partial identifier 部分标识符</b> —— <b>双下划线</b>。用在两个地方：</p>
+    <ul>
+      <li><b>弱实体：</b><code>DEPENDENT</code> 的 <code>Dependent Name</code>，只在同一个员工范围内唯一，完整标识是 <code>Employee ID + Dependent Name</code>。</li>
+      <li><b>关联实体：</b>slides 里 <code>SCHEDULE</code> 的 <code>Semester</code>，完整标识是 <code>Professor ID + Course ID + Semester</code>。</li>
+    </ul>
+    <p>两种情况的共同点：<b>这个属性本身不够唯一，必须借 owner／两端实体的标识符补齐。</b>完整的那个组合写在框外，标注成 <span class="en">Implicit identifier: …</span>。</p>
+
+    <div class="box rule">
+      <p class="bt">三种实体各自的标识符要求</p>
+      <ul style="margin-bottom:0">
+        <li><b>Strong entity —— 必须有</b>完整标识符（单下划线）。</li>
+        <li><b>Weak entity ——</b> 没有完整标识符，只有 partial identifier（双下划线）。</li>
+        <li><b>Associative entity ——</b> slides 原话是 <span class="en">“may or may not have an identifier”</span>：可以有自己的（如 Mario Education 里的 <code>Class Number</code>），也可以没有（那就用两端标识符组合成 implicit identifier）。</li>
+      </ul>
+    </div>
+
+    <h4>额外一招：给时间相关的数据打时间戳</h4>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 640 160" role="img" aria-label="时间戳建模">
+          <rect class="d-box" x="150" y="20" width="340" height="112"/>
+          <text class="d-name" x="320" y="46" text-anchor="middle">PRODUCT</text>
+          <line class="d-div" x1="150" y1="60" x2="490" y2="60"/>
+          <text class="d-attr d-pk" x="172" y="88">Product ID</text>
+          <text class="d-attr" x="172" y="114">{Price History (</text>
+          <text class="d-attr" x="286" y="114" style="fill:var(--accent)">Effective Date</text>
+          <text class="d-attr" x="382" y="114">, Price)}</text>
+          <text class="d-note" x="286" y="150">↑ Time Stamp</text>
+        </svg>
+      </div>
+      <figcaption>一个<b>多值 + 复合</b>的属性：价格历史有多条，每条由「生效日期 + 价格」构成。想保留「某个时点的价格是多少」，就在复合属性里加一个时间戳，这是建模时间相关数据的标准手法。</figcaption>
+    </figure>
+  </section>
+
+  <section id="s25">
+    <h3><span class="no">2.5</span> 关系 Relationships <span class="tag exam">考点</span></h3>
+    <p><b>定义：</b>a relationship is an <b>association representing an interaction among the instances</b> of one or more entity types.</p>
+    <p><b>记法：</b>两实体之间一条<b>单实线</b>，线上写一个<b>单数动词／动词短语</b>；连向弱实体时改画<b>双实线</b>（identifying relationship）；关系自己的属性用<b>虚线</b>挂一个方框上去。</p>
+    <div class="box biz">
+      <p class="bt">业务上为什么关系比实体更要紧</p>
+      <p style="margin-bottom:0">实体只回答「公司里有哪些东西」，关系回答「这些东西之间发生了什么」。而业务上真正要问的问题，几乎全是关系问题：<b>哪个客户下了哪张单？这门课排在哪个教室？这笔支出记在哪个账户？</b>把实体建对但关系建错，数据是齐的，却答不出任何有用的问题。</p>
+    </div>
+
+    <h4>命名规则 <span class="tag exam">考点</span></h4>
+    <ul>
+      <li>用<b>动词或动词短语</b>标注，且是<b>单数形式</b>（a verb or verb phrase in singular form）</li>
+      <li>可以是<b>主动语态也可以是被动语态</b>（active or passive voice）</li>
+    </ul>
+    <div class="box rule">
+      <p class="bt">主动还是被动，由读图方向决定</p>
+      <p>ER 图有一条不成文的读法：<b>从左到右、从上到下</b>。动词要保证按这个方向读出来是一句通顺的话。</p>
+      <ul style="margin-bottom:0">
+        <li><code>CUSTOMER</code> 在左、<code>ORDER</code> 在右 → 用主动：<span class="en">Customer <b>places</b> Order</span></li>
+        <li><code>ORDER</code> 在左、<code>CUSTOMER</code> 在右 → 用被动：<span class="en">Order <b>is placed by</b> Customer</span></li>
+      </ul>
+    </div>
+    <p>Slides 上 ORDER–CUSTOMER 那条线两端同时标了 <code>Places</code> 和 <code>Is Placed By</code>，就是把两个方向都写出来，读者从任一端出发都能读通。</p>
+
+    <h4>Relationship type vs Relationship instance</h4>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 940 260" role="img" aria-label="关系类型与关系实例">
+          <text class="d-note" x="20" y="18">RELATIONSHIP TYPE</text>
+          <rect class="d-box" x="30" y="30" width="200" height="66"/>
+          <text class="d-name" x="130" y="60" text-anchor="middle">EMPLOYEE</text>
+          <text class="d-t sm" x="130" y="80" text-anchor="middle">Employee ID · Name</text>
+          <rect class="d-box" x="30" y="176" width="200" height="66"/>
+          <text class="d-name" x="130" y="206" text-anchor="middle">COURSE</text>
+          <text class="d-t sm" x="130" y="226" text-anchor="middle">Course ID · Title</text>
+          <line class="d-line" x1="130" y1="96" x2="130" y2="176"/>
+          <path class="d-sym" d="M 130 112 L 120 96 M 130 112 L 130 96 M 130 112 L 140 96"/>
+          <line class="d-sym" x1="121" y1="122" x2="139" y2="122"/>
+          <path class="d-sym" d="M 130 160 L 120 176 M 130 160 L 130 176 M 130 160 L 140 176"/>
+          <circle class="d-symo" cx="130" cy="151" r="6.5"/>
+          <text class="d-lbl" x="144" y="140">completes</text>
+
+          <line class="d-line dash" x1="270" y1="20" x2="270" y2="250"/>
+
+          <text class="d-note" x="330" y="18">RELATIONSHIP INSTANCES · 每条线是一个实例</text>
+          <text class="d-attr" x="330" y="66">Chen</text>
+          <text class="d-attr" x="330" y="102">Melton</text>
+          <text class="d-attr" x="330" y="138">Ritchie</text>
+          <text class="d-attr" x="330" y="174">Celko</text>
+          <text class="d-attr" x="330" y="210">Gosling</text>
+          <text class="d-attr" x="826" y="66">C++</text>
+          <text class="d-attr" x="826" y="102">Java</text>
+          <text class="d-attr" x="826" y="138">Python</text>
+          <text class="d-attr" x="826" y="174">Angular</text>
+          <text class="d-attr" x="826" y="210">SQL</text>
+          <g stroke="var(--line-strong)" stroke-width="1.1" opacity=".78">
+            <line x1="410" y1="62" x2="812" y2="62"/>
+            <line x1="410" y1="62" x2="812" y2="206"/>
+            <line x1="430" y1="98" x2="812" y2="98"/>
+            <line x1="430" y1="98" x2="812" y2="134"/>
+            <line x1="430" y1="98" x2="812" y2="170"/>
+            <line x1="424" y1="134" x2="812" y2="62"/>
+            <line x1="410" y1="170" x2="812" y2="98"/>
+            <line x1="432" y1="206" x2="812" y2="170"/>
+            <line x1="432" y1="206" x2="812" y2="206"/>
+          </g>
+          <text class="d-t sm" x="620" y="242" text-anchor="middle">这里一共 9 个 “completes” 关系实例</text>
+        </svg>
+      </div>
+      <figcaption><b>Type</b> 是实体类型之间的那条线（画在 ER 图上）；<b>instance</b> 是具体实例之间的连线（存在数据库里）。ER 图永远画 type。</figcaption>
+    </figure>
+
+    <h4>关系也可以有属性 <span class="en">Attributes on Relationships</span></h4>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 820 230" role="img" aria-label="关系上的属性">
+          <rect class="d-box" x="330" y="20" width="180" height="56"/>
+          <text class="d-attr" x="420" y="53" text-anchor="middle">Date Completed</text>
+          <line class="d-line dash" x1="420" y1="76" x2="420" y2="133"/>
+          <text class="d-note" x="434" y="106">relationship attribute</text>
+
+          <rect class="d-box" x="40" y="100" width="230" height="76"/>
+          <text class="d-name" x="155" y="132" text-anchor="middle">EMPLOYEE</text>
+          <text class="d-t sm" x="155" y="154" text-anchor="middle">Employee ID · Name · Birth Date</text>
+          <rect class="d-box" x="550" y="100" width="230" height="76"/>
+          <text class="d-name" x="665" y="132" text-anchor="middle">COURSE</text>
+          <text class="d-t sm" x="665" y="154" text-anchor="middle">Course ID · Title · {Topic}</text>
+
+          <line class="d-line" x1="270" y1="137" x2="550" y2="137"/>
+          <path class="d-sym" d="M 286 137 L 270 126 M 286 137 L 270 137 M 286 137 L 270 148"/>
+          <line class="d-sym" x1="296" y1="127" x2="296" y2="147"/>
+          <path class="d-sym" d="M 534 137 L 550 126 M 534 137 L 550 137 M 534 137 L 550 148"/>
+          <circle class="d-symo" cx="525" cy="137" r="6.5"/>
+          <text class="d-lbl" x="410" y="163" text-anchor="middle">completes</text>
+          <text class="d-t sm" x="410" y="205" text-anchor="middle">「完成日期」既不属于员工也不属于课程，只属于「这个员工完成这门课」这件事</text>
+        </svg>
+      </div>
+      <figcaption>用<b>虚线</b>把属性框挂到关系线上。当这种属性变多，或者关系是 M:N 时，就该把它升格成 <b>associative entity</b>（2.2 节）。</figcaption>
+    </figure>
+  </section>
+
+  <section id="s26">
+    <h3><span class="no">2.6</span> 基数约束 Cardinality Constraints <span class="tag exam">重点考点</span></h3>
+    <p>基数约束就是 business rules 里那些「能不能」「有几个」的限制被画进图里的样子。它由<b>两个符号</b>组成，永远成对出现：</p>
+
+    <div class="box rule">
+      <p class="bt">内外两个符号，各管一件事</p>
+      <ul style="margin-bottom:0">
+        <li><b>最小基数 = 内侧那个</b>（inner）：<b>○</b> 表示 optional，<b>|</b> 表示 mandatory</li>
+        <li><b>最大基数 = 外侧那个</b>（outer，靠近实体框的那个）：<b>|</b> 表示 one，<b>&lt;</b>（鸡爪）表示 many</li>
+      </ul>
+    </div>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 900 150" role="img" aria-label="四种基数符号">
+          <g>
+            <line class="d-line" x1="20" y1="60" x2="130" y2="60"/>
+            <rect class="d-box" x="130" y="32" width="86" height="56"/>
+            <line class="d-sym" x1="118" y1="49" x2="118" y2="71"/>
+            <line class="d-sym" x1="104" y1="49" x2="104" y2="71"/>
+            <text class="d-t sm" x="110" y="112" text-anchor="middle">Mandatory one</text>
+            <text class="d-t sm" x="110" y="132" text-anchor="middle">必须且只有一个</text>
+          </g>
+          <g>
+            <line class="d-line" x1="245" y1="60" x2="355" y2="60"/>
+            <rect class="d-box" x="355" y="32" width="86" height="56"/>
+            <path class="d-sym" d="M 339 60 L 355 48 M 339 60 L 355 60 M 339 60 L 355 72"/>
+            <line class="d-sym" x1="329" y1="49" x2="329" y2="71"/>
+            <text class="d-t sm" x="335" y="112" text-anchor="middle">Mandatory many</text>
+            <text class="d-t sm" x="335" y="132" text-anchor="middle">至少一个，可以多个</text>
+          </g>
+          <g>
+            <line class="d-line" x1="470" y1="60" x2="580" y2="60"/>
+            <rect class="d-box" x="580" y="32" width="86" height="56"/>
+            <line class="d-sym" x1="568" y1="49" x2="568" y2="71"/>
+            <circle class="d-symo" cx="554" cy="60" r="7"/>
+            <text class="d-t sm" x="560" y="112" text-anchor="middle">Optional one</text>
+            <text class="d-t sm" x="560" y="132" text-anchor="middle">零个或一个</text>
+          </g>
+          <g>
+            <line class="d-line" x1="695" y1="60" x2="805" y2="60"/>
+            <rect class="d-box" x="805" y="32" width="86" height="56"/>
+            <path class="d-sym" d="M 789 60 L 805 48 M 789 60 L 805 60 M 789 60 L 805 72"/>
+            <circle class="d-symo" cx="779" cy="60" r="7"/>
+            <text class="d-t sm" x="785" y="112" text-anchor="middle">Optional many</text>
+            <text class="d-t sm" x="785" y="132" text-anchor="middle">零个或多个</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>四种组合。注意鸡爪永远贴着实体框（它是最大基数），圆圈／竖线在外侧靠线中间（最小基数）。</figcaption>
+    </figure>
+
+    <h4>做题方法：只问两个问题 <span class="tag exam">背这个</span></h4>
+    <div class="box rule">
+      <p class="bt">From A to B</p>
+      <ol class="body" style="margin-bottom:8px">
+        <li><b>一个 A，可以<u>没有</u> B 吗？</b><br>
+          可以 → 最小基数 optional，画 <b>○</b>；不可以 → mandatory，画 <b>|</b></li>
+        <li><b>一个 A，可以有<u>超过一个</u> B 吗？</b><br>
+          可以 → 最大基数 many，画 <b>&lt;</b>；不可以 → one，画 <b>|</b></li>
+      </ol>
+      <p style="margin-bottom:0"><b>答案画在 B 那一端。</b>问「一个 department 能有几个 employee」，符号就画在 EMPLOYEE 框旁边。然后把 A、B 对调再问一遍，得到另一端的符号。</p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:280px">Slides 上的例子</th><th>问答</th><th>结论</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>对任一 <b>department</b>：<br>能没有 employee 吗？能有多于一个 employee 吗？</td>
+            <td>不能没有；能有多个</td>
+            <td>EMPLOYEE 端 = <b>mandatory many</b>（一对多）</td>
+          </tr>
+          <tr>
+            <td>对任一 <b>employee</b>：<br>能不属于任何 department 吗？能属于多个 department 吗？</td>
+            <td>能不属于；不能属于多个</td>
+            <td>DEPARTMENT 端 = <b>optional one</b>（零到一）</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box trap">
+      <p class="bt">题目没给基数怎么办</p>
+      <p style="margin-bottom:0">业务描述里经常只说清一个方向。这时<b>必须自己做假设，并明确写出来</b>（clearly stated）。写法：先引用原文说明哪一半是给定的，再说明你假设了另一半是什么、为什么。<b>不写假设 = 默认扣分；写了假设 = 就算和标准答案不同也能拿分。</b></p>
+    </div>
+
+    <div class="box rule">
+      <p class="bt">两条必须记住的规律</p>
+      <ul style="margin-bottom:0">
+        <li><b>弱实体连强实体时，强实体那一端必定是 mandatory one（‖）。</b>因为弱实体没有完整标识符，它必须靠 owner 才能被识别 —— 每一个弱实体实例必须<b>恰好</b>属于一个 owner，不能没有、也不能有两个。</li>
+        <li><b>关联实体连两端实体时，两端也都是 mandatory one。</b>同理：一条选课记录必然对应恰好一个学生和恰好一门课。「many」跑到了关联实体那一侧。</li>
+      </ul>
+    </div>
+
+    <div class="box trap">
+      <p class="bt">最小基数不一定只有 0 和 1</p>
+      <p style="margin-bottom:0">Slides 上 <code>PROFESSOR — is qualified — COURSE</code> 那张图，在 PROFESSOR 端的竖线下面直接写了一个数字 <b>2</b>，表示「一门课至少要有 2 位有资格的教授」。<b>最小基数可以是任意数字，直接标在符号旁边。</b></p>
+    </div>
+  </section>
+
+  <section id="s27">
+    <h3><span class="no">2.7</span> 关系的度 Degree of a Relationship <span class="tag exam">考点</span></h3>
+    <p><b>定义：</b>degree 是<b>参与这个关系的实体类型的个数</b>（the number of entity types that participate in it）。</p>
+
+    <h4>Unary（Degree 1）—— 一元／递归关系</h4>
+    <p>同一个实体类型自己和自己发生关系。画法是一条从实体框出去又回到自己身上的线。</p>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 960 250" role="img" aria-label="三种一元关系">
+          <g>
+            <rect class="d-box" x="20" y="120" width="160" height="66"/>
+            <text class="d-name" x="100" y="159" text-anchor="middle">PERSON</text>
+            <path class="d-line" d="M 70 120 L 70 70 L 250 70 L 250 155 L 180 155"/>
+            <circle class="d-symo" cx="70" cy="102" r="6.5"/>
+            <line class="d-sym" x1="60" y1="114" x2="80" y2="114"/>
+            <circle class="d-symo" cx="198" cy="155" r="6.5"/>
+            <line class="d-sym" x1="184" y1="145" x2="184" y2="165"/>
+            <text class="d-lbl" x="160" y="60">is married to</text>
+            <text class="d-t sm ac" x="100" y="212" text-anchor="middle">One-to-one</text>
+            <text class="d-t sm" x="100" y="232" text-anchor="middle">一个人最多一个配偶</text>
+          </g>
+          <g>
+            <rect class="d-box" x="340" y="120" width="160" height="66"/>
+            <text class="d-name" x="420" y="159" text-anchor="middle">EMPLOYEE</text>
+            <path class="d-line" d="M 390 120 L 390 70 L 570 70 L 570 155 L 500 155"/>
+            <path class="d-sym" d="M 390 104 L 380 120 M 390 104 L 390 120 M 390 104 L 400 120"/>
+            <circle class="d-symo" cx="390" cy="95" r="6.5"/>
+            <circle class="d-symo" cx="518" cy="155" r="6.5"/>
+            <line class="d-sym" x1="504" y1="145" x2="504" y2="165"/>
+            <text class="d-lbl" x="480" y="60">manages</text>
+            <text class="d-t sm ac" x="420" y="212" text-anchor="middle">One-to-many</text>
+            <text class="d-t sm" x="420" y="232" text-anchor="middle">一个经理管多名员工</text>
+          </g>
+          <g>
+            <rect class="d-box" x="660" y="120" width="160" height="66"/>
+            <text class="d-name" x="740" y="159" text-anchor="middle">ITEM</text>
+            <path class="d-line" d="M 710 120 L 710 70 L 890 70 L 890 155 L 820 155"/>
+            <path class="d-sym" d="M 710 104 L 700 120 M 710 104 L 710 120 M 710 104 L 720 120"/>
+            <circle class="d-symo" cx="710" cy="95" r="6.5"/>
+            <path class="d-sym" d="M 836 155 L 820 145 M 836 155 L 820 155 M 836 155 L 820 165"/>
+            <circle class="d-symo" cx="845" cy="155" r="6.5"/>
+            <text class="d-lbl" x="800" y="60">contains</text>
+            <text class="d-t sm ac" x="740" y="212" text-anchor="middle">Many-to-many</text>
+            <text class="d-t sm" x="740" y="232" text-anchor="middle">物料清单 BOM</text>
+          </g>
+        </svg>
+      </div>
+      <figcaption>Slides 用的 M:N 例子是车轮：「Sporty Rim」<b>既是</b>由「Rim Body + Japan Wheel Cap」组成的成品，<b>又是</b>「Race Wheel」和「Snow Racing Wheel」的组件。</figcaption>
+    </figure>
+    <div class="box biz">
+      <p class="bt">为什么一元关系在业务上很重要</p>
+      <p>如果不认识一元关系，看到「员工和经理」你会本能地建<b>两张表</b>：EMPLOYEE 和 MANAGER。后果是：</p>
+      <ul>
+        <li>经理本身也是员工，他的姓名、工号、薪资在两张表里各存一份 —— <b>数据重复</b>。</li>
+        <li>一个员工升职当经理，你要在 EMPLOYEE 里改状态，还要在 MANAGER 里插一行；他离职时又要两边删 —— <b>迟早不一致</b>。</li>
+        <li>层级只能有两层。总监管经理、经理管员工，难道再建一张 DIRECTOR 表？</li>
+      </ul>
+      <p style="margin-bottom:0">用一元关系，只有一张 EMPLOYEE 表，自己引用自己，<b>层级要多深有多深</b>。同样的道理适用于：物料清单（零件由零件组成）、组织架构、评论的回复、账户的推荐人关系。</p>
+    </div>
+
+    <h4>Binary（Degree 2）</h4>
+    <p>两个实体类型之间的关系，最常见的形态。Mario Education 那份作业里除了一元关系之外全是二元关系。</p>
+
+    <h4>Ternary（Degree 3）—— 三元关系</h4>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 960 330" role="img" aria-label="三元关系 supplies">
+          <rect class="d-box" x="400" y="20" width="180" height="62"/>
+          <text class="d-name" x="490" y="58" text-anchor="middle">PART</text>
+          <rect class="d-box" x="60" y="150" width="180" height="62"/>
+          <text class="d-name" x="150" y="188" text-anchor="middle">VENDOR</text>
+          <rect class="d-box" x="740" y="150" width="180" height="62"/>
+          <text class="d-name" x="830" y="188" text-anchor="middle">WAREHOUSE</text>
+
+          <line class="d-line" x1="490" y1="82" x2="490" y2="181"/>
+          <line class="d-line" x1="240" y1="181" x2="490" y2="181"/>
+          <line class="d-line" x1="740" y1="181" x2="490" y2="181"/>
+          <path class="d-sym" d="M 490 98 L 480 82 M 490 98 L 490 82 M 490 98 L 500 82"/>
+          <path class="d-sym" d="M 256 181 L 240 170 M 256 181 L 240 181 M 256 181 L 240 192"/>
+          <path class="d-sym" d="M 724 181 L 740 170 M 724 181 L 740 181 M 724 181 L 740 192"/>
+          <text class="d-lbl" x="504" y="200">supplies</text>
+
+          <line class="d-line dash" x1="490" y1="181" x2="490" y2="238"/>
+          <rect class="d-box" x="380" y="238" width="220" height="62"/>
+          <text class="d-attr" x="400" y="262">Shipping Mode</text>
+          <text class="d-attr" x="400" y="286">Unit Cost</text>
+
+          <text class="d-t sm" x="60" y="264">一个实例＝</text>
+          <text class="d-t sm" x="60" y="284">「Vendor X 把 Part C 供到 Warehouse Y，</text>
+          <text class="d-t sm" x="60" y="304">运输方式 next-day air，单价 $5」</text>
+        </svg>
+      </div>
+      <figcaption>三条腿交汇于一点，属性挂在交汇点上。</figcaption>
+    </figure>
+
+    <div class="box biz">
+      <p class="bt">为什么不能拆成三个二元关系</p>
+      <p>看上去可以拆成 Vendor–Part、Vendor–Warehouse、Part–Warehouse 三条二元关系，但那样<b>会永久丢失信息</b>：</p>
+      <ul>
+        <li>你知道「X 供 C」「X 供货给 Y」「C 存在 Y」，但<b>无法确定这三条说的是同一笔安排</b>。X 可能供 C 给别的仓库，同时供别的零件给 Y。</li>
+        <li>更要命的是 <code>Unit Cost</code> <b>无处安放</b>。单价是「X 供 C 到 Y」这一个三元组合才有的，放进任何一条二元关系都是错的。</li>
+      </ul>
+      <p style="margin-bottom:0"><b>判据：</b>当一个事实必须三个实体<b>同时到场</b>才成立，它就是三元关系，不能拆。</p>
+    </div>
+
+    <h4>三元关系落地：转成 associative entity</h4>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 960 250" role="img" aria-label="三元关系转为关联实体">
+          <rect class="d-box" x="400" y="16" width="180" height="62"/>
+          <text class="d-name" x="490" y="54" text-anchor="middle">PART</text>
+          <rect class="d-box" x="60" y="152" width="180" height="62"/>
+          <text class="d-name" x="150" y="190" text-anchor="middle">VENDOR</text>
+          <rect class="d-box" x="740" y="152" width="180" height="62"/>
+          <text class="d-name" x="830" y="190" text-anchor="middle">WAREHOUSE</text>
+
+          <rect class="d-box" x="370" y="136" width="220" height="94" rx="26" ry="26"/>
+          <text class="d-name" x="480" y="164" text-anchor="middle">SUPPLY SCHEDULE</text>
+          <line class="d-div" x1="394" y1="176" x2="566" y2="176"/>
+          <text class="d-attr" x="406" y="198">Shipping Mode</text>
+          <text class="d-attr" x="406" y="220">Unit Cost</text>
+
+          <line class="d-line" x1="490" y1="78" x2="490" y2="136"/>
+          <line class="d-sym" x1="480" y1="90" x2="500" y2="90"/>
+          <path class="d-sym" d="M 490 120 L 480 136 M 490 120 L 490 136 M 490 120 L 500 136"/>
+
+          <line class="d-line" x1="240" y1="183" x2="370" y2="183"/>
+          <line class="d-sym" x1="252" y1="173" x2="252" y2="193"/>
+          <path class="d-sym" d="M 354 183 L 370 172 M 354 183 L 370 183 M 354 183 L 370 194"/>
+
+          <line class="d-line" x1="590" y1="183" x2="740" y2="183"/>
+          <path class="d-sym" d="M 606 183 L 590 172 M 606 183 L 590 183 M 606 183 L 590 194"/>
+          <line class="d-sym" x1="728" y1="173" x2="728" y2="193"/>
+        </svg>
+      </div>
+      <figcaption>三条腿都连到圆角矩形上。每条腿在<b>父实体那一端是 one</b>（一条供货安排只对应一个供应商／零件／仓库），在<b>关联实体那一端是 many</b>。属性终于有了合法的家。</figcaption>
+    </figure>
+  </section>
+
+  <section id="s28">
+    <h3><span class="no">2.8</span> 同两个实体之间的多重关系 <span class="tag und">理解</span></h3>
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 900 330" role="img" aria-label="多重关系">
+          <rect class="d-box" x="330" y="140" width="190" height="70"/>
+          <text class="d-name" x="425" y="182" text-anchor="middle">EMPLOYEE</text>
+          <rect class="d-box" x="660" y="140" width="190" height="70"/>
+          <text class="d-name" x="755" y="182" text-anchor="middle">DEPARTMENT</text>
+
+          <path class="d-line" d="M 420 140 L 420 62 L 760 62 L 760 140"/>
+          <path class="d-sym" d="M 420 124 L 410 140 M 420 124 L 420 140 M 420 124 L 430 140"/>
+          <line class="d-sym" x1="410" y1="114" x2="430" y2="114"/>
+          <line class="d-sym" x1="750" y1="126" x2="770" y2="126"/>
+          <line class="d-sym" x1="750" y1="114" x2="770" y2="114"/>
+          <text class="d-lbl" x="590" y="52" text-anchor="middle">works in</text>
+
+          <path class="d-line" d="M 460 210 L 460 288 L 760 288 L 760 210"/>
+          <line class="d-sym" x1="450" y1="224" x2="470" y2="224"/>
+          <line class="d-sym" x1="450" y1="236" x2="470" y2="236"/>
+          <circle class="d-symo" cx="760" cy="234" r="6.5"/>
+          <line class="d-sym" x1="750" y1="222" x2="770" y2="222"/>
+          <text class="d-lbl" x="600" y="306" text-anchor="middle">manages</text>
+
+          <path class="d-line" d="M 360 140 L 360 96 L 180 96 L 180 258 L 360 258 L 360 210"/>
+          <circle class="d-symo" cx="360" cy="122" r="6.5"/>
+          <line class="d-sym" x1="350" y1="134" x2="370" y2="134"/>
+          <path class="d-sym" d="M 360 242 L 350 258 M 360 242 L 360 258 M 360 242 L 370 258"/>
+          <text class="d-lbl" x="252" y="180" text-anchor="middle">supervises</text>
+        </svg>
+      </div>
+      <figcaption>同样是 EMPLOYEE 和 DEPARTMENT，<b>works in</b> 和 <b>manages</b> 是两条完全独立的关系，基数也不同（每个部门有很多员工，但只有一位经理）。左边的 <b>supervises</b> 则是 EMPLOYEE 的一元关系。</figcaption>
+      </figure>
+    <p><b>不能合并成一条线。</b>「张三在市场部工作」和「张三管理市场部」是两件不同的事实，合成一条线就分不清一个部门的 50 个员工里谁是经理。业务上要问「谁是市场部负责人」，就必须有独立的 <code>manages</code>。</p>
+  </section>
+
+  <section id="s30">
+    <div class="part"><div class="part-no">Part 3</div><h2>做题技巧：四轮扫描法</h2></div>
+    <p style="margin-top:20px">ER 图<b>只有四种元素</b>：entity、attribute、relationship、cardinality。做题就是拿着这四个筐，把业务描述<b>从头到尾扫四遍</b>，每遍只找一种东西。一遍找一种，比一句一句边读边画要稳得多——因为后面的句子经常会改写前面的判断。</p>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 1120 160" role="img" aria-label="四轮扫描法">
+          <g>
+            <rect class="d-box" x="15" y="28" width="250" height="98"/>
+            <text class="d-note" x="35" y="52">ROUND 1</text>
+            <text class="d-name" x="35" y="76">Entity</text>
+            <text class="d-t sm" x="35" y="98">圈名词 → 判 strong /</text>
+            <text class="d-t sm" x="35" y="116">weak / associative</text>
+          </g>
+          <g>
+            <rect class="d-box" x="295" y="28" width="250" height="98"/>
+            <text class="d-note" x="315" y="52">ROUND 2</text>
+            <text class="d-name" x="315" y="76">Attribute</text>
+            <text class="d-t sm" x="315" y="98">每个实体的特性 →</text>
+            <text class="d-t sm" x="315" y="116">五分类 + 标识符</text>
+          </g>
+          <g>
+            <rect class="d-box" x="575" y="28" width="250" height="98"/>
+            <text class="d-note" x="595" y="52">ROUND 3</text>
+            <text class="d-name" x="595" y="76">Relationship</text>
+            <text class="d-t sm" x="595" y="98">找动词 → 连线 +</text>
+            <text class="d-t sm" x="595" y="116">标单数动词短语</text>
+          </g>
+          <g>
+            <rect class="d-box hi" x="855" y="28" width="250" height="98"/>
+            <text class="d-note" x="875" y="52">ROUND 4</text>
+            <text class="d-name hi" x="875" y="76">Cardinality</text>
+            <text class="d-t sm ac" x="875" y="98">先填「白送」的，</text>
+            <text class="d-t sm ac" x="875" y="116">剩下问两个问题</text>
+          </g>
+          <line class="d-line" x1="265" y1="77" x2="288" y2="77" marker-end="url(#ar)"/>
+          <line class="d-line" x1="545" y1="77" x2="568" y2="77" marker-end="url(#ar)"/>
+          <line class="d-line" x1="825" y1="77" x2="848" y2="77" marker-end="url(#ar)"/>
+        </svg>
+      </div>
+      <figcaption><b>第 0 步：先通读一遍，不动笔。</b>目的只有一个——知道总共有哪些东西，以及哪几句话其实在讲同一个东西。</figcaption>
+    </figure>
+
+    <h4>在卷面上做标记</h4>
+    <p>四种元素用四种标记，扫完一轮就多一层标记。扫完四轮，整张纸就是一张 ER 图的草稿：</p>
+    <div class="box" style="max-width:none">
+      <p class="bt">标记示例（取自 Assignment 1）</p>
+      <p style="line-height:2.2;margin-bottom:12px">ME wants to store details of <span class="mk-e">course</span>. Relevant details include <span class="mk-a">course id</span>, <span class="mk-a">name</span>, <span class="mk-a">description</span>, <span class="mk-a">available languages</span>, <span class="mk-a">first launch date</span> and <span class="mk-a">number of years launched</span>.</p>
+      <p style="line-height:2.2;margin-bottom:12px">Each <span class="mk-e">course</span> <span class="mk-c">must</span> be <span class="mk-v">categorized</span> under one <span class="mk-e">level</span>. A level can have <span class="mk-c">many</span> different courses, but some level newly created <span class="mk-c">may not</span> have any course associated yet.</p>
+      <p style="line-height:2.2;margin-bottom:12px">Each time a <span class="mk-e">course</span> is <span class="mk-v">scheduled</span> in one or more <span class="mk-e">venues</span>, ME makes an entry in <span class="mk-e">class schedule</span>. Class schedule data includes <span class="mk-a">class number</span>, <span class="mk-a">date</span>, <span class="mk-a">start time</span>, <span class="mk-a">end time</span>, and <span class="mk-a">duration</span>.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:16px;font-size:13px;font-family:var(--sans);color:var(--ink-2);border-top:1px solid var(--line);padding-top:12px">
+        <span><span class="mk-e">方框</span> = entity</span>
+        <span><span class="mk-a">黄底</span> = attribute</span>
+        <span><span class="mk-v">波浪线</span> = 动词 → relationship</span>
+        <span><span class="mk-c">圈起来</span> = must / may / many → cardinality</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="s31">
+    <h3><span class="no">3.1</span> 第一轮：找 Entity</h3>
+    <p><b>动作：</b>圈出所有名词，尤其是句子的主语和宾语；对每个候选用 2.1 节的三条标准筛一遍（有很多实例／有多个属性／业务确实要记）；留下来的再判类型。</p>
+
+    <h4>判 strong 还是 weak</h4>
+    <div class="box rule">
+      <p class="bt">weak 的两个信号，通常同时出现</p>
+      <ol class="body" style="margin-bottom:0">
+        <li><b>措辞上有存在依赖。</b>找 “only when…”、“as long as…”、“if X is removed, this is meaningless” 这类限定。<br>
+        <span class="d-t sm" style="font-family:var(--serif);color:var(--ink-2)">Assignment 原文：<i>“ME would like to keep data about the video … <b>only when the courses are still offered by ME</b>.”</i> —— 这句话就是在说 VIDEO 的存在依赖 COURSE。</span></li>
+        <li><b>题目没给它独立 ID。</b>其他实体都给了 course id、venue id、hashtag id，唯独 video 只给了 video name 和 video file。<b>出题人漏给 ID，往往就是在暗示这是弱实体。</b></li>
+      </ol>
+    </div>
+    <p><b>画法：</b>双线矩形，标识属性用<b>双下划线</b>（partial identifier），连向 owner 的线画<b>双实线</b>。</p>
+
+    <h4>判 associative——这一步最容易判错</h4>
+    <div class="box trap">
+      <p class="bt">「跟两个实体都有关系」不能当判据</p>
+      <p style="margin-bottom:0">COURSE 同时连着 LEVEL、SYLLABUS、VIDEO、CLASS SCHEDULE、HASHTAG，连了五个，但它是<b>强实体</b>。「连了两个」只是关联实体的表象，不是它的定义。</p>
+    </div>
+    <div class="box rule">
+      <p class="bt">真正的判据（三条，命中任意一条即可）</p>
+      <ol class="body" style="margin-bottom:8px">
+        <li><b>它的每一个实例，本身就是「A 的某一个 × B 的某一个」这个配对。</b><br>
+        反过来检验：<i>把两端任意一端删掉，这条记录还有意义吗？</i> 一条 class schedule 记录，如果没有课程，或者没有场地，它就什么都不是 → 它是配对本身 → associative。<br>
+        对照：一门 course 就算还没排课、还没配 hashtag，它依然是一门课 → 不是配对 → strong。</li>
+        <li><b>它带的属性只属于这个配对</b>，塞进任何一端都塞不下（2.2 节的成绩例子）。</li>
+        <li><b>描述里出现了 M:N。</b>“Some courses may use multiple hashtags” + “the same hashtag can be used … for one course” —— 两个方向都是 many，这条 M:N 必须落成一个关联实体。</li>
+      </ol>
+      <p style="margin-bottom:0"><b>还有一个语感上的信号：</b>描述里出现「每当 A 发生 B，系统就<u>记一条</u>」这种句式。<i>“Each time a course is scheduled in one or more venues, ME <b>makes an entry in</b> class schedule.”</i> —— “makes an entry” 直接告诉你：这条记录是由「课程 × 场地」这个动作产生的。</p>
+    </div>
+    <p><b>画法：</b>圆角矩形。</p>
+
+    <h4>Assignment 1 的判定结果</h4>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:158px">候选</th><th style="width:104px">判定</th><th>依据</th></tr></thead>
+        <tbody>
+          <tr><td class="k">COURSE</td><td>Strong</td><td>有 course id，独立存在</td></tr>
+          <tr><td class="k">DIFFICULTY LEVEL</td><td>Strong</td><td>有 Level ID；“some level … may not have any course associated yet” 说明它离开 course 也存在</td></tr>
+          <tr><td class="k">HASHTAG</td><td>Strong</td><td>有 hashtag id；“the hashtags are stored in the database” 是独立存储</td></tr>
+          <tr><td class="k">SYLLABUS</td><td>Strong</td><td>有 syllabi ID；“Not all syllabi … are currently followed” 说明没有课也能存在</td></tr>
+          <tr><td class="k">TEACHING VENUE</td><td>Strong</td><td>有 Venue id；“some teaching venues may be scheduled with no class”</td></tr>
+          <tr><td class="k" style="color:var(--flag)">VIDEO</td><td><b>Weak</b></td><td>“only when the courses are still offered” + 没给独立 ID</td></tr>
+          <tr><td class="k" style="color:var(--accent)">CLASS SCHEDULE</td><td><b>Associative</b></td><td>“Each time a course is scheduled in one or more venues, ME makes an entry in class schedule” —— 由「课程 × 场地」产生</td></tr>
+          <tr><td class="k" style="color:var(--accent)">HASHTAG USAGE</td><td><b>Associative</b></td><td>course 与 hashtag 是 M:N；且 social media platform 是<b>关系</b>的属性，无处可放</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box biz">
+      <p class="bt">为什么 SOCIAL MEDIA PLATFORM 不是一个独立实体</p>
+      <p style="margin-bottom:0">题目原话是 <i>“<b>One attribute of the relationship</b> between course and hashtag is the social media platforms using the hashtag.”</i> —— 它自己就说了这是<b>关系的属性</b>。如果把它建成独立实体，它就变成了「平台清单表」（Facebook、Instagram 各一行），而实际要记的是「A 课程的 B 标签发在 C 平台上」这个三元组合。这正是判据②：属性只属于配对。</p>
+    </div>
+  </section>
+
+  <section id="s32">
+    <h3><span class="no">3.2</span> 第二轮：找 Attribute</h3>
+    <p>题目通常会把每个实体的属性一次性列清楚（“Relevant details include…”、“Its attributes include…”、“…are basic data of…”）。这一轮的重点<b>不是找，而是分类</b>。</p>
+    <p>要画在图上的只有<b>五类</b>——required / optional 不画（2.3 节）。按下面的顺序问，第一个命中就是答案：</p>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:44px">顺序</th><th style="width:230px">问句</th><th style="width:118px">是 → 分类</th><th>记法</th></tr></thead>
+        <tbody>
+          <tr><td class="m">1</td><td>它能唯一确定这个实体的一个实例吗？</td><td class="k">Identifier</td><td class="m">下划线（见下）</td></tr>
+          <tr><td class="m">2</td><td>同一个实例上，它能同时有多个值吗？</td><td class="k">Multivalued</td><td class="m">{ Attr }</td></tr>
+          <tr><td class="m">3</td><td>它能拆成<b>有意义</b>的组件吗？</td><td class="k">Composite</td><td class="m">Attr (1, 2, 3)</td></tr>
+          <tr><td class="m">4</td><td>它能由别的属性算出来吗？</td><td class="k">Derived</td><td class="m">[ Attr ]</td></tr>
+          <tr><td class="m">5</td><td>以上都不是</td><td class="k">Simple</td><td class="m">无标记</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box trap">
+      <p class="bt">第 4 问经常要靠自己发现</p>
+      <p style="margin-bottom:0">题目<b>不会</b>告诉你「number of years launched 是算出来的」。它只是把它和 first launch date 并排列在一起。你要自己看出这两者的关系，做出假设并写明：<i>“Number of years launched is derived from first launch date and the current date; it is not stored.”</i> 同一句里的 <code>start time / end time / duration</code> 也是同一个套路。<b>这两处是这份作业里最容易整份丢掉的分。</b></p>
+    </div>
+
+    <h4>标识符的三种形态怎么判</h4>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:132px">形态</th><th style="width:110px">记法</th><th>判法</th></tr></thead>
+        <tbody>
+          <tr><td class="k">Simple</td><td class="m">单下划线</td><td>单独一个属性就能唯一确定实例。<code>Course ID</code>、<code>Venue ID</code>、<code>Level ID</code> —— 名字里带 ID 的基本都是。</td></tr>
+          <tr><td class="k">Composite</td><td class="m">两个都加单下划线<br>（或另造一个）</td><td>单独任何一个都不够，两个合起来才唯一。slides 的 FLIGHT：<code>Flight Number</code> 每天重复、<code>Flight Date</code> 每天几百班，各自都不唯一，合起来才唯一。<b>Assignment 1 里没有这种情况。</b></td></tr>
+          <tr><td class="k">Partial</td><td class="m">双下划线</td><td>它只在<b>某个父实体范围内</b>唯一，必须借父实体的 ID 才能补齐。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box trap">
+      <p class="bt">修正一条常见的误记</p>
+      <p><b>「weak entity 一定有 partial identifier」——对。</b>弱实体按定义就没有完整标识符。</p>
+      <p><b>「associative entity 一定有 partial identifier」——不对。</b>Slides 原话是 <span class="en">“It may have its own attributes, and <b>may or may not have an identifier</b>.”</span> 三种情况都存在：</p>
+      <ul>
+        <li><b>有自己完整的 identifier</b> → <b>单</b>下划线。Assignment 1 的 <code>CLASS SCHEDULE</code> 就是这种，题目给了 <code>class number</code>。</li>
+        <li><b>只有 partial identifier</b> → <b>双</b>下划线。slides 的 <code>SCHEDULE</code>，<code>Semester</code> 只在同一对「教授 × 课程」内唯一。</li>
+        <li><b>什么标识属性都没有</b> → 框里不写，只在框外注明 <span class="en">Implicit identifier: A ID + B ID</span>。slides 的 <code>Completion</code> 就是这种。</li>
+      </ul>
+      <p style="margin-bottom:0"><b>判断问句：</b>这个属性<u>单独拿出来</u>，能不能在全表范围内唯一？能 → 单下划线；不能、但配上两端 ID 就能 → 双下划线；根本没有这么一个属性 → 只写 implicit identifier。</p>
+    </div>
+
+    <h4>Assignment 1 的属性分类</h4>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:150px">实体</th><th>属性与分类</th></tr></thead>
+        <tbody>
+          <tr><td class="k">COURSE</td><td><u>Course ID</u> · Name · Description · <b>{Available Languages}</b>（“like English, Chinese and French” 明示多值）· First Launch Date · <b>[Number of Years Launched]</b>（自己看出的派生）</td></tr>
+          <tr><td class="k">DIFFICULTY LEVEL</td><td><u>Level ID</u> · Name · Target Student Group · <b>Study Coordinator (First Name, Last Name)</b>（“including the first name and last name” 明示复合）· Enquiry Phone Number</td></tr>
+          <tr><td class="k">HASHTAG</td><td><u>Hashtag ID</u> · Description · Text</td></tr>
+          <tr><td class="k">VIDEO <span class="tag fyi">weak</span></td><td><b>Video Name</b>（双下划线，partial）· Video File<br><small>Implicit identifier: Course ID + Video Name</small></td></tr>
+          <tr><td class="k">SYLLABUS</td><td><u>Syllabi ID</u> · Text · Designer Name · Designer Notes</td></tr>
+          <tr><td class="k">TEACHING VENUE</td><td><u>Venue ID</u> · Address · Capacity · Coordinating Person · Telephone</td></tr>
+          <tr><td class="k">CLASS SCHEDULE <span class="tag fyi">assoc</span></td><td><u>Class Number</u>（单下划线，题目给了完整 ID）· Date · Start Time · End Time · <b>[Duration]</b></td></tr>
+          <tr><td class="k">HASHTAG USAGE <span class="tag fyi">assoc</span></td><td><b>Social Media Name</b>（双下划线，partial）<br><small>Implicit identifier: Course ID + Hashtag ID + Social Media Name</small></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s33">
+    <h3><span class="no">3.3</span> 第三轮：找 Relationship</h3>
+    <p><b>动作：</b>在描述里找<b>动词</b>——它把两个已经圈出来的实体连在一起。找到一个就画一条线，并把那个动词直接抄上去。</p>
+    <p>Assignment 1 里的动词几乎是明写的：<code>categorized under</code>、<code>be associated to</code>、<code>be offered with</code>、<code>is following</code>、<code>is scheduled in</code>、<code>is using</code>。</p>
+
+    <div class="box rule">
+      <p class="bt">标签三条规矩</p>
+      <ul style="margin-bottom:0">
+        <li>动词或动词短语，<b>单数形式</b></li>
+        <li>主动、被动都行，但要保证<b>从左到右、从上到下</b>读出来通顺</li>
+        <li>关联实体两侧的连线，按 slides 的画法<b>可以不标动词</b>（slide 35、43 都是空的）</li>
+      </ul>
+    </div>
+
+    <div class="box biz">
+      <p class="bt">反过来用：从动词发现关联实体</p>
+      <p style="margin-bottom:0">你在第一轮如果漏判了，第三轮找动词时还有一次机会。<i>“Some teaching venues may be <b>scheduled</b> with no class while some other teaching venues are <b>scheduled</b> with multiple classes.”</i> —— 同一个动词 <code>schedule</code> 既连着 course 又连着 venue，而 <code>class schedule</code> 这个名词本身又被给了一整套属性。<b>一个动词被名词化、还带着自己的属性，它就是关联实体。</b></p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:290px">关系</th><th style="width:118px">来源动词</th><th>说明</th></tr></thead>
+        <tbody>
+          <tr><td class="k">DIFFICULTY LEVEL — COURSE</td><td class="m">categorizes</td><td>“Each course must be <b>categorized</b> under one level”</td></tr>
+          <tr><td class="k">COURSE — VIDEO</td><td class="m">is offered</td><td>“Each course may be <b>offered</b> with videos”；双实线（identifying）</td></tr>
+          <tr><td class="k">COURSE — SYLLABUS</td><td class="m">follows</td><td>“Each course is <b>following</b> one and only one syllabus”</td></tr>
+          <tr><td class="k">COURSE — CLASS SCHEDULE</td><td class="m">—</td><td rowspan="2">关联实体两侧，按 slides 可不标动词</td></tr>
+          <tr><td class="k">CLASS SCHEDULE — TEACHING VENUE</td><td class="m">—</td></tr>
+          <tr><td class="k">COURSE — HASHTAG USAGE</td><td class="m">—</td><td rowspan="2">同上</td></tr>
+          <tr><td class="k">HASHTAG — HASHTAG USAGE</td><td class="m">—</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="s34">
+    <h3><span class="no">3.4</span> 第四轮：定 Cardinality <span class="tag exam">最难也最值钱</span></h3>
+    <p>不要一上来就一条一条问。先用<b>两条白送的规律</b>把能确定的填掉，剩下的才需要动脑。</p>
+
+    <div class="box rule">
+      <p class="bt">Step 1 · 两条白送的规律</p>
+      <ul style="margin-bottom:0">
+        <li><b>弱实体</b>连它的 owner：<b>owner 那一端必定 mandatory one（‖）</b>。因为弱实体靠 owner 才能被识别，必须恰好属于一个 owner。<br>
+        <span class="d-t sm" style="font-family:var(--serif);color:var(--ink-2)">→ COURSE — VIDEO：COURSE 端直接填 ‖。</span></li>
+        <li><b>关联实体</b>连两端实体：<b>两端实体那一侧都是 mandatory one（‖）</b>。一条记录必然对应恰好一个 A 和恰好一个 B。<br>
+        <span class="d-t sm" style="font-family:var(--serif);color:var(--ink-2)">→ CLASS SCHEDULE 两条线的 COURSE 端和 VENUE 端、HASHTAG USAGE 两条线的 COURSE 端和 HASHTAG 端，全部填 ‖。</span></li>
+      </ul>
+    </div>
+    <p style="color:var(--ink-2);font-size:14.5px">光这一步，Assignment 1 的 14 个端点里就填掉了 <b>5 个</b>，一个问题都没问。</p>
+
+    <div class="box rule">
+      <p class="bt">Step 2 · M:N 转成关联实体时，符号怎么搬</p>
+      <p style="margin-bottom:0">关联实体那一侧的符号<b>不是新想的，是从原来的 M:N 搬过来的</b>，而且是<b>交叉</b>搬：原来贴着 B 的符号，搬到关联实体<b>靠 A 的那一侧</b>。</p>
+    </div>
+
+    <figure>
+      <div class="fig-canvas">
+        <svg viewBox="0 0 900 270" role="img" aria-label="M:N 转关联实体时基数符号的搬移">
+          <text class="d-note" x="20" y="18">转换前 · M : N</text>
+          <rect class="d-box" x="20" y="30" width="160" height="52"/>
+          <text class="d-name" x="100" y="61" text-anchor="middle">EMPLOYEE</text>
+          <rect class="d-box" x="720" y="30" width="160" height="52"/>
+          <text class="d-name" x="800" y="61" text-anchor="middle">COURSE</text>
+          <line class="d-line" x1="180" y1="56" x2="720" y2="56"/>
+          <path class="d-sym" d="M 196 56 L 180 45 M 196 56 L 180 56 M 196 56 L 180 67"/>
+          <line class="d-sym" x1="206" y1="46" x2="206" y2="66"/>
+          <path class="d-sym" d="M 704 56 L 720 45 M 704 56 L 720 56 M 704 56 L 720 67"/>
+          <circle class="d-symo" cx="695" cy="56" r="6.5"/>
+          <text class="d-lbl" x="450" y="46" text-anchor="middle">completes</text>
+
+          <path class="d-line dash" d="M 688 74 C 600 140, 430 140, 344 174" style="stroke:var(--accent)" marker-end="url(#ara)"/>
+          <path class="d-line dash" d="M 208 74 C 300 140, 470 140, 552 174" style="stroke:var(--accent)" marker-end="url(#ara)"/>
+          <text class="d-note" x="450" y="130" text-anchor="middle">交叉搬家</text>
+
+          <text class="d-note" x="20" y="176">转换后 · 关联实体</text>
+          <rect class="d-box" x="20" y="188" width="160" height="52"/>
+          <text class="d-name" x="100" y="219" text-anchor="middle">EMPLOYEE</text>
+          <rect class="d-box" x="360" y="184" width="180" height="60" rx="22" ry="22"/>
+          <text class="d-name" x="450" y="209" text-anchor="middle">COMPLETION</text>
+          <text class="d-t sm" x="450" y="229" text-anchor="middle">Date Completed</text>
+          <rect class="d-box" x="720" y="188" width="160" height="52"/>
+          <text class="d-name" x="800" y="219" text-anchor="middle">COURSE</text>
+
+          <line class="d-line" x1="180" y1="214" x2="360" y2="214"/>
+          <line class="d-sym" x1="192" y1="204" x2="192" y2="224"/>
+          <line class="d-sym" x1="204" y1="204" x2="204" y2="224"/>
+          <path class="d-sym" d="M 344 214 L 360 203 M 344 214 L 360 214 M 344 214 L 360 225"/>
+          <circle class="d-symo" cx="335" cy="214" r="6.5"/>
+
+          <line class="d-line" x1="540" y1="214" x2="720" y2="214"/>
+          <path class="d-sym" d="M 556 214 L 540 203 M 556 214 L 540 214 M 556 214 L 540 225"/>
+          <line class="d-sym" x1="566" y1="204" x2="566" y2="224"/>
+          <line class="d-sym" x1="708" y1="204" x2="708" y2="224"/>
+          <line class="d-sym" x1="696" y1="204" x2="696" y2="224"/>
+        </svg>
+      </div>
+      <figcaption>验算：转换前「贴 COURSE 的 <code>O&lt;</code>」回答的是<b>一个员工修几门课 = 0..M</b>；转换后它变成<b>一个员工有几条 completion 记录 = 0..M</b> —— 同一句话。另一侧同理。</figcaption>
+    </figure>
+
+    <div class="box rule">
+      <p class="bt">Step 3 · 剩下的，每一端问两个问题</p>
+      <ol class="body" style="margin-bottom:8px">
+        <li>一个 A，可以<b>没有</b> B 吗？ → 有 <b>○</b>，没有 <b>|</b>（最小基数，内侧）</li>
+        <li>一个 A，可以有<b>多于一个</b> B 吗？ → 可以 <b>&lt;</b>，不可以 <b>|</b>（最大基数，外侧）</li>
+      </ol>
+      <p style="margin-bottom:0">答案画在 <b>B 那一端</b>。然后把 A、B 对调，再问一遍。</p>
+    </div>
+
+    <div class="box biz">
+      <p class="bt">Step 4 · 答案只能从描述里推，推不出就 assume</p>
+      <p>关键词往往就藏在一个词里：<code>must</code>／<code>only one</code> → mandatory / one；<code>may</code>／<code>not all</code>／<code>some … may not</code> → optional；<code>many</code>／<code>multiple</code> → many。所以第一轮做标记时，把这些词圈出来是有用的。</p>
+      <p style="margin-bottom:0">找不到任何一句能支持的，就<b>做假设并明确写出来</b>。写法：先引用原文说明哪一半是给定的，再说明你假设了另一半是什么、为什么。</p>
+    </div>
+
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:250px">端点</th><th style="width:64px">符号</th><th>来源</th></tr></thead>
+        <tbody>
+          <tr><td class="k">COURSE → DIFFICULTY LEVEL</td><td class="m">‖</td><td><small>“<b>must</b> be categorized under <b>one</b> level”</small></td></tr>
+          <tr><td class="k">DIFFICULTY LEVEL → COURSE</td><td class="m">O&lt;</td><td><small>“can have <b>many</b>… some level <b>may not</b> have any course”</small></td></tr>
+          <tr><td class="k">COURSE → VIDEO</td><td class="m">O&lt;</td><td><small>“<b>may</b> be offered with video<b>s</b>… <b>Not all</b> courses are offered”</small></td></tr>
+          <tr><td class="k">VIDEO → COURSE</td><td class="m">‖</td><td><small>Step 1 白送（弱实体）</small></td></tr>
+          <tr><td class="k">CLASS SCHEDULE → COURSE</td><td class="m">‖</td><td><small>Step 1 白送 ＋ “a class can be scheduled for <b>only one</b> course”</small></td></tr>
+          <tr><td class="k">COURSE → CLASS SCHEDULE</td><td class="m">O&lt;</td><td><small>“<b>may</b> be scheduled with <b>many</b> classes”</small></td></tr>
+          <tr><td class="k">CLASS SCHEDULE → TEACHING VENUE</td><td class="m">‖</td><td><small>Step 1 白送 ＋ “<b>must</b> be using <b>only one</b> teaching venue”</small></td></tr>
+          <tr><td class="k">TEACHING VENUE → CLASS SCHEDULE</td><td class="m">O&lt;</td><td><small>“some venues <b>may be scheduled with no class</b>… others… <b>multiple</b> classes”</small></td></tr>
+          <tr><td class="k">HASHTAG USAGE → COURSE / HASHTAG</td><td class="m">‖ ‖</td><td><small>Step 1 白送（关联实体）</small></td></tr>
+          <tr><td class="k">COURSE → HASHTAG USAGE</td><td class="m">O&lt;</td><td><small>“<b>may</b> be associated… some courses may use <b>multiple</b> hashtags”</small></td></tr>
+          <tr><td class="k">HASHTAG → HASHTAG USAGE</td><td class="m">O&lt;</td><td><small>“the <b>same</b> hashtag can be used on <b>different</b> social media platform for one course”</small></td></tr>
+          <tr><td class="k">SYLLABUS → COURSE</td><td class="m">‖</td><td><small>“<b>one and only one</b> syllabus”</small></td></tr>
+          <tr class="bad"><td class="k">COURSE → SYLLABUS</td><td class="m">O|</td><td><small>最小值来自 “<b>Not all</b> syllabi… are currently followed”；<b>最大值全文无明文 → 必须 assume</b></small></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box trap">
+      <p class="bt">这份作业唯一需要基数假设的地方</p>
+      <p>题目说了「每门课恰好跟一份 syllabus」和「有些 syllabus 没被任何课使用」，但<b>从没说过一份 syllabus 能不能同时被多门课使用</b>。两个方向都讲得通：</p>
+      <ul>
+        <li><b>假设最多一门课</b>（→ <code>O|</code>，1:1）：每门课的结构和进度都不同，syllabus 是为这门课单独写的。</li>
+        <li><b>假设可以多门课</b>（→ <code>O&lt;</code>，1:M）：ME 有一份通用大纲模板，同一级别的多门课共用。</li>
+      </ul>
+      <p style="margin-bottom:0"><b>两种都能拿分，前提是写出来。</b>可以直接抄这个句式：<br>
+      <span style="display:block;margin-top:8px;padding:11px 13px;background:var(--surface);border-radius:2px;font-size:13.5px;line-height:1.6"><span class="en" style="color:var(--ink)">The description states that each course follows exactly one syllabus, and that some syllabi are not currently followed by any course. It does not state whether one syllabus may be shared by several courses. I assume a syllabus can be followed by <b>at most one</b> course, so the COURSE end of <i>follows</i> is optional one and the relationship is 1:1.</span></span></p>
+    </div>
+  </section>
+
+  <section id="s35">
+    <h3><span class="no">3.5</span> 交卷前</h3>
+    <p>四轮扫完，最后按<a href="#trap">附录 B 的十二条清单</a>过一遍。另外三件容易被忘的事：</p>
+    <ul>
+      <li><b>非基数的建模判断也要写进 assumptions。</b>「VIDEO 视为弱实体」「CLASS SCHEDULE 与 HASHTAG USAGE 视为关联实体」「Number of Years Launched 与 Duration 为派生属性，不入库」—— 这些是你的判断，不是题目给的，写出来才算数。</li>
+      <li><b>题目里自相矛盾的地方要点出来。</b>“scheduled in <b>one or more</b> venues” 和 “A given class schedule must be using <b>only one</b> teaching venue” 表面冲突，要说明你按后者理解：一门课在多个场地上课时，每个场地各生成一条 class schedule 记录。</li>
+      <li><b>图里画不下的规则，用文字补。</b>Slides 明说了 <span class="en">some business rules cannot be represented in E-R diagram</span> —— 文字说明是答案的一部分。</li>
+    </ul>
+    <div class="box rule">
+      <p class="bt">四轮扫描一句话版</p>
+      <p style="margin-bottom:0"><b>①</b> 圈名词定实体，用「存在依赖 + 没给 ID」判弱实体，用「这条记录是不是一个配对」判关联实体 → <b>②</b> 每个属性按「唯一 / 多值 / 可拆 / 可算 / 都不是」五问归类，标识符按「单独够不够唯一」决定单双下划线 → <b>③</b> 找动词连线，单数形式，主被动看读图方向 → <b>④</b> 先填弱实体和关联实体白送的 ‖，再对剩下每一端问两个问题，答不出来的写成 assumption。</p>
+    </div>
+  </section>
+
+  <section id="ref">
+    <div class="part"><div class="part-no">附录 A</div><h2>记法总表</h2></div>
+    <div class="tw" style="margin-top:20px">
+      <table>
+        <thead><tr><th style="width:132px">画法</th><th style="width:210px">含义</th><th>要点</th></tr></thead>
+        <tbody>
+          <tr><td class="m">单线矩形</td><td class="k">Strong entity</td><td>独立存在，有自己完整的标识符</td></tr>
+          <tr><td class="m">双线矩形</td><td class="k">Weak entity</td><td>依赖 identifying owner；框和 partial identifier 都是双线</td></tr>
+          <tr><td class="m">圆角矩形</td><td class="k">Associative entity</td><td>M:N 拆解而来；可有可无自己的标识符</td></tr>
+          <tr><td class="m">单实线</td><td class="k">普通关系</td><td>用单数动词／动词短语标注</td></tr>
+          <tr><td class="m">双实线</td><td class="k">Identifying relationship</td><td>连接弱实体与它的 owner</td></tr>
+          <tr><td class="m">虚线 + 方框</td><td class="k">Relationship attribute</td><td>属性挂在关系线上</td></tr>
+          <tr><td class="m">Attribute</td><td class="k">Identifier</td><td>单下划线</td></tr>
+          <tr><td class="m">Attribute（双线）</td><td class="k">Partial identifier</td><td>双下划线；弱实体与部分关联实体用</td></tr>
+          <tr><td class="m">Attribute</td><td class="k">Simple attribute</td><td>无标记</td></tr>
+          <tr><td class="m">Attr (1, 2, 3)</td><td class="k">Composite attribute</td><td>圆括号列出有意义的组件</td></tr>
+          <tr><td class="m">{Attr}</td><td class="k">Multivalued attribute</td><td>花括号</td></tr>
+          <tr><td class="m">[Attr]</td><td class="k">Derived attribute</td><td>方括号；不入库，用时计算</td></tr>
+          <tr><td class="m">‖</td><td class="k">Mandatory one</td><td>内 mandatory + 外 one</td></tr>
+          <tr><td class="m">|&lt;</td><td class="k">Mandatory many</td><td>内 mandatory + 外 many</td></tr>
+          <tr><td class="m">O|</td><td class="k">Optional one</td><td>内 optional + 外 one</td></tr>
+          <tr><td class="m">O&lt;</td><td class="k">Optional many</td><td>内 optional + 外 many</td></tr>
+          <tr><td class="m">符号旁数字</td><td class="k">具体的最小基数</td><td>如 <code>2</code> 表示「至少两个」</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="box trap">
+      <p class="bt">记法是会变的</p>
+      <p style="margin-bottom:0">Slides 最后一页专门放了一张 <b>MS Visio</b> 的图并说明：<span class="en">different modeling software tools may have different notation for the same constructs</span>。Visio 里用<b>虚线</b>区分 non-identifying relationship，而本课程的记法里普通关系一律<b>单实线</b>、双实线才表示 identifying。<b>考试和作业一律按上面这张表。</b></p>
+    </div>
+  </section>
+
+  <section id="trap">
+    <div class="part"><div class="part-no">附录 B</div><h2>易错清单</h2></div>
+    <p style="margin-top:18px">画完一张 ER 图，照这个单子过一遍。</p>
+    <div class="tw">
+      <table>
+        <thead><tr><th style="width:52px">✓</th><th>检查项</th></tr></thead>
+        <tbody>
+          <tr><td class="m">01</td><td>实体名是<b>单数名词</b>，且是<b>类型</b>不是<b>实例</b>（没有 <code>PETER LEE</code> 这种）。</td></tr>
+          <tr><td class="m">02</td><td>没有把<b>系统生成的输出</b>（报表、汇总）建成实体。</td></tr>
+          <tr><td class="m">03</td><td>每个强实体都有<b>单下划线</b>的标识符；弱实体和用 partial identifier 的关联实体是<b>双下划线</b>。</td></tr>
+          <tr><td class="m">04</td><td>三种实体<b>形状</b>画对了：单线矩形 / 双线矩形 / 圆角矩形。</td></tr>
+          <tr><td class="m">05</td><td>弱实体那条线是<b>双实线</b>；其余关系是<b>单实线</b>（不要画虚线）。</td></tr>
+          <tr><td class="m">06</td><td>弱实体 / 关联实体连向父实体那一端是 <b>mandatory one（‖）</b>。</td></tr>
+          <tr><td class="m">07</td><td>没有留下未拆解的 <b>M:N</b>（或者刻意保留并说明）；关系上的属性有地方放。</td></tr>
+          <tr><td class="m">08</td><td>多值属性 <code>{}</code>、派生属性 <code>[]</code>、复合属性 <code>()</code> 都标了 —— 这三个最常漏。</td></tr>
+          <tr><td class="m">09</td><td>每条<b>普通</b>关系线都有单数动词标签，且主动／被动符合「从左到右、从上到下」的读法。（关联实体两侧的连线按 slides 可以不标）</td></tr>
+          <tr><td class="m">10</td><td><b>每一端</b>都有一对基数符号 —— 内侧管最小、外侧管最大，两个都不能少。</td></tr>
+          <tr><td class="m">11</td><td>题目没说清的基数，写成了<b>明确的 assumption</b>，并引用了原文说明哪一半是给定的。</td></tr>
+          <tr><td class="m">12</td><td>无法用图表达的 business rule（如「一学期最多 18 学分」）用<b>文字</b>补充说明。</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="box rule">
+      <p class="bt">一分钟回顾</p>
+      <p style="margin-bottom:0">信息系统三层 → 底层是 DBMS → 先做企业数据建模决定立哪些项目 → 项目按 SDLC 或原型法开发 → SDLC 的 <b>Analysis</b> 阶段做 conceptual data modeling → 产物是 <b>E-R 图</b> → ER 图 = 实体（强／弱／关联）+ 属性（六种记法）+ 关系（动词 + 一对基数符号）→ 图画不下的规则，用文字写成 assumptions。</p>
+    </div>
+  </section>
+
+  </main>
+</div>

@@ -1,0 +1,9 @@
+{
+  "code": "ISOM 5070",
+  "title": { "en": "Cyber Security Risk Management", "zh": "网络安全风险管理" },
+  "instructor": "Prof. Peter Wu",
+  "description": {
+    "en": "Cyber security through a business lens — risk assessment, governance frameworks (NIST CSF, FAIR, ATT&CK) and cost/benefit-driven security strategy.",
+    "zh": "从商业视角看网络安全：风险评估、治理框架（NIST CSF、FAIR、ATT&CK），以及基于成本收益的安全策略。"
+  }
+}

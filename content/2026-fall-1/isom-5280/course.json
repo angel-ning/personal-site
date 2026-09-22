@@ -1,0 +1,9 @@
+{
+  "code": "ISOM 5280",
+  "title": { "en": "Computer and Internet Security Management", "zh": "计算机与互联网安全管理" },
+  "instructor": "Paul Ip",
+  "description": {
+    "en": "The threat landscape, security technologies — access control, firewalls, IDPS, SIEM — and how organizations run security.",
+    "zh": "威胁形势、安全技术（访问控制、防火墙、IDPS、SIEM），以及组织如何运营安全。"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "code": "ISOM 5180",
+  "title": { "en": "Advanced Network and Security Management", "zh": "高级网络与安全管理" },
+  "instructor": "Dr. Percy Dias",
+  "description": {
+    "en": "Networking protocols and communications, and how network design underpins security.",
+    "zh": "网络协议与通信，以及网络设计如何支撑安全。"
+  }
+}

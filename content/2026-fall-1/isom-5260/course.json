@@ -1,0 +1,8 @@
+{
+  "code": "ISOM 5260",
+  "title": { "en": "Fundamentals of Database Management", "zh": "数据库管理基础" },
+  "description": {
+    "en": "From requirements to relations — E-R modelling, logical design, normalization and SQL.",
+    "zh": "从需求到关系表：E-R 建模、逻辑设计、规范化与 SQL。"
+  }
+}
