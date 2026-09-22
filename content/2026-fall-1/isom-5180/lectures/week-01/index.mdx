@@ -767,11 +767,11 @@ MAC 表（CAM 表）容量有限。攻击者用工具**伪造大量不同的源 
 
 **实际网络里，路由表通常由 dynamic routing protocol 完成**（网络一大，手工写每一条既累又容易错，线路断了也不会自动绕路）；static 多用在小网络或固定的出口（比如默认路由）。
 
-<Callout type="todo" title="TODO：课后问老师">
+<Callout type="note" title="TODO 已解决（见第 2 周笔记）">
 
-- 课件和板书对 dynamic routing 只**列了名字**（RIP、EIGRP、OSPF），没有展开协议具体怎么交换路由信息。课上是不是只要求会**画表**（就是下面的 Initial R.T. → 完整 R.T.），不考 dynamic 协议的细节？
-- 考试画路由表时，**路由器之间串行线本身的网络**（A–B、B–C 那两段）要不要也写进表里？
-- IP address 分成 **network 部分和 host 部分**、子网掩码——老师说后面会展开，到时候回来把下面例子里的地址补成完整写法。
+- **Dynamic routing 讲不讲细节？** —— 讲。Module 2 的 Slide 52–66 专门讲 routing protocol（RIP 怎么通告路由、metric 怎么选路）；第 2 周的板书也画了「A 把 1.0、2.0、3.0 告诉 B，B 把 3.0、4.0、5.0 告诉 A」。
+- **路由器之间串行线本身的网络要不要写进表？** —— **要**，两边都写成直连网络（课堂板书的 3.0，以及 Slide 55、64）。
+- **IP 分 network / host** —— 第 2 周第 1–3 节。
 
 </Callout>
 

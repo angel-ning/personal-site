@@ -258,3 +258,14 @@ body {
 .cm-svg { border: 1px solid var(--line); border-radius: 12px; padding: .4em; background: var(--surface); overflow-x: auto; }
 .cm-svg svg { display: block; width: 100%; min-width: 560px; height: auto; }
 .collision-map .table-wrap { margin-top: .8em; }
+.ip-octets { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5em; margin-top: .9em; }
+.ip-octet { border: 1px solid var(--line); border-radius: 8px; padding: .45em .5em; display: flex; flex-direction: column; align-items: center; gap: .1em; }
+.ip-dec { font-family: var(--font-mono); font-weight: 600; font-size: 1.1em; }
+.ip-bin { font-family: var(--font-mono); font-size: .85em; letter-spacing: .04em; color: var(--fg-2); }
+.ip-lead { color: var(--c-exam); font-weight: 700; }
+.ip-octet small { color: var(--fg-3); font-size: .78em; }
+.ip-net { background: color-mix(in oklab, var(--c-warn) 9%, transparent); border-color: color-mix(in oklab, var(--c-warn) 35%, var(--line)); }
+.ip-host { background: color-mix(in oklab, var(--accent) 8%, transparent); border-color: color-mix(in oklab, var(--accent) 30%, var(--line)); }
+.lab-table tbody th { width: 9.5em; white-space: nowrap; vertical-align: top; font-size: .92em; }
+.lab-table code { font-family: var(--font-mono); background: var(--subtle); padding: 0 .3em; border-radius: 4px; }
+@media (max-width: 560px) { .ip-octets { grid-template-columns: repeat(2, 1fr); } .lab-table tbody tr:has(th) { display: flex; flex-direction: column; } .lab-table tbody th { width: auto; border-bottom: 0; padding-bottom: 0; } }

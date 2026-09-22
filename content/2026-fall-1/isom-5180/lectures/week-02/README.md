@@ -1,0 +1,908 @@
+---
+title:
+  en: "Week 2 · Network Layer & IPv4 Addressing"
+  zh: "第 2 周 · 网络层与 IPv4 地址"
+summary:
+  en: "IPv4 structure and classes, network and broadcast addresses, private addresses and NAT, DHCP, DNS, ARP — then default gateways and how routers build routing tables."
+  zh: "IPv4 结构与分类、网络地址与广播地址、私有地址与 NAT、DHCP、DNS、ARP，以及默认网关和路由器如何建立路由表。"
+week: 2
+date: 2026-09-22
+tags: [IPv4, NAT, DHCP, DNS, ARP, Routing]
+---
+# ISOM 5180 Advanced Network and Security Management — Week 2 复习笔记
+
+**主题：Module 2 Network Layer and IP Addressing (IPv4) — IP 地址结构 (Network + Host) · 地址分类 (Class A–E) · Network / Broadcast 地址 · Public / Private 与 NAT · Static / DHCP · DNS · ARP · Default Gateway ｜ 预习：Routing 基础 · Routing Protocol 与路由表**
+
+> 优先级标注说明（按考试重要性）：  
+> 🔴 **必考核心** — 概念名称、定义、结构必须能背出来  
+> 🟡 **需要理解** — 需要懂逻辑关系，能举例说明  
+> 🟢 **了解即可** — 背景知识，考试大概率不会细抠
+>
+> **本周的范围**：课件讲到 **ARP（Slide 38）**，板书讲到 **Default Gateway（Supplementary p.9）**。第 1–8 节是课上内容；**第 9 节（Routing Fundamentals）起是我按自己的理解整理的预习**，等老师讲完再对照修改。  
+> **优先级依据**（推断，可以随时改）：① 老师的课堂手写题（M2 Supplementary）几乎每页都是「给拓扑 → 填表 / 写 IP(S, D) 和 MAC(S, D)」，说明**会画表、会写地址**是本课的核心考法；② IP 分类、network / broadcast 地址是可以直接出计算题的内容；③ 上周已确认的考法「画 Initial R.T.」在本周 Slide 55、64 有标准答案格式。
+
+> **📌 关于本周的老师板书**
+>
+> 这周的 *M2 Supplementary* 文件是**空白版**（只有拓扑和空表），图片用的是这份空白扫描。**p.1–p.9 板书下的答案已按你拍的课堂笔记核对过**，标为「课堂答案」；只有 **p.10（RIP）课上还没讲，答案是我自己做的**。
+
+---
+
+## 0. 核心地图（先建立整体框架）
+
+上周讲「数据怎么在网络里走」，这周把**第 3 层的地址**讲清楚，并补上「一台主机从开机到把包发出去」需要的全部信息：
+
+```
+IP 地址长什么样：32 bits = Network 部分 + Host 部分
+   → 怎么看出 Network 有几位：Class A / B / C（看第一个 octet）
+   → 每个网络保留两个地址：Network address（host 全 0）· Broadcast address（host 全 1）
+   → 地址从哪来：Public vs Private（Private 出网靠 NAT / PAT）
+   → 主机怎么拿到地址：Static 手工配 vs DHCP 自动分配
+   → 知道名字，找 IP：DNS          知道 IP，找 MAC：ARP
+   → 目的地在别的网络：交给 Default Gateway（路由器）         ← 课上讲到这里
+   ─────────────────────────────────────────────── 以下预习
+   → 路由器怎么选路：Routing table · next hop · ARP cache
+   → 路由表怎么来：Connected · Static · Dynamic（RIP / EIGRP / OSPF，靠 metric 选最佳路径）
+```
+
+**一句话抓住本周**：发一个包需要 **4 个地址**——源 / 目的 **IP**（端到端不变）和源 / 目的 **MAC**（每一跳都换）。本周的每个协议都在回答「这 4 个地址中的某一个从哪来」：DHCP 给我自己的 IP，DNS 给我对方的 IP，ARP 给我下一跳的 MAC，Default Gateway 告诉我跨网络时下一跳是谁。
+
+---
+
+## 1. 🔴 IPv4 地址的结构：Network + Host
+
+![IP 地址是 32 位二进制数：前面是 Network，后面是 Host；写成 4 个 octet 的点分十进制](images/page_03.png)
+
+*IP 地址是 32 位二进制数：前面是 Network，后面是 Host；写成 4 个 octet 的点分十进制（Slide 3）*
+
+### 🔴 基本事实（Slide 3–4）
+
+| 要点                 | 课件原文                                                                                   | 中文                             |
+| ------------------ | -------------------------------------------------------------------------------------- | ------------------------------ |
+| 长度                 | They are **32-bit** numbers                                                            | 32 位二进制数                       |
+| 写法                 | Written as **dotted-decimal** numbers (e.g., 10.1.5.66)                                | 点分十进制                          |
+| Octet              | Each decimal number represents **8 bits** (often called an **octet**)                  | 每段 8 位，叫一个 octet（字节）           |
+| 取值                 | Each of the four decimal values is **between 0 and 255**, inclusive                    | 每段 0–255（8 位最大 11111111 = 255） |
+| 唯一性                | They must be **unique** inside a particular network                                    | 同一个网络里不能重复                     |
+| **Network number** | Identifies the network to which a device is attached — **high order / left most bits** | 左边的位：你在**哪个网络**                |
+| **Host portion**   | Identifies the specific device on that network — **lower order / right most bits**     | 右边的位：你是这个网络里的**哪一台**           |
+
+> **💡 小白理解**
+>
+> IP 地址就像\*\*「街道 + 门牌号」\*\*：Network 部分是街道，Host 部分是门牌号。路由器只看街道（把包送到正确的网络），到了那条街再按门牌号找到具体的房子——正是 Slide 6 那句：**Network ID enables a router to put a packet onto the appropriate network segment. Host ID helps the router deliver the packet to a specific host.**（呼应上周板书「HK → UST → ISOM」的分级地址。）
+
+### 🔴 地址属于接口，不属于设备（Slide 5：Dual-Homed Computer）
+
+![Dual-homed：一台设备有两个接口连到两个网络，就有两个 IP 地址](images/page_05.png)
+
+*Dual-homed：一台设备有两个接口连到两个网络，就有两个 IP 地址（Slide 5）*
+
+> A device cannot be said to have an address, but **each of its connection points (or interfaces)** to a network has an address.
+
+所以**路由器每个接口都有一个 IP**，而且每个接口连的是**不同的网络**。
+
+![路由器 A 有 24 个接口；交换机 24 个端口；Hub 24 个端口 —— 各自代表几个网络？](images/BOARD2_INTERFACES.png)
+
+*✍️ 路由器 A 有 24 个接口；交换机 24 个端口；Hub 24 个端口 —— 各自代表几个网络？（M2 Supplementary p.2）*
+
+> **✍️ 老师板书：24 个接口 = 几个网络？（课堂答案）**
+>
+> - **Router A 有 24 个 interfaces → 可以连 24 个不同的网络**，每个接口一个 IP，各属一个网络（Network 部分都不同）。
+> - **Switch 的 24 个端口、Hub 的 24 个端口 → 全部在同一个网络里**：它们是第 2 / 第 1 层设备，不看 IP，挂在上面的主机 **Network 部分相同、只有 Host 部分不同**（N.H 里的 N 一样）。
+> - 课堂笔记原话：*24 interfaces of router — each interface of router = a network*；交换机、Hub 上的主机**共享 (share) 同一个网络**。所以划分「网络」的边界是**路由器的接口**，不是交换机的端口。
+> - 板书下半部分：**N.H 里把 H 写成 0 → N.0 = Network address**。一个网络就用它的 network address 来代表（例如网络 1 写作 **1.0**），见第 3 节。
+
+### 🔴 IP Routing 怎么用这个结构（Slide 6–7）
+
+![Network Layer Addressing：路由器 1.1 / 2.1 / 3.1 各接一个网络；网络 1 里有主机 1.2、1.3](images/page_06.png)
+
+*Network Layer Addressing：路由器 1.1 / 2.1 / 3.1 各接一个网络；网络 1 里有主机 1.2、1.3（Slide 6）*
+
+- **Routers learn routes to directly connected networks easily**（直连网络自动知道）
+- Routers can forward packets to networks that are not directly connected by sending them to another router, called the **next-hop router**
+- IP addresses on the **same physical network must have the same value in the first part** of the addresses（同一网络 → Network 部分相同）
+- **Routers can scale their routing tables because they need only one entry for each IP network**（路由表每个网络只要一条，不用每台主机一条——这就是分 Network / Host 的意义）
+
+![两台路由器 A、B 连 4 个 LAN；写出 Initial R.T.，以及 PC1 → PC3、PC1 → PC5 的 IP(S, D)](images/BOARD2_INITIAL_RT.png)
+
+*✍️ 两台路由器 A、B 连 4 个 LAN；写出 Initial R.T.，以及 PC1 → PC3、PC1 → PC5 的 IP(S, D)（M2 Supplementary p.1）*
+
+> **✍️ 老师板书：用 N.H 写地址、画 Initial R.T.（课堂答案）**
+>
+> 按 **N.H 写法**（N = Network，H = Host；路由器接口用 H = 1）给每个网络编号：
+>
+> | 网络    | 在哪            | 地址                             |
+> | ----- | ------------- | ------------------------------ |
+> | **1** | A 左边（PC1、PC2） | A-E0 = 1.1，PC1 = 1.2，PC2 = 1.3 |
+> | **2** | A 上面（PC3、PC4） | A-E1 = 2.1，PC3 = 2.2，PC4 = 2.3 |
+> | **3** | A ↔ B 之间的线    | A-S0 = 3.1，B-S0 = 3.2          |
+> | **4** | B 上面（PC5、PC6） | B-E0 = 4.1，PC5 = 4.2，PC6 = 4.3 |
+> | **5** | B 右边（PC7、PC8） | B-E1 = 5.1，PC7 = 5.2，PC8 = 5.3 |
+>
+> **路由表**（Network address 用 **N.0** 写法）：
+>
+> | Router A            |               | Router B            |               |
+> | ------------------- | ------------- | ------------------- | ------------- |
+> | **Network address** | **Interface** | **Network address** | **Interface** |
+> | 1.0                 | E0            | 3.0                 | S0            |
+> | 2.0                 | E1            | 4.0                 | E0            |
+> | 3.0                 | S0            | 5.0                 | E1            |
+> | 4.0                 | S0            | 1.0                 | S0            |
+> | 5.0                 | S0            | 2.0                 | S0            |
+>
+> - 前三行是 **Initial R.T.**（直连网络，路由器自己知道）。
+> - 后两行靠 **Routing Protocol** 交换得到：**A 把「1.0、2.0、3.0」告诉 B，B 把「3.0、4.0、5.0」告诉 A**，双方再把对方的网络记成「从 S0 出去」。
+> - **A–B 之间那段线本身也是一个网络（3.0）**，两边都当直连网络写进表里——这回答了上周 TODO 的第二个问题（Slide 55、64 的课件答案也是这样写的）。
+>
+> **IP(S, D)**：
+>
+> - PC1 → PC3：`IP (S, D) = (1.2, 2.2)` —— 不同网络，要经过 A
+> - PC1 → PC5：`IP (S, D) = (1.2, 4.2)` —— 经过 A、B 两台路由器，**IP 地址一路不变**；A 查表发现 4.0 → S0，就 **forward** 给 B
+>
+> 右下角 **PC1 → A → B → C → D → PC2**：包要经过 4 台路由器（4 个 hop），`IP (S, D)` 从头到尾都是 (PC1, PC2)；每经过一台路由器，MAC 地址换一次（第 9 节会细讲）。
+
+---
+
+## 2. 🔴 二进制与地址分类（Classful Addressing）
+
+### 🟡 十进制 ↔ 二进制（老师板书的换算表）
+
+![8 位的位权：128 64 32 16 8 4 2 1；Class A 开头 0，B 开头 10，C 开头 110。课上填的是 0、127 (01111111) 和 128 (10000000)](images/BOARD2_BINARY.png)
+
+*✍️ 8 位的位权：128 64 32 16 8 4 2 1；Class A 开头 0，B 开头 10，C 开头 110。课上填的是 0、127 (01111111) 和 128 (10000000)（M2 Supplementary p.4）*
+
+一个 octet 有 8 位，从左到右的位权是 **2⁷ … 2⁰ = 128, 64, 32, 16, 8, 4, 2, 1**。换算方法：从 128 开始，**放得下就写 1 并减掉，放不下就写 0**。
+
+| 十进制                                    | 128 | 64 | 32 | 16 | 8 | 4 | 2 | 1 | 二进制      | 开头 → Class                  |
+| -------------------------------------- | --- | -- | -- | -- | - | - | - | - | -------- | --------------------------- |
+| **0**                                  | 0   | 0  | 0  | 0  | 0 | 0 | 0 | 0 | 00000000 | Class A 的最小值                |
+| **127** = 64 + 32 + 16 + 8 + 4 + 2 + 1 | 0   | 1  | 1  | 1  | 1 | 1 | 1 | 1 | 01111111 | 开头还是 **0** → Class A 的最大值   |
+| **128**                                | 1   | 0  | 0  | 0  | 0 | 0 | 0 | 0 | 10000000 | 开头变成 **10** → Class B 从这里开始 |
+| **10**                                 | 0   | 0  | 0  | 0  | 1 | 0 | 1 | 0 | 00001010 | **0** → A                   |
+| **130** = 128 + 2                      | 1   | 0  | 0  | 0  | 0 | 0 | 1 | 0 | 10000010 | **10** → B                  |
+| **200** = 128 + 64 + 8                 | 1   | 1  | 0  | 0  | 1 | 0 | 0 | 0 | 11001000 | **110** → C                 |
+| **255**                                | 1   | 1  | 1  | 1  | 1 | 1 | 1 | 1 | 11111111 | 全 1                         |
+
+### 🔴 五个 Class（Slide 8–11）
+
+![Class A / B / C 的 Network、Host 各占几个 octet](images/page_08.png)
+
+*Class A / B / C 的 Network、Host 各占几个 octet（Slide 8）*
+
+| Class | 开头的位 (Higher Order Bits) | 第一个 octet 范围                     | 格式          | Network / Host octet | 每个网络可用主机数            |
+| ----- | ------------------------ | -------------------------------- | ----------- | -------------------- | -------------------- |
+| **A** | **0**                    | **1 – 126**（0 保留，127 = loopback） | **N.H.H.H** | 1 / 3                | 2²⁴ − 2 = 16,777,214 |
+| **B** | **10**                   | **128 – 191**                    | **N.N.H.H** | 2 / 2                | 2¹⁶ − 2 = 65,534     |
+| **C** | **110**                  | **192 – 223**                    | **N.N.N.H** | 3 / 1                | 2⁸ − 2 = 254         |
+| **D** | **1110**                 | **224 – 239**                    | —           | 不分                   | **Multicast** 组播     |
+| **E** | **1111**                 | **240 – 255**                    | —           | 不分                   | **Research** 保留      |
+
+![IP Address Range：用第一个 octet 的十进制值判断 Class；127 是 loopback](images/page_10.png)
+
+*IP Address Range：用第一个 octet 的十进制值判断 Class；127 是 loopback（Slide 10）*
+
+> **🎯 考点**
+>
+> **为什么范围是这几个数**：开头位固定后，剩下的位从全 0 到全 1。Class A 开头 0 → 0**0000000** 到 0**1111111** = 0–127；Class B 开头 10 → 10**000000**（128）到 10**111111**（191）；Class C 开头 110 → 11000000（192）到 11011111（223）。考试忘了范围，用这个方法现场推出来即可。
+
+> **⚠️ 踩坑提醒**
+>
+> - **127.x.x.x 是 loopback**（本机回环，例如 127.0.0.1 = 自己），用于测试，**不能分配给网络**。所以 Class A 可用的是 1–126。
+> - 分配地址的机构：课件写的是 **ARIN (American Registry for Internet Numbers)**，负责北美；亚太地区是 APNIC（课外补充）。
+> - Classful 是早期的分法。现在实际使用的是 **subnet mask / CIDR**（例如 /24），可以把网络切得更细——课件 Slide 47、55 里已经出现了 255.255.255.0 这样的掩码，后面的课应该会讲。
+
+![Analyzing the Structure：10.1.1.1 → A（N = 10，H = 1.1.1）；172.22.3.4 → B；192.168.55.66 → C](images/page_11.png)
+
+*Analyzing the Structure：10.1.1.1 → A（N = 10，H = 1.1.1）；172.22.3.4 → B；192.168.55.66 → C（Slide 11）*
+
+*（网页版此处可以输入任意 IPv4 地址自动分析；下表是几个例子的结果）*
+
+| 地址                | Class            | 二进制                                 | Network address | Broadcast      | 可用主机 / 说明                                 | 范围       |
+| ----------------- | ---------------- | ----------------------------------- | --------------- | -------------- | ----------------------------------------- | -------- |
+| **10.3.4.6**      | Class A（开头 0）    | 00001010.00000011.00000100.00000110 | 10.0.0.0        | 10.255.255.255 | 10.0.0.1 – 10.255.255.254                 | private  |
+| **130.6.8.9**     | Class B（开头 10）   | 10000010.00000110.00001000.00001001 | 130.6.0.0       | 130.6.255.255  | 130.6.0.1 – 130.6.255.254                 | public   |
+| **200.3.9.11**    | Class C（开头 110）  | 11001000.00000011.00001001.00001011 | 200.3.9.0       | 200.3.9.255    | 200.3.9.1 – 200.3.9.254                   | public   |
+| **172.16.1.1**    | Class B（开头 10）   | 10101100.00010000.00000001.00000001 | 172.16.0.0      | 172.16.255.255 | 172.16.0.1 – 172.16.255.254               | private  |
+| **192.168.1.255** | Class C（开头 110）  | 11000000.10101000.00000001.11111111 | 192.168.1.0     | 192.168.1.255  | 192.168.1.1 – 192.168.1.254               | private  |
+| **127.0.0.1**     | Class A（开头 0）    | 01111111.00000000.00000000.00000001 | —               | —              | 127.x.x.x 是 loopback（本机回环）地址，用于测试，不能分配给网络 | loopback |
+| **224.0.0.9**     | Class D（开头 1110） | 11100000.00000000.00000000.00001001 | —               | —              | Multicast 组播地址，不分 network / host          | special  |
+
+---
+
+## 3. 🔴 Network Address 与 Broadcast Address（每个网络保留两个地址）
+
+![Host 部分全 0 = 代表整个网络：198.150.11.0、198.150.12.0](images/page_12.png)
+
+*Host 部分全 0 = 代表整个网络：198.150.11.0、198.150.12.0（Slide 12）*
+
+![Host 部分全 1 = 这个网络的广播地址：198.150.11.255、198.150.12.255](images/page_14.png)
+
+*Host 部分全 1 = 这个网络的广播地址：198.150.11.255、198.150.12.255（Slide 14）*
+
+|                      | **Network address**（network number） | **Broadcast address**            |
+| -------------------- | ----------------------------------- | -------------------------------- |
+| 规则                   | **All zeros in the host portion**   | **All ones in the host portion** |
+| 代表                   | **The entire network**（路由表里写的就是它）   | 发给这个网络里**每一台主机**                 |
+| 大小                   | 这个网络里**数值最小**的地址                    | 这个网络里**数值最大**的地址                 |
+| 能否分配给主机              | **不能**                              | **不能**                           |
+| 例：Class B 176.10.x.x | **176.10.0.0**                      | **176.10.255.255**               |
+
+- **Two numbers in each network must be reserved** — cannot be assigned as unicast address to any host（Slide 17）
+- 其余的地址叫 **host address**：any address that can be assigned to an interface（Slide 18）
+- **可用主机数 = 2^(host 位数) − 2**（减掉这两个保留地址）
+
+![Correct convention：network 10 写作 10.0.0.0，第一个可用 10.0.0.1，最后一个 10.255.255.254，广播 10.255.255.255](images/page_16.png)
+
+*Correct convention：network 10 写作 10.0.0.0，第一个可用 10.0.0.1，最后一个 10.255.255.254，广播 10.255.255.255（Slide 16）*
+
+![Class 的 N / H 格式，以及三道练习：10.3.4.6、130.6.8.9、200.3.9.11 的 network address 和 broadcast address](images/BOARD2_CLASS_EXERCISE.png)
+
+*✍️ Class 的 N / H 格式，以及三道练习：10.3.4.6、130.6.8.9、200.3.9.11 的 network address 和 broadcast address（M2 Supplementary p.3）*
+
+> **✍️ 老师板书练习（课堂答案）**
+>
+> | # | 地址         | Class（看第一个 octet） | 格式      | **Network address** | **Broadcast address** | 可用主机范围                    |
+> | - | ---------- | ----------------- | ------- | ------------------- | --------------------- | ------------------------- |
+> | ① | 10.3.4.6   | 10 → **A**        | N.H.H.H | **10.0.0.0**        | **10.255.255.255**    | 10.0.0.1 – 10.255.255.254 |
+> | ② | 130.6.8.9  | 130 → **B**       | N.N.H.H | **130.6.0.0**       | **130.6.255.255**     | 130.6.0.1 – 130.6.255.254 |
+> | ③ | 200.3.9.11 | 200 → **C**       | N.N.N.H | **200.3.9.0**       | **200.3.9.255**       | 200.3.9.1 – 200.3.9.254   |
+>
+> **做题三步**：① 看第一个 octet 定 Class → ② 在每段上方标出 N / H → ③ H 部分全写 **0** 得 network address，全写 **255**（二进制全 1）得 broadcast address。
+>
+> 板书左上角还框了一句：**`ping 127.0.0.1` — loopback address**。在自己电脑上 ping 这个地址，测试的是本机的 TCP/IP 协议栈是否正常，数据不会离开电脑。
+
+> **⚠️ 踩坑提醒：两种「广播地址」**
+>
+> 上周学的 **255.255.255.255** 是「全部 32 位都是 1」，叫 **limited broadcast**，只在**本地网络**里广播，路由器不转发。这周的 **directed broadcast**（如 130.6.255.255）是「只有 **host 部分**是 1」，指的是**某一个特定网络**里的所有主机。两个都是「全 1」的思路，只是范围不同。
+
+---
+
+## 4. 🔴 Public vs Private 地址，以及 NAT
+
+### 🔴 Public 与 Private（Slide 19–20）
+
+- **Public IP addresses are unique**：连到公网的机器不能有相同 IP
+- 不连 Internet 的私有网络可以用任何有效地址，只要内部唯一——但\*\*「随便抓一个地址」强烈不建议\*\*，因为这个网络以后可能会接到 Internet 上
+- 所以标准预留了三段 **Private 地址**，而且 **Internet routers immediately discard private addresses**（公网路由器看到私有地址直接丢弃）
+
+![Private IP Addresses：三段私有地址范围](images/page_20.png)
+
+*Private IP Addresses：三段私有地址范围（Slide 20）*
+
+| Class | Private 范围                                                     | 网络个数 |
+| ----- | -------------------------------------------------------------- | ---- |
+| **A** | **10.0.0.0**（10.0.0.0 – 10.255.255.255）                        | 1    |
+| **B** | **172.16.0.0 – 172.31.0.0**（172.16.0.0 – 172.31.255.255）       | 16   |
+| **C** | **192.168.0.0 – 192.168.255.0**（192.168.0.0 – 192.168.255.255） | 256  |
+
+> **🧠 记忆口诀**
+>
+> **10 · 172.16–31 · 192.168**。家里 Wi-Fi 分到的 192.168.x.x、公司内网常见的 10.x.x.x 都是 private。注意 Class B 私有段是 172.**16** 到 172.**31**，172.32.x.x 就已经是 public 了。
+
+### 🔴 NAT：私有地址怎么上网（Slide 21–22）
+
+- 用 private 地址的网络要连 Internet，必须把 private 地址**翻译**成 public 地址：**Network Address Translation (NAT)**
+- **NAT allows a company to use a few registered IP addresses instead of an entire network**（公司只要买少量 public IP）
+- 公司内部的主机通常用 private 地址
+
+![NAT：出去时源地址 10.1.1.1 → 200.1.1.1；回来时目的地址 200.1.1.1 → 10.1.1.1](images/page_22.png)
+
+*NAT：出去时源地址 10.1.1.1 → 200.1.1.1；回来时目的地址 200.1.1.1 → 10.1.1.1（Slide 22）*
+
+![三台路由器 A、B、C，从 192.168.1.0 开始编网络；C 是 NAT router；PC100 在 Internet 上（200.3.4.6）](images/BOARD2_NAT.png)
+
+*✍️ 三台路由器 A、B、C，从 192.168.1.0 开始编网络；C 是 NAT router；PC100 在 Internet 上（200.3.4.6）（M2 Supplementary p.5）*
+
+> **✍️ 老师板书：NAT 表与 IP(S, D)（课堂答案）**
+>
+> **Step 1 — 从 192.168.1.0 开始给网络编号**（每个网络一个 Class C 私有网段，路由器接口用 .1）：
+>
+> | 网络              | 设备                          |
+> | --------------- | --------------------------- |
+> | 192.168.**1**.0 | A = 1.1，PC1 = 1.2，PC2 = 1.3 |
+> | 192.168.**2**.0 | A = 2.1，PC3 = 2.2，PC4 = 2.3 |
+> | 192.168.**3**.0 | A = 3.1，B = 3.2             |
+> | 192.168.**4**.0 | B = 4.1，PC5 = 4.2，PC6 = 4.3 |
+> | 192.168.**5**.0 | B = 5.1，C = 5.2             |
+> | 192.168.**6**.0 | C = 6.1，PC7 = 6.2，PC8 = 6.3 |
+>
+> C 是 **NAT router**，通过 **ISP** 连到 Internet；它的 public 地址是**向 ISP 买的：201.4.8.9**。
+>
+> **Step 2 — PC1 → PC100（出去）**
+>
+> | 位置                      | IP (S, D)                    |
+> | ----------------------- | ---------------------------- |
+> | 内网里（到达 C 之前）            | (**192.168.1.2**, 200.3.4.6) |
+> | C 做完 NAT 之后（Internet 上） | (**201.4.8.9**, 200.3.4.6)   |
+>
+> C 同时在 **NAT Table** 里记下一条对应关系：
+>
+> | Private IP  | Public IP |
+> | ----------- | --------- |
+> | 192.168.1.2 | 201.4.8.9 |
+>
+> **Step 3 — PC100 → PC1（回来）**：PC100 只知道 201.4.8.9，于是发 `IP (S, D) = (200.3.4.6, 201.4.8.9)`；C 查 NAT 表，把目的地址换回 → (200.3.4.6, **192.168.1.2**)，再送进内网。
+>
+> **NAT → PAT**：一个 public IP 只对应一个 private IP 的话，公司还是要买很多 public IP。**PAT (Port Address Translation)** 在翻译 IP 的同时**也翻译端口号**，于是**一个 public IP 可以同时服务很多台内部主机**——老师板书写的是 **one public → 4,000 private**。
+>
+> | Private IP : Port  | Public IP : Port |
+> | ------------------ | ---------------- |
+> | 192.168.1.2 : 3001 | 201.4.8.9 : 5001 |
+> | 192.168.4.2 : 3001 | 201.4.8.9 : 5002 |
+
+> **➕ 课外补充：NAT 的安全含义**
+>
+> - 外面的人只能看到 NAT router 的 public IP，**看不到内部主机的真实地址**，内部结构被隐藏了。
+> - 外部主机**不能主动连进来**：NAT 表里没有记录的进站流量，路由器不知道该转给谁，只能丢弃。所以 NAT 顺带起到一点防火墙的作用（但它不是防火墙，不能替代防火墙）。
+> - 端口号是 16 位，理论上一个 public IP 可以对应六万多个连接；老师说的「约 4,000 台」是实际使用中比较稳妥的数量。
+
+---
+
+## 5. 🟡 获取 IP 地址：Static vs DHCP
+
+![Windows 里选 Obtain an IP address automatically（DHCP），用 ipconfig 验证拿到的地址、掩码、网关、DNS](images/page_26.png)
+
+*Windows 里选 Obtain an IP address automatically（DHCP），用 ipconfig 验证拿到的地址、掩码、网关、DNS（Slide 26）*
+
+|     | **Static 静态分配**                                                                                        | **Dynamic：DHCP**                   |
+| --- | ------------------------------------------------------------------------------------------------------ | ---------------------------------- |
+| 怎么做 | 管理员在**每台设备上手工配置** IP（Slide 24 的 Windows 界面）                                                            | 主机开机时向 **DHCP server** 申请          |
+| 适合  | **需要被别人找到的设备**（like an address of a building）：**servers、network printers、application servers、routers** | 大量普通主机：PC、手机、笔记本                   |
+| 注意  | 必须**记录分配情况**，否则容易出现**重复 IP**                                                                           | DHCP 是**大网络的首选**：减轻网管负担，几乎消除手工输入错误 |
+
+### 🔴 DHCP 四步：DORA（Slide 27–28）
+
+![DHCPDISCOVER (broadcast) → DHCPOFFER (unicast) → DHCPREQUEST (broadcast) → DHCPACK (unicast)](images/page_27.png)
+
+*DHCPDISCOVER (broadcast) → DHCPOFFER (unicast) → DHCPREQUEST (broadcast) → DHCPACK (unicast)（Slide 27）*
+
+| 步骤    | 消息               | 方向              | 广播 / 单播       | 在说什么                                                   |
+| ----- | ---------------- | --------------- | ------------- | ------------------------------------------------------ |
+| **D** | **DHCPDISCOVER** | Client → 所有人    | **Broadcast** | 「有没有 DHCP server？我需要一个地址」（我还没有 IP，也不知道 server 在哪，只能广播） |
+| **O** | **DHCPOFFER**    | Server → Client | **Unicast**   | 「我可以给你这个地址」                                            |
+| **R** | **DHCPREQUEST**  | Client → 所有人    | **Broadcast** | 「我要这个 server 给的地址」（广播是为了让**其他** server 知道自己没被选中）       |
+| **A** | **DHCPACK**      | Server → Client | **Unicast**   | 「确认，这个地址租给你了」                                          |
+
+- DHCP 给的不只是 IP，还有 **default gateway、subnet mask、DNS IP address**
+- 地址是**租 (lease)** 的：server 从一个**地址池 (range)** 里挑一个租给设备，用户释放后再**回收**给别人
+- DHCP 用 **UDP**：请求发往 **port 67**（server），回复发往 **port 68**（client）
+
+![PC5 刚接入网络；有两台 DHCP server：DHCP-1 地址池 IP-5 到 IP-9，DHCP-2 地址池 IP-10 到 IP-14](images/BOARD2_DHCP.png)
+
+*✍️ PC5 刚接入网络；有两台 DHCP server：DHCP-1 地址池 IP-5 到 IP-9，DHCP-2 地址池 IP-10 到 IP-14（M2 Supplementary p.6）*
+
+> **✍️ 老师板书：两台 DHCP server 的情况（课堂答案 + 我的补充）**
+>
+> **PC5 → DHCP（DHCPDISCOVER）**：PC5 还没有 IP，也不知道 server 在哪：
+>
+> - `IP (S, D) = (0.0.0.0, 255.255.255.255)` —— 源地址 0.0.0.0 表示「我还没有地址」
+> - `MAC (S, D) = (MAC-5, FF-FF-FF-FF-FF-FF)` —— 广播帧，同一网络的所有设备都收到
+>
+> **DHCP-1 → PC5（DHCPOFFER）**：两台 server 都会回应，各自从自己的地址池里拿一个：
+>
+> - DHCP-1：`IP (S, D) = (IP-2, IP-5)`，`MAC (S, D) = (MAC-2, MAC-5)` —— 提供 IP-5
+> - DHCP-2 同时提供 IP-10：`IP (S, D) = (IP-3, IP-10)`，`MAC (S, D) = (MAC-3, MAC-5)`
+>
+> （以上是课堂答案。以下是我的补充：）**PC5 通常接受先到的那个**（假设 DHCP-1），然后**广播** DHCPREQUEST 说「我要 DHCP-1 给的 IP-5」，DHCP-2 听到后就把 IP-10 收回；最后 DHCP-1 回 DHCPACK，PC5 正式使用 IP-5。
+>
+> **They should have range**（课堂笔记原话）——**为什么两台 server 的地址池不能重叠**（IP-5 到 IP-9 和 IP-10 到 IP-14 分开）：如果重叠，两台 server 可能把**同一个 IP 租给两台主机**，造成 IP 冲突。两台 server 的好处是**冗余**——一台坏了另一台还能继续分配。
+
+> **➕ 课外补充：DHCP 的安全问题**
+>
+> DHCP 的 DISCOVER 是广播、主机接受**第一个**回应的 offer，所以攻击者可以在网络里架一台 **rogue DHCP server（伪造 DHCP 服务器）**，抢先回应，把自己设成受害者的 default gateway 或 DNS，所有流量就会先经过攻击者（中间人攻击）。防御：交换机上的 **DHCP snooping**（只允许指定端口发 DHCP offer）。
+
+---
+
+## 6. 🔴 Address Resolution（一）：DNS —— 知道名字，找 IP
+
+### 🔴 发一个包需要知道什么（Slide 29–31）
+
+![Hannah 知道 Jessie 的名字，但帧里还缺目的 MAC 和目的 IP](images/page_31.png)
+
+*Hannah 知道 Jessie 的名字，但帧里还缺目的 MAC 和目的 IP（Slide 31）*
+
+- A datagram on a LAN must contain **both a destination MAC address and a destination IP address**
+- TCP/IP 需要两种查找：**名字 → IP**（DNS）和 **IP → MAC**（ARP）
+- Hannah **自己的**名字、IP、MAC 是预先配置好的（或 DHCP 给的）；**DNS server 的 IP** 也可以预先配置或由 **DHCP** 提供
+
+| 要找          | 已知                                    | 用什么                                   | 在哪一层             |
+| ----------- | ------------------------------------- | ------------------------------------- | ---------------- |
+| 对方的 **IP**  | 对方的**名字**（jessie.skylinecomputer.com） | **DNS (Domain Name System)**          | Application（UDP） |
+| 对方的 **MAC** | 对方的 **IP**                            | **ARP (Address Resolution Protocol)** | 介于 L3 与 L2 之间    |
+
+![DNS Request and Reply：Hannah 问 DNS server「Jessie 的 IP 是多少」，DNS 回答 10.1.1.2](images/page_32.png)
+
+*DNS Request and Reply：Hannah 问 DNS server「Jessie 的 IP 是多少」，DNS 回答 10.1.1.2（Slide 32）*
+
+### 🟡 DNS Hierarchy（Slide 33）
+
+![DNS 分层：Local DNS server → Root DNS servers → Top-level domain servers（.com、.org、.au…）→ Second-level（cisco.com）](images/page_33.png)
+
+*DNS 分层：Local DNS server → Root DNS servers → Top-level domain servers（.com、.org、.au…）→ Second-level（cisco.com）（Slide 33）*
+
+| 层级                                 | 例子                     | 知道什么                                                                           |
+| ---------------------------------- | ---------------------- | ------------------------------------------------------------------------------ |
+| **Root DNS servers**               | 全世界少数几组根服务器            | 知道每个顶级域（.com、.org、.au…）由谁负责                                                    |
+| **Top-level domain (TLD) servers** | .com、.org、.au、.co      | 知道 cisco.com、linksys.com 这些二级域由谁负责                                             |
+| **Second-level domain servers**    | cisco.com 的 DNS server | 有最终记录：[www.cisco.com、mail.cisco.com](http://www.cisco.com、mail.cisco.com) 的 IP |
+| **Local DNS server**               | 公司 / 学校 / ISP 的 DNS    | 帮客户端去问，并把结果**缓存**起来                                                            |
+
+![UST 的电脑要访问 www.cisco.com：UST DNS server → UST ISP DNS server → Root DNS server → … → Cisco DNS server → Cisco web server (IP-100)](images/BOARD2_DNS.png)
+
+*✍️ UST 的电脑要访问 www\.cisco.com：UST DNS server → UST ISP DNS server → Root DNS server → … → Cisco DNS server → Cisco web server (IP-100)（M2 Supplementary p.7）*
+
+> **✍️ 老师板书：解析 www\.cisco.com（课堂答案 + 我的补充）**
+>
+> 1. **UST PC** 问 **UST DNS server**：「cisco.com 的 IP 是多少？」UST DNS 的表里只有**校内所有服务器**的记录（All the servers in UST），查不到。
+> 2. UST DNS 转去问 **UST ISP 的 DNS server**，ISP 的表里也没有（或缓存里没有）。
+> 3. 再去问 **Root DNS server**：根服务器不知道具体 IP，但知道「.com 归哪台 TLD server 管」。
+> 4. 问 **.com TLD server** → 它回答「cisco.com 归 **Cisco DNS server** 管」。
+> 5. 问 **Cisco DNS server**：它的 **Domain Name | IP** 表里有 `cisco.com → IP-100`（课上填的就是这一条）。
+> 6. 答案一路传回 UST PC，**沿途的 DNS server 把结果缓存**；下次校内有人再访问 cisco.com，UST DNS 直接回答，不用再从头问。
+> 7. UST PC 拿到 IP-100 后，才开始真正连接 **Cisco web server**。
+>
+> 每台 DNS server 的核心就是一张 **Domain Name → IP** 表，这和 ARP 表（IP → MAC）、MAC 表（MAC → Port）、路由表（Network → Interface）是同一种思路：**查表找下一步**。
+
+---
+
+## 7. 🔴 Address Resolution（二）：ARP —— 知道 IP，找 MAC
+
+### 🔴 ARP Table（Slide 34–35）
+
+![ARP Table：同一个 LAN 上其他设备的 IP Address ↔ MAC Address](images/page_34.png)
+
+*ARP Table：同一个 LAN 上其他设备的 IP Address ↔ MAC Address（Slide 34）*
+
+- **ARP tables contain MAC address and IP addresses of other devices that are connected to the same LAN**（只记**同一个 LAN** 的设备）
+- 设备分析收到的帧时，会**把帧里的源 IP–源 MAC 加进 ARP 表**
+- **ARP table is dynamically updated**：根据网段活动和 **timeout values**（条目保留多久）增删条目
+- 保留时间**取决于操作系统，typically a few hours**
+
+| 表                         | 谁维护    | 记录             | 怎么学                        | 过期                  |
+| ------------------------- | ------ | -------------- | -------------------------- | ------------------- |
+| **MAC address table**（上周） | Switch | MAC → **Port** | 看帧的 **source MAC**         | 约 5 分钟（Cisco 300 秒） |
+| **ARP table**（本周）         | 主机、路由器 | **IP → MAC**   | ARP request / reply，以及收到的帧 | 由 OS 决定，课件说通常几个小时   |
+
+> **⚠️ 踩坑提醒**
+>
+> 两张表很容易混：**Switch 的 MAC 表回答「这个 MAC 在我哪个口」**，**主机的 ARP 表回答「这个 IP 对应哪个 MAC」**。交换机（L2）根本不看 IP，所以交换机没有也不需要 ARP 表（除非它有管理用的 IP 地址）。
+
+### 🔴 ARP 流程（Slide 36–38）
+
+![ARP operation within a subnet：ARP cache 里有 MAC 就直接发；没有就发 ARP request，收到 ARP reply 再发](images/page_36.png)
+
+*ARP operation within a subnet：ARP cache 里有 MAC 就直接发；没有就发 ARP request，收到 ARP reply 再发（Slide 36）*
+
+1. 要发数据 → 先查 **ARP cache**：有对方的 MAC → 直接发
+2. 没有 → 构造 **ARP request**，用 **MAC broadcast** 发给所有设备：「谁是 10.1.1.2？请告诉我你的 MAC」
+3. 只有 IP 匹配的那台设备回复 **ARP reply**（**unicast** 直接回给询问者）：「我是 10.1.1.2，我的 MAC 是 0200.2222.2222」
+4. 询问者把结果存进 ARP 表，然后发送数据
+
+![Simple ARP Process：「Hey Everybody! If you are 10.1.1.2, tell me your MAC address!」](images/page_37.png)
+
+*Simple ARP Process：「Hey Everybody! If you are 10.1.1.2, tell me your MAC address!」（Slide 37）*
+
+![Example：① 10.1.1.11 在同一网络 → ② ARP 广播 → ③ PC11 发现是问自己 → ④ ARP reply 单播回 PC1](images/page_38.png)
+
+*Example：① 10.1.1.11 在同一网络 → ② ARP 广播 → ③ PC11 发现是问自己 → ④ ARP reply 单播回 PC1（Slide 38）*
+
+![PC1 (IP-1 / MAC-1)、PC2、PC3 在同一个网络；写出 ARP request、ARP reply 的地址和两边的 ARP 表](images/BOARD2_ARP.png)
+
+*✍️ PC1 (IP-1 / MAC-1)、PC2、PC3 在同一个网络；写出 ARP request、ARP reply 的地址和两边的 ARP 表（M2 Supplementary p.8）*
+
+> **✍️ 老师板书：PC1 → PC3 的 ARP（课堂答案）**
+>
+> **先想清楚 4 个地址从哪来**（课堂笔记）：PC1 自己的 **IP-1 由 DHCP 给**；**MAC-1 烧在 NIC 上**；**PC3 的 IP-3 由 DNS 查到**；只剩 **PC3 的 MAC-3 不知道 → 这就是 ARP 要解决的**。
+>
+> **ARP request（PC1 → 所有人）**
+>
+> - `MAC (S, D) = (MAC-1, FF-FF-FF-FF-FF-FF)` —— **广播帧**
+> - ARP 消息里写的是 `IP (S, D) = (IP-1, IP-3)`，要找的 MAC 留空：「IP-1 / MAC-1 在问：谁是 IP-3？」
+> - PC2 也收到了，但问的不是自己 → **不回复**；PC3 发现问的是自己 → 回复
+>
+> **ARP reply（PC3 → PC1）**
+>
+> - `MAC (S, D) = (MAC-3, MAC-1)` —— **单播**，因为 PC3 从 request 里已经知道了 PC1 的 MAC
+> - ARP 消息：`IP (S, D) = (IP-3, IP-1)`，内容「IP-3 的 MAC 是 MAC-3」
+>
+> **两边的 ARP 表**
+>
+> | PC1 ARP Table |         |                | PC3 ARP Table |         |                |
+> | ------------- | ------- | -------------- | ------------- | ------- | -------------- |
+> | **IP**        | **MAC** | **Time stamp** | **IP**        | **MAC** | **Time stamp** |
+> | IP-3          | MAC-3   | 11:51          | IP-1          | MAC-1   | 11:50          |
+>
+> 注意时间顺序：**PC3 在 11:50 收到 request 时就先记下了 PC1**（request 里有 PC1 的 IP 和 MAC），所以它回复时不需要再广播；**PC1 在 11:51 收到 reply 才记下 PC3**。
+>
+> 板书中间画了一台路由器 R，旁边写着：**if broadcast address in Router, then it will discard**。ARP request 是广播，**到了路由器就被丢弃，不会传到别的网络**。所以 ARP 只能查**同一个网络**里的 MAC，这正好引出第 8 节的 Default Gateway。之后真正的数据帧就是 `IP (S, D) = (IP-1, IP-3)`，`MAC (S, D) = (MAC-1, MAC-3)`。
+
+> **➕ 课外补充：ARP spoofing（安全课一定会讲）**
+>
+> ARP **没有任何验证**：谁回复都信，而且很多系统收到**没请求过的 ARP reply**（gratuitous ARP）也会更新表。攻击者可以不停地广播「网关 192.168.1.1 的 MAC 是我的 MAC」，让受害者把发往网关的流量全部发给攻击者——**ARP spoofing / ARP poisoning**，典型的中间人攻击。防御：交换机的 **Dynamic ARP Inspection (DAI)**、静态 ARP 条目。
+
+---
+
+## 8. 🔴 Default Gateway
+
+### 🔴 定义（Slide 39）
+
+> **Default gateway** = the **IP address of the interface on the router** that connects to the network segment on which the source host is located. The default gateway's IP address **must be in the same network segment as the source host**.
+
+![176.10.16.4 是路由器在这个网段上的接口，主机的 Default Gateway 就填它](images/page_39.png)
+
+*176.10.16.4 是路由器在这个网段上的接口，主机的 Default Gateway 就填它（Slide 39）*
+
+> **💡 小白理解**
+>
+> Default gateway 就是**本网络的「出口」**：主机只认识自己网络里的邻居（Slide 41 的气泡：*I only know the addresses of the devices in my network. If I don't know the address of the destination device, I send the packet to the gateway address by default.*）。凡是要去别的网络的包，一律先交给网关，由路由器去想办法。
+
+### 🔴 主机的发送逻辑（Slide 40–42）
+
+主机每发一个包，都先做一次判断：**目的 IP 和我在不在同一个网络？**（比较两者的 **Network 部分**）
+
+| 情况       | 目的 IP          | 目的 MAC                    | 要 ARP 谁    |
+| -------- | -------------- | ------------------------- | ---------- |
+| **同一网络** | 对方的 IP         | **对方的 MAC**               | ARP 对方     |
+| **不同网络** | 对方的 IP（**不变**） | **Default gateway 的 MAC** | ARP **网关** |
+
+> *If the destination is in another network, destination MAC address is default gateway MAC address.*（Slide 40）
+
+![Gateways Enable Communications between Networks：192.168.2.0/24 的网关是 192.168.2.1，192.168.3.0/24 的网关是 192.168.3.1](images/page_41.png)
+
+*Gateways Enable Communications between Networks：192.168.2.0/24 的网关是 192.168.2.1，192.168.3.0/24 的网关是 192.168.3.1（Slide 41）*
+
+![PC1 要发给 172.16.10.2 → 在别的网络 → ARP 找默认网关 10.1.1.251 的 MAC → 帧的目的 MAC = R1 FA0/0 的 MAC，目的 IP 仍是 172.16.10.2](images/page_42.png)
+
+*PC1 要发给 172.16.10.2 → 在别的网络 → ARP 找默认网关 10.1.1.251 的 MAC → 帧的目的 MAC = R1 FA0/0 的 MAC，目的 IP 仍是 172.16.10.2（Slide 42）*
+
+> **⚠️ 踩坑提醒：Default gateway 的 IP 和主机必须在同一网络**
+>
+> PC1 是 10.1.1.1，它的网关必须是 10.1.x.x 这个网络里的地址（这里是 10.1.1.251）。如果网关填成别的网络的地址，主机根本 ARP 不到它（ARP 只在本网络广播），就**出不了网**。这也是常见的配置错误题。
+
+![从 192.168.10.0 开始编址：PC1、PC2 和路由器 R 在一个网络，PC3 在 R 另一边；写出两种情况的 IP(S, D)、MAC(S, D) 和 ARP 表](images/BOARD2_GATEWAY.png)
+
+*✍️ 从 192.168.10.0 开始编址：PC1、PC2 和路由器 R 在一个网络，PC3 在 R 另一边；写出两种情况的 IP(S, D)、MAC(S, D) 和 ARP 表（M2 Supplementary p.9）*
+
+> **✍️ 老师板书：同网络 vs 跨网络（课堂答案）**
+>
+> **编址**：网络 **192.168.10.0** = R-E0 **192.168.10.1**（网关）、PC1 = 192.168.10.2、PC2 = 192.168.10.3；网络 **192.168.11.0** = R-E1 **192.168.11.1**、PC3 = 192.168.11.2。
+>
+> | 主机  | IP           | Default gateway |
+> | --- | ------------ | --------------- |
+> | PC1 | 192.168.10.2 | 192.168.10.1    |
+> | PC2 | 192.168.10.3 | 192.168.10.1    |
+> | PC3 | 192.168.11.2 | 192.168.11.1    |
+>
+> **先比较 Network 部分**（Class C，前三段 N.N.N）：
+>
+> - PC1 = **192.168.10**.2，PC2 = **192.168.10**.3 → Network 部分相同 → **同一网络**
+> - PC1 = **(192.168.10)**.2，PC3 = **(192.168.11)**.2 → **not the same** → 不同网络，要经过网关
+>
+> **情况 1：PC1 → PC2（同一网络，不经过路由器）**
+>
+> - 直接 ARP PC2
+> - `IP (S, D) = (192.168.10.2, 192.168.10.3)`，`MAC (S, D) = (MAC-1, MAC-2)`
+>
+> **情况 2：PC1 → PC3（跨网络，经过 R）**
+>
+> - 192.168.**11**.2 不在自己的网络 → 找默认网关 → ARP **192.168.10.1** 得到 R-E0 的 MAC
+> - 第 1 段（PC1 → R）：`IP (S, D) = (192.168.10.2, 192.168.11.2)`，`MAC (S, D) = (MAC-1, MAC-R-E0)`
+> - R 查路由表：192.168.11.0 直连在 E1 → ARP PC3 得到 MAC-3
+> - 第 2 段（R → PC3，**simply forwarding**）：`IP (S, D) = (192.168.10.2, 192.168.11.2)` **不变**，`MAC (S, D) = (MAC-R-E1, MAC-3)`
+> - 课堂笔记的结论：**when forward, IP doesn't change, MAC changes**
+>
+> 课上 PC1 的 ARP 表写的是 **192.168.10.1 → MAC-E0**（默认网关的 MAC），R 的 ARP 表留空。按上面的流程，R 转发前 ARP 了 PC3、也从 PC1 发来的帧里知道了 PC1，所以之后 R 的表会是（我的补充）：
+>
+> | PC1 ARP table |         | R ARP table（补充） |         |
+> | ------------- | ------- | --------------- | ------- |
+> | **IP**        | **MAC** | **IP**          | **MAC** |
+> | 192.168.10.1  | MAC-E0  | 192.168.10.2    | MAC-1   |
+> |               |         | 192.168.11.2    | MAC-3   |
+>
+> 注意：**PC1 的 ARP 表里永远不会有 PC3**——PC3 在别的网络，PC1 只需要知道网关的 MAC。
+>
+> **PC1 → A → B → C → D → E → PC2**：5 台路由器、6 段链路。`IP (S, D)` 始终是 (PC1, PC2)；`MAC (S, D)` 在每一段都不同（PC1→A、A→B、B→C、C→D、D→E、E→PC2），每台路由器都用自己的 ARP 表找下一跳的 MAC。
+
+![IP Routing Logic Including Data Link Perspective：R1 丢掉收到的帧头帧尾，按出口接口重新封装；IP 包 Unchanged](images/page_43.png)
+
+*IP Routing Logic Including Data Link Perspective：R1 丢掉收到的帧头帧尾，按出口接口重新封装；IP 包 Unchanged（Slide 43）*
+
+---
+
+> **📝 以下第 9–12 节：课上还没讲，是我按自己的理解整理的预习**
+>
+> 课件 Slide 44–66（Routing Fundamentals、Routing Protocols、路由表）以及板书 p.10（RIP）课上还没讲到。下面按课件顺序整理，老师讲完后把你觉得不一样的地方告诉我。
+
+## 9. 🔴 Routing Fundamentals（预习）
+
+### 🔴 Path determination 与路由器的两个功能（Slide 45–46）
+
+- **Path determination**：路由器把**目的地址**和路由表里的路由比较，**选出最佳路径**
+- **Routing** = the process of finding the **most efficient path** from one device to another
+- **Router has two key functions**：
+  1. **Maintain routing table** and make sure other routers know of changes in the network topology（维护路由表，并让其他路由器知道拓扑变化）
+  2. When packets arrive at an interface, **use the routing table to determine where to send** the packets — it **switches them to the appropriate interface**（查表转发）
+
+![从 IP 的角度：目的 172.16.2.2 匹配路由 172.16.2.0 255.255.255.0 → 从 fa0/1 发出](images/page_47.png)
+
+*从 IP 的角度：目的 172.16.2.2 匹配路由 172.16.2.0 255.255.255.0 → 从 fa0/1 发出（Slide 47）*
+
+### 🔴 路由中的 ARP cache（Slide 48）
+
+![PC1 → R1 → R2 → PC3：每一跳都 De-encapsulate 再 Re-encapsulate；每台设备用自己的 ARP 表找下一跳的 MAC](images/page_48.png)
+
+*PC1 → R1 → R2 → PC3：每一跳都 De-encapsulate 再 Re-encapsulate；每台设备用自己的 ARP 表找下一跳的 MAC（Slide 48）*
+
+| 段          | 源 MAC    | 目的 MAC       | 目的 MAC 从哪来                                                                      |
+| ---------- | -------- | ------------ | ------------------------------------------------------------------------------- |
+| ① PC1 → R1 | PC1      | **R1 FA0/0** | PC1 的 ARP 表：172.16.1.251（网关）                                                    |
+| ② R1 → R2  | R1 FA0/1 | **R2 FA0/0** | R1 路由表说 172.16.3.0 的 next hop 是 **172.16.2.252** → R1 的 ARP 表查这个 next hop 的 MAC |
+| ③ R2 → PC3 | R2 FA0/1 | **PC3**      | R2 路由表说 172.16.3.0 直连（next hop N/A）→ ARP 表直接查 PC3                               |
+
+> **🎯 考点**
+>
+> **路由器查两张表**：先查**路由表**（目的 IP → 出口接口 + next hop IP），再查 **ARP 表**（next hop IP → MAC）。直连网络没有 next hop，就直接 ARP 最终目的主机。这张图把上周的 MAC 表、这周的 ARP 表和路由表全串在一起了，很适合出画图题。
+
+### 🔴 Routing vs Switching（Slide 49–51）
+
+![交换机用 CAM（MAC → Port），路由器用 IP routing table（Network → Out Int. + Next-hop）](images/page_49.png)
+
+*交换机用 CAM（MAC → Port），路由器用 IP routing table（Network → Out Int. + Next-hop）（Slide 49）*
+
+| Feature                        | **Router**   | **Switch**  |
+| ------------------------------ | ------------ | ----------- |
+| Relative speed                 | Slower       | **Faster**  |
+| OSI layer used for forwarding  | **Layer 3**  | **Layer 2** |
+| Address forwarding is based on | **IP**       | **MAC**     |
+| Separates broadcast domains?   | **Yes**      | No          |
+| Separates collision domains?   | Yes          | Yes         |
+| Security                       | **Stronger** | Weaker      |
+
+- **Switches**：让 collision domain 更小，提供 **full duplex** → 性能好
+- **Routers**：可以使用 **ACL（access control lists）** 这类更复杂的安全工具 → 安全性强
+
+---
+
+## 10. 🔴 Routed Protocol vs Routing Protocol（预习）
+
+![Routed protocol 负责承载用户流量；Routing protocol 负责在路由器之间维护路由表](images/page_52.png)
+
+*Routed protocol 负责承载用户流量；Routing protocol 负责在路由器之间维护路由表（Slide 52）*
+
+> **Routing protocols determine the path that routed protocols follow to their destinations.**
+
+|      | **Routed (routable) protocol**                             | **Routing protocol**                                    |
+| ---- | ---------------------------------------------------------- | ------------------------------------------------------- |
+| 作用   | **承载用户数据**，从一台主机经过路由器到另一台主机                                | 路由器之间**交换路由信息**，建立和维护路由表                                |
+| 关键特征 | 网络层地址里有足够的信息，让路由器能转发到下一跳                                   | 定期发送 **routing updates**                                |
+| 例子   | **IP**、**IPX**（Internetwork Packet Exchange）、**AppleTalk** | **RIP**、**IGRP**（Cisco 私有）、**EIGRP**（Cisco 私有）、**OSPF** |
+| 比喻   | 路上跑的**车**                                                  | 交通部门绘制和更新的**地图**                                        |
+
+> **🧠 记忆口诀**
+>
+> **Rout-ED = 被路由的（货物）；Rout-ING = 去路由别人的（导航）**。IP 是 routed，RIP / OSPF 是 routing——名字很像，考选择题经常一起出。
+
+---
+
+## 11. 🔴 路由器怎么学路由：Connected → Routing Protocol → Metric（预习）
+
+### 🔴 第一步：只有直连路由（Slide 55）
+
+![Connected Routes Only：R1 只知道 172.16.1.0 (FA0/0) 和 172.16.2.0 (Se0/0)；R2 只知道 172.16.2.0 (Se0/0) 和 172.16.3.0 (FA0/1)](images/page_55.png)
+
+*Connected Routes Only：R1 只知道 172.16.1.0 (FA0/0) 和 172.16.2.0 (Se0/0)；R2 只知道 172.16.2.0 (Se0/0) 和 172.16.3.0 (FA0/1)（Slide 55）*
+
+这就是上周说的 **Initial R.T.**，课件的标准格式有 5 列：**Source（C = connected）| Subnet | Mask | Out Int. | Next-hop（直连写 N/A）**。R1–R2 之间的串行网络 172.16.2.0 两边都写成 C。
+
+### 🔴 第二步：用 Routing Protocol 交换信息（Slide 56–57）
+
+![① R2 从 FA0/0 广播 RIP update：「172.16.3.0，metric 1」 ② R1 从 Fa0/1 收到 ③ R1 加入 R 172.16.3.0 FA0/1 next-hop 172.16.2.252](images/page_56.png)
+
+*① R2 从 FA0/0 广播 RIP update：「172.16.3.0，metric 1」 ② R1 从 Fa0/1 收到 ③ R1 加入 R 172.16.3.0 FA0/1 next-hop 172.16.2.252（Slide 56）*
+
+- **Each router sends messages to other routers attached to the same subnets**，消息里列出它知道的所有路由
+- 有新路由就发 **routing updates**
+- **Eventually, all the routers learn all the routes**（最终收敛）
+
+R1 学到的路由写成：**R**（RIP 学到的）| 172.16.3.0 | 255.255.255.0 | **FA0/1**（从哪个口收到 update 就从哪个口出去）| **172.16.2.252**（发 update 的那台路由器 = next hop）。
+
+> **🎯 考点**
+>
+> 这正好回答了上周的问题「dynamic 是怎么填表的」：**邻居路由器告诉你它能到哪些网络，你就把这些网络记成「从收到消息的那个接口出去，下一跳 = 那个邻居」**。你之前的理解「看每个端口连着谁，远程网络就写通往那边的 serial 口」完全正确。
+
+### 🔴 第三步：有多条路时用 Metric 选（Slide 58–62）
+
+![R1 从 R2 听到 172.16.3.0 metric 1，从 R3 听到 metric 2 → 选 metric 1 的路（next hop R2）](images/page_60.png)
+
+*R1 从 R2 听到 172.16.3.0 metric 1，从 R3 听到 metric 2 → 选 metric 1 的路（next hop R2）（Slide 60）*
+
+- 网络有**冗余 (redundancy)** 时，路由器会学到**多条路**到同一个网络
+- Routing protocol 用 **metric** 衡量每条路有多好，选最好的那条
+- **RIP 只用 hop count**：中间隔了几台路由器。每台路由器转发 update 时 **metric + 1**（Slide 60：*I have a metric 1 route… when I advertise it to others, add 1 to the metric*）
+
+| 协议                         | Metric                                                                                            | 特点         |
+| -------------------------- | ------------------------------------------------------------------------------------------------- | ---------- |
+| **RIP**                    | **Hop count**（经过几台路由器）                                                                            | 简单；不管线路快慢  |
+| **IGRP / EIGRP**（Cisco 私有） | 可以用 4 个：**Bandwidth、Delay、Link loading、Link error rate (reliability)**；**默认只用 bandwidth 和 delay** | 更聪明，会避开慢链路 |
+
+![EIGRP：R1 直连 R2 的线只有 64 Kbps，绕经 R3 的线都是 1.5 Mbps → EIGRP 选择绕道 R3](images/page_62.png)
+
+*EIGRP：R1 直连 R2 的线只有 64 Kbps，绕经 R3 的线都是 1.5 Mbps → EIGRP 选择绕道 R3（Slide 62）*
+
+> **⚠️ 踩坑提醒：RIP 和 EIGRP 在同一张图上会选不同的路**
+>
+> Slide 58–62 用的是同一个三角形：R1 去 172.16.3.0，**直连 R2 的路只要 1 hop，但线路只有 64 Kbps**；**绕 R3 的路 2 hops，但每段都是 1.5 Mbps**。
+>
+> - **RIP** 只数 hop → 选 **R2**（1 hop），哪怕它慢得多
+> - **EIGRP** 看 bandwidth（取整条路上**最慢**那段）→ 选 **R3**（最慢一段 1.5 Mbps 远大于 64 Kbps）  
+>   这是 hop count 这种 metric 的局限，很适合出比较题。
+
+![R1、R2、R3 三角形，R2 连着 3.0 网络；RIP 每 30 秒；R2 的路由表（Source · Network address · Next hop · Distance）；拓扑变化；Dynamic vs Static](images/BOARD2_RIP.png)
+
+*✍️ R1、R2、R3 三角形，R2 连着 3.0 网络；RIP 每 30 秒；R2 的路由表（Source · Network address · Next hop · Distance）；拓扑变化；Dynamic vs Static（M2 Supplementary p.10）*
+
+> **✍️ 老师板书：RIP 与拓扑变化（我的解答，课上还没讲）**
+>
+> **R2 的路由表**（3.0 = 172.16.3.0 直连在 R2 上）：
+>
+> | Source | Network address | Next hop | Distance (metric) |
+> | ------ | --------------- | -------- | ----------------- |
+> | C      | 172.16.3.0      | —（直连）    | 0                 |
+>
+> **R1 的路由表**（RIP 收敛后）：R1 从 R2 听到「3.0，metric 1」，从 R3 听到「3.0，metric 2」→ 选 **best path**：
+>
+> | Source | Network address | Next hop | Distance (metric) |
+> | ------ | --------------- | -------- | ----------------- |
+> | R      | 172.16.3.0      | R2       | 1                 |
+>
+> **RIP every 30 sec**：RIP 路由器**每 30 秒**把整张路由表发给邻居一次。
+>
+> **Topology change**（假设 R1–R2 那条线断了）：R1 不再收到 R2 的 update；等这条路由**超时**（RIP 默认 180 秒没更新就判定失效），R1 删掉它，改用 R3 通告的路由：**172.16.3.0，next hop R3，metric 2**。网络自己恢复，不需要人去改。
+>
+> **Dynamic vs Static**：同样的故障，如果 R1 用的是 **static route**，它会一直把包往断掉的 R2 那边送，直到管理员手工改表——这就是 Slide 65 说的 static route 的缺点。
+
+> **➕ 课外补充：RIP 的几个数字**
+>
+> - **每 30 秒**发一次完整更新；**180 秒**收不到就判为失效；**最大 15 hops**，16 表示不可达——所以 RIP 只适合小网络。
+> - **OSPF** 不数 hop，而是按链路带宽算 **cost**，并且只在拓扑变化时才发更新，收敛更快，适合大网络。
+> - 路由协议交换的信息本身也可能被伪造（攻击者冒充路由器发布假路由），所以生产网络会给 OSPF / EIGRP 配置**认证**。
+
+---
+
+## 12. 🔴 Routing Table 的组成与画表（预习）
+
+### 🔴 路由表的 4 类信息（Slide 63）
+
+| 字段                                     | 课件原文                                                                    | 中文                                            |
+| -------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------- |
+| **Protocol type**                      | Type of routing protocol that created the routing table entry           | 这条路由是怎么来的：C（直连）、S（静态）、R（RIP）、D（EIGRP）、O（OSPF） |
+| **Destination / next-hop association** | 目的地是 **directly connected**，或要经过 **next hop** 路由器                       | 目的网络 + 下一跳                                    |
+| **Routing metrics**                    | Used to determine a route's desirability                                | 这条路有多好（hop 数、带宽…）                             |
+| **Outbound interface**                 | Interface that the data must be sent out to reach the final destination | 从哪个口发出去                                       |
+
+### 🔴 画表练习：课件的标准答案（Slide 64）
+
+![两台路由器：左边 E0 = 192.168.11.1、E1 = 192.168.12.1、S0 = 192.168.20.1；右边 E0 = 192.168.21.1、E1 = 192.168.22.1、S1 = 192.168.20.2](images/page_64.png)
+
+*两台路由器：左边 E0 = 192.168.11.1、E1 = 192.168.12.1、S0 = 192.168.20.1；右边 E0 = 192.168.21.1、E1 = 192.168.22.1、S1 = 192.168.20.2（Slide 64）*
+
+这就是上周说的考法「画图 → 标端口 → Initial R.T. → 完整 R.T.」的课件版本：
+
+| 左边路由器       |              |         |               | 右边路由器       |              |         |               |
+| ----------- | ------------ | ------- | ------------- | ----------- | ------------ | ------- | ------------- |
+| **Learned** | **Network**  | **Hop** | **Interface** | **Learned** | **Network**  | **Hop** | **Interface** |
+| C           | 192.168.11.0 | 0       | E0            | C           | 192.168.21.0 | 0       | E0            |
+| C           | 192.168.12.0 | 0       | E1            | C           | 192.168.22.0 | 0       | E1            |
+| C           | 192.168.20.0 | 0       | S0            | C           | 192.168.20.0 | 0       | S1            |
+| R           | 192.168.21.0 | 1       | S0            | R           | 192.168.11.0 | 1       | S1            |
+| R           | 192.168.22.0 | 1       | S0            | R           | 192.168.12.0 | 1       | S1            |
+
+- 前三行 **C (connected)、Hop 0** 就是 **Initial R.T.**；后两行 **R (RIP)、Hop 1** 是动态学到的
+- **串行线网络 192.168.20.0 两边都写成 C**
+- 远程网络的 Interface = **本路由器**通往那边的口（左边写 S0，右边写 S1）
+
+### 🔴 Static vs Dynamic Routes（Slide 65–66）
+
+|                      | **Static routes** | **Dynamic routes**                        |
+| -------------------- | ----------------- | ----------------------------------------- |
+| 怎么来                  | 管理员**手工建立**       | 管理员**配置好 routing protocol** 后，路由器**自动学习** |
+| 拓扑变化（如 link failure） | 管理员必须**手工更新**     | 路由进程收到新的拓扑信息就**自动更新**                     |
+
+![Dynamic Routing：C 告诉 B「我有 10.1.1.0 和 10.1.2.0」，B 再告诉 A；B 的 next hop 是 192.168.1.2 (C)，A 的 next hop 是 192.168.2.2 (B)](images/page_66.png)
+
+*Dynamic Routing：C 告诉 B「我有 10.1.1.0 和 10.1.2.0」，B 再告诉 A；B 的 next hop 是 192.168.1.2 (C)，A 的 next hop 是 192.168.2.2 (B)（Slide 66）*
+
+> **📌 回答上周的 TODO**
+>
+> - **课上是不是只要求画表，不讲 dynamic 细节？** —— Module 2 的 Slide 52–66 专门讲了 dynamic routing（RIP 怎么通告、metric 怎么选路），所以**动态路由会讲，只是还没讲到**。Week 1 板书只列名字，是因为这部分放在了 Module 2。
+> - **串行线本身的网络要不要写进表？** —— **要**。Slide 55、64 都把路由器之间的网络写成 C（connected）。
+> - **IP 分 network / host** —— 已在本周第 1–3 节展开。
+
+---
+
+## 13. 🔴 综合缩写速查表
+
+| 缩写    | 全称                                         | 所属                       |
+| ----- | ------------------------------------------ | ------------------------ |
+| APNIC | Asia-Pacific Network Information Centre    | 亚太地址分配机构（补充）             |
+| ARIN  | American Registry for Internet Numbers     | 北美地址分配机构                 |
+| ARP   | Address Resolution Protocol                | IP → MAC                 |
+| CIDR  | Classless Inter-Domain Routing             | 无类地址（补充）                 |
+| DAI   | Dynamic ARP Inspection                     | 防 ARP spoofing（补充）       |
+| DHCP  | Dynamic Host Configuration Protocol        | 自动分配 IP（UDP 67 / 68）     |
+| DNS   | Domain Name System                         | 名字 → IP                  |
+| DORA  | Discover, Offer, Request, Acknowledge      | DHCP 四步                  |
+| EIGRP | Enhanced Interior Gateway Routing Protocol | Cisco 私有路由协议             |
+| IGRP  | Interior Gateway Routing Protocol          | Cisco 私有路由协议             |
+| IPX   | Internetwork Packet Exchange               | Routed protocol          |
+| NAT   | Network Address Translation                | Private ↔ Public         |
+| OSPF  | Open Shortest Path First                   | 路由协议                     |
+| PAT   | Port Address Translation                   | 一个 public IP 对多个 private |
+| RIP   | Routing Information Protocol               | 路由协议（hop count）          |
+| TLD   | Top-Level Domain                           | .com、.org…               |
+| UDP   | User Datagram Protocol                     | DHCP、DNS、RIP 都用它         |
+
+---
+
+## 14. 模拟自测题
+
+> 以下是**自测题**，按本笔记顺序排列，用来检查自己是否真的掌握，**不是预测的考题**。点开看参考答案。
+
+**1. IPv4 地址有多少位？每个 octet 的取值范围是多少？为什么？**
+
+> 32 位，分成 4 个 octet，每个 8 位。8 位全 0 = 0，全 1 = 11111111 = 128 + 64 + 32 + 16 + 8 + 4 + 2 + 1 = 255，所以每段 0–255。
+
+**2. 为什么说 IP 地址属于接口而不是设备？一台有 3 个接口的路由器有几个 IP、连几个网络？**
+
+> 地址用来在某个网络上找到这个连接点（Slide 5：each of its interfaces has an address）。路由器 3 个接口 → 3 个 IP，分别属于 3 个不同的网络。交换机和 Hub 的端口都在同一个网络里。
+
+**3. 把 172 和 200 换成二进制，并判断 172.16.5.9 与 200.1.1.1 各属于哪个 Class。**
+
+> 172 = 128 + 32 + 8 + 4 = **10101100**，开头 10 → **Class B**；200 = 128 + 64 + 8 = **11001000**，开头 110 → **Class C**。
+
+**4. 写出 150.20.33.4 的 Class、network address、broadcast address 和可用主机数。**
+
+> 150 在 128–191 → **Class B**（N.N.H.H）。Network = **150.20.0.0**，Broadcast = **150.20.255.255**，可用主机 = 2¹⁶ − 2 = **65,534** 台（150.20.0.1 – 150.20.255.254）。
+
+**5. 为什么每个网络都要减 2 个地址？**
+
+> Host 部分全 0 保留为 **network address**（代表整个网络，路由表里用它），全 1 保留为 **broadcast address**（发给网络里所有主机）。两者都不能分配给接口。
+
+**6. 写出三段私有地址，并说明私有地址的主机怎么访问 Internet。**
+
+> 10.0.0.0/8、172.16.0.0–172.31.255.255、192.168.0.0–192.168.255.255。Internet 路由器会丢弃私有地址，所以出口路由器用 **NAT** 把私有源地址换成 public 地址，并在 NAT 表里记下对应关系，回包时再换回来；**PAT** 进一步用端口号让一个 public IP 同时服务很多内部主机。
+
+**7. DHCP 的四个消息分别是广播还是单播？为什么 REQUEST 要广播？**
+
+> DISCOVER **广播**、OFFER **单播**、REQUEST **广播**、ACK **单播**。REQUEST 广播是为了让所有提供过 offer 的 server 知道客户端选了谁，没被选中的 server 就收回自己提供的地址。
+
+**8. 哪些设备应该使用 static IP？为什么？**
+
+> Servers、network printers、application servers、routers——它们需要被其他设备找到（像楼的地址一样固定），地址变了别人就找不到服务。
+
+**9. Hannah 只知道 Jessie 的名字，要发一个帧，还缺哪两样信息？分别用什么协议得到？**
+
+> 缺 Jessie 的 **IP**（用 **DNS**：名字 → IP）和 Jessie 的 **MAC**（用 **ARP**：IP → MAC，前提是 Jessie 在同一个 LAN 上）。
+
+**10. 写出 PC1 (IP-1 / MAC-1) 向同网段 PC3 (IP-3 / MAC-3) 发 ARP request 和 ARP reply 时的 MAC(S, D)。**
+
+> Request：`MAC (S, D) = (MAC-1, FF-FF-FF-FF-FF-FF)`，广播。Reply：`MAC (S, D) = (MAC-3, MAC-1)`，单播。之后 PC1 的 ARP 表多一条 IP-3 → MAC-3，PC3 的 ARP 表多一条 IP-1 → MAC-1。
+
+**11. 比较 Switch 的 MAC address table 和主机的 ARP table。**
+
+> MAC 表在交换机上，记录 **MAC → Port**，从帧的源 MAC 学习，约 5 分钟老化；ARP 表在主机 / 路由器上，记录 **IP → MAC**，通过 ARP request / reply 学习，只包含同一 LAN 的设备，保留时间由 OS 决定（课件：通常几个小时）。
+
+**12. PC1 = 10.1.1.1，网关 10.1.1.251，要发给 172.16.10.2。帧里的目的 IP 和目的 MAC 是什么？PC1 要 ARP 谁？**
+
+> 目的 IP = **172.16.10.2**（最终目的地，不变）；目的 MAC = **默认网关（R1 FA0/0）的 MAC**。因为 172.16.10.2 在别的网络，PC1 ARP 的是**网关 10.1.1.251**，不是 172.16.10.2。
+
+**13. （预习）Routed protocol 和 routing protocol 有什么区别？各举两个例子。**
+
+> Routed protocol 承载用户数据、可以被路由器转发，例如 **IP、IPX**；routing protocol 让路由器之间交换路由信息、维护路由表，例如 **RIP、OSPF**。Routing protocols determine the path that routed protocols follow.
+
+**14. （预习）同一个网络里，RIP 和 EIGRP 为什么可能选不同的路？**
+
+> RIP 只用 **hop count**，选经过路由器最少的路；EIGRP 默认用 **bandwidth 和 delay**，会避开慢链路。Slide 62：直连 R2 只要 1 hop 但只有 64 Kbps，绕 R3 要 2 hops 但都是 1.5 Mbps——RIP 选 R2，EIGRP 选 R3。
+
+**15. （预习）按 Slide 64 的拓扑，写出左边路由器的完整路由表，并标出哪几行属于 Initial R.T.。**
+
+> C 192.168.11.0 hop 0 E0；C 192.168.12.0 hop 0 E1；C 192.168.20.0 hop 0 S0（这三行 = Initial R.T.）；R 192.168.21.0 hop 1 S0；R 192.168.22.0 hop 1 S0（RIP 从右边路由器学到）。

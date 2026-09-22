@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import osi from "./data/osi.json";
 import { SwitchLab } from "./switch-lab";
 import { FcsDemo } from "./fcs-demo";
+import { IpAnalyzer } from "./ip-analyzer";
 import { collisionRows, collisionSvg } from "./collision-map.mjs";
 
 // Components available inside .mdx notes. scripts/mdx-to-md.mjs knows how to turn
@@ -144,5 +145,5 @@ export function CollisionMap() {
 }
 
 export function noteComponents(assetBase: string) {
-  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap };
+  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer };
 }

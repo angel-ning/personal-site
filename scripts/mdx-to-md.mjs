@@ -19,6 +19,7 @@ import remarkStringify from "remark-stringify";
 import { visit, SKIP } from "unist-util-visit";
 import { switchFrame, toMin } from "../src/components/mdx/switch-logic.mjs";
 import { collisionRows, collisionSvgStatic } from "../src/components/mdx/collision-map.mjs";
+import { analyzeIp, IP_PRESETS } from "../src/components/mdx/ip-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
@@ -116,6 +117,24 @@ const components = {
         ["标记", "冲突在哪里发生（Hub）", "交换机怎么防", "位置"],
         collisionRows.map((r) => [strong(r.mark), r.where, r.fix, r.place]),
       ),
+    ];
+  },
+  IpAnalyzer() {
+    const rows = IP_PRESETS.map((ip) => {
+      const r = analyzeIp(ip);
+      return [
+        strong(ip),
+        `Class ${r.cls}（开头 ${r.lead}）`,
+        r.binary.join("."),
+        r.network ?? "—",
+        r.broadcast ?? "—",
+        r.network ? `${r.firstHost} – ${r.lastHost}` : r.note,
+        r.scope,
+      ];
+    });
+    return [
+      para({ type: "emphasis", children: [text("（网页版此处可以输入任意 IPv4 地址自动分析；下表是几个例子的结果）")] }),
+      table(["地址", "Class", "二进制", "Network address", "Broadcast", "可用主机 / 说明", "范围"], rows),
     ];
   },
   FcsDemo() {
