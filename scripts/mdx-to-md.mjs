@@ -68,6 +68,7 @@ const CALLOUTS = {
   extra: ["➕", "课外补充"],
   memo: ["🧠", "记忆口诀"],
   note: ["📌", "注意"],
+  todo: ["📝", "TODO"],
 };
 
 const components = {

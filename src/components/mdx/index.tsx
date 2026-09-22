@@ -17,6 +17,7 @@ const CALLOUTS = {
   extra: { icon: "➕", label: "课外补充" },
   memo: { icon: "🧠", label: "记忆口诀" },
   note: { icon: "📌", label: "注意" },
+  todo: { icon: "📝", label: "TODO" },
 } as const;
 type CalloutType = keyof typeof CALLOUTS;
 

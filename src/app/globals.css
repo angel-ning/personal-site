@@ -189,6 +189,7 @@ body {
 .callout-tip, .callout-memo { --c: var(--c-tip); }
 .callout-board { --c: var(--c-board); }
 .callout-extra, .callout-note { --c: var(--c-extra); }
+.callout-todo { --c: var(--c-warn); border-style: dashed; border-left-style: solid; }
 .callout-title { font-size: .86em; font-weight: 600; color: var(--c); letter-spacing: .01em; }
 .callout-body { margin-top: .35em; }
 .callout-body > * + * { margin-top: .55em; }

@@ -36,7 +36,7 @@ npm run add-note -- "../2026 Fall 1st/ISOM 5260/lectures/lec5/notes.md" 2026-fal
 
 | 组件 | 用法 | 作用 |
 |---|---|---|
-| `<Callout type="exam\|tip\|warn\|board\|extra\|memo\|note" title="...">…</Callout>` | 内容前后各空一行 | 考点、踩坑、老师板书、课外补充等提示框 |
+| `<Callout type="exam\|tip\|warn\|board\|extra\|memo\|note\|todo" title="...">…</Callout>` | 内容前后各空一行 | 考点、踩坑、老师板书、课外补充等提示框 |
 | `<Figure src="images/x.png" caption="..." source="Slide 3" board />` | `board` 表示老师手写板书 | 带说明和出处的图 |
 | `<QA q="问题">答案</QA>` | 自测题 | 点开看答案 |
 | `<LayerStack />` | 数据在 `data/osi.json` | OSI 七层 × PDU × 设备 × TCP/IP 对照 |
