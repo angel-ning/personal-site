@@ -1,7 +1,9 @@
 // Vendor (third-party) inherent cyber-risk tiering, shared with scripts/mdx-to-md.mjs (Week 5 p.6).
 // Rating = 0.25*Data + 0.25*Access + 0.20*Criticality + 0.15*BlastRadius + 0.10*FourthParty + 0.05*Regulatory
-// Each factor is scored 1 (Low) / 3 (Moderate) / 5 (High-critical). The slide only anchors one
-// threshold explicitly: rating > 3.5 -> Tier 1 (full assessment). Below that, the deck's own
+// Each factor is scored 1 (Low) / 3 (Moderate) / 5 (High-critical). Both the weights and the
+// Tier 1 threshold (rating > 3.5) are the slide's own illustrative numbers, not a universal
+// standard — every organization calibrates its own weights/threshold to its risk appetite and
+// vendor population, so the calculator lets you change both. Below the threshold, the deck's own
 // worked example (a SaaS travel-expense tool) is treated as a lower, non-Tier-1 tier — we don't
 // invent unsupported Tier 2/3 cutoffs beyond that.
 
@@ -68,9 +70,12 @@ export const FACTORS = [
   },
 ];
 
-export function computeVendorTier(scores) {
-  const rating = FACTORS.reduce((sum, f) => sum + f.weight * (scores[f.id] ?? 1), 0);
-  const isTier1 = rating > 3.5;
+export const DEFAULT_WEIGHTS = Object.fromEntries(FACTORS.map((f) => [f.id, f.weight]));
+export const DEFAULT_THRESHOLD = 3.5;
+
+export function computeVendorTier(scores, weights = DEFAULT_WEIGHTS, threshold = DEFAULT_THRESHOLD) {
+  const rating = FACTORS.reduce((sum, f) => sum + (weights[f.id] ?? f.weight) * (scores[f.id] ?? 1), 0);
+  const isTier1 = rating > threshold;
   return { rating, isTier1 };
 }
 
