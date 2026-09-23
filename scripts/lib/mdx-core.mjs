@@ -27,6 +27,7 @@ import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic
 import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../src/components/mdx/cardinality-logic.mjs";
 import { evaluate as evalFirewall, PRESETS as FW_PRESETS } from "../../src/components/mdx/firewall-logic.mjs";
 import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic.mjs";
+import { computeVendorTier, FACTORS as VENDOR_FACTORS, VENDOR_TIER_PRESETS } from "../../src/components/mdx/vendor-tier-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
@@ -342,6 +343,17 @@ const components = {
     return [
       note("（网页版此处可交互：自己填 Source IP / Dest IP / Dest Port，逐条走一遍规则表；下表是几个典型场景的结果）"),
       table(["场景", "Packet", "命中规则", "结果"], rows),
+    ];
+  },
+  VendorTierCalculator() {
+    const rows = VENDOR_TIER_PRESETS.map((p) => {
+      const { rating, isTier1 } = computeVendorTier(p.scores);
+      const factorStr = VENDOR_FACTORS.map((f) => `${f.id.toUpperCase()}=${p.scores[f.id]}`).join(" ");
+      return [p.label, factorStr, strong(rating.toFixed(2)), isTier1 ? strong("Tier 1") : "非 Tier 1"];
+    });
+    return [
+      note("（网页版此处可以自己给 6 个因子打分 1/3/5；下表是预设场景的结果）"),
+      table(["场景", "因子打分", "Rating", "结论"], rows),
     ];
   },
 };
