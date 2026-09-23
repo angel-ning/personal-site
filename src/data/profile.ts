@@ -36,7 +36,7 @@ export const experience: Experience[] = [
   {
     period: "2025.07 — 2026.07",
     org: { en: "Huawei Technologies · Beijing Research Institute", zh: "华为技术有限公司 · 北京研究所" },
-    role: { en: "Software Development Engineer (on-site contractor)", zh: "软件开发工程师（派驻）" },
+    role: { en: "Software Development Engineer", zh: "软件开发工程师" },
     place: { en: "Beijing", zh: "北京" },
     points: [
       {
