@@ -1,0 +1,47 @@
+{
+  "types": [
+    { "id": "script_kiddie", "en": "Script Kiddie", "zh": "脚本小子" },
+    { "id": "hacktivist", "en": "Hacktivist", "zh": "黑客行动主义者" },
+    { "id": "criminal_syndicate", "en": "Criminal Syndicate", "zh": "犯罪集团" },
+    { "id": "nation_state", "en": "Nation-State Actor", "zh": "国家级行为者" },
+    { "id": "insider", "en": "Insider Threat", "zh": "内部威胁" },
+    { "id": "cyber_terrorist", "en": "Cyber Terrorist", "zh": "网络恐怖分子" }
+  ],
+  "items": [
+    {
+      "scenario": "一名员工不小心把含客户资料的表格转发给了外部邮箱，事后才发现收件人不对。",
+      "answers": ["insider"],
+      "why": "Insider Threat 的动机包含 revenge、financial gain **或 negligence（疏忽）**——这名员工没有恶意，纯粹是失误，但因为他本来就拥有合法访问权限，依然算 Insider。"
+    },
+    {
+      "scenario": "一个犯罪团伙对医院系统部署勒索软件，索要比特币赎金，并刻意避免任何会引来媒体关注的举动。",
+      "answers": ["criminal_syndicate"],
+      "why": "动机是 illegal financial gain（为了钱），手法是 ransomware，且 **\"want low attention\"**——越低调越好赚，正是 Criminal Syndicate 的典型画像。"
+    },
+    {
+      "scenario": "一群人入侵某公司官网首页，把内容替换成抗议该公司环保政策的标语。",
+      "answers": ["hacktivist"],
+      "why": "动机是 disagree with a company's policies（不满某项政策），手法是 **website defacement**——教科书式的 Hacktivist。"
+    },
+    {
+      "scenario": "某国的网络部队潜伏进另一国的电网控制系统三年，期间没有采取任何破坏动作，只是持续收集情报。",
+      "answers": ["nation_state"],
+      "why": "动机是 espionage / political disruption，手法是 **Advanced Persistent Threat（长期潜伏）**——APT 正是 Nation-State Actor 的标志性手法。"
+    },
+    {
+      "scenario": "一名 14 岁少年下载了网上现成的 DDoS 工具，随便找了个游戏服务器打，只是想看看自己能不能打得动。",
+      "answers": ["script_kiddie"],
+      "why": "动机是 thrill/mischief（图刺激），使用的是 **pre-built tools without deep technical knowledge**，而且没有特定目标（NO target）——典型 Script Kiddie。"
+    },
+    {
+      "scenario": "一个组织袭击城市供水系统的控制设施，目的是制造大范围恐慌，让市民对基础设施失去信心。",
+      "answers": ["cyber_terrorist"],
+      "why": "动机是 fear、disruption、destruction 本身，手法是 **infrastructure attacks**——不是为了钱也不是为了传达政治诉求，单纯要制造恐惧，是 Cyber Terrorist。"
+    },
+    {
+      "scenario": "Edward Snowden 是一名政府合同工，他把敏感的政府文件披露给记者，理由是揭发他认为不道德的活动。（本题选 2 项）",
+      "answers": ["insider", "hacktivist"],
+      "why": "他是 **政府合同工**，本身拥有合法访问权限 → **Insider**；他的动机是揭发不道德行为（理念/道德立场）、手法是数据泄露 → **Hacktivist**。这两个答案来自两条不同的分类维度：Insider 讲的是「他在哪」，Hacktivist 讲的是「他为什么」，不矛盾。"
+    }
+  ]
+}

@@ -25,6 +25,26 @@ export const FAIR_PRESETS = [
     tefRange: [0.4, 1.0, 2.0],
     vulnRange: [10, 25, 45],
   },
+  // Week 2 slide's data-breach walkthrough (§8): same TEF, only Vulnerability changes with
+  // control maturity — isolates how much a single factor swings the annualized Risk.
+  {
+    id: "databreach-weak",
+    label: "数据泄露 · 未加固（Week 2 案例）",
+    tef: 20,
+    vuln: 30,
+    primary: 5,
+    secondary: 15,
+    currency: "HK$",
+  },
+  {
+    id: "databreach-strong",
+    label: "数据泄露 · 已加固（Week 2 案例）",
+    tef: 20,
+    vuln: 2,
+    primary: 5,
+    secondary: 15,
+    currency: "HK$",
+  },
   {
     id: "custom",
     label: "自定义",
@@ -35,4 +55,4 @@ export const FAIR_PRESETS = [
   },
 ];
 
-export const fmtM = (m) => `US$${m.toLocaleString("en-US", { maximumFractionDigits: 2 })}M`;
+export const fmtM = (m, currency = "US$") => `${currency}${m.toLocaleString("en-US", { maximumFractionDigits: 2 })}M`;

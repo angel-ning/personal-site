@@ -2,8 +2,12 @@
 title:
   en: "Week 1 · Risk 101 & Cyber Risk Foundations"
   zh: "第 1 周 · 风险基础与网络风险"
+summary:
+  en: "What risk and cyber risk are, the 5 risk assessment dimensions, prevention/mitigation/remediation, attack surface, global cyber law (US/EU/China/HK), and where cyber risk sits inside enterprise risk management."
+  zh: "风险与网络风险的定义、5 个风险评估维度、Prevention/Mitigation/Remediation 三分法、攻击面、全球网络安全法律（美/欧/中/港），以及网络风险在企业风险管理中的位置。"
 week: 1
 date: 2026-09-04
+tags: [Risk101, CyberRisk, AttackSurface, CyberLaw, ERM]
 ---
 # ISOM 5070 Cyber Security Risk Management — Week 1 复习笔记
 
@@ -81,6 +85,10 @@ date: 2026-09-04
 | **Remediation 补救/修复** | 事后 | 风险已经发生/被发现**之后** | **彻底纠正根本原因**，让这个具体风险不再复发（一次性、永久解决）| 修补已被利用的软件漏洞（Patching a vulnerability that was exploited）|
 
 **记忆口诀**：Prevention 是"防患于未然"，Mitigation 是"退而求其次减小伤害"，Remediation 是"亡羊补牢、堵上漏洞"。
+
+下面这个互动小测把「这个具体动作属于哪一种」变成可以自己点的练习——这正是全课件**最容易混淆的三个词**：
+
+<PmrQuiz />
 
 ---
 
@@ -565,16 +573,45 @@ Compliance ──Regulatory Requirements（监管要求）─┘         │
 
 ## 13. 模拟自测题（自我检查用，不代表真实考题）
 
-1. 请解释 Prevention、Mitigation、Remediation 三者的区别，并各举一个网络安全的例子。
-2. 列举风险评估的5个主维度（Primary Dimensions）并各用一句话解释。
-3. 为什么说"Risks DO NOT have a single consequence"？请结合CrowdStrike 2024案例说明。
-4. 比较中国、欧盟、美国网络安全法律监管的核心差异（至少从3个维度）。
-5. GDPR、NIS2、DORA三者分别侧重什么？
-6. 解释CIA+2（五性）分别代表什么，并说明InfoSec的四大关注领域。
-7. 为什么说Cyber Security Risk应该被纳入企业整体的ERM框架，而不只是IT部门的问题？请列举至少3个治理角色及其职责。
-8. 中国的CSL、DSL、PIPL三部法律分别管什么？它们之间是什么关系？
-9. 香港新颁布的PCICSO（关键基础设施保护条例）何时生效？适用于哪些行业？
-10. 什么是Attack Surface？请列举其五大类别。
+<QA q="请解释 Prevention、Mitigation、Remediation 三者的区别，并各举一个网络安全的例子。">
+**Prevention（预防）**发生在风险**之前**，从根源上消除发生的可能性，例：员工钓鱼邮件识别培训；**Mitigation（缓解）**承认风险仍可能发生，事前/事中/事后**降低**其概率或影响，例：网络分段隔离限制入侵扩散范围；**Remediation（补救）**发生在风险**已经发生/被发现之后**，彻底纠正根本原因，让这个具体问题不再复发，例：给已经被利用的漏洞打补丁。三者按时间点区分：事前消除 → 事前/中/后降低 → 事后根治。
+</QA>
+
+<QA q="列举风险评估的 5 个主维度（Primary Dimensions）并各用一句话解释。">
+**Likelihood（可能性）**——这件坏事发生的概率有多大；**Severity（严重程度）**——一旦发生造成的损害有多大；**Velocity（速度）**——风险从发生到造成实际冲击的速度有多快；**Volatility（波动性）**——发生概率会随环境变化而持续波动、越难预测波动性越高；**Connectivity（关联性）**——这个风险和其他风险事件的关联程度，风险不能孤立评估。
+</QA>
+
+<QA q="为什么说「Risks DO NOT have a single consequence」？请结合 CrowdStrike 2024 案例说明。">
+一个风险事件往往同时触发多类后果，而不是单一后果。CrowdStrike 2024 蓝屏事件就是最好的例子：一次软件升级失误，**同时**造成了运营中断（航班取消、ATM 停摆）、财务损失（估计 $1.5B，股价两天暴跌 40%）、法律风险（Delta 起诉索赔 $5 亿）和声誉损害（多行业客户信任受损）——单一事件，多重后果同时发生，这正是"风险不止一个后果"的直接证据。
+</QA>
+
+<QA q="比较中国、欧盟、美国网络安全法律监管的核心差异（至少从 3 个维度）。">
+**监管方式**：中国是国家中心的"网络主权"，政府强力管控；欧盟是区域协调统一监管；美国是分行业、分散式，联邦法+州法+自愿框架混合，无单一综合法。**核心法律**：中国 CSL/DSL/PIPL；欧盟 NIS2/GDPR/DORA；美国靠 CFAA、行业规则和 NIST 指南拼凑。**数据跨境流动**：中国限制最严格（尤其重要数据）；欧盟允许但受 GDPR 传输机制约束；美国总体更开放。**主要优先事项**：中国是国家安全优先；欧盟是个人数据保护优先（GDPR 赋权个人）；美国是关键基础设施保护+公私合作。
+</QA>
+
+<QA q="GDPR、NIS2、DORA 三者分别侧重什么？">
+一句话区分：**GDPR = 数据保护**（管理如何收集/使用/保护/共享欧盟个人数据，赋予个人访问/更正/删除等权利）；**NIS2 = 全行业网络韧性**（关键行业网络安全治理总指令，涵盖风险管理、事件报告、供应链意识）；**DORA = 金融业数字韧性**（专门针对金融机构的 ICT/网络风险管理统一规则）。
+</QA>
+
+<QA q="解释 CIA+2（五性）分别代表什么，并说明 InfoSec 的四大关注领域。">
+CIA+2 五性：**Confidentiality（机密性）**——只有授权人能看到信息；**Integrity（完整性）**——信息未被篡改；**Availability（可用性）**——需要时信息/系统可用；**Authenticity（真实性）**——信息/身份真实可信；**Non-repudiation（不可否认性）**——发送方不能否认自己发过某条信息。InfoSec 的四大关注领域：**Network（网络）、Endpoint（终端）、Application（应用）、Data（数据）**。
+</QA>
+
+<QA q="为什么说 Cyber Security Risk 应该被纳入企业整体的 ERM 框架，而不只是 IT 部门的问题？请列举至少 3 个治理角色及其职责。">
+因为网络风险会像其他企业风险一样冲击财务、法律、声誉和运营，且往往和运营、行为、第三方、韧性等其他风险类别相互关联触发——只放在 IT 部门管理，既缺乏企业级的资源分配和问责，也容易在董事会层面失去应有的关注和挑战。三个关键角色：**Board / Risk Committee**——批准风险偏好、挑战重大网络风险敞口、监督韧性与重大事件响应；**CRO / ERM**——负责方法论一致性、风险汇总报告、企业级优先排序；**CISO**——负责网络风险识别、评估、控制策略与处置执行。
+</QA>
+
+<QA q="中国的 CSL、DSL、PIPL 三部法律分别管什么？它们之间是什么关系？">
+**CSL（网络安全法）**管"网络本身"的安全和治理——网络运营者义务、关键信息基础设施保护；**DSL（数据安全法）**管"数据"这种资产的分类分级保护和跨境流动限制；**PIPL（个人信息保护法）**管"个人信息"这种特殊数据的隐私权益，类似"中国版 GDPR"。三者共同构成中国数据安全法律体系的"三驾马车"：CSL 管网络载体，DSL 管数据资产，PIPL 管个人信息权益。
+</QA>
+
+<QA q="香港新颁布的 PCICSO（关键基础设施保护条例）何时生效？适用于哪些行业？">
+**2026 年 1 月 1 日**生效，是香港首部专门的网络安全法。适用于**能源、银行金融、IT、交通、医疗、电讯**等行业的关键基础设施（CI）运营者，对其施加组织、预防和事件报告义务，罚款最高 500 万港元。
+</QA>
+
+<QA q="什么是 Attack Surface？请列举其五大类别。">
+NIST 定义：系统、系统组件或环境边界上，攻击者可能尝试进入、造成影响或窃取数据的所有点的集合。五大类别：**① Digital（数字层）**——面向互联网的服务、API、云资源；**② Physical（物理层）**——能被物理接触到的设备；**③ Human/社会工程**——用户、管理员可能被钓鱼或欺骗；**④ Third-party/供应链**——供应商、托管服务商、第三方软件；**⑤ AI/应用层**——暴露的模型、Agent 可能被 prompt injection 或投毒数据滥用。
+</QA>
 
 ---
 

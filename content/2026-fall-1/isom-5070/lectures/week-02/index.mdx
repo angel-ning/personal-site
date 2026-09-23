@@ -2,8 +2,12 @@
 title:
   en: "Week 2 · Governance, Frameworks & AI Impacts"
   zh: "第 2 周 · 安全治理、框架与 AI 影响"
+summary:
+  en: "Why frameworks exist and how NIST CSF 2.0, ISO 27001/27002, CIS Controls, COBIT, FAIR and MITRE ATT&CK/D3FEND fit together, plus a deepfake-fraud case study and AI's dual impact on offense and defense."
+  zh: "为什么需要框架，以及 NIST CSF 2.0、ISO 27001/27002、CIS Controls、COBIT、FAIR 和 MITRE ATT&CK/D3FEND 如何组合使用，再加一个 deepfake 诈骗案例和 AI 对攻防两端的双重影响。"
 week: 2
 date: 2026-09-03
+tags: [NIST CSF, ISO 27001, CIS Controls, COBIT, FAIR, MITRE ATT&CK, Deepfake]
 ---
 # ISOM5070 Cyber Security Risk Management — Week 2 复习笔记
 **主题：Cyber Security Governance, Frameworks, AI Impacts**
@@ -367,6 +371,10 @@ FAIR 的整个逻辑其实就是把"这件坏事有多大风险"拆成两个大�
 
 > 🔴 一句话记忆链：**TEF（来试几次）→ 乘以 Vulnerability（防不防得住）= LEF（真出几次事）**；**Primary（自己直接花的钱）+ Secondary（别人反应导致多花的钱）= LM（一次亏多少）**；**LEF × LM = Risk（一年平均预期亏多少）**。
 
+下面这个互动计算器就是上面这个数据库拖库案例——默认是"未加固"场景，切到"已加固"能立刻看到**只改一个 Vulnerability**，Risk 从 HK$120M/年掉到 HK$8M/年；也可以自己拖动数字，感受哪个参数对最终 Risk 的杠杆最大：
+
+<FairCalculator initial="databreach-weak" />
+
 **考试提示**：如果给出一个场景，问"哪个是Primary loss哪个是Secondary loss"，判断标准是——**Primary = 直接花的钱**，**Secondary = 因为别人反应而多花的钱**（罚款、客户跑了、被告）。
 
 **FAIR 和前面 NIST CSF 的 residual risk 概念是相通的**：FAIR是把"risk"这个抽象词，用财务语言变成LEF×LM这样一个可以量化、可以做cost-benefit分析的数字，方便管理层决策"这笔安全投资值不值"。控制措施主要是在降低**Vulnerability**（防得住的概率更高）或**LEF**（出事的频率更低），这跟第3.5节的residual risk逻辑完全一致。
@@ -519,6 +527,54 @@ slide在案例后面只问了两个问题——**"What controls were broken down
 
 - 主题：企业采用AI会带来哪些新风险？
 - 要求：团队协作，至少3个风险+对应remediation，下周二前提交canvas，随机抽3组做5-10分钟展示+2-3分钟Q&A
+
+---
+
+## 14. 模拟自测题（自我检查用，不代表真实考题）
+
+<QA q="为什么企业要用 framework，而不是自己拍脑袋做安全？请说出三层理由。">
+Framework 提供三重价值，不能只答"更安全"：① **系统性方法论**——提供成熟度提升路径，系统化做风险管理而不是东一榔头西一棒子；② **合规强制**——金融、医疗等行业被法律/监管要求满足特定标准；③ **对外证明治理良好**——留痕便于审计，向投资人/董事会证明公司治理到位。
+</QA>
+
+<QA q="Control、Objective、Safeguard 这三个词有什么区别？为什么不能跨框架直接比数字？">
+**Objective（目标）**是最抽象的责任领域（如 COBIT 的 APO12），本身不是单一动作；**Control（控制）**是可审计、能打勾"做了没做"的具体防护动作；**Safeguard（防护措施）**是 CIS 框架自己的说法，是 18 个大类 control 下面更细的执行项。三者是"目标→规定→执行动作"层层拆解的关系，但**同一个词在不同框架里粒度不一样**——ISO 27001 的 93 个"control"粒度接近 CIS 的 safeguard，CIS 的 18 个"control"粒度接近 COBIT 的 objective，所以不能直接拿"ISO 有 93 个 control"和"CIS 有 18 个 control"来说谁的控制更多。
+</QA>
+
+<QA q="NIST CSF 2.0 的 Category/Subcategory、Profile、Tier 三者分别回答什么问题？">
+**Category/Subcategory** 回答"要管什么"（内容分类）；**Profile** 回答"现在做到哪、要做到哪"（现状 vs 目标的落地记录，记录颗粒度固定在 Subcategory）；**Tier** 回答"我们是怎么做到的"（流程有多正式、多整合，不是合规认证也不是打分）。三者互相独立：Tier 高不代表控制点齐全，只代表管理过程成熟；现状很朴素但流程规范，一样可以是 Tier 3。
+</QA>
+
+<QA q="Inherent Risk 和 Residual Risk 的区别是什么？和 FAIR 公式是什么关系？">
+**Inherent Risk（固有风险）**是完全没有任何控制措施时的原始风险水平，只跟资产敏感度和攻击面有关；**Residual Risk（剩余风险）**是实施控制措施之后仍然存在的风险水平。关系：Residual Risk = Inherent Risk − 控制措施降低的部分。对应到 FAIR 公式，控制措施本质上大多在降低 Vulnerability（从而降低 LEF），residual risk 说到底就是控制生效后剩下的 `LEF × LM`。
+</QA>
+
+<QA q="ISO 27001 和 ISO 27002 有什么区别？各自的核心产出是什么？">
+**ISO 27001** 是国际可认证标准，回答"我们有没有一个可审计的 ISMS 来管理信息安全风险"，核心产出是 **Statement of Applicability (SoA)**——哪些控制适用、是否已落实、为什么排除某些控制。**ISO 27002** 是不可认证的实施指南，回答"具体的控制措施该怎么设计、怎么运作"，是 27001 的"怎么做"手册。
+</QA>
+
+<QA q="COBIT 里 Governance 和 Management 的区别是什么？APO12 和 APO13 分别是什么？">
+**Governance（治理）**是评估干系人需求、定方向、定优先级、监督绩效，属于董事会/高管层的职责；**Management（管理）**是计划、建设、运行、监控具体活动去执行方向，属于执行层的职责。**APO12 (Managed Risk)** 是在企业批准的容忍度内持续识别/评估/降低 I&T 风险；**APO13 (Managed Security)** 是定义、运行、监控信息安全管理系统。
+</QA>
+
+<QA q="用课件给出的运营模型，说明 NIST CSF、ISO 27001、ISO 27002、CIS Controls、COBIT 五个框架是怎么串起来一起用的。">
+用 **COBIT** 分配董事会/高管/风险/技术/安全/审计的问责 → 用 **ISO 27001** 建 ISMS → 用 **ISO 27002 + CIS Controls** 设计并落地具体控制环境 → 用 **NIST CSF Profile** 对外沟通当前安全状态和目标状态。FAIR 不在这张分工表里，因为它不是用来"分工"的框架，而是可以套在任何一个框架识别出的风险点上算钱的独立定量工具。
+</QA>
+
+<QA q="FAIR 公式里，Primary Loss 和 Secondary Loss 怎么区分？给一个判断标准。">
+判断标准：**Primary = 直接花的钱**（应急响应、取证、修复、停机、赎金），不牵扯别人的反应；**Secondary = 因为别人（监管、客户、媒体、股东）看到这件事之后做出反应，而多花/多亏的钱**（监管罚款、集体诉讼、客户流失、声誉受损）。同一个事故里两者要分开算，最后 LM = Primary + Secondary。
+</QA>
+
+<QA q="MITRE ATT&CK 的 Tactics / Techniques / Procedures 三层分别回答什么问题？和 D3FEND 是什么关系？">
+**Tactics** 回答 "The Why"——攻击者的高层目标（如获取初始访问）；**Techniques** 回答 "The How"——达成目标的具体方法（如钓鱼邮件）；**Procedures** 回答 "The How Exactly"——执行该技术的具体步骤/命令/工具。**D3FEND** 是防御技术知识图谱，把防御措施和 ATT&CK 里的攻击者行为关联起来——ATT&CK 讲"攻击者会怎么打"，D3FEND 讲"针对这种打法该用什么类型的防御手段（侦测/拒绝/隔离/限制/验证）"，两者是攻防对照表。
+</QA>
+
+<QA q="分析 HK$200M Deepfake 诈骗案例，为什么老师强调「先诊断，后开药」，不能直接跳到「应该上 MFA」？">
+因为不先诊断清楚"哪个具体控制点失效了"，提出的补救措施就是无的放矢、答案没有逻辑闭环。正确结构是先说清楚"因为 XX 控制缺失/失效，所以攻击者才能得手"（对应五大 Root Causes，例如"身份验证依赖外表"），再针对每个失效点提出"该加什么 control/流程"（例如强交易签名、双重独立审批）。跳过诊断直接开药方，答案就只是堆砌安全名词，答不到案例分析想考的因果链。
+</QA>
+
+<QA q="为什么说 AI 不改变攻防的基本逻辑，只是放大了效率和规模？重点放大了攻击链的哪个阶段？">
+攻防的基本逻辑依然是"侦察 → 武器化 → 交付 → 执行 → …"这条链，AI 并没有创造新的攻击阶段，而是让双方在**已有环节里**做得更快、更逼真、更大规模——比如钓鱼邮件更流畅定制、恶意代码生成更快、检测告警的优先排序更准。**攻击链早期阶段（侦察、钓鱼/社工、冒充）被显著放大**，这正是 Deepfake 案例能得手的原因：AI 把"冒充身份"这个早期环节的逼真度和效率都拉满了，而后端的支付控制没跟上。
+</QA>
 
 ---
 

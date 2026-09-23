@@ -2,8 +2,12 @@
 title:
   en: "Week 2 · Database Analysis & E-R Diagrams"
   zh: "第 2 周 · 数据库分析与 E-R 图"
+summary:
+  en: "From enterprise data modeling and SDLC to drawing an E-R diagram: entities, attributes, relationships, cardinality constraints, and a four-pass scanning method for turning a business description into a diagram."
+  zh: "从企业数据建模、SDLC 一路推到画 E-R 图：实体、属性、关系、基数约束，以及把业务描述转成图的四轮扫描做题法。"
 week: 2
 date: 2026-09-08
+tags: [ER Diagram, Entity, Cardinality, SDLC, Data Modeling]
 ---
 # 数据库分析与 E-R 图
 **ISOM 5260 · Lecture 2 · Week 2**
@@ -462,6 +466,10 @@ Slides 上 ORDER–CUSTOMER 那条线两端同时标了 `Places` 和 `Is Placed 
 
 </Callout>
 
+下面这个互动小测把「只问两个问题」变成真的可以点着练——包括两条「白送规律」（弱实体、关联实体连 owner 那一端）：
+
+<CardinalityLab />
+
 | Slides 上的例子 | 问答 | 结论 |
 |---|---|---|
 | 对任一 **department**：<br />能没有 employee 吗？能有多于一个 employee 吗？ | 不能没有；能有多个 | EMPLOYEE 端 = **mandatory many**（一对多） |
@@ -841,3 +849,45 @@ Slides 最后一页专门放了一张 **MS Visio** 的图并说明：different m
 信息系统三层 → 底层是 DBMS → 先做企业数据建模决定立哪些项目 → 项目按 SDLC 或原型法开发 → SDLC 的 **Analysis** 阶段做 conceptual data modeling → 产物是 **E-R 图** → ER 图 = 实体（强／弱／关联）+ 属性（六种记法）+ 关系（动词 + 一对基数符号）→ 图画不下的规则，用文字写成 assumptions。
 
 </Callout>
+
+---
+
+## 模拟自测题（自我检查用，不代表真实考题）
+
+<QA q="Enterprise Data Model 和 Project Data Model 有什么区别？">
+**范围**：Enterprise Model 覆盖整个组织，Project Model 只覆盖单个项目/业务职能。**粒度**：Enterprise Model 宏观，通常只有实体名和主要关系、不含属性；Project Model 细致，所有实体、关系、**属性**、business rules 全都要有。**关系**：Project Model = 把 Enterprise Model 中相关的那一块取出来细化 + 扩展，两者必须保持一致。
+</QA>
+
+<QA q="为什么「系统生成的输出」（如报表）不能建成一个实体类型？">
+报表里的每个数字都是从已存在的数据算出来的——把报表也建成表会带来三个问题：① **数据重复**（同一笔数据存了两份）；② **更新异常**（原始数据改了，报表那份不会自动跟着变）；③ **没有独立存在性**（报表只是「看数据的一种方式」，换个筛选条件就是另一张报表）。正确做法是报表在需要时由查询实时生成——这和 derived attribute「不存、用时算」是同一个原则。
+</QA>
+
+<QA q="强实体、弱实体、关联实体分别怎么画？各自的标识符要求是什么？">
+**Strong entity**：单线矩形，有自己完整的标识符（单下划线）。**Weak entity**：双线矩形，没有完整标识符，只有 partial identifier（双下划线），连向 owner 的线画双实线。**Associative entity**：圆角矩形，"may or may not have an identifier"——可以有自己完整的标识符（单下划线），也可以只有 partial identifier（双下划线），也可以完全没有（用两端标识符组合成 implicit identifier）。
+</QA>
+
+<QA q="判断一个候选实体是不是 associative entity，真正的判据是什么？「它跟两个实体都有关系」算不算判据？">
+「跟两个实体都有关系」**不能**当判据——COURSE 同时连着 LEVEL、SYLLABUS、VIDEO 等五个实体，但它是强实体。真正的判据（命中任意一条即可）：① 它的每一个实例本身就是「A 的某一个 × B 的某一个」这个配对，把任意一端删掉这条记录就没有意义；② 它带的属性只属于这个配对，塞进任何一端都塞不下；③ 描述里出现了 M:N 关系，M:N 必须落成一个关联实体（因为关系数据库没法直接实现 M:N）。
+</QA>
+
+<QA q="Multivalued、Composite、Derived 三种属性分别怎么标记？为什么派生属性「标出来但不存」？">
+**Multivalued（多值）** 用花括号 `{Attr}`，同一实例可以同时取多个值（如 `EMPLOYEE {Skills}`）。**Composite（复合）** 用圆括号 `Attr (a, b, c)`，可以拆成有意义的组件（如 `Name (First, Last)`）。**Derived（派生）** 用方括号 `[Attr]`，值可以从其他属性算出来（如 `[Years Employed]`）。不存的理由：派生值会随时间自动变化，存一份很快就会过期、且没人会发现算错；标出来的理由：不标的话后面开发根本不知道业务需要这个值，标出来相当于交接说明「用时再算，别建列」。
+</QA>
+
+<QA q="选标识符的三条规则是什么？为什么「有含义的编号」（intelligent identifier）是个坏主意？">
+三条规则：① **Will not be null**——空值无法定位记录；② **Will not change in value**——标识符一旦改变，所有引用它的地方都要跟着改，漏改一处就是孤儿记录；③ **No intelligent identifiers**——不要把业务含义编进标识符里。有含义的编号是坏主意，因为一旦编码依据的业务事实变了（换了办公室、入学延毕），编号就必须跟着改，直接违反第二条「值不会变」。标识符唯一的职责是唯一，不是携带信息。
+</QA>
+
+<QA q="判断基数约束的「两个问题法」是什么？「弱实体连 owner」「关联实体连两端实体」这两条白送规律分别怎么用？">
+两个问题（答案画在 B 那一端）：① 一个 A 可以没有 B 吗？可以 → optional（○）；不可以 → mandatory（\|）。② 一个 A 可以有多于一个 B 吗？可以 → many（鸡爪）；不可以 → one（\|）。两条白送规律：弱实体连它的 owner，owner 那一端必定 **mandatory one（‖）**（弱实体必须恰好属于一个 owner 才能被识别）；关联实体连两端实体，两端那一侧都是 **mandatory one（‖）**（一条记录必然对应恰好一个 A 和恰好一个 B，"many" 已经跑到关联实体那一侧了）。
+</QA>
+
+<QA q="Unary、Binary、Ternary 关系分别是什么？为什么三元关系不能拆成三个二元关系？">
+**Unary（一元/递归）**：同一实体类型自己和自己发生关系（如 EMPLOYEE 的 manages）。**Binary（二元）**：两个实体类型之间的关系，最常见。**Ternary（三元）**：三个实体类型同时参与才成立的关系。三元关系不能拆成三个二元关系，因为拆开会永久丢失信息——你知道「X 供 C」「X 供货给 Y」「C 存在 Y」，但无法确定这三条说的是不是同一笔安排；而且像 `Unit Cost` 这种只属于「X 供 C 到 Y」这个三元组合的属性，放进任何一条二元关系里都无处安放。
+</QA>
+
+<QA q="四轮扫描法的四轮分别找什么？为什么要分开扫，而不是边读边画？">
+第一轮找 **Entity**（圈名词，尤其主语宾语，按三条标准筛：有很多实例/由多个属性描述/数据库确实需要建模）；第二轮找 **Attribute**（按五问分类：能唯一确定实例吗→identifier；能同时多个值吗→multivalued；能拆成有意义组件吗→composite；能算出来吗→derived；都不是→simple）；第三轮找 **Relationship**（找动词，单数形式，主被动看读图方向）；第四轮定 **Cardinality**（先用白送规律填掉弱实体/关联实体的一端，剩下每端问两个问题）。分开扫比边读边画稳，是因为后面的句子经常会改写前面的判断——一遍只找一种东西，不会被后续信息打乱已经做的判断。
+</QA>
+
+---

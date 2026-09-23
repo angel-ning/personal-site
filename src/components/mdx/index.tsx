@@ -15,6 +15,11 @@ import { InsuranceCalculator } from "./insurance-calculator";
 import { SynFloodLab } from "./syn-flood-lab";
 import { PkiTrustLab } from "./pki-trust-lab";
 import { RiskAssessmentLab } from "./risk-assessment-lab";
+import { PmrQuiz } from "./pmr-quiz";
+import { CardinalityLab } from "./cardinality-lab";
+import { NormalizationLab } from "./normalization-lab";
+import { ThreatActorQuiz } from "./threat-actor-quiz";
+import { FirewallRuleLab } from "./firewall-rule-lab";
 import { collisionRows, collisionSvg } from "./collision-map.mjs";
 
 // Components available inside .mdx notes. scripts/mdx-to-md.mjs knows how to turn
@@ -163,5 +168,5 @@ export function Mk({ t, children }: { t: "e" | "a" | "v" | "c"; children: ReactN
 }
 
 export function noteComponents(assetBase: string) {
-  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab };
+  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab, PmrQuiz, CardinalityLab, NormalizationLab, ThreatActorQuiz, FirewallRuleLab };
 }

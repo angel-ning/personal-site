@@ -1,0 +1,12 @@
+[
+  { "src": "any", "srcPort": "any", "dst": "10.10.10.x", "dstPort": ">1023", "action": "allow", "note": "Response to internal requests are allowed" },
+  { "src": "any", "srcPort": "any", "dst": "10.10.10.1", "dstPort": "any", "action": "deny", "note": "The firewall device is never accessible directly from the public network" },
+  { "src": "10.10.10.x", "srcPort": "any", "dst": "any", "dstPort": "any", "action": "allow", "note": "All traffic from the trusted network is allowed out" },
+  { "src": "any", "srcPort": "any", "dst": "10.10.10.6", "dstPort": "25", "action": "allow", "note": "All email traffic allowed to the SMTP server but only at port 25" },
+  { "src": "any", "srcPort": "any", "dst": "10.10.10.x", "dstPort": "7", "action": "deny", "note": "All ICMP (i.e., ping) requests should be denied" },
+  { "src": "10.10.10.x", "srcPort": "any", "dst": "10.10.10.x", "dstPort": "23", "action": "allow", "note": "Telnet connections allowed among internal devices" },
+  { "src": "any", "srcPort": "any", "dst": "10.10.10.x", "dstPort": "23", "action": "deny", "note": "Telnet requests from external to internal devices denied" },
+  { "src": "any", "srcPort": "any", "dst": "10.10.10.4", "dstPort": "80", "action": "allow", "note": "All HTTP requests are allowed to web/proxy servers in DMZ" },
+  { "src": "10.10.10.4", "srcPort": "any", "dst": "10.10.10.8", "dstPort": "80", "action": "allow", "note": "Then web/proxy servers in DMZ are allowed to reach internal network" },
+  { "src": "any", "srcPort": "any", "dst": "any", "dstPort": "any", "action": "deny", "note": "All other types of traffic denied (Default Deny)" }
+]

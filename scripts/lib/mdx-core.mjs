@@ -24,12 +24,20 @@ import { computeInsurance, INSURANCE_PRESETS, fmtM as fmtInsM } from "../../src/
 import { CAPACITY, HALFOPEN_TIMEOUT, runScript } from "../../src/components/mdx/syn-flood-logic.mjs";
 import { MODES, scenarioLabel, verifyPki } from "../../src/components/mdx/pki-logic.mjs";
 import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic.mjs";
+import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../src/components/mdx/cardinality-logic.mjs";
+import { evaluate as evalFirewall, PRESETS as FW_PRESETS } from "../../src/components/mdx/firewall-logic.mjs";
+import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
 const osi = readJson("src/components/mdx/data/osi.json");
 const lab = readJson("src/components/mdx/data/switch-lab.json");
 const dbLayers = readJson("src/components/mdx/data/dbms-layers.json");
+const pmrItems = readJson("src/components/mdx/data/pmr-items.json");
+const cardinalityItems = readJson("src/components/mdx/data/cardinality-items.json");
+const normalizationScenarios = readJson("src/components/mdx/data/normalization-scenarios.json");
+const threatActorData = readJson("src/components/mdx/data/threat-actor-items.json");
+const firewallRules = readJson("src/components/mdx/data/firewall-rules.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -209,7 +217,7 @@ const components = {
   FairCalculator() {
     const rows = FAIR_PRESETS.map((p) => {
       const { lef, lm, risk } = computeFair(p);
-      return [p.label, `${p.tef} × ${p.vuln}% = ${lef.toFixed(3)}`, fmtFairM(lm), strong(fmtFairM(risk))];
+      return [p.label, `${p.tef} × ${p.vuln}% = ${lef.toFixed(3)}`, fmtFairM(lm, p.currency), strong(fmtFairM(risk, p.currency))];
     });
     return [
       note("（网页版此处可以自己调 TEF / Vulnerability / Primary / Secondary；下表是预设场景的结果）"),
@@ -279,6 +287,61 @@ const components = {
     return [
       note("（网页版此处可交互：自己调 Asset Value / Likelihood / Probable Loss 等参数，实时看 Heat Map 落点；下表是几个例子的结果）"),
       table(["场景", "Loss Frequency", "Loss Magnitude", "Calculated Risk", "Heat Map", "决定"], rows),
+    ];
+  },
+  PmrQuiz() {
+    const name = (id) => pmrItems.categories.find((c) => c.id === id).en;
+    return [
+      note("（网页版此处是「这属于 Prevention / Mitigation / Remediation 哪一种」的点选练习；下表是全部题目和答案）"),
+      table(["动作", "属于", "理由"], pmrItems.items.map((it) => [it.text, strong(name(it.cat)), it.why])),
+    ];
+  },
+  CardinalityLab() {
+    const rows = cardinalityItems.map((it) => [
+      `${it.from} → ${it.to}`,
+      it.rule,
+      strong(`${cardSymbolFor(it.min, it.max)}（${cardSymbolName(it.min, it.max)}）`),
+      it.why,
+    ]);
+    return [
+      note("（网页版此处可交互：对每条 business rule 回答两个问题，自动算出基数符号；下表是全部题目和答案）"),
+      table(["A → B", "Business rule", "B 端符号", "理由"], rows),
+    ];
+  },
+  NormalizationLab() {
+    const blocks = normalizationScenarios.flatMap((s) => {
+      const fdRows = s.fds.map((fd) => [fdText(fd), strong(classifyFd(s.pk, fd.det))]);
+      const decompRows = s.decomposition.map((t) => [
+        t.name,
+        t.cols.map((c) => (t.pk.includes(c) ? `_${c}_` : c)).join(", "),
+        t.fk.map((f) => `${f.col} → ${f.ref}`).join("；") || "—",
+      ]);
+      return [
+        para(strong(`${s.label}：${s.table}（主键 = ${s.pk.join(" + ")}）`)),
+        table(["Functional Dependency", "属于"], fdRows),
+        table(["分解后的表", "列（斜体 = 主键）", "外键"], decompRows),
+      ];
+    });
+    return [note("（网页版此处可交互：给每条函数依赖分类 Full / Partial / Transitive，再看分解到 3NF 的结果；下面是全部场景的答案）"), ...blocks];
+  },
+  ThreatActorQuiz() {
+    const name = (id) => threatActorData.types.find((t) => t.id === id).en;
+    return [
+      note("（网页版此处是「这是哪种 Threat Actor」的点选练习，部分题目要选两项；下表是全部题目和答案）"),
+      table(
+        ["场景", "属于", "理由"],
+        threatActorData.items.map((it) => [it.scenario, strong(it.answers.map(name).join(" + ")), it.why]),
+      ),
+    ];
+  },
+  FirewallRuleLab() {
+    const rows = FW_PRESETS.map((p) => {
+      const r = evalFirewall(firewallRules, { srcIp: p.srcIp, dstIp: p.dstIp, dstPort: p.dstPort });
+      return [p.label, `${p.srcIp} → ${p.dstIp}:${p.dstPort}`, `#${r.index + 1}`, strong(r.rule.action === "allow" ? "Allow" : "Deny")];
+    });
+    return [
+      note("（网页版此处可交互：自己填 Source IP / Dest IP / Dest Port，逐条走一遍规则表；下表是几个典型场景的结果）"),
+      table(["场景", "Packet", "命中规则", "结果"], rows),
     ];
   },
 };

@@ -1,0 +1,66 @@
+[
+  {
+    "from": "EMPLOYEE",
+    "to": "DEPARTMENT",
+    "rule": "每位 EMPLOYEE 必须（must）恰好属于一个 DEPARTMENT——不允许没有部门，也不允许同时属于两个部门。",
+    "min": "mandatory",
+    "max": "one",
+    "why": "「必须」= 不能没有 → mandatory；「恰好一个」= 不能多个 → one。符号画在 DEPARTMENT 这一端：‖"
+  },
+  {
+    "from": "DEPARTMENT",
+    "to": "EMPLOYEE",
+    "rule": "每个 DEPARTMENT 至少要有一名 EMPLOYEE（不允许是空部门），可以有很多名员工。",
+    "min": "mandatory",
+    "max": "many",
+    "why": "「至少一名」= 不能没有 → mandatory；「可以有很多」→ many。符号画在 EMPLOYEE 这一端：|<"
+  },
+  {
+    "from": "CUSTOMER",
+    "to": "LOYALTY CARD",
+    "rule": "一个 CUSTOMER 注册时可能还没申请 LOYALTY CARD（可选）；如果申请了，一个 customer 只能有一张卡。",
+    "min": "optional",
+    "max": "one",
+    "why": "「可能还没有」= 可以没有 → optional；「只能有一张」→ one。符号画在 LOYALTY CARD 这一端：O|"
+  },
+  {
+    "from": "CUSTOMER",
+    "to": "ORDER",
+    "rule": "一个 CUSTOMER 刚注册时可能还没下过 ORDER（可选）；下单之后可以有很多笔订单。",
+    "min": "optional",
+    "max": "many",
+    "why": "「可能还没有」= 可以没有 → optional；「可以有很多笔」→ many。符号画在 ORDER 这一端：O<"
+  },
+  {
+    "from": "DEPENDENT",
+    "to": "EMPLOYEE",
+    "rule": "DEPENDENT 是弱实体，它的存在依赖 identifying owner EMPLOYEE——每一条 dependent 记录必须恰好属于一位员工。",
+    "min": "mandatory",
+    "max": "one",
+    "why": "白送规律：弱实体连它的 owner，owner 那一端必定 mandatory one（‖）——弱实体靠 owner 才能被识别，必须恰好属于一个 owner。"
+  },
+  {
+    "from": "ENROLLMENT",
+    "to": "STUDENT",
+    "rule": "ENROLLMENT 是 STUDENT 和 COURSE 之间的关联实体（拆解 M:N 而来）——一条选课记录必须恰好对应一位学生。",
+    "min": "mandatory",
+    "max": "one",
+    "why": "白送规律：关联实体连两端实体，两端那一侧都是 mandatory one（‖）——一条记录必然对应恰好一个 A 和恰好一个 B，「many」已经跑到关联实体那一侧了。"
+  },
+  {
+    "from": "COURSE",
+    "to": "PREREQUISITE COURSE",
+    "rule": "一门 COURSE 可能没有先修课要求（可选）；有先修要求的课，可能同时要求修过好几门先修课。",
+    "min": "optional",
+    "max": "many",
+    "why": "「可能没有」= 可以没有 → optional；「同时要求好几门」→ many。符号画在 PREREQUISITE COURSE 这一端：O<"
+  },
+  {
+    "from": "PROJECT",
+    "to": "PROJECT MANAGER",
+    "rule": "公司规定每个 PROJECT 必须指派一位、且只能指派一位 PROJECT MANAGER 负责。",
+    "min": "mandatory",
+    "max": "one",
+    "why": "「必须指派」= 不能没有 → mandatory；「只能一位」→ one。符号画在 PROJECT MANAGER 这一端：‖"
+  }
+]

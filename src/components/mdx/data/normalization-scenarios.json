@@ -1,0 +1,273 @@
+[
+  {
+    "id": "empcourse",
+    "label": "EMP COURSE（p.36 课件例子）",
+    "table": "EMP COURSE",
+    "pk": [
+      "EmpID",
+      "Course"
+    ],
+    "cols": [
+      "EmpID",
+      "Course",
+      "Name",
+      "Department",
+      "Salary",
+      "DateCompleted"
+    ],
+    "fds": [
+      {
+        "det": [
+          "EmpID"
+        ],
+        "dep": [
+          "Name",
+          "Department",
+          "Salary"
+        ]
+      },
+      {
+        "det": [
+          "EmpID",
+          "Course"
+        ],
+        "dep": [
+          "DateCompleted"
+        ]
+      }
+    ],
+    "decomposition": [
+      {
+        "name": "EMPLOYEE",
+        "pk": [
+          "EmpID"
+        ],
+        "cols": [
+          "EmpID",
+          "Name",
+          "Department",
+          "Salary"
+        ],
+        "fk": []
+      },
+      {
+        "name": "EMPCOURSE",
+        "pk": [
+          "EmpID",
+          "Course"
+        ],
+        "cols": [
+          "EmpID",
+          "Course",
+          "DateCompleted"
+        ],
+        "fk": [
+          {
+            "col": "EmpID",
+            "ref": "EMPLOYEE"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "customerorder",
+    "label": "CUSTOMERORDER（p.38 课件例子）",
+    "table": "CUSTOMERORDER",
+    "pk": [
+      "OrderID"
+    ],
+    "cols": [
+      "OrderID",
+      "OrderDate",
+      "CustomerID",
+      "CustomerName",
+      "CustomerAddress"
+    ],
+    "fds": [
+      {
+        "det": [
+          "OrderID"
+        ],
+        "dep": [
+          "OrderDate",
+          "CustomerID"
+        ]
+      },
+      {
+        "det": [
+          "CustomerID"
+        ],
+        "dep": [
+          "CustomerName",
+          "CustomerAddress"
+        ]
+      }
+    ],
+    "decomposition": [
+      {
+        "name": "ORDER",
+        "pk": [
+          "OrderID"
+        ],
+        "cols": [
+          "OrderID",
+          "OrderDate",
+          "CustomerID"
+        ],
+        "fk": [
+          {
+            "col": "CustomerID",
+            "ref": "CUSTOMER"
+          }
+        ]
+      },
+      {
+        "name": "CUSTOMER",
+        "pk": [
+          "CustomerID"
+        ],
+        "cols": [
+          "CustomerID",
+          "CustomerName",
+          "CustomerAddress"
+        ],
+        "fk": []
+      }
+    ]
+  },
+  {
+    "id": "studentcourse",
+    "label": "STUDENT COURSE（自测题 Q10）",
+    "table": "STUDENT COURSE",
+    "pk": [
+      "StudentID",
+      "CourseID"
+    ],
+    "cols": [
+      "StudentID",
+      "CourseID",
+      "StudentName",
+      "Major",
+      "Grade"
+    ],
+    "fds": [
+      {
+        "det": [
+          "StudentID"
+        ],
+        "dep": [
+          "StudentName",
+          "Major"
+        ]
+      },
+      {
+        "det": [
+          "StudentID",
+          "CourseID"
+        ],
+        "dep": [
+          "Grade"
+        ]
+      }
+    ],
+    "decomposition": [
+      {
+        "name": "STUDENT",
+        "pk": [
+          "StudentID"
+        ],
+        "cols": [
+          "StudentID",
+          "StudentName",
+          "Major"
+        ],
+        "fk": []
+      },
+      {
+        "name": "ENROLLMENT",
+        "pk": [
+          "StudentID",
+          "CourseID"
+        ],
+        "cols": [
+          "StudentID",
+          "CourseID",
+          "Grade"
+        ],
+        "fk": [
+          {
+            "col": "StudentID",
+            "ref": "STUDENT"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "book",
+    "label": "BOOK（自测题 Q11）",
+    "table": "BOOK",
+    "pk": [
+      "ISBN"
+    ],
+    "cols": [
+      "ISBN",
+      "Title",
+      "PublisherID",
+      "PublisherName",
+      "PublisherCity"
+    ],
+    "fds": [
+      {
+        "det": [
+          "ISBN"
+        ],
+        "dep": [
+          "Title",
+          "PublisherID"
+        ]
+      },
+      {
+        "det": [
+          "PublisherID"
+        ],
+        "dep": [
+          "PublisherName",
+          "PublisherCity"
+        ]
+      }
+    ],
+    "decomposition": [
+      {
+        "name": "BOOK",
+        "pk": [
+          "ISBN"
+        ],
+        "cols": [
+          "ISBN",
+          "Title",
+          "PublisherID"
+        ],
+        "fk": [
+          {
+            "col": "PublisherID",
+            "ref": "PUBLISHER"
+          }
+        ]
+      },
+      {
+        "name": "PUBLISHER",
+        "pk": [
+          "PublisherID"
+        ],
+        "cols": [
+          "PublisherID",
+          "PublisherName",
+          "PublisherCity"
+        ],
+        "fk": []
+      }
+    ]
+  }
+]

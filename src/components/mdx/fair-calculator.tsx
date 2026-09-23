@@ -5,8 +5,8 @@ import { computeFair, FAIR_PRESETS as PRESETS, fmtM } from "./fair-logic.mjs";
 
 // Drag TEF / Vulnerability / Primary / Secondary and watch LEF, LM and annualized Risk update —
 // the same arithmetic as the Week 3 ransomware case (pp.30-32), just editable.
-export function FairCalculator() {
-  const [presetId, setPresetId] = useState("ransomware");
+export function FairCalculator({ initial = "ransomware" }: { initial?: string }) {
+  const [presetId, setPresetId] = useState(initial);
   const preset = PRESETS.find((p) => p.id === presetId) ?? PRESETS[0];
   const [tef, setTef] = useState(preset.tef);
   const [vuln, setVuln] = useState(preset.vuln);
@@ -23,6 +23,7 @@ export function FairCalculator() {
   };
 
   const { lef, lm, risk } = computeFair({ tef, vuln, primary, secondary });
+  const currency = preset.currency ?? "US$";
 
   const field = (label: string, value: number, onChange: (v: number) => void, step: number, suffix: string) => (
     <label className="flex items-center gap-1.5 text-[13px]">
@@ -62,8 +63,8 @@ export function FairCalculator() {
       <div className="lab-controls">
         {field("TEF", tef, setTef, 0.1, "次/年")}
         {field("Vulnerability", vuln, setVuln, 1, "%")}
-        {field("Primary loss", primary, setPrimary, 0.1, "US$M")}
-        {field("Secondary loss", secondary, setSecondary, 0.1, "US$M")}
+        {field("Primary loss", primary, setPrimary, 0.1, `${currency}M`)}
+        {field("Secondary loss", secondary, setSecondary, 0.1, `${currency}M`)}
       </div>
 
       {preset.tefRange && (
@@ -83,13 +84,13 @@ export function FairCalculator() {
           <tr>
             <th>LM = Primary + Secondary</th>
             <td className="font-mono">
-              {fmtM(primary)} + {fmtM(secondary)} = <b>{fmtM(lm)}</b>
+              {fmtM(primary, currency)} + {fmtM(secondary, currency)} = <b>{fmtM(lm, currency)}</b>
             </td>
           </tr>
           <tr>
             <th>Risk（年化预期损失）</th>
             <td className="font-mono">
-              {lef.toFixed(3)} × {fmtM(lm)} = <b>{fmtM(risk)}</b>
+              {lef.toFixed(3)} × {fmtM(lm, currency)} = <b>{fmtM(risk, currency)}</b>
             </td>
           </tr>
         </tbody>
