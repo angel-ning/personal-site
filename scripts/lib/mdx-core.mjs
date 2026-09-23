@@ -22,6 +22,8 @@ import { computeFair, FAIR_PRESETS, fmtM as fmtFairM } from "../../src/component
 import { computeControlRoi, ROI_PRESETS, fmtM as fmtRoiM, fmtPct } from "../../src/components/mdx/control-roi-logic.mjs";
 import { computeInsurance, INSURANCE_PRESETS, fmtM as fmtInsM } from "../../src/components/mdx/insurance-logic.mjs";
 import { CAPACITY, HALFOPEN_TIMEOUT, runScript } from "../../src/components/mdx/syn-flood-logic.mjs";
+import { MODES, scenarioLabel, verifyPki } from "../../src/components/mdx/pki-logic.mjs";
+import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
@@ -245,6 +247,38 @@ const components = {
     return [
       note(`（网页版此处可交互：自己发正常连接 / 伪造 SYN，看队列如何被打满；下表是同一套规则跑一遍的脚本，半开连接超时阈值 = ${HALFOPEN_TIMEOUT} tick）`),
       table(["#", "动作", "队列", "队列内容"], rows),
+    ];
+  },
+  PkiTrustLab() {
+    const scenarios = MODES.flatMap((mode) =>
+      (mode === "hash" ? [{ tampered: false }, { tampered: true }] : [{ impersonated: false }, { impersonated: true }, { tampered: true }]).map(
+        (s) => ({ mode, tampered: false, impersonated: false, ...s }),
+      ),
+    );
+    const rows = scenarios.map((s) => {
+      const r = verifyPki(s);
+      return [scenarioLabel(s), r.integrityCheckPassed ? "一致" : "不一致", r.caCheckApplies ? (r.caCheckPassed ? "通过" : "拒绝") : "—", r.fooled ? strong("Bob 被骗了") : r.bobAccepts ? "正确接受" : "正确拒绝"];
+    });
+    return [
+      note("（网页版此处可交互：切换 Hash / Signature / Certificate 三种模式，勾选「篡改内容」「冒充身份」看 Bob 会不会被骗；下表是同一套规则跑一遍全部组合）"),
+      table(["场景", "摘要比对", "CA 检查", "结果"], rows),
+    ];
+  },
+  RiskAssessmentLab() {
+    const rows = RISK_SCENARIOS.map((s) => {
+      const r = computeRisk(s);
+      return [
+        s.label,
+        `${s.attackLikelihoodPct}% × ${s.successProbPct}% = ${r.lossFrequencyPct.toFixed(1)}%`,
+        `${s.assetValue} × ${s.probableLossPct}% = ${r.lossMagnitude.toFixed(1)}`,
+        `${r.rangeLow.toFixed(1)} ~ ${r.rangeHigh.toFixed(1)}`,
+        `${r.likelihoodLabel} × ${r.impactLabel} → ${r.heatLabel}`,
+        r.acceptable ? "Accept" : strong("需要 Treat"),
+      ];
+    });
+    return [
+      note("（网页版此处可交互：自己调 Asset Value / Likelihood / Probable Loss 等参数，实时看 Heat Map 落点；下表是几个例子的结果）"),
+      table(["场景", "Loss Frequency", "Loss Magnitude", "Calculated Risk", "Heat Map", "决定"], rows),
     ];
   },
 };
