@@ -30,6 +30,7 @@ import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic
 import { tcpConversation, HANDSHAKE_PRESETS, simulateWindow, WINDOW_PRESETS, classifyPort, PORT_PRESETS, openConnections } from "../../src/components/mdx/tcp-logic.mjs";
 import { subnetPlan, planOptions, SUBNET_PRESETS, PLAN_PRESETS } from "../../src/components/mdx/subnet-logic.mjs";
 import { computeVendorTier, FACTORS as VENDOR_FACTORS, VENDOR_TIER_PRESETS } from "../../src/components/mdx/vendor-tier-logic.mjs";
+import { runSql, runJoin, show as sqlShow, SQL_PRESETS, JOIN_TYPES, DCL_STATEMENTS, DCL_SCRIPT, DCL_USERS, DCL_ROLE, DCL_PRIVS, dclStep, dclCell, emptyDcl } from "../../src/components/mdx/sql-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
@@ -425,6 +426,60 @@ const components = {
     return [
       note("（网页版此处可以自己给 6 个因子打分 1/3/5；下表是预设场景的结果）"),
       table(["场景", "因子打分", "Rating", "结论"], rows),
+    ];
+  },
+  SqlPipelineLab() {
+    const code = (value) => ({ type: "code", lang: "sql", value });
+    const blocks = SQL_PRESETS.flatMap((p) => {
+      const r = runSql(p.q);
+      const order = r.steps.map((s) => `${s.clause}（${s.marks.filter((m) => m !== "drop").length} ${s.clause === "HAVING" ? "组" : "行"}）`).join(" → ");
+      return [
+        para(strong(p.label)),
+        code(r.sql),
+        para(text(`执行顺序：${order}${r.error ? ` → ${r.error.clause} ✗` : ""}`)),
+        r.error ? para(strong(`${r.error.code}：`), text(r.error.msg)) : table(r.result.cols, r.result.rows.map((row) => row.map(sqlShow))),
+      ];
+    });
+    return [note("（网页版此处可以自己组合 WHERE / GROUP BY / HAVING / ORDER BY，并逐步查看每个子句执行后的中间表；下面是预设查询的结果）"), ...blocks];
+  },
+  JoinLab() {
+    const counts = JOIN_TYPES.map((t) => {
+      const r = runJoin({ type: t, extraOrder: true });
+      return [t === "INNER" ? "INNER JOIN" : `${t} OUTER JOIN`, String(r.counts.match), String(r.counts.left), String(r.counts.right), strong(String(r.rows.length))];
+    });
+    const left = runJoin({ type: "LEFT" });
+    const self = runJoin({ data: "self", type: "INNER" });
+    return [
+      note("（网页版此处可以切换四种 join、加一张 CustomerID 为 NULL 的订单、以及做 self-join；下面是同一套数据的结果）"),
+      para(text("Customer_T（15 位客户）⋈ Order_T（10 张订单 + 1 张 CustomerID = NULL 的订单 1011）：")),
+      table(["Join", "匹配行", "左边独有（补 NULL）", "右边独有（补 NULL）", "结果行数"], counts),
+      para(strong("LEFT OUTER JOIN（p.47）")),
+      table(left.cols, left.rows.map((r) => r.v.map(sqlShow))),
+      para(strong("Self-join（p.50）")),
+      table(self.cols, self.rows.map((r) => r.v.map(sqlShow))),
+    ];
+  },
+  GrantLab() {
+    let st = emptyDcl();
+    const rows = DCL_SCRIPT.map((id, i) => {
+      const r = dclStep(st, id);
+      st = r.state;
+      const s = DCL_STATEMENTS.find((x) => x.id === id);
+      return [String(i + 1), s.by, { type: "inlineCode", value: s.sql }, r.ok ? "✓" : "✗", r.msg];
+    });
+    const who = [...DCL_USERS, DCL_ROLE];
+    const matrix = who.map((u) => [
+      u + (u !== DCL_ROLE && st.members.includes(u) ? `（+ ${DCL_ROLE}）` : ""),
+      ...DCL_PRIVS.map(([o, p]) => {
+        const c = dclCell(st, u, o, p);
+        return c.direct || c.viaRole ? `✓${c.wgo ? " (GRANT OPTION)" : ""}${c.viaRole ? "（经由角色）" : ""}` : "—";
+      }),
+    ]);
+    return [
+      note("（网页版此处可以按任意顺序执行 GRANT / REVOKE 并看权限矩阵变化；下面是按课件顺序走一遍的结果）"),
+      table(["#", "执行者", "语句", "", "结果"], rows),
+      para(strong("最终权限矩阵")),
+      table(["用户 / 角色", ...DCL_PRIVS.map(([o, p]) => `${p} ON ${o}`)], matrix),
     ];
   },
 };

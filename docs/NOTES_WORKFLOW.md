@@ -86,6 +86,9 @@ tags: [IPv4, NAT, DHCP]
 | `<SubnetLab />` | 子网划分：借位 → 掩码 / 子网表 / 某地址属于哪个子网（AND 逐位） |
 | `<SubnetPlanner />` | 按「需要几个子网 + 每个多少主机」算借几位、列出可行方案 |
 | `<PortLab />` | 端口号分类 + 多窗口访问服务器的 IP / MAC / Port (S, D) 与多路复用 |
+| `<SqlPipelineLab />` | SELECT 逻辑执行顺序：FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY 逐步看中间表（含报错示例） |
+| `<JoinLab />` | INNER / LEFT / RIGHT / FULL join 与 self-join，补 NULL 的行高亮 |
+| `<GrantLab />` | GRANT / REVOKE 权限矩阵：角色、WITH GRANT OPTION、连锁撤销 |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 
