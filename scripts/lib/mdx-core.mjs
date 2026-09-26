@@ -27,6 +27,7 @@ import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic
 import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../src/components/mdx/cardinality-logic.mjs";
 import { evaluate as evalFirewall, PRESETS as FW_PRESETS } from "../../src/components/mdx/firewall-logic.mjs";
 import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic.mjs";
+import { tcpConversation, HANDSHAKE_PRESETS, simulateWindow, WINDOW_PRESETS, classifyPort, PORT_PRESETS, openConnections } from "../../src/components/mdx/tcp-logic.mjs";
 import { computeVendorTier, FACTORS as VENDOR_FACTORS, VENDOR_TIER_PRESETS } from "../../src/components/mdx/vendor-tier-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -343,6 +344,46 @@ const components = {
     return [
       note("（网页版此处可交互：自己填 Source IP / Dest IP / Dest Port，逐条走一遍规则表；下表是几个典型场景的结果）"),
       table(["场景", "Packet", "命中规则", "结果"], rows),
+    ];
+  },
+  TcpHandshakeLab() {
+    const blocks = HANDSHAKE_PRESETS.flatMap((p) => [
+      para(strong(`${p.label}：Client ISN = ${p.clientIsn}，Server ISN = ${p.serverIsn}`)),
+      table(
+        ["#", "方向", "Flags", "SEQ", "ACK", "Len", "说明"],
+        tcpConversation(p).map((r, i) => [String(i + 1), r.from === "client" ? "Client → Server" : "Server → Client", r.flags, String(r.seq), r.ack == null ? "—" : String(r.ack), String(r.len), r.why]),
+      ),
+    ]);
+    return [note("（网页版此处可以自己填两边的 ISN 和数据长度，一步步看 SEQ / ACK；下面是两个例子的结果）"), ...blocks];
+  },
+  WindowLab() {
+    const blocks = WINDOW_PRESETS.flatMap((p) => [
+      para(strong(p.label)),
+      table(
+        ["轮", "窗口", "发送方发出（↻ 重传，✗ 丢失）", "接收方回"],
+        simulateWindow(p).map((r, i) => [
+          String(i + 1),
+          `${r.winStart}–${Math.min(p.total, r.winStart + r.window - 1)}（${r.window}）`,
+          r.sent.map((s) => `${s.retx ? "↻" : ""}${s.n}${s.arrived ? "" : "✗"}`).join("  "),
+          `ACK ${r.ack}${r.timeout ? " ⏰ 超时" : ""}`,
+        ]),
+      ),
+    ]);
+    return [note("（网页版此处可以自己设窗口大小、点选丢失的段，一轮轮看滑动和重传；下面是三个例子）"), ...blocks];
+  },
+  PortLab() {
+    const ports = PORT_PRESETS.map((n) => {
+      const r = classifyPort(n);
+      return [strong(String(n)), r.label, r.known ? `${r.known.proto} ${r.known.app}` : "—"];
+    });
+    const flows = openConnections(["UST", "FB"]).flatMap((c) => [
+      [`PC → ${c.server.id}`, `(${c.request.ip.join(", ")})`, `(${c.request.mac.join(", ")})`, `(${c.request.port.join(", ")})`],
+      [`${c.server.id} → PC`, `(${c.reply.ip.join(", ")})`, `(${c.reply.mac.join(", ")})`, `(${c.reply.port.join(", ")})`],
+    ]);
+    return [
+      note("（网页版此处可以输入任意端口号分类，并打开多个浏览器窗口观察源端口怎样区分对话）"),
+      table(["端口", "范围", "常见用途"], ports),
+      table(["方向", "IP (S, D)", "MAC (S, D)", "Port (S, D)"], flows),
     ];
   },
   VendorTierCalculator() {

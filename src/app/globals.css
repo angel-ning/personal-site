@@ -388,3 +388,12 @@ body {
 .hx-sel { border-color: var(--accent); background: var(--accent); color: var(--bg); }
 .hx-sel small { color: color-mix(in oklab, var(--bg) 80%, transparent); }
 .hx-split { margin-left: .6em; font-family: var(--font-mono); font-size: .82em; color: var(--c-exam); }
+
+/* ---------- ISOM 5180 transport-layer labs ---------- */
+.win-strip { display: flex; flex-wrap: wrap; gap: .35em; margin-top: .4em; }
+.win-seg { width: 2.4em; height: 2.2em; border: 1px solid var(--line); border-radius: 6px; font-family: var(--font-mono); font-size: 13px; transition: all .15s; }
+.win-seg:hover { border-color: var(--line-strong); }
+.win-acked { background: color-mix(in oklab, var(--c-tip) 18%, transparent); border-color: var(--c-tip); }
+.win-flight { background: color-mix(in oklab, var(--c-extra) 18%, transparent); border-color: var(--c-extra); }
+.win-lost { outline: 2px solid var(--c-exam); outline-offset: -2px; }
+.win-dropped { color: var(--c-exam); text-decoration: line-through; }

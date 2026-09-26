@@ -1,0 +1,583 @@
+---
+title:
+  en: "Week 3 · Transport Layer: TCP, UDP & Port Numbers"
+  zh: "第 3 周 · 传输层：TCP、UDP 与端口号"
+summary:
+  en: "What the transport layer adds on top of IP: segmentation, connection-oriented vs connectionless delivery, the TCP three-way handshake, sequence and expectational acknowledgment numbers, sliding windows and retransmission, port numbers and multiplexing, and when applications choose TCP or UDP."
+  zh: "传输层在 IP 之上补了什么：分段、面向连接与无连接、TCP 三次握手、序列号与期望型确认、滑动窗口与超时重传、端口号与多路复用，以及应用什么时候选 TCP、什么时候选 UDP。"
+week: 3
+date: 2026-09-26
+tags: [TCP, UDP, Handshake, Windowing, Ports]
+---
+# ISOM 5180 Advanced Network and Security Management — Week 3 复习笔记
+
+**主题：Module 3 Transport Layer — 传输层的 5 个功能 · Segmentation 与有序交付 · Connection-oriented vs Connectionless · 三次握手 (SYN / SYN-ACK / ACK) · Sequence & Acknowledgment · Windowing 流量控制 · 超时重传 · Port Numbers 与 Multiplexing · TCP vs UDP**
+
+> 优先级标注说明（按考试重要性）：  
+> 🔴 **必考核心** — 概念名称、定义、结构必须能背出来  
+> 🟡 **需要理解** — 需要懂逻辑关系，能举例说明  
+> 🟢 **了解即可** — 背景知识，考试大概率不会细抠
+>
+> **优先级依据**（推断，可以随时改）：① 老师的手写补充（M3 Supplementary）5 页里有 3 页是**过程题**：三次握手（给了双方的 S.N. = 10 / 20）、重传计时器、以及「PC → UST / FB 写 IP(S, D)、MAC(S, D)」——延续了前两周「给图 → 写地址 / 填表」的考法，这次多了**端口号**；② Slide 11、23 直接给出了 SEQ / ACK 的数字，是可以出计算题的内容；③ Slide 21 的端口号表和 Slide 25 的 TCP / UDP 对比表是典型的背诵题。
+
+> **📌 关于本周的老师板书**
+>
+> 这周的 *M3 Supplementary* 是**空白版**（只有拓扑、人名和空的 IP(S, D) / MAC(S, D)），扫描件是横着的，已经转正。**板书下面的答案全部是我按课件推出来的，标为「我的解答」**。如果你有课堂笔记照片，发给我就能改成「课堂答案」并核对。
+
+---
+
+## 0. 核心地图（先建立整体框架）
+
+前两周解决了「包怎么从一台电脑走到另一台电脑」（L2 MAC、L3 IP、路由）。这周往上一层：**到了对方电脑之后，数据要交给哪个程序？路上丢了、乱了怎么办？**
+
+```
+网络层 (IP)：只负责「电脑 → 电脑」，尽力而为，不保证到、不保证顺序
+   → 传输层的 5 个功能：分段 · 端到端 · 主机到主机 · 可靠 (SEQ + ACK) · 流量控制 (sliding window)
+   → 两种风格：Connection-oriented (TCP) vs Connectionless (UDP)
+   → TCP 先握手：SYN → SYN-ACK → ACK（交换双方的 ISN 和端口）
+   → 发数据：Sequence number 给每个字节编号，Acknowledgment 说「下一个要几号」
+   → 一次发多少：Window size（滑动窗口）；没收到 ACK：计时器超时 → 重传
+   → 交给哪个程序：Port number（well-known · registered · dynamic）→ Multiplexing
+   → 应用怎么选：要可靠 → TCP（HTTP、FTP、SMTP、Telnet）；要快 → UDP（DNS、DHCP、SNMP、TFTP、VoIP、IPTV）
+```
+
+**一句话抓住本周**：上周说发一个包要 4 个地址（IP、MAC 各一对），这周再加**第 5、6 个：源端口和目的端口**。IP 把数据送到**哪台电脑**，端口决定交给这台电脑上的**哪个程序**；TCP 再用 SEQ / ACK / 窗口保证它**完整、有序**地到达。
+
+---
+
+## 1. 🔴 传输层的角色与 5 个功能
+
+![应用开发者按需求选传输层协议：IP 电话、流媒体要快（UDP）；Email、HTTP 要可靠（TCP）](images/page_02.png)
+
+*应用开发者按需求选传输层协议：IP 电话、流媒体要快（UDP）；Email、HTTP 要可靠（TCP）（Slide 2）*
+
+![PC1 要发 1 MB 的文件：传输层把它切成 1000 个 1000 bytes 的 segment；PC2 再把它们拼回去](images/page_03.png)
+
+*PC1 要发 1 MB 的文件：传输层把它切成 1000 个 1000 bytes 的 segment；PC2 再把它们拼回去（Slide 3）*
+
+### 🔴 Five basic services（Slide 4）
+
+| # | 课件原文                                                                               | 中文 / 小白解释                      | 靠什么实现       |
+| - | ---------------------------------------------------------------------------------- | ------------------------------ | ----------- |
+| 1 | **Segmenting** upper-layer application data                                        | 把应用的大数据**切成小段**（segment），一段一段发 | 分段 + 编号     |
+| 2 | Establishing **end-to-end** operations                                             | 只在**两端主机**之间运作，中间的路由器不管        | TCP 连接（握手）  |
+| 3 | Sending segments from **one end host to another end host**                         | 从一台主机送到另一台主机上的正确程序             | Port number |
+| 4 | Ensuring **data reliability** provided by **sequence numbers and acknowledgments** | 保证不丢、不乱                        | SEQ + ACK   |
+| 5 | Ensuring **flow control** provided by **sliding windows**                          | 发送方不要一下子发太多，把接收方淹没             | Window size |
+
+> **🧠 记忆口诀**
+>
+> **「切、连、送、稳、控」**：Segmenting · End-to-end · Host-to-host · Reliability (SEQ/ACK) · Flow control (window)。后两个都带了「靠什么实现」，考的时候要一起写出来。
+
+> **💡 小白理解**
+>
+> **PDU 名字**（呼应第 1 周的封装）：传输层的数据单位叫 **segment**（UDP 的通常叫 datagram），网络层叫 packet，数据链路层叫 frame。1 MB 文件 = 1000 个 segment，每个 segment 再被 IP 包起来、再被帧包起来。
+
+### 🔴 TCP Reliability：有序交付与可靠传输（Slide 5–6）
+
+![不同 segment 可能走不同的路，到达时乱序（1、2、6、5、4、3）；TCP 在目的端按序号重新排好](images/page_05.png)
+
+*不同 segment 可能走不同的路，到达时乱序（1、2、6、5、4、3）；TCP 在目的端按序号重新排好（Slide 5）*
+
+**Reliable Data Transport** 做 4 件事（Slide 6）：
+
+| 课件原文                                                                     | 中文                  |
+| ------------------------------------------------------------------------ | ------------------- |
+| Ensure that segments delivered will be **acknowledged** to the sender    | 收到的每段都要**确认**给发送方   |
+| Provide for **retransmission** of any segments that are not acknowledged | 没被确认的段要**重传**       |
+| Put segments back into their **correct sequence** at the destination     | 在目的端按**正确顺序**重组     |
+| Provide **congestion avoidance and control**                             | **拥塞避免与控制**（网络堵时放慢） |
+
+![Percy (PC1) → A → (B fast / E average / C slow) → D → PC2；两边各写了一套 OSI 七层，右上角框着 Transport](images/BOARD3_ROUTES.png)
+
+*✍️ Percy (PC1) → A → (B fast / E average / C slow) → D → PC2；两边各写了一套 OSI 七层，右上角框着 Transport（M3 Supplementary p.1）*
+
+> **✍️ 老师板书：为什么需要传输层（我的解答）**
+>
+> - 从 A 到 D 有三条路：**B 快、E 一般、C 慢**。IP 对每个包**独立选路**，所以 Percy 按 1、2、3 顺序发出的 segment，可能 1 走 B、2 走 C、3 走 E——**到达 PC2 时变成 1、3、2**（正是 Slide 5 的图）。
+> - IP（网络层）**不管顺序，也不管丢没丢**；负责把它们**排回正确顺序、发现丢失并要求重传**的，是两端电脑上的 **Transport 层**（右上角框出来的那个词）。
+> - 两边各画了一套 **Ap / Pre / Ses / Tran / Net / D.L. / Ph**，而中间的路由器 A–E 只用到 **Net 及以下**：传输层是 **end-to-end** 的——只有 Percy 和 PC2 两端有，路由器不看、也不改 segment 的内容。这就是 Slide 4 第 2 条 *Establishing end-to-end operations*。
+
+> **🎯 考点**
+>
+> **分工一句话**：**IP 负责「送到哪台电脑」（best effort，不保证），TCP 负责「送得完整有序、交给对的程序」**。路由器只到第 3 层，所以 SEQ / ACK / 端口这些都是**两端主机**在处理。
+
+---
+
+## 2. 🔴 Connection-oriented vs Connectionless
+
+### 🔴 定义（Slide 7）
+
+|      | **Connection-oriented protocol**                                                                                                          | **Connectionless protocol**                                                                                               |
+| ---- | ----------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| 课件原文 | Requires an **exchange of messages before data transfer begins**, or has a required **pre-established correlation between two endpoints** | Does **not** require an exchange of messages and does **not** require a pre-established correlation between two endpoints |
+| 中文   | 发数据**之前**先交换消息、把两端「连」起来                                                                                                                   | 不打招呼，**直接发**                                                                                                              |
+| 代表   | **TCP**                                                                                                                                   | **UDP**（以及 IP 本身）                                                                                                         |
+| 比喻   | **打电话**：先拨号、对方接起来说「喂」，确认在线再说话                                                                                                             | **寄信**：投进邮箱就不管了                                                                                                           |
+
+![Connectionless Communication：寄信。发送方不知道收件人在不在、信到了没有、能不能读；收件人不知道信什么时候来](images/page_08.png)
+
+*Connectionless Communication：寄信。发送方不知道收件人在不在、信到了没有、能不能读；收件人不知道信什么时候来（Slide 8）*
+
+![Percy 和 G.f.（girlfriend）两个框](images/BOARD3_CONNECTION.png)
+
+*✍️ Percy 和 G.f.（girlfriend）两个框（M3 Supplementary p.2）*
+
+> **✍️ 老师板书：Percy 和 G.f.（我的解答）**
+>
+> 这一页只有两个人，推测是用来对比两种通信方式：
+>
+> - **Connectionless（寄信）**：Percy 直接把信寄给 G.f.。Percy **不知道** G.f. 在不在家、信有没有到、她能不能读懂（Slide 8 的 *The sender doesn't know*）；G.f. 也**不知道**信什么时候来。
+> - **Connection-oriented（打电话）**：Percy 先打过去，G.f. 接起来，双方**确认对方在线**之后才开始说正事；说完还能确认「你听清了吗」。
+>
+> 下一页的三次握手就是把「打电话先说喂」精确化。
+
+---
+
+## 3. 🔴 TCP 三次握手（Three-way Handshake）
+
+### 🔴 要点（Slide 9）
+
+- TCP is **connection-oriented**, so it requires **connection establishment before data transfer begins**
+- 两台主机必须 **synchronize on each other's initial sequence numbers (ISNs)**——互相告诉对方「我从几号开始编号」
+- **ISN 是每台主机自己选的一个大随机数**（不是从 0 或 1 开始）
+- Connection establishment = **初始化 sequence 和 acknowledgement 字段 + 商定使用的端口号**
+
+![Host A 发 SYN (seq = x)；Host B 回 SYN (seq = y, ACK = x + 1)；A 再发 ACK (ack = y + 1)](images/page_10.png)
+
+*Host A 发 SYN (seq = x)；Host B 回 SYN (seq = y, ACK = x + 1)；A 再发 ACK (ack = y + 1)（Slide 10）*
+
+| 步 | 谁 → 谁 | Flags        | SEQ   | ACK       | 在说什么                        |
+| - | ----- | ------------ | ----- | --------- | --------------------------- |
+| ① | A → B | **SYN**      | **x** | —         | 「我想连你，我的起始编号是 x」            |
+| ② | B → A | **SYN, ACK** | **y** | **x + 1** | 「收到了（下一个要 x + 1）；我的起始编号是 y」 |
+| ③ | A → B | **ACK**      | x + 1 | **y + 1** | 「收到你的 y 了，下一个要 y + 1」→ 连接建立 |
+
+![TCP Connection Establishment：浏览器 SEQ = 200、SPORT = 49152 → Web Server DPORT = 80；服务器 SEQ = 1450, ACK = 201；浏览器 SEQ = 201, ACK = 1451](images/page_11.png)
+
+*TCP Connection Establishment：浏览器 SEQ = 200、SPORT = 49152 → Web Server DPORT = 80；服务器 SEQ = 1450, ACK = 201；浏览器 SEQ = 201, ACK = 1451（Slide 11）*
+
+> **🎯 考点**
+>
+> **ACK 的算法**：**ACK = 对方的 SEQ + 1**（握手阶段 SYN 本身占 1 个编号）。Slide 11 的数字：浏览器 SEQ = **200** → 服务器回 ACK = **201**；服务器 SEQ = **1450** → 浏览器回 ACK = **1451**，同时浏览器自己的 SEQ 变成 **201**。  
+> **端口也在握手里定下来**：浏览器的 SPORT = **49152**（动态端口），DPORT = **80**（web 的 well-known port）；服务器回包时两者**对调**（DPORT = 49152，SPORT = 80）。
+
+*（网页版此处可以自己填两边的 ISN 和数据长度，一步步看 SEQ / ACK；下面是两个例子的结果）*
+
+**Slide 11（SEQ 200 / 1450）：Client ISN = 200，Server ISN = 1450**
+
+| # | 方向              | Flags    | SEQ  | ACK  | Len | 说明                                                              |
+| - | --------------- | -------- | ---- | ---- | --- | --------------------------------------------------------------- |
+| 1 | Client → Server | SYN      | 200  | —    | 0   | 客户端随机选 ISN = 200，请求建立连接                                         |
+| 2 | Server → Client | SYN, ACK | 1450 | 201  | 0   | 服务器选自己的 ISN = 1450；ACK = 200 + 1 = 201（SYN 占 1 个序号，下一个想收的是 201） |
+| 3 | Client → Server | ACK      | 201  | 1451 | 0   | SEQ = 对方刚才确认的 201；ACK = 1450 + 1 = 1451。连接建立 (ESTABLISHED)      |
+
+**板书 p.3（Percy 10 / G.F. 20）：Client ISN = 10，Server ISN = 20**
+
+| # | 方向              | Flags     | SEQ | ACK | Len | 说明                                                         |
+| - | --------------- | --------- | --- | --- | --- | ---------------------------------------------------------- |
+| 1 | Client → Server | SYN       | 10  | —   | 0   | 客户端随机选 ISN = 10，请求建立连接                                     |
+| 2 | Server → Client | SYN, ACK  | 20  | 11  | 0   | 服务器选自己的 ISN = 20；ACK = 10 + 1 = 11（SYN 占 1 个序号，下一个想收的是 11） |
+| 3 | Client → Server | ACK       | 11  | 21  | 0   | SEQ = 对方刚才确认的 11；ACK = 20 + 1 = 21。连接建立 (ESTABLISHED)      |
+| 4 | Client → Server | ACK, Data | 11  | 21  | 100 | 第 1 段数据 100 bytes：字节编号 11 – 110                            |
+| 5 | Server → Client | ACK       | 21  | 111 | 0   | 期望型确认：ACK = 11 + 100 = 111（「前面都收到了，下一个请发 111」）             |
+| 6 | Client → Server | ACK, Data | 111 | 21  | 50  | 第 2 段数据 50 bytes：字节编号 111 – 160                            |
+| 7 | Server → Client | ACK       | 21  | 161 | 0   | 期望型确认：ACK = 111 + 50 = 161（「前面都收到了，下一个请发 161」）             |
+
+![Percy 的 S.N. = 10，G.f. 的 S.N. = 20；画出三次握手。下面两栏是空白的 Percy ↔ G.f. 时序图](images/BOARD3_HANDSHAKE.png)
+
+*✍️ Percy 的 S.N. = 10，G.f. 的 S.N. = 20；画出三次握手。下面两栏是空白的 Percy ↔ G.f. 时序图（M3 Supplementary p.3）*
+
+> **✍️ 老师板书：S.N. = 10 和 20 的三次握手（我的解答）**
+>
+> | 步 | 方向           | Flags        | SEQ    | ACK    |
+> | - | ------------ | ------------ | ------ | ------ |
+> | ① | Percy → G.f. | **SYN**      | **10** | —      |
+> | ② | G.f. → Percy | **SYN, ACK** | **20** | **11** |
+> | ③ | Percy → G.f. | **ACK**      | **11** | **21** |
+>
+> - ② 的 ACK = 10 + 1 = **11**：「你的 10 号收到了，下一个请发 11」
+> - ③ 的 ACK = 20 + 1 = **21**；Percy 的 SEQ 也前进到 **11**
+> - 之后 Percy 发第一段数据时 **SEQ = 11**。如果这段有 100 bytes，G.f. 回 **ACK = 111**（上面的互动实验选「板书 p.3」可以一步步看）
+>
+> 下面两栏空白的 Percy ↔ G.f. 时序图，推测是用来对比**不同的 window size**（例如一次发 1 段 vs 一次发 3 段），见第 5 节。
+
+> **➕ 课外补充：为什么 ISN 要随机（和安全有关）**
+>
+> 如果 ISN 可以预测（比如总从 0 开始），攻击者就能**伪造**一个看起来合法的 segment，插进别人的连接里（**TCP session hijacking**）。随机的大 ISN 让猜中的概率极低。另一个和握手有关的攻击是 **SYN flood**：攻击者只发 SYN、不回第 ③ 步的 ACK，服务器留着一大堆「半开连接」等待，队列被占满后正常用户就连不进来（ISOM 5280 有互动演示）。连接结束时 TCP 用 **FIN / ACK** 四次挥手关闭，课件没讲。
+
+---
+
+## 4. 🔴 Sequence Number 与 Acknowledgment
+
+![「I sent #10」→「I received #10, now send #11」：源端口 1028、目的端口 23 (Telnet)；Seq 10 → Ack 11 → Seq 11](images/page_23.png)
+
+*「I sent #10」→「I received #10, now send #11」：源端口 1028、目的端口 23 (Telnet)；Seq 10 → Ack 11 → Seq 11（Slide 23）*
+
+TCP 头部里最重要的四个字段：**Source Port · Destination Port · Sequence Number · Acknowledgment Number**。
+
+| 字段                        | 意思                              |
+| ------------------------- | ------------------------------- |
+| **Sequence number**       | 「我这一段是**几号**」——接收方靠它**排序、发现缺号** |
+| **Acknowledgment number** | 「我**下一个想要几号**」——不是「我收到了几号」      |
+
+**Expectational acknowledgment（Forward Acknowledgment）**（Slide 12）：ACK 写的是**期望收到的下一个号码**。Slide 23 里客户端发 Seq = **10**，服务器回 Ack = **11**：意思是「10 以及之前都收到了，请发 11」。
+
+> **⚠️ 踩坑提醒：ACK 是「下一个要的」，不是「刚收到的」**
+>
+> - 收到 #10 → 回 **ACK 11**，不是 ACK 10
+> - 真实的 TCP 是给**每个字节**编号：SEQ = 11、长度 100 bytes → 这段包含字节 11–110 → ACK = **111**。Slide 23 为了简单，把一个 segment 当成一个编号
+> - 双方**各有一套**编号：客户端的 SEQ 和服务器的 SEQ 互不相干（Slide 23：客户端 Seq 10、11，服务器 Seq 5；服务器的 Ack 11 对应客户端的编号，客户端的 Ack 6 对应服务器的编号）
+
+### 🔴 Acknowledgment 与重传（Slide 14）
+
+- Sender **keeps a record** of each data packet that it sends and expects an acknowledgment
+- Sender **starts a timer** when it sends a segment, and **retransmits if the timer expires before an acknowledgment**（transmission rate should be slowed）
+- **Each Acknowledgement contains a window advertisement**：每个 ACK 都顺带告诉发送方「我还能收多少 bytes」
+
+![Re-Transmission Queue：Percy 发出段 1，计时器 100 sec → 99 sec … → 0 sec 到期 (expire)；重发，计时器重新从 100 sec 开始 … 80 sec](images/BOARD3_RETX.png)
+
+*✍️ Re-Transmission Queue：Percy 发出段 1，计时器 100 sec → 99 sec … → 0 sec 到期 (expire)；重发，计时器重新从 100 sec 开始 … 80 sec（M3 Supplementary p.4）*
+
+> **✍️ 老师板书：Re-Transmission Queue（我的解答）**
+>
+> 1. Percy 发出段 **1**，同时把它的副本放进 **retransmission queue（重传队列）**，并启动计时器 **100 sec**。
+> 2. 计时器倒数：100 → 99 → … 如果在这期间收到 G.f. 的 **ACK 2**，说明段 1 到了 → 把段 1 从队列里删掉，计时器停止。
+> 3. 板书的情况是**一直没等到 ACK**：计时器走到 **0 sec → expire（超时）** → Percy 从队列里拿出段 1 **重传**，计时器**重新从 100 sec 开始**。
+> 4. 第二次在 **80 sec** 时（即 20 秒后）收到 ACK → 段 1 离开队列，完成。
+>
+> **为什么要有队列**：发出去的段在被确认之前不能丢掉，否则丢了就没法重发。**为什么要慢下来**（Slide 14 括号里那句）：超时往往说明网络堵了，再猛发只会更堵——这就是 Slide 6 的 *congestion avoidance and control*。
+
+---
+
+## 5. 🔴 Windowing：流量控制
+
+### 🔴 Windowing 的定义（Slide 12–13）
+
+| 课件原文                                                                                                          | 中文 / 小白解释             |
+| ------------------------------------------------------------------------------------------------------------- | --------------------- |
+| **Flow-control mechanism** requiring that source device receive an acknowledgment from the destination        | 流量控制：发出去的东西要等对方确认     |
+| TCP uses **expectational acknowledgments (Forward Acknowledgment)**                                           | ACK = 下一个想要的号码（第 4 节） |
+| **Window size** determines the amount of data can transmit at one time **before receiving an acknowledgment** | 不等 ACK、一口气能发多少        |
+| **Larger window sizes increase communication efficiency**                                                     | 窗口越大，等待越少，效率越高        |
+| Window field = the **maximum number of unacknowledged bytes allowed outstanding** at any instance             | 任何时刻「已发出、未确认」的数据最多这么多 |
+| TCP window sizes are **variable** during the lifetime of a connection                                         | 窗口大小在连接过程中会变          |
+| The window **"Slides" up and down based on network performance** → **sliding window**                         | 网络好就放大、网络差就缩小，所以叫滑动窗口 |
+
+> **💡 小白理解**
+>
+> **Window = 1** 就是「发一段、等一个 ACK、再发下一段」（停等），每段都要等一个来回，很慢。**Window = 3** 就是连发 3 段再等 ACK，时间省下来了。但窗口不能无限大：接收方的缓冲区有限，所以 **接收方在每个 ACK 里告诉发送方自己还能收多少**（window advertisement）——这就是 Slide 24 说的 *uses window sizes to **protect buffer space***。
+
+*（网页版此处可以自己设窗口大小、点选丢失的段，一轮轮看滑动和重传；下面是三个例子）*
+
+**没有丢包，窗口 3**
+
+| 轮 | 窗口     | 发送方发出（↻ 重传，✗ 丢失） | 接收方回  |
+| - | ------ | ---------------- | ----- |
+| 1 | 1–3（3） | 1  2  3          | ACK 4 |
+| 2 | 4–6（3） | 4  5  6          | ACK 7 |
+| 3 | 7–8（3） | 7  8             | ACK 9 |
+
+**窗口 1（停等）**
+
+| 轮 | 窗口     | 发送方发出（↻ 重传，✗ 丢失） | 接收方回  |
+| - | ------ | ---------------- | ----- |
+| 1 | 1–1（1） | 1                | ACK 2 |
+| 2 | 2–2（1） | 2                | ACK 3 |
+| 3 | 3–3（1） | 3                | ACK 4 |
+| 4 | 4–4（1） | 4                | ACK 5 |
+
+**第 4 段丢失，窗口 3**
+
+| 轮 | 窗口     | 发送方发出（↻ 重传，✗ 丢失） | 接收方回       |
+| - | ------ | ---------------- | ---------- |
+| 1 | 1–3（3） | 1  2  3          | ACK 4      |
+| 2 | 4–6（3） | 4✗  5  6         | ACK 4 ⏰ 超时 |
+| 3 | 4–6（3） | ↻4               | ACK 7      |
+| 4 | 7–8（3） | 7  8             | ACK 9      |
+
+> **🎯 考点**
+>
+> **窗口「滑动」的两层意思**，都可能考：
+>
+> 1. **往前滑**：收到 ACK 后，窗口的起点移到 ACK 的号码，新的段进入窗口可以发送（上面实验里窗口从 1–3 滑到 4–6）。
+> 2. **变大 / 变小**（课件说的 *slides up and down*）：接收方忙或网络出问题（超时）→ 窗口缩小，发慢一点；一切顺利 → 窗口变大，效率更高。实验里勾选「窗口随网络状况伸缩」可以看到。
+
+> **➕ 课外补充：丢了一段之后，后面的段怎么办？**
+>
+> 上面实验的做法是：接收方把后面先到的段**先存在缓冲区**里，一直回「ACK 4」（期望型确认只能说「最前面缺的是 4 号」）；4 号重传到达后，一次性确认到 7。真实的 TCP 还有两个加速机制：连续收到 3 个重复 ACK 就**不等超时直接重传**（fast retransmit），以及 **SACK**（selective ACK，告诉发送方具体收到了哪些）。
+
+---
+
+## 6. 🔴 Port Numbers 与 Multiplexing
+
+### 🔴 为什么需要端口（Slide 15–17）
+
+![端口号是应用层和传输层之间的接口：FTP 21、Telnet 23、SMTP 25 走 TCP；DNS 53、TFTP 69、SNMP 161 走 UDP](images/page_15.png)
+
+*端口号是应用层和传输层之间的接口：FTP 21、Telnet 23、SMTP 25 走 TCP；DNS 53、TFTP 69、SNMP 161 走 UDP（Slide 15）*
+
+- **Internet layer delivers data from one computer to another**，但它不管是哪个程序发的、该交给对方的哪个程序
+- 例：开了 **5 个浏览器窗口**，IP 只负责把数据送到这台电脑，**传输层保证每个窗口拿到自己的数据**
+- **TCP and UDP use port numbers to pass information to the upper layers**
+- Port numbers **keep track of different conversations** crossing the network at the same time
+
+![Keith's Computer：Browser1 = 49152、Browser2 = 49153、E-Mail = 49154、FTP = 49155；收到 Dest. Port = 49153 的段 → TCP 交给 Browser2](images/page_17.png)
+
+*Keith's Computer：Browser1 = 49152、Browser2 = 49153、E-Mail = 49154、FTP = 49155；收到 Dest. Port = 49153 的段 → TCP 交给 Browser2（Slide 17）*
+
+> **💡 小白理解**
+>
+> **IP 地址 = 大楼地址，端口号 = 房间号**。快递（IP）只负责送到大楼门口，前台（传输层）看房间号把包裹送到正确的房间（程序）。一台电脑同时跑很多程序，所以同一个 IP 上要用端口区分它们。
+
+### 🔴 三种端口范围（Slide 18–19）
+
+| 范围                | 名字                          | 谁用        | 课件要点                                                                                                                                |
+| ----------------- | --------------------------- | --------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **0 – 1023**      | **Well-known ports**        | **服务器**   | Servers **cannot use dynamic port numbers** because clients must know **ahead of time** what port numbers servers use；由 **IANA** 管理 |
+| **1024 – 49151**  | **Registered ports**        | 用户自己安装的应用 | 没被服务器使用时，**也可以被客户端动态选作源端口**                                                                                                         |
+| **49152 – 65535** | **Dynamic / private ports** | **客户端**   | Assigned **dynamically to client applications**                                                                                     |
+
+- **Each client on the same host uses a different port number, but a server uses the same port number for all connections**（同一台电脑上每个客户端程序端口不同；服务器对所有连接都用同一个端口，比如 web 永远是 80）
+- **By each process having its own port number, a PC can have multiple conversations with other PCs** — sometimes called **multiplexing**
+
+> **🧠 记忆口诀**
+>
+> **1023 / 49151 / 65535** 三个分界：「1K 以下是名门（well-known），到 49151 是登记（registered），剩下的是临时工（dynamic）」。65535 = 2¹⁶ − 1，因为端口号是 **16 位**。
+
+![Browser2 选了没被占用的 49152 当源端口，目的端口 80；Web server 回包时 Source Port = 80、Dest. Port = 49152](images/page_20.png)
+
+*Browser2 选了没被占用的 49152 当源端口，目的端口 80；Web server 回包时 Source Port = 80、Dest. Port = 49152（Slide 20）*
+
+### 🔴 常用 Well-known ports（Slide 21）
+
+![Popular Well-Known Port Numbers](images/page_21.png)
+
+*Popular Well-Known Port Numbers（Slide 21）*
+
+| Port    | Protocol     | Application | 中文            |
+| ------- | ------------ | ----------- | ------------- |
+| **20**  | TCP          | FTP data    | 文件传输（数据）      |
+| **21**  | TCP          | FTP control | 文件传输（控制命令）    |
+| **23**  | TCP          | Telnet      | 远程登录（明文）      |
+| **25**  | TCP          | SMTP        | **发**邮件       |
+| **53**  | **TCP, UDP** | DNS         | 域名解析（查询用 UDP） |
+| **69**  | UDP          | TFTP        | 简化版 FTP       |
+| **80**  | TCP          | HTTP (WWW)  | 网页            |
+| **110** | TCP          | POP3        | **收**邮件       |
+| **161** | UDP          | SNMP        | 网络管理          |
+
+> **🧠 记忆口诀**
+>
+> 按大小背：**20/21 FTP → 23 Telnet → 25 SMTP → 53 DNS → 69 TFTP → 80 HTTP → 110 POP3 → 161 SNMP**。只有 **DNS 两个都用**；**TFTP、SNMP 用 UDP**，其余用 TCP。第 2 周学过的 **DHCP 是 UDP 67 / 68**。
+
+*（网页版此处可以输入任意端口号分类，并打开多个浏览器窗口观察源端口怎样区分对话）*
+
+| 端口        | 范围                                    | 常见用途            |
+| --------- | ------------------------------------- | --------------- |
+| **21**    | Well-known port（0 – 1023）             | TCP FTP control |
+| **53**    | Well-known port（0 – 1023）             | TCP, UDP DNS    |
+| **80**    | Well-known port（0 – 1023）             | TCP HTTP (WWW)  |
+| **161**   | Well-known port（0 – 1023）             | UDP SNMP（网管）    |
+| **3389**  | Registered port（1024 – 49151）         | —               |
+| **49152** | Dynamic / private port（49152 – 65535） | —               |
+| **65535** | Dynamic / private port（49152 – 65535） | —               |
+
+| 方向       | IP (S, D)    | MAC (S, D)     | Port (S, D) |
+| -------- | ------------ | -------------- | ----------- |
+| PC → UST | (IP-1, IP-2) | (MAC-1, MAC-2) | (49152, 80) |
+| UST → PC | (IP-2, IP-1) | (MAC-2, MAC-1) | (80, 49152) |
+| PC → FB  | (IP-1, IP-3) | (MAC-1, MAC-3) | (49153, 80) |
+| FB → PC  | (IP-3, IP-1) | (MAC-3, MAC-1) | (80, 49153) |
+
+![Client (IP-1 / MAC-1) 里有两个应用；UST web server (IP-2 / MAC-2)、FB server (IP-3 / MAC-3) 在同一条线上。写 PC → UST、PC → FB、UST → PC、FB → PC 的 IP(S, D) 和 MAC(S, D)](images/BOARD3_PORTS.png)
+
+*✍️ Client (IP-1 / MAC-1) 里有两个应用；UST web server (IP-2 / MAC-2)、FB server (IP-3 / MAC-3) 在同一条线上。写 PC → UST、PC → FB、UST → PC、FB → PC 的 IP(S, D) 和 MAC(S, D)（M3 Supplementary p.5）*
+
+> **✍️ 老师板书：同时访问 UST 和 FB（我的解答）**
+>
+> 三台设备连在同一个网络上（同一条线），所以**不经过路由器**，MAC 直接写对方的（第 2 周：同一网络 → ARP 对方）。Client 里画的两个格子是**两个应用进程**（两个浏览器窗口），分别访问 UST 和 FB：
+>
+> | 方向       | IP (S, D)    | MAC (S, D)     | Port (S, D)         |
+> | -------- | ------------ | -------------- | ------------------- |
+> | PC → UST | (IP-1, IP-2) | (MAC-1, MAC-2) | (**49152**, **80**) |
+> | PC → FB  | (IP-1, IP-3) | (MAC-1, MAC-3) | (**49153**, **80**) |
+> | UST → PC | (IP-2, IP-1) | (MAC-2, MAC-1) | (80, 49152)         |
+> | FB → PC  | (IP-3, IP-1) | (MAC-3, MAC-1) | (80, 49153)         |
+>
+> - **两个服务器都用 80**（well-known，所有客户端事先知道）；**客户端的两个窗口用不同的动态端口**（49152、49153）
+> - 回包时 IP、MAC、Port **三对全部对调**
+> - PC 收到 FB 的回包：IP 层只看到「是给 IP-1 的」；传输层看 **Dest. Port = 49153** → 交给访问 FB 的那个窗口，不会和 UST 的数据混在一起——这就是 **multiplexing**
+> - 具体端口号是我假设的（按 Slide 20 的习惯从 49152 开始）；考试写任意 49152–65535 之间、两个不同的数都对
+
+> **🎯 考点**
+>
+> **一个连接由 5 样东西唯一确定**：源 IP、目的 IP、源端口、目的端口、协议 (TCP/UDP)。两个窗口访问**同一台** UST 服务器也不会混：IP 和目的端口都一样，但**源端口不同**。（**IP 地址 + 端口号** 合起来叫 **socket**，课外术语。）
+
+### 🟡 用 netstat 查看连接（Slide 22）
+
+![netstat：Proto TCP，Local Address kenpc:3126 …，Foreign Address 207.138.126.152:http，State ESTABLISHED](images/page_22.png)
+
+*netstat：Proto TCP，Local Address kenpc:3126 …，Foreign Address 207.138.126.152:http，State ESTABLISHED（Slide 22）*
+
+- **Netstat is used to examine TCP connections that are open and running on a networked host**
+- 每行一个连接：**本机地址:端口 ↔ 对方地址:端口**，以及状态（**ESTABLISHED** = 三次握手已完成）
+- 注意 Local Address 的端口 3126、3158… 是**客户端**的端口（在 1024–49151 内：旧版 Windows 从 1025 起分配客户端端口，正好对应 Slide 19 说的 registered 端口也能被客户端动态选用），Foreign Address 的 **:http = 80**
+
+> **➕ 课外补充：端口与安全**
+>
+> - **端口扫描 (port scanning)**：攻击者逐个试探目标的端口，看哪些开着，就知道上面跑了什么服务（开着 23 = 有 Telnet）。所以**不用的服务要关掉**，减少攻击面。
+> - **防火墙规则**几乎都按「IP + 端口 + 协议」写，例如只允许外部访问服务器的 TCP 80 / 443。
+> - **Telnet (23)、FTP (21)、POP3 (110)** 都是**明文**协议，密码会被嗅探；现在用 **SSH (22)**、**SFTP**、**HTTPS (443)** 替代。
+
+---
+
+## 7. 🔴 TCP vs UDP
+
+### 🔴 TCP Function Summary（Slide 24）
+
+| Function                         | Description                                                                                                           | 中文             |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------- |
+| **Multiplexing**                 | Allows receiving hosts to decide the correct application for which the data is destined, **based on the port number** | 按端口号把数据交给正确的程序 |
+| **Error recovery (reliability)** | Numbering and acknowledging data with **Sequence and Acknowledgment** header fields                                   | 编号 + 确认 + 重传   |
+| **Flow control using windowing** | Uses window sizes to **protect buffer space**                                                                         | 用窗口保护接收方缓冲区    |
+
+### 🔴 对比表（Slide 25）
+
+![Comparing TCP and UDP：只有「用端口号识别应用」两者都有](images/page_25.png)
+
+*Comparing TCP and UDP：只有「用端口号识别应用」两者都有（Slide 25）*
+
+| Transport Layer Feature                         | **TCP** | **UDP** |
+| ----------------------------------------------- | ------- | ------- |
+| Flow control and windowing                      | Yes     | No      |
+| Connection-oriented                             | Yes     | No      |
+| Error recovery                                  | Yes     | No      |
+| Segmentation and reassembly of data             | Yes     | No      |
+| In-order delivery of data                       | Yes     | No      |
+| **Identifying applications using port numbers** | **Yes** | **Yes** |
+
+> **🎯 考点**
+>
+> **UDP 唯一和 TCP 一样的功能：端口号**。其他（窗口、连接、纠错、分段重组、有序）UDP 全都没有。反过来看 Slide 2 的「Required Protocol Properties」：
+>
+> |    | UDP                               | TCP                             |
+> | -- | --------------------------------- | ------------------------------- |
+> | 特点 | **Fast、Low overhead**             | **Reliable**                    |
+> | 确认 | Does not require acknowledgements | Acknowledge data                |
+> | 丢了 | Does not resend lost data         | Resend lost data                |
+> | 顺序 | Delivers data **as it arrives**   | Delivers data **in order sent** |
+
+### 🔴 哪些应用用 TCP / UDP（Slide 26–27）
+
+| 用 **TCP**                               | 用 **UDP**                                     |
+| --------------------------------------- | --------------------------------------------- |
+| **HTTP、FTP、SMTP、Telnet**                | **DHCP、DNS、SNMP、TFTP、VoIP、IPTV**              |
+| 共同点：数据**必须完整、有序**，错一个字节就不行（网页、文件、邮件、命令） | 共同点：**小而频繁的查询**，或**实时**数据（迟到的声音 / 画面没用，重传反而卡） |
+
+> **💡 小白理解**
+>
+> 判断口诀：**「错不得」选 TCP，「等不得」选 UDP**。打网络电话时丢了 0.02 秒的声音，你几乎听不出来；但如果为了重传它让整段通话卡住，体验反而更差。DHCP 用 UDP 还有一个硬理由：客户端**还没有 IP**，根本没法和谁建立 TCP 连接，只能广播（第 2 周）。
+
+> **⚠️ 踩坑提醒**
+>
+> - **DNS 两个都用**：普通查询用 UDP 53；数据很大时（例如 DNS 服务器之间的 zone transfer）用 TCP 53。Slide 27 把 DNS 画在 UDP 下面，Slide 21 写的是 TCP, UDP——都对。
+> - **TFTP ≠ FTP**：FTP 用 TCP 20/21；TFTP (Trivial) 用 UDP 69。
+> - UDP「不可靠」不等于「不好」：需要可靠性的 UDP 应用可以在**应用层**自己做确认和重传。
+
+---
+
+## 8. 🔴 综合缩写速查表
+
+| 缩写         | 全称                                  | 所属                        |
+| ---------- | ----------------------------------- | ------------------------- |
+| ACK        | Acknowledgment                      | TCP 确认（期望型：下一个要的号码）       |
+| DNS        | Domain Name System                  | TCP / UDP 53              |
+| FTP        | File Transfer Protocol              | TCP 20（data）/ 21（control） |
+| HTTP       | Hypertext Transfer Protocol         | TCP 80                    |
+| IANA       | Internet Assigned Numbers Authority | 管理 well-known ports       |
+| IPTV       | Internet Protocol Television        | 用 UDP                     |
+| ISN        | Initial Sequence Number             | 握手时各自随机选的起始编号             |
+| POP3       | Post Office Protocol version 3      | TCP 110，收邮件               |
+| SEQ / S.N. | Sequence Number                     | 给数据编号                     |
+| SMTP       | Simple Mail Transfer Protocol       | TCP 25，发邮件                |
+| SNMP       | Simple Network Management Protocol  | UDP 161                   |
+| SYN        | Synchronize                         | 握手第 ①② 步，同步 ISN           |
+| TCP        | Transmission Control Protocol       | 面向连接、可靠                   |
+| TFTP       | Trivial File Transfer Protocol      | UDP 69                    |
+| UDP        | User Datagram Protocol              | 无连接、快、开销低                 |
+| VoIP       | Voice over IP                       | 用 UDP                     |
+
+---
+
+## 9. 模拟自测题
+
+> 以下是**自测题**，按本笔记顺序排列，用来检查自己是否真的掌握，**不是预测的考题**。点开看参考答案。
+
+**1. 传输层的 5 个基本功能是什么？其中可靠性和流量控制分别靠什么实现？**
+
+> Segmenting upper-layer data；Establishing end-to-end operations；Sending segments from one end host to another；Ensuring **reliability** by **sequence numbers and acknowledgments**；Ensuring **flow control** by **sliding windows**。
+
+**2. 为什么 PC1 按顺序发出的 segment 到达 PC2 时可能乱序？谁负责排好？路由器参与吗？**
+
+> IP 对每个包独立选路（板书：经过 B 快、E 一般、C 慢三条路），不同 segment 走不同的路，到达时间不同。PC2 上的 **TCP** 按 sequence number 重新排序。路由器只处理到第 3 层，不看也不改 segment——传输层是 end-to-end 的。
+
+**3. Connection-oriented 和 connectionless 的区别是什么？各举一个协议和一个生活比喻。**
+
+> Connection-oriented 在传数据前要交换消息、建立两端之间的关联（**TCP**，像打电话先接通）；connectionless 不需要（**UDP**，像寄信：发送方不知道对方在不在、收到没有）。
+
+**4. Client ISN = 500，Server ISN = 3000。写出三次握手每一步的 Flags、SEQ、ACK。**
+
+> ① SYN，SEQ = 500；② SYN + ACK，SEQ = 3000，ACK = 501；③ ACK，SEQ = 501，ACK = 3001。
+
+**5. 接上题，握手完成后客户端发一段 200 bytes 的数据，这段的 SEQ 是多少？服务器回的 ACK 是多少？**
+
+> SEQ = **501**（包含字节 501–700）；服务器回 **ACK = 701**（期望型确认：下一个想要 701）。
+
+**6. 为什么 ISN 是随机的大数，而不是从 0 开始？**
+
+> 课件：ISN 是每台主机选的大随机数，握手时双方同步。课外补充的理由：如果 ISN 可预测，攻击者可以伪造看起来合法的 segment 插入连接（session hijacking），随机的大 ISN 让这种猜测几乎不可能。
+
+**7. 什么是 expectational (forward) acknowledgment？收到 #10 之后回什么？**
+
+> ACK 写的是**期望收到的下一个号码**，表示之前的都收到了。收到 #10 回 **ACK 11**（Slide 23：I received #10, now send #11）。
+
+**8. 发送方发出一段后 100 秒还没收到 ACK，会发生什么？为什么要保留重传队列？**
+
+> 计时器到期（expire）→ 从 retransmission queue 里取出这段**重传**，重新计时，并应当**放慢发送速率**（超时往往意味着拥塞）。在收到 ACK 之前必须保留副本，否则丢了就没法重发。
+
+**9. Window size 是什么？为什么大窗口效率高？为什么又不能无限大？**
+
+> 在收到 ACK 之前最多可以发出（未确认）的数据量。窗口大 → 少等待 → 效率高。但接收方的缓冲区有限，所以接收方在每个 ACK 里做 window advertisement，告诉发送方自己还能收多少（flow control 保护 buffer space）；网络差时窗口也要缩小。
+
+**10. Window = 3，共 6 段，第 2 段第一次发送时丢失。按期望型确认，第一轮接收方回的 ACK 是多少？接下来发生什么？**
+
+> 第一轮发 1、2、3，2 丢了 → 接收方只能回 **ACK 2**（缺的是 2）。段 2 的计时器超时 → 重传 2。窗口起点还是 2（窗口 2–4），所以这一轮还能新发 4 → 接收方已缓存了 3，收到 2 和 4 后回 **ACK 5** → 窗口滑到 5–7，发 5、6 → **ACK 7**，结束。（上面的 WindowLab 选 6 段、窗口 3、点 2 可以验证。）
+
+**11. 端口号的三个范围是什么？分别给谁用？**
+
+> **0–1023 well-known**（服务器，IANA 管理）；**1024–49151 registered**（用户安装的应用，也可被客户端动态选作源端口）；**49152–65535 dynamic / private**（动态分配给客户端）。
+
+**12. 为什么服务器必须用固定的 well-known port，而客户端用动态端口？**
+
+> 客户端必须**事先知道**服务器在哪个端口（例如 web = 80）才能连上；服务器如果用动态端口，客户端就找不到它。客户端不需要被别人找到，而且同一台电脑上多个客户端程序需要**不同**的端口来区分各自的对话，所以动态分配。
+
+**13. 写出 FTP、Telnet、SMTP、DNS、TFTP、HTTP、POP3、SNMP 的端口号和使用的传输协议。**
+
+> FTP 20/21 TCP；Telnet 23 TCP；SMTP 25 TCP；DNS 53 TCP 和 UDP；TFTP 69 UDP；HTTP 80 TCP；POP3 110 TCP；SNMP 161 UDP。
+
+**14. PC (IP-1/MAC-1) 同时用两个窗口访问同网段的 UST (IP-2/MAC-2) 和 FB (IP-3/MAC-3) 的网页。写出 FB → PC 这一段的 IP、MAC、Port (S, D)，并说明 PC 怎么知道交给哪个窗口。**
+
+> 假设访问 FB 的窗口源端口是 49153：IP (S, D) = (IP-3, IP-1)，MAC (S, D) = (MAC-3, MAC-1)，Port (S, D) = (80, 49153)。PC 的传输层看**目的端口 49153**，交给访问 FB 的那个窗口（multiplexing）。两台服务器都是 80，区分对话靠的是客户端的源端口。
+
+**15. TCP 和 UDP 有哪些功能不同？唯一相同的是什么？**
+
+> TCP 有而 UDP 没有：flow control / windowing、connection-oriented、error recovery、segmentation and reassembly、in-order delivery。两者都有：**identifying applications using port numbers**。
+
+**16. 下列应用各用 TCP 还是 UDP：HTTP、DHCP、VoIP、FTP、SNMP、SMTP、IPTV、TFTP。说出判断原则。**
+
+> TCP：HTTP、FTP、SMTP；UDP：DHCP、VoIP、SNMP、IPTV、TFTP。原则：数据必须完整有序（网页、文件、邮件）→ TCP；小而频繁的查询或实时流媒体（丢一点没关系、重传反而卡）→ UDP。DHCP 还因为客户端没有 IP、只能广播。
+
+**17. netstat 的输出里 State = ESTABLISHED 是什么意思？Foreign Address 的 :http 是哪个端口？**
+
+> ESTABLISHED 表示这个 TCP 连接的三次握手已经完成、正在使用。:http 就是 **80**。

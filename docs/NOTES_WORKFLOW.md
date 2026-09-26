@@ -81,6 +81,9 @@ tags: [IPv4, NAT, DHCP]
 | `<BufferPoolLab />` | Buffer pool：hit / miss、dirty、LRU 替换、写回 |
 | `<EerConstraintLab />` | EER 两个约束问题 → 自动画图 + discriminator 取值 |
 | `<HierarchyExplorer />` | 超类 / 子类层级的属性继承 |
+| `<TcpHandshakeLab />` | TCP 三次握手 + 数据段的 SEQ / ACK（自填 ISN、数据长度） |
+| `<WindowLab />` | 滑动窗口 + 期望型 ACK + 超时重传（点选丢失的段） |
+| `<PortLab />` | 端口号分类 + 多窗口访问服务器的 IP / MAC / Port (S, D) 与多路复用 |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 
