@@ -83,6 +83,8 @@ tags: [IPv4, NAT, DHCP]
 | `<HierarchyExplorer />` | 超类 / 子类层级的属性继承 |
 | `<TcpHandshakeLab />` | TCP 三次握手 + 数据段的 SEQ / ACK（自填 ISN、数据长度） |
 | `<WindowLab />` | 滑动窗口 + 期望型 ACK + 超时重传（点选丢失的段） |
+| `<SubnetLab />` | 子网划分：借位 → 掩码 / 子网表 / 某地址属于哪个子网（AND 逐位） |
+| `<SubnetPlanner />` | 按「需要几个子网 + 每个多少主机」算借几位、列出可行方案 |
 | `<PortLab />` | 端口号分类 + 多窗口访问服务器的 IP / MAC / Port (S, D) 与多路复用 |
 
 ### 什么时候新做一个互动组件（重要，别忘了）

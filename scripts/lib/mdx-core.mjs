@@ -28,6 +28,7 @@ import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../
 import { evaluate as evalFirewall, PRESETS as FW_PRESETS } from "../../src/components/mdx/firewall-logic.mjs";
 import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic.mjs";
 import { tcpConversation, HANDSHAKE_PRESETS, simulateWindow, WINDOW_PRESETS, classifyPort, PORT_PRESETS, openConnections } from "../../src/components/mdx/tcp-logic.mjs";
+import { subnetPlan, planOptions, SUBNET_PRESETS, PLAN_PRESETS } from "../../src/components/mdx/subnet-logic.mjs";
 import { computeVendorTier, FACTORS as VENDOR_FACTORS, VENDOR_TIER_PRESETS } from "../../src/components/mdx/vendor-tier-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -384,6 +385,35 @@ const components = {
       note("（网页版此处可以输入任意端口号分类，并打开多个浏览器窗口观察源端口怎样区分对话）"),
       table(["端口", "范围", "常见用途"], ports),
       table(["方向", "IP (S, D)", "MAC (S, D)", "Port (S, D)"], flows),
+    ];
+  },
+  SubnetLab() {
+    const blocks = SUBNET_PRESETS.flatMap((x) => {
+      const p = subnetPlan(x.address, x.borrow);
+      const n = Math.min(p.subnets, 8);
+      const rows = Array.from({ length: n }, (_, i) => p.subnet(i)).map((r) => [String(r.i), r.subnetBits, r.network, `${r.first} – ${r.last}`, r.broadcast]);
+      if (p.subnets > n) {
+        const l = p.subnet(p.subnets - 1);
+        rows.push(["…", "…", "…", "…", "…"], [String(l.i), l.subnetBits, l.network, `${l.first} – ${l.last}`, l.broadcast]);
+      }
+      const hit = p.locate(x.probe);
+      return [
+        para(strong(`${x.label}：Class ${p.cls}，掩码 ${p.mask.dotted} (/${p.prefix})，2^${p.borrow} = ${p.subnets} 个子网，每个 2^${p.hostBits} − 2 = ${p.hostsPerSubnet} 台主机`)),
+        table(["S.N #", "子网位", "Network address", "Host range", "Broadcast"], rows),
+        para(text(`${x.probe} AND ${p.mask.dotted} = `), strong(hit.network), text(`（第 ${hit.i} 个子网，broadcast ${hit.broadcast}）`)),
+      ];
+    });
+    return [note("（网页版此处可以输入任意网络和借位数，并查任意地址属于哪个子网；下面是板书和课件例子的结果）"), ...blocks];
+  },
+  SubnetPlanner() {
+    const rows = PLAN_PRESETS.map((x) => {
+      const r = planOptions(x.cls, x.subnets, x.hosts);
+      const base = 32 - r.total;
+      return [x.label, `Class ${x.cls}`, String(x.subnets), String(x.hosts), String(r.minBorrow), String(r.minHostBits), strong(r.feasible ? (r.minBorrow === r.maxBorrow ? `借 ${r.minBorrow} 位 (/${base + r.minBorrow})` : `借 ${r.minBorrow}–${r.maxBorrow} 位 (/${base + r.minBorrow}–/${base + r.maxBorrow})`) : "做不到")];
+    });
+    return [
+      note("（网页版此处可以自己填 Class、需要的子网数和主机数；下表是课件和板书题的结果）"),
+      table(["题目", "Class", "需要子网", "每子网主机", "最少借位", "最少 host 位", "可行方案"], rows),
     ];
   },
   VendorTierCalculator() {

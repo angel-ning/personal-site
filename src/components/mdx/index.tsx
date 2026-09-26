@@ -24,6 +24,8 @@ import { VendorTierCalculator } from "./vendor-tier-calculator";
 import { TcpHandshakeLab } from "./tcp-handshake-lab";
 import { WindowLab } from "./window-lab";
 import { PortLab } from "./port-lab";
+import { SubnetLab } from "./subnet-lab";
+import { SubnetPlanner } from "./subnet-planner";
 import { collisionRows, collisionSvg } from "./collision-map.mjs";
 
 // Components available inside .mdx notes. scripts/mdx-to-md.mjs knows how to turn
@@ -172,5 +174,5 @@ export function Mk({ t, children }: { t: "e" | "a" | "v" | "c"; children: ReactN
 }
 
 export function noteComponents(assetBase: string) {
-  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab, PmrQuiz, CardinalityLab, NormalizationLab, ThreatActorQuiz, FirewallRuleLab, VendorTierCalculator, TcpHandshakeLab, WindowLab, PortLab };
+  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab, PmrQuiz, CardinalityLab, NormalizationLab, ThreatActorQuiz, FirewallRuleLab, VendorTierCalculator, TcpHandshakeLab, WindowLab, PortLab, SubnetLab, SubnetPlanner };
 }

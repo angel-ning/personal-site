@@ -397,3 +397,12 @@ body {
 .win-flight { background: color-mix(in oklab, var(--c-extra) 18%, transparent); border-color: var(--c-extra); }
 .win-lost { outline: 2px solid var(--c-exam); outline-offset: -2px; }
 .win-dropped { color: var(--c-exam); text-decoration: line-through; }
+
+/* ---------- ISOM 5180 subnetting labs ---------- */
+.sub-bits { display: inline-flex; flex-wrap: wrap; gap: 0 .45em; letter-spacing: .04em; }
+.sub-oct { white-space: nowrap; }
+.sb-n { color: var(--fg-2); }
+.sb-s { color: var(--c-exam); font-weight: 600; }
+.sb-h { color: var(--c-extra); }
+.sub-legend { display: block; margin-top: .2em; font-size: .92em; color: var(--fg-2); }
+.sub-and td { vertical-align: middle; }
