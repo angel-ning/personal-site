@@ -71,6 +71,36 @@ export const WALK_SCENARIOS = [
     ],
     names: { CustomerID: "CUSTOMER", rest: "ORDER" },
   },
+  {
+    id: "project",
+    label: "PROJECT EQUIPMENT（Lab 5-02）",
+    table: "PROJECT",
+    note: "Lab 5-02 的项目设备登记表：每格都是单值，但项目、联系人、设备、借用记录全挤在一张表里。",
+    cols: ["Project_ID", "Project_Name", "Date", "Contact_Person", "Position", "Equipment_No", "Equipment_Description", "Date_of_Return", "Location_of_usage"],
+    multi: [],
+    rows: [
+      ["P2022-001", "Implementing a ERP system (HR module)", "01-JAN-2022", "Collin Lee", "Senior Business Analyst", "C414", "Dell XEON server", "30-NOV-2022", "7/F, Server Room"],
+      ["P2022-001", "Implementing a ERP system (HR module)", "01-JAN-2022", "Collin Lee", "Senior Business Analyst", "C415", "Dell XEON server", "30-JUN-2023", "7/F, Server Room"],
+      ["P2022-001", "Implementing a ERP system (HR module)", "01-JAN-2022", "Collin Lee", "Senior Business Analyst", "E001", "Furniture Set (Blue)", "01-MAR-2022", "6/F, Open Office"],
+      ["P2022-001", "Implementing a ERP system (HR module)", "01-JAN-2023", "James Wong", "Project Manager", "E002", "Furniture Set (Green)", "30-JUN-2023", "6/F, Meeting Room 6A"],
+      ["P2022-001", "Implementing a ERP system (HR module)", "01-JAN-2023", "James Wong", "Project Manager", "C414", "Dell XEON server", "31-JUL-2023", "6/F Server Room"],
+      ["P2021-003", "Performing Training and Development System Audit", "01-JUL-2021", "Chris Wong", "Senior Business Analyst", "E001", "Furniture Set (Blue)", "04-APR-2022", "6/F, Meeting Room 6C"],
+      ["P2021-003", "Performing Training and Development System Audit", "01-JUL-2021", "Chris Wong", "Senior Business Analyst", "P068", "HP LaserJet 4L", "04-APR-2022", "6/F, Meeting Room 6C"],
+      ["P2021-005", "Post-implementation maintenance of the Financial System", "01-JUL-2021", "James Wong", "Project Manager", "M501", "AOC LCD Monitor 27\"", "06-OCT-2022", "4/F, IT Department Open Office"],
+      ["P2022-005", "Post-implementation maintenance of the Financial System", "01-JUL-2022", "James Wong", "Project Manager", "E002", "Furniture Set (Green)", "30-JUL-2023", "6/F, Meeting Room 6A"],
+      ["P2022-006", "Power Load Test", "01-JUL-2022", "Samuel Lai", "Project Manager", "E002", "Furniture Set (Green)", "(null)", "TBC"],
+    ],
+    pk: ["Project_ID", "Equipment_No", "Date"],
+    pkWhy: "P2022-001 借了两次 C414（2022 年和 2023 年），Project_ID + Equipment_No 还不唯一，要再加 Date。",
+    fds: [
+      { det: ["Project_ID"], dep: ["Project_Name"] },
+      { det: ["Project_ID", "Date"], dep: ["Contact_Person", "Position"] },
+      { det: ["Contact_Person"], dep: ["Position"] },
+      { det: ["Equipment_No"], dep: ["Equipment_Description"] },
+      { det: ["Project_ID", "Equipment_No", "Date"], dep: ["Date_of_Return", "Location_of_usage"] },
+    ],
+    names: { Project_ID: "PROJECT2", "Project_ID+Date": "PROJECT_CONTACT", Contact_Person: "CONTACT", Equipment_No: "EQUIPMENT", rest: "PROJECT_EQUIPMENT" },
+  },
 ];
 
 const key = (r, idx) => JSON.stringify(idx.map((i) => r[i]));
@@ -166,8 +196,14 @@ export function normalizeSteps(s) {
     notes2.push(`${fd.det.join(", ")} 是主键的一部分 → 新表 ${tableName(s, fd.det)}，搬走 ${moved.join("、")}${extra.length ? `（${extra.join("、")} 通过 ${fd.dep.filter((c) => s.fds.some((f) => f.det.includes(c) && f.dep.some((d) => extra.includes(d)))).join("、")} 间接依赖 ${fd.det.join(", ")}，也只跟它有关，一起搬）` : ""}。`);
   }
   if (tables.length) {
-    const fk = tables.map((t) => t.pk).flat().filter((c) => s.pk.includes(c)).map((c) => ({ col: c, ref: tables.find((t) => t.pk.includes(c)).name }));
-    tables.push({ name: s.names.rest, cols: restCols, pk: s.pk, fk, rows: project(s.cols, flat, restCols) });
+    // Each split-off determinant (possibly composite) is a foreign key back to its new table;
+    // a split table whose key contains a smaller split key also references that table.
+    const fk = tables.map((t) => ({ col: t.pk.join(", "), ref: t.name }));
+    for (const t of tables)
+      for (const u of tables) if (u !== t && u.pk.length < t.pk.length && u.pk.every((c) => t.pk.includes(c))) t.fk.push({ col: u.pk.join(", "), ref: u.name });
+    // Drop a reference already implied by a wider one (Project_ID is inside Project_ID, Date).
+    const fkRest = fk.filter((f) => !fk.some((g) => g !== f && g.col.split(", ").length > f.col.split(", ").length && f.col.split(", ").every((c) => g.col.split(", ").includes(c))));
+    tables.push({ name: s.names.rest, cols: restCols, pk: s.pk, fk: fkRest, rows: project(s.cols, flat, restCols) });
     notes2.push(`原表只剩主键 + 真正依赖整个主键的属性，改名 ${s.names.rest}；主键里的每一部分同时是指向新表的外键。`);
   } else {
     tables = [{ ...t1, name: s.table }];

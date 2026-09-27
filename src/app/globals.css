@@ -365,6 +365,13 @@ body {
 .nw-full { border-color: var(--c-tip); } .nw-full b { color: var(--c-tip); }
 .nw-partial { border-color: var(--c-warn); } .nw-partial b { color: var(--c-warn); }
 .nw-trans { border-color: var(--c-exam); } .nw-trans b { color: var(--c-exam); }
+.fd-results { display: flex; flex-wrap: wrap; gap: .3em; margin-top: .3em; }
+.fd-res { border: 1px solid var(--line); border-radius: 6px; padding: .1em .6em; font-size: 12.5px; font-family: var(--font-mono); }
+.fd-ok { border-color: color-mix(in oklab, var(--c-tip) 50%, var(--line)); }
+.fd-no { color: var(--fg-3); }
+.fd-on { border-color: var(--c-exam); color: var(--c-exam); }
+.fd-det { background: color-mix(in oklab, var(--accent) 18%, transparent); }
+.fd-dep { background: color-mix(in oklab, var(--c-exam) 14%, transparent); }
 .nw-notes { margin-top: .6em; padding-left: 1.2em; list-style: disc; font-size: 13px; color: var(--fg-2); display: grid; gap: .2em; }
 /* SqlPipelineLab / JoinLab / GrantLab (ISOM 5260 week 5) */
 .sp-wide { max-width: 100%; }

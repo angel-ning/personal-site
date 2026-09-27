@@ -28,6 +28,7 @@ import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../
 import { evaluate as evalFirewall, PRESETS as FW_PRESETS } from "../../src/components/mdx/firewall-logic.mjs";
 import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic.mjs";
 import { WALK_SCENARIOS, normalizeSteps } from "../../src/components/mdx/normalize-steps.mjs";
+import { FD_SCENARIOS, sweepNonKey } from "../../src/components/mdx/fd-finder-logic.mjs";
 import { tcpConversation, HANDSHAKE_PRESETS, simulateWindow, WINDOW_PRESETS, classifyPort, PORT_PRESETS, openConnections } from "../../src/components/mdx/tcp-logic.mjs";
 import { subnetPlan, planOptions, SUBNET_PRESETS, PLAN_PRESETS } from "../../src/components/mdx/subnet-logic.mjs";
 import { computeVendorTier, FACTORS as VENDOR_FACTORS, VENDOR_TIER_PRESETS } from "../../src/components/mdx/vendor-tier-logic.mjs";
@@ -349,6 +350,20 @@ const components = {
       return out;
     });
     return [note("（网页版此处可以一步步看原始表 → 1NF → 2NF → 3NF，并高亮每一步还在重复存储的格子；下面是三个例子每一步的结果）"), ...blocks];
+  },
+  FdFinderLab() {
+    const blocks = FD_SCENARIOS.flatMap((s) => [
+      para(strong(`${s.label}（主键 = ${s.pk.join(" + ")}）`)),
+      table(
+        ["非键列放左边", "数据里没有反例的候选", "业务含义判断"],
+        sweepNonKey(s).flatMap((r) =>
+          r.found.length
+            ? r.found.map((f) => [`${r.det} → ${f.col}`, f.real ? strong("真 FD") : "假候选", f.why])
+            : [[`${r.det} → ∅`, "—", "数据里就有反例"]],
+        ),
+      ),
+    ]);
+    return [note("（网页版此处可交互：自己选决定因素，看数据里有没有反例；下面是每个例子「第三层扫描」的结果）"), ...blocks];
   },
   ThreatActorQuiz() {
     const name = (id) => threatActorData.types.find((t) => t.id === id).en;

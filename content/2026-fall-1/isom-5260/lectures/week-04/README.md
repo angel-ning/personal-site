@@ -37,7 +37,8 @@ SDLC 中的位置（Logical Design 阶段）
         实体 → 属性(复合/多值/派生) → 弱实体 → 二元关系(1:1/1:M/M:N)
         → 关联实体 → 一元关系 → 三元关系 → 超类/子类
    → ⭐ Normalization：消除冗余与异常
-        Anomalies → Functional Dependency → 1NF → 2NF → 3NF
+        Anomalies → Functional Dependency
+        → 做题套路：找主键 → 三层检查找齐 FD → 1NF → 2NF（拆 Partial）→ 3NF（拆 Transitive）
 ```
 
 **一句话**：前半节是「**怎么转**」（mapping），后半节是「**转得好不好**」（normalization）。两块都是出计算/画图题的地方。
@@ -342,7 +343,7 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 
 > **📌 这一节怎么读**
 >
-> 先用 6.1–6.2 搞懂**为什么要拆表**、**函数依赖是什么**；然后背 6.3 的**五步做题法**（这是重点）；6.4 用一道完整例题把五步走一遍；6.5 是可以点的逐步演示；6.6 是常见错误。课程只要求到 **3NF**，BCNF 以后不用管。
+> 先用 6.1–6.2 搞懂**为什么要拆表**、**函数依赖是什么**；然后背 6.3 的**做题套路**（这是重点，尤其是找 FD 的三层检查）；6.4 用 Lab 5-02 完整走一遍；6.5 是一道有多值属性的例题；6.6 是可以点的 FD 检查器和逐步演示；6.7 是常见错误。课程只要求到 **3NF**，BCNF 以后不用管。
 
 ### 6.1 🔴 为什么要规范化：一张表只讲一件事
 
@@ -379,9 +380,12 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 
 **考试里怎么找 FD？**
 
-1. **题目直接给**（最常见）：像 `EmpID → Name, Department, Salary` 这样列出来，或者画成依赖图（箭头从决定因素指向被决定的属性）。
-2. **从业务含义推**：对每个属性问一句「**知道 X，能不能确定这个值只有一个？**」。每门课有一个课名 → `CourseID → CourseTitle`；每个学生有一个导师 → `StudentID → AdvisorID`。
-3. **样本数据只能用来否定**：如果同一个 X 对应了两个不同的 Y，那 `X → Y` 一定不成立；但几行数据恰好没冲突，并不能证明依赖成立。
+这门课的 lab 和作业通常**不直接给 FD**，而是给一张带样本数据的大表，要自己找。靠两样东西：
+
+1. **业务含义**：对每个属性问一句「**知道 X，能不能确定这个值只有一个？**」。每门课有一个课名 → `CourseID → CourseTitle`；每个人有一个职位 → `Contact_Person → Position`。
+2. **样本数据只能用来否定**：如果同一个 X 对应了两个不同的 Y，那 `X → Y` 一定不成立；但几行数据恰好没冲突，并不能证明依赖成立。
+
+怎么保证**一条都不漏**，见 6.3 的「三层检查」。
 
 **两个名词**，后面每一步都要用到：
 
@@ -411,15 +415,67 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 >
 > 英文口诀：每个非键属性都必须依赖 **the key**（1NF）、**the whole key**（2NF）、**and nothing but the key**（3NF）。
 
-### 6.3 🔴🔴 五步做题法（从任何一张表到 3NF）
+### 6.3 🔴🔴 做题套路：给一张大表 → 找 FD → 1NF → 2NF → 3NF
 
-| 步骤             | 做什么                                                                                                | 课件规则原文                                                                                                                                                                                                                                                |
-| -------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **① 找主键**      | 列出所有属性，确定主键。有多值属性的话，先做 ②，摊开之后**重新**找主键                                                             | —                                                                                                                                                                                                                                                     |
-| **② → 1NF**    | 检查每一格是不是**只有一个值**。有多值（一个格子里写了好几门课）就**摊开成多行**，其他列的公共值每行重复填。摊开后原来的 ID 不再唯一，主键通常变成「原 ID + 被摊开那一组的 ID」 | Spread values into their own rows, and repeat common values as needed（p.33）                                                                                                                                                                           |
-| **③ 写 FD 并分类** | 写出所有函数依赖，按 6.2 的表分成 Full / Partial / Transitive                                                    | Identify the primary key attributes（p.40）                                                                                                                                                                                                             |
-| **④ → 2NF**    | 对每个**部分依赖**的决定因素：**建一张新表，用它当主键**，把**只依赖它**的属性搬过去。原表留下完整主键和依赖整个主键的属性；主键里被拆出去的那一部分，同时成为指向新表的外键       | Create a new relation for each determinant involved in a partial dependency; use the determinant as the new relation's primary key. Move the non-key attributes that depend only on that determinant to the new relation.（p.37）                       |
-| **⑤ → 3NF**    | 在**每张表**里找传递依赖。对每个**非键决定因素**：**建一张新表，用它当主键**，把依赖它的属性搬过去，**原表留下它作外键**                               | For each non-key determinant, create a new relation and use the determinant as its primary key. Move to the new relation all attributes that depend only on that determinant. Retain the determinant in the original relation as a foreign key.（p.39） |
+作业、lab 和考试都是同一种题：给一张**带样本数据的大表**，要你写出所有 functional dependency，再画出 1NF、2NF、3NF 的 schema。FD 通常**不会直接给**，要自己从数据和业务含义里找。
+
+> **⚠️ 最重要的一点：FD 在第一步就要找齐**
+>
+> **所有 FD（包括传递依赖）都要在一开始全部写出来。** 2NF、3NF 这两步的工作是**按 FD 拆表**，不是去找新的 FD。
+>
+> Lab 5-02 的答案就是这个顺序：第 9 页先列出全部 5 条 FD，第 10、13 页只是按它们拆表。如果第一步漏了 `Contact_Person → Position`，到 3NF 就不知道还要拆 CONTACT 表。
+
+| 步骤          | 做什么                                  | 产出                                    |
+| ----------- | ------------------------------------ | ------------------------------------- |
+| **① 找主键**   | 找能唯一定位一行的**最小**列组合                   | 主键                                    |
+| **② 找齐 FD** | 三层检查（见下），每个非键列都当过一次决定因素才停            | FD 清单，每条标 Full / Partial / Transitive |
+| **③ 1NF**   | 多值属性摊开成多行；没有多值就原样照抄                  | 一张大表 + 主键                             |
+| **④ 2NF**   | 每条 **Partial** 的决定因素 → 新表，用它当主键      | 几张表                                   |
+| **⑤ 3NF**   | 每条 **Transitive** 的决定因素 → 新表，原表留它当外键 | 最终的表                                  |
+
+#### ① 找主键：从数据里找「会重复的 ID」
+
+1. 先看有哪些 ID 类的列（Project\_ID、Equipment\_No……）。
+2. 看这些 ID 在表里有没有重复。一个 ID 出现好几次，说明它**单独**当不了主键。
+3. 往上加列，直到每一行都不重复。**再检查能不能去掉某一列**，主键要最小。
+
+Lab 5-02：Project\_ID 重复 → 加 Equipment\_No；P2022-001 借了两次 C414（2022 年、2023 年）→ 还要加 Date。主键 = **Project\_ID + Equipment\_No + Date**。
+
+#### ② 找齐 FD：三层检查（按顺序做，不要跳）
+
+| 层         | 问什么                                      | 找到的是       | Lab 5-02                                                                                                         |
+| --------- | ---------------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| **第一层**   | 整个主键能决定哪些列？                              | Full       | `Project_ID, Equipment_No, Date → Date_of_Return, Location_of_usage`                                             |
+| **第二层**   | 把主键拆开，**每个真子集**单独能决定什么？（单列、两列组合都要试）      | Partial    | `Project_ID → Project_Name`；`Equipment_No → Equipment_Description`；`Project_ID, Date → Contact_Person, Position` |
+| **第三层** ⭐ | 把**每个非键列**轮流放到箭头左边：只知道它，能不能确定**另一个非键列**？ | Transitive | `Contact_Person → Position`                                                                                      |
+
+很多人做完第二层就以为找完了，**第三层最容易漏**，而它正好是 3NF 要拆的东西。
+
+**什么时候可以停？** 第三层把每一个非键列都放到左边检查过一遍，就可以停了。做法是列一张表逐行打勾：
+
+| 放在左边                   | 能确定别的非键列吗？         | 理由                                                        |
+| ---------------------- | ------------------ | --------------------------------------------------------- |
+| Project\_Name          | 不能                 | P2021-005 和 P2022-005 同名，连 Project\_ID 都确定不了              |
+| **Contact\_Person**    | **能 → Position** ✅ | 职位是**人**的属性；Collin Lee 每次都是 Senior BA，James Wong 4 次都是 PM |
+| Position               | 不能                 | James Wong 和 Samuel Lai 都是 Project Manager                |
+| Equipment\_Description | 不能                 | C414、C415 都叫 Dell XEON server                             |
+| Date\_of\_Return       | 不能                 | 样本里碰巧不冲突，但两个项目可以同一天还设备                                    |
+| Location\_of\_usage    | 不能                 | 同一个会议室可以给不同项目用                                            |
+
+**两个判断技巧：**
+
+1. **问「这一列描述的是谁」**。Position 描述的是**人**，不是项目，也不是某次设备借用。所以决定它的应该是 Contact\_Person，而不是 `Project_ID, Date`。一列描述的对象和主键代表的对象不一样，基本就有传递依赖。
+2. **用数据找反例**。同一个 X 对应了两个不同的 Y → `X → Y` 一定不成立。但数据**只能推翻、不能证明**：几行数据碰巧没冲突（比如 Date\_of\_Return 在样本里都不重复）不代表 FD 成立，最后要按业务含义判断。
+
+> **💡 为什么 Position 不算 Project\_ID, Date 的「普通」依赖**
+>
+> `Project_ID, Date → Contact_Person` 和 `Contact_Person → Position` 连起来，就得到 `Project_ID, Date → Position`。Lab 答案把 Position 也写在 `Project_ID, Date` 的右边，所以 **2NF 时 Position 跟着 Contact\_Person 一起搬进 PROJECT\_CONTACT**。但它其实是**经过** Contact\_Person 传过去的，所以 3NF 还要再拆一次。
+
+#### ③–⑤ 按 FD 拆表
+
+- **1NF**：检查每格是不是单值。有多值就摊开成多行、公共值重复填，然后**重新找主键**（p.33）。已经是单值的表（如 Lab 5-02），1NF 就是原表加上主键。
+- **2NF**：对每条 **Partial** 依赖的决定因素，建一张新表、用它当主键，把**只依赖它**的属性搬过去（p.37）。原表剩下完整主键 + Full 依赖的属性。这一步**不管传递依赖**，所以 Position 还留在 PROJECT\_CONTACT 里。
+- **3NF**：在**每张表**里找 Transitive 依赖（包括 2NF 新拆出来的表）。对每个非键决定因素，建一张新表、用它当主键，搬走依赖它的属性，**原表留下它当外键**（p.39）。
 
 **最后检查三件事：**
 
@@ -446,9 +502,72 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 >
 > 问「第几范式」时，答的是**满足的最高那一级**。一张表同时有部分依赖和传递依赖，答案是 **1NF**（先卡在 2NF），不是「2NF 和 3NF 都不满足」。
 
-### 6.4 🔴 完整例题：三步都要做
+### 6.4 🔴 Lab 5-02 完整走一遍：Project Equipment
 
-**题目**：把下面这张选课登记表规范化到 3NF。业务规则：每个学生只有一个导师；每门课只有一个课名；成绩取决于「哪个学生上哪门课」。
+**题目**：项目设备登记表，每行记录「某个项目在某个日期借了某件设备」，同时写着项目名、当时的联系人和他的职位。把它规范化到 3NF。
+
+| Project\_ID | Project\_Name                                           | Date        | Contact\_Person | Position                | Equipment\_No | Equipment\_Description | Date\_of\_Return | Location\_of\_usage            |
+| ----------- | ------------------------------------------------------- | ----------- | --------------- | ----------------------- | ------------- | ---------------------- | ---------------- | ------------------------------ |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2022 | Collin Lee      | Senior Business Analyst | C414          | Dell XEON server       | 30-NOV-2022      | 7/F, Server Room               |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2022 | Collin Lee      | Senior Business Analyst | C415          | Dell XEON server       | 30-JUN-2023      | 7/F, Server Room               |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2022 | Collin Lee      | Senior Business Analyst | E001          | Furniture Set (Blue)   | 01-MAR-2022      | 6/F, Open Office               |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2023 | James Wong      | Project Manager         | E002          | Furniture Set (Green)  | 30-JUN-2023      | 6/F, Meeting Room 6A           |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2023 | James Wong      | Project Manager         | C414          | DELL XEON server       | 31-JUL-2023      | 6/F Server Room                |
+| P2021-003   | Performing Training and Development System Audit        | 01-JUL-2021 | Chris Wong      | Senior Business Analyst | E001          | Furniture Set (Blue)   | 04-APR-2022      | 6/F, Meeting Room 6C           |
+| P2021-003   | Performing Training and Development System Audit        | 01-JUL-2021 | Chris Wong      | Senior Business Analyst | P068          | HP LaserJet 4L         | 04-APR-2022      | 6/F, Meeting Room 6C           |
+| P2021-005   | Post-implementation maintenance of the Financial System | 01-JUL-2021 | James Wong      | Project Manager         | M501          | AOC LCD Monitor 27"    | 06-OCT-2022      | 4/F, IT Department Open Office |
+| P2022-005   | Post-implementation maintenance of the Financial System | 01-JUL-2022 | James Wong      | Project Manager         | E002          | Furniture Set (Green)  | 30-JUL-2023      | 6/F, Meeting Room 6A           |
+| P2022-006   | Power Load Test                                         | 01-JUL-2022 | Samuel Lai      | Project Manager         | E002          | Furniture Set (Green)  | (null)           | TBC                            |
+
+> **📌 数据里的一个小坑**
+>
+> 第 5 行 C414 写成了「DELL XEON server」，第 1 行是「Dell XEON server」。这不是说 `Equipment_No → Equipment_Description` 不成立，而是同一个描述存了好几遍、有一处录入不一致，正好是 **modification anomaly** 的例子。拆出 EQUIPMENT 表以后，描述只存一次，就不会再出现这种不一致。
+
+**① 主键**：Project\_ID + Equipment\_No + Date（理由见 6.3 ①）。
+
+**② FD 清单**（课堂答案，Lab p.9）：
+
+| FD                                                                   | 箭头左边是…… | 类型                   |
+| -------------------------------------------------------------------- | ------- | -------------------- |
+| `Project_ID → Project_Name`                                          | 主键的一部分  | **Partial** ❌ 2NF    |
+| `Project_ID, Date → Contact_Person, Position`                        | 主键的一部分  | **Partial** ❌ 2NF    |
+| `Contact_Person → Position`                                          | 非键属性    | **Transitive** ❌ 3NF |
+| `Equipment_No → Equipment_Description`                               | 主键的一部分  | **Partial** ❌ 2NF    |
+| `Project_ID, Equipment_No, Date → Date_of_Return, Location_of_usage` | 整个主键    | **Full** ✅           |
+
+**③ 1NF**：每格都是单值，原表就是 1NF，只要标出主键：
+
+<div><div>PROJECT (1NF)</div><table><tr><td><span>Project\_ID</span></td><td><span>Equipment\_No</span></td><td><span>Date</span></td><td>Project\_Name</td><td>Contact\_Person</td><td>Position</td><td>Equipment\_Description</td><td>Date\_of\_Return</td><td>Location\_of\_usage</td></tr></table></div>
+
+**④ 2NF**（课堂答案，Lab p.10）：三条 Partial 依赖各拆一张表，Full 依赖的列留在原表。Position 跟着 Contact\_Person 一起进 PROJECT\_CONTACT，传递依赖这一步先不管。
+
+<div><div>PROJECT2</div><table><tr><td><span>Project\_ID</span></td><td>Project\_Name</td></tr></table></div>
+
+<div><div>PROJECT\_CONTACT</div><table><tr><td><span>Project\_ID</span></td><td><span>Date</span></td><td>Contact\_Person</td><td>Position</td></tr></table><div>↳ Project\_ID → PROJECT2</div></div>
+
+<div><div>EQUIPMENT</div><table><tr><td><span>Equipment\_No</span></td><td>Equipment\_Description</td></tr></table></div>
+
+<div><div>PROJECT\_EQUIPMENT</div><table><tr><td><span>Project\_ID</span></td><td><span>Equipment\_No</span></td><td><span>Date</span></td><td>Date\_of\_Return</td><td>Location\_of\_usage</td></tr></table><div>↳ (Project\_ID, Date) → PROJECT\_CONTACT；Equipment\_No → EQUIPMENT</div></div>
+
+**⑤ 3NF**（课堂答案，Lab p.13）：PROJECT\_CONTACT 里 Contact\_Person 是非键属性，却决定 Position → 拆出 CONTACT，PROJECT\_CONTACT2 留下 Contact\_Person 当外键。其他三张表没有传递依赖，不变。
+
+<div><div>PROJECT2</div><table><tr><td><span>Project\_ID</span></td><td>Project\_Name</td></tr></table></div>
+
+<div><div>PROJECT\_CONTACT2</div><table><tr><td><span>Project\_ID</span></td><td><span>Date</span></td><td><span>Contact\_Person</span></td></tr></table><div>↳ Project\_ID → PROJECT2；Contact\_Person → CONTACT</div></div>
+
+<div><div>CONTACT</div><table><tr><td><span>Contact\_Person</span></td><td>Position</td></tr></table></div>
+
+<div><div>EQUIPMENT</div><table><tr><td><span>Equipment\_No</span></td><td>Equipment\_Description</td></tr></table></div>
+
+<div><div>PROJECT\_EQUIPMENT</div><table><tr><td><span>Project\_ID</span></td><td><span>Equipment\_No</span></td><td><span>Date</span></td><td>Date\_of\_Return</td><td>Location\_of\_usage</td></tr></table><div>↳ (Project\_ID, Date) → PROJECT\_CONTACT；Equipment\_No → EQUIPMENT</div></div>
+
+> 表和列是课堂答案；外键的虚线和 ↳ 箭头是**我的解答**，按 p.37、p.39 的规则补上的（lab 幻灯片上没写）。
+
+**检查**：9 个属性一个不少；「James Wong = Project Manager」原来存了 4 次，现在只存 1 次。
+
+### 6.5 🔴 例题二：多值属性 + 三步都要做
+
+**题目**：这题和 Lab 5-02 不同，原始表**有多值属性**，要先做 1NF。把下面这张选课登记表规范化到 3NF。业务规则：每个学生只有一个导师；每门课只有一个课名；成绩取决于「哪个学生上哪门课」。
 
 | StudentID | StudentName | AdvisorID | AdvisorName | CourseID                     | CourseTitle                    | Grade     |
 | --------- | ----------- | --------- | ----------- | ---------------------------- | ------------------------------ | --------- |
@@ -471,7 +590,7 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 
 <div><div>STUDENT ENROLLMENT (1NF)</div><table><tr><td><span>StudentID</span></td><td><span>CourseID</span></td><td>StudentName</td><td>AdvisorID</td><td>AdvisorName</td><td>CourseTitle</td><td>Grade</td></tr></table></div>
 
-**③ 写 FD 并分类**（主键 = StudentID + CourseID）：
+**③ 找齐 FD 并分类**（主键 = StudentID + CourseID）。第三层扫描时，把 StudentName、AdvisorID、AdvisorName、CourseTitle、Grade 逐个放左边，只有 AdvisorID 能决定别的列：
 
 | FD                                   | 箭头左边是……    | 类型                   |
 | ------------------------------------ | ---------- | -------------------- |
@@ -508,10 +627,52 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 >
 > *"The relation is in 1NF but not 2NF because StudentName and AdvisorID depend only on StudentID, and CourseTitle depends only on CourseID — both are parts of the composite primary key (partial dependencies). To reach 2NF, we create STUDENT with StudentID as its primary key and COURSE with CourseID as its primary key, leaving Grade in ENROLLMENT. STUDENT is not yet in 3NF because AdvisorName depends on AdvisorID, a non-key attribute (transitive dependency). To reach 3NF, we move AdvisorID and AdvisorName into a new ADVISOR relation and keep AdvisorID in STUDENT as a foreign key."*
 
-### 6.5 🔴 自己点一遍：原始表 → 1NF → 2NF → 3NF
+### 6.6 🔴 自己点一遍：找 FD → 1NF → 2NF → 3NF
 
-下面的演示用样本数据一步步做规范化。**黄底格子 = 只因为坏依赖才重复存储的值**，每做一步，右上角的「重复存储」格数都会变少，到 3NF 归零。除了上面的例题，还可以切换到课件的两个例子：
+先用下面这个检查器练「找 FD」：选一列或几列当箭头左边，看数据里有没有反例；下面的「第三层扫描」会把每个非键列都放到左边试一遍，并说明哪些候选是真的 FD、哪些只是样本太少碰巧没冲突。
 
+*（网页版此处可交互：自己选决定因素，看数据里有没有反例；下面是每个例子「第三层扫描」的结果）*
+
+**PROJECT EQUIPMENT（Lab 5-02）（主键 = Project\_ID + Equipment\_No + Date）**
+
+| 非键列放左边                                | 数据里没有反例的候选 | 业务含义判断                                 |
+| ------------------------------------- | ---------- | -------------------------------------- |
+| Project\_Name → ∅                     | —          | 数据里就有反例                                |
+| Contact\_Person → Position            | **真 FD**   | 写进 FD 清单，3NF 要拆                        |
+| Position → ∅                          | —          | 数据里就有反例                                |
+| Equipment\_Description → ∅            | —          | 数据里就有反例                                |
+| Date\_of\_Return → Project\_ID        | 假候选        | 巧合：样本里每个归还日期只出现在一个项目里，但两个项目完全可以同一天还设备。 |
+| Date\_of\_Return → Project\_Name      | 假候选        | 巧合：同上，归还日期和项目名没有业务关系。                  |
+| Location\_of\_usage → Contact\_Person | 假候选        | 巧合：同一个会议室可以给不同项目、不同联系人用。               |
+| Location\_of\_usage → Position        | 假候选        | 巧合：地点和职位没有关系。                          |
+
+**选课表（三步都要做）（主键 = StudentID + CourseID）**
+
+| 非键列放左边                    | 数据里没有反例的候选 | 业务含义判断                                                  |
+| ------------------------- | ---------- | ------------------------------------------------------- |
+| StudentName → StudentID   | 假候选        | 名字不是标识符：样本里碰巧没重名，但现实中可能有同名的人，所以决定因素用 ID。                |
+| StudentName → AdvisorID   | 假候选        | 名字不是标识符：样本里碰巧没重名，但现实中可能有同名的人，所以决定因素用 ID。                |
+| StudentName → AdvisorName | 假候选        | 名字不是标识符：样本里碰巧没重名，但现实中可能有同名的人，所以决定因素用 ID。                |
+| AdvisorID → AdvisorName   | **真 FD**   | 写进 FD 清单，3NF 要拆                                         |
+| AdvisorName → AdvisorID   | 假候选        | 名字不是标识符：样本里碰巧没重名，但现实中可能有同名的人，所以决定因素用 ID。                |
+| CourseTitle → CourseID    | 假候选        | 课名不是标识符：两门课可以同名（比如不同学期的 Special Topics），决定因素用 CourseID。 |
+| Grade → ∅                 | —          | 数据里就有反例                                                 |
+
+**CUSTOMERORDER（课件 p.38–39）（主键 = OrderID）**
+
+| 非键列放左边                         | 数据里没有反例的候选 | 业务含义判断                                   |
+| ------------------------------ | ---------- | ---------------------------------------- |
+| OrderDate → ∅                  | —          | 数据里就有反例                                  |
+| CustomerID → CustomerName      | **真 FD**   | 写进 FD 清单，3NF 要拆                          |
+| CustomerID → CustomerAddress   | **真 FD**   | 写进 FD 清单，3NF 要拆                          |
+| CustomerName → CustomerID      | 假候选        | 名字不是标识符：样本里碰巧没重名，但现实中可能有同名的人，所以决定因素用 ID。 |
+| CustomerName → CustomerAddress | 假候选        | 名字不是标识符：样本里碰巧没重名，但现实中可能有同名的人，所以决定因素用 ID。 |
+| CustomerAddress → CustomerID   | 假候选        | 巧合：同一个地址可以有好几个客户（同一栋楼的两家公司）。             |
+| CustomerAddress → CustomerName | 假候选        | 巧合：同上。                                   |
+
+再用下面的演示一步步拆表。**黄底格子 = 只因为坏依赖才重复存储的值**，每做一步，右上角的「重复存储」格数都会变少，到 3NF 归零。可以切换到 Lab 5-02、例题二和课件的两个例子：
+
+- **PROJECT EQUIPMENT（Lab 5-02）**：原表已经是 1NF，要做 2NF 和 3NF；注意 2NF 那一步 PROJECT\_CONTACT 里还有黄底格子（James Wong 的职位重复），3NF 才归零。
 - **EMP COURSE**：要做 1NF 和 2NF，做完 2NF 就已经是 3NF（没有传递依赖）。
 - **CUSTOMERORDER**：主键是单属性，1NF 直接就是 2NF，只需要做 3NF。
 
@@ -673,6 +834,78 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 
 - CUSTOMERORDER 里 CustomerID 不是主键却决定 CustomerName、CustomerAddress → 新表 CUSTOMER；原表（改名 ORDER）保留 CustomerID 作外键。
 
+**PROJECT EQUIPMENT（Lab 5-02）**
+
+**原始表**
+
+| Project\_ID | Project\_Name                                           | Date        | Contact\_Person | Position                | Equipment\_No | Equipment\_Description | Date\_of\_Return | Location\_of\_usage            |
+| ----------- | ------------------------------------------------------- | ----------- | --------------- | ----------------------- | ------------- | ---------------------- | ---------------- | ------------------------------ |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2022 | Collin Lee      | Senior Business Analyst | C414          | Dell XEON server       | 30-NOV-2022      | 7/F, Server Room               |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2022 | Collin Lee      | Senior Business Analyst | C415          | Dell XEON server       | 30-JUN-2023      | 7/F, Server Room               |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2022 | Collin Lee      | Senior Business Analyst | E001          | Furniture Set (Blue)   | 01-MAR-2022      | 6/F, Open Office               |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2023 | James Wong      | Project Manager         | E002          | Furniture Set (Green)  | 30-JUN-2023      | 6/F, Meeting Room 6A           |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2023 | James Wong      | Project Manager         | C414          | Dell XEON server       | 31-JUL-2023      | 6/F Server Room                |
+| P2021-003   | Performing Training and Development System Audit        | 01-JUL-2021 | Chris Wong      | Senior Business Analyst | E001          | Furniture Set (Blue)   | 04-APR-2022      | 6/F, Meeting Room 6C           |
+| P2021-003   | Performing Training and Development System Audit        | 01-JUL-2021 | Chris Wong      | Senior Business Analyst | P068          | HP LaserJet 4L         | 04-APR-2022      | 6/F, Meeting Room 6C           |
+| P2021-005   | Post-implementation maintenance of the Financial System | 01-JUL-2021 | James Wong      | Project Manager         | M501          | AOC LCD Monitor 27"    | 06-OCT-2022      | 4/F, IT Department Open Office |
+| P2022-005   | Post-implementation maintenance of the Financial System | 01-JUL-2022 | James Wong      | Project Manager         | E002          | Furniture Set (Green)  | 30-JUL-2023      | 6/F, Meeting Room 6A           |
+| P2022-006   | Power Load Test                                         | 01-JUL-2022 | Samuel Lai      | Project Manager         | E002          | Furniture Set (Green)  | (null)           | TBC                            |
+
+- 每格都是单值。
+
+**1NF：去掉多值属性**（1 张表，重复存储 19 格）
+
+| Project\_ID | Project\_Name                                           | Date        | Contact\_Person | Position                | Equipment\_No | Equipment\_Description | Date\_of\_Return | Location\_of\_usage            |
+| ----------- | ------------------------------------------------------- | ----------- | --------------- | ----------------------- | ------------- | ---------------------- | ---------------- | ------------------------------ |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2022 | Collin Lee      | Senior Business Analyst | C414          | Dell XEON server       | 30-NOV-2022      | 7/F, Server Room               |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2022 | Collin Lee      | Senior Business Analyst | C415          | Dell XEON server       | 30-JUN-2023      | 7/F, Server Room               |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2022 | Collin Lee      | Senior Business Analyst | E001          | Furniture Set (Blue)   | 01-MAR-2022      | 6/F, Open Office               |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2023 | James Wong      | Project Manager         | E002          | Furniture Set (Green)  | 30-JUN-2023      | 6/F, Meeting Room 6A           |
+| P2022-001   | Implementing a ERP system (HR module)                   | 01-JAN-2023 | James Wong      | Project Manager         | C414          | Dell XEON server       | 31-JUL-2023      | 6/F Server Room                |
+| P2021-003   | Performing Training and Development System Audit        | 01-JUL-2021 | Chris Wong      | Senior Business Analyst | E001          | Furniture Set (Blue)   | 04-APR-2022      | 6/F, Meeting Room 6C           |
+| P2021-003   | Performing Training and Development System Audit        | 01-JUL-2021 | Chris Wong      | Senior Business Analyst | P068          | HP LaserJet 4L         | 04-APR-2022      | 6/F, Meeting Room 6C           |
+| P2021-005   | Post-implementation maintenance of the Financial System | 01-JUL-2021 | James Wong      | Project Manager         | M501          | AOC LCD Monitor 27"    | 06-OCT-2022      | 4/F, IT Department Open Office |
+| P2022-005   | Post-implementation maintenance of the Financial System | 01-JUL-2022 | James Wong      | Project Manager         | E002          | Furniture Set (Green)  | 30-JUL-2023      | 6/F, Meeting Room 6A           |
+| P2022-006   | Power Load Test                                         | 01-JUL-2022 | Samuel Lai      | Project Manager         | E002          | Furniture Set (Green)  | (null)           | TBC                            |
+
+- 主键 = Project\_ID + Equipment\_No + Date：P2022-001 借了两次 C414（2022 年和 2023 年），Project\_ID + Equipment\_No 还不唯一，要再加 Date。
+
+**找函数依赖并分类**（1 张表，重复存储 19 格）
+
+| Functional Dependency                                                    | 类型             |
+| ------------------------------------------------------------------------ | -------------- |
+| Project\_ID → Project\_Name                                              | **partial**    |
+| Project\_ID, Date → Contact\_Person, Position                            | **partial**    |
+| Contact\_Person → Position                                               | **transitive** |
+| Equipment\_No → Equipment\_Description                                   | **partial**    |
+| Project\_ID, Equipment\_No, Date → Date\_of\_Return, Location\_of\_usage | **full**       |
+
+**2NF：消除部分依赖**（4 张表，重复存储 2 格）
+
+| 表                  | 列（斜体 = 主键）                                                                          | 外键                                                             |
+| ------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| PROJECT2           | \_Project\_ID\_, Project\_Name                                                      | —                                                              |
+| PROJECT\_CONTACT   | \_Project\_ID\_, \_Date\_, Contact\_Person, Position                                | Project\_ID → PROJECT2                                         |
+| EQUIPMENT          | \_Equipment\_No\_, Equipment\_Description                                           | —                                                              |
+| PROJECT\_EQUIPMENT | \_Project\_ID\_, \_Date\_, \_Equipment\_No\_, Date\_of\_Return, Location\_of\_usage | Project\_ID, Date → PROJECT\_CONTACT；Equipment\_No → EQUIPMENT |
+
+- Project\_ID 是主键的一部分 → 新表 PROJECT2，搬走 Project\_Name。
+- Project\_ID, Date 是主键的一部分 → 新表 PROJECT\_CONTACT，搬走 Contact\_Person、Position。
+- Equipment\_No 是主键的一部分 → 新表 EQUIPMENT，搬走 Equipment\_Description。
+- 原表只剩主键 + 真正依赖整个主键的属性，改名 PROJECT\_EQUIPMENT；主键里的每一部分同时是指向新表的外键。
+
+**3NF：消除传递依赖**（5 张表，重复存储 0 格）
+
+| 表                  | 列（斜体 = 主键）                                                                          | 外键                                                             |
+| ------------------ | ----------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| PROJECT2           | \_Project\_ID\_, Project\_Name                                                      | —                                                              |
+| PROJECT\_CONTACT   | \_Project\_ID\_, \_Date\_, Contact\_Person                                          | Project\_ID → PROJECT2；Contact\_Person → CONTACT               |
+| CONTACT            | \_Contact\_Person\_, Position                                                       | —                                                              |
+| EQUIPMENT          | \_Equipment\_No\_, Equipment\_Description                                           | —                                                              |
+| PROJECT\_EQUIPMENT | \_Project\_ID\_, \_Date\_, \_Equipment\_No\_, Date\_of\_Return, Location\_of\_usage | Project\_ID, Date → PROJECT\_CONTACT；Equipment\_No → EQUIPMENT |
+
+- PROJECT\_CONTACT 里 Contact\_Person 不是主键却决定 Position → 新表 CONTACT；PROJECT\_CONTACT 保留 Contact\_Person 作外键。
+
 光会分类还不够熟的话，用下面这个练习专门练「这条依赖是 Full / Partial / Transitive」：
 
 *（网页版此处可交互：给每条函数依赖分类 Full / Partial / Transitive，再看分解到 3NF 的结果；下面是全部场景的答案）*
@@ -725,21 +958,25 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 | BOOK      | \_ISBN\_, Title, PublisherID                  | PublisherID → PUBLISHER |
 | PUBLISHER | \_PublisherID\_, PublisherName, PublisherCity | —                       |
 
-### 6.6 🔴 常见错误
+### 6.7 🔴 常见错误
 
-| 错误                                                 | 为什么错 / 正确做法                             |
-| -------------------------------------------------- | --------------------------------------- |
-| 1NF 摊开之后**没重新定主键**，还用 StudentID                    | 摊开后 StudentID 重复出现，已经不唯一；主键要加上被摊开那组的 ID |
-| 单属性主键的表还在找部分依赖                                     | 部分依赖要求主键是**复合**的；单属性主键 → 1NF 自动是 2NF    |
-| 把 **Full** 依赖也拆出去（给 Grade 单独建表）                    | Full 是正常的，Grade 就应该留在 ENROLLMENT        |
-| 2NF 时把 StudentID 从原表**删掉**                         | 它是原表主键的一部分，必须留下（同时成为外键）                 |
-| 3NF 时搬走 AdvisorName，却把 AdvisorID 也从 STUDENT **删了** | 原表必须**保留决定因素作外键**，否则就不知道学生的导师是谁         |
-| 只检查原表的传递依赖                                         | 2NF 拆出来的**新表**里也可能藏着传递依赖（例题的 STUDENT）   |
-| 把箭头方向写反：`CustomerName → CustomerID`                | 名字不唯一，决定不了 ID。决定因素通常是 ID 类的属性           |
-| 把 partial **identifier** 当成 partial **dependency** | 前者是弱实体映射的概念，后者是规范化的概念，完全无关              |
-| 问「第几范式」时答了不满足的那一级                                  | 答**满足的最高一级**：卡在 2NF 就是 1NF              |
+| 错误                                                                 | 为什么错 / 正确做法                             |
+| ------------------------------------------------------------------ | --------------------------------------- |
+| **找 FD 时只做了前两层**，漏了非键 → 非键（Lab 5-02 漏 `Contact_Person → Position`） | 第三层要把**每个非键列**都放到左边试一遍，全部打完勾才算找完        |
+| 以为传递依赖是「到 3NF 才去找」                                                 | 所有 FD 第一步就找齐；2NF、3NF 只是按清单拆表            |
+| 看到样本数据没冲突就写成 FD（如 `Date_of_Return → Project_ID`）                   | 数据只能推翻、不能证明，还要按业务含义判断                   |
+| 主键找得不够：只用 Project\_ID + Equipment\_No                              | 同一个项目可能在不同日期借同一件设备，要加 Date 才唯一          |
+| 1NF 摊开之后**没重新定主键**，还用 StudentID                                    | 摊开后 StudentID 重复出现，已经不唯一；主键要加上被摊开那组的 ID |
+| 单属性主键的表还在找部分依赖                                                     | 部分依赖要求主键是**复合**的；单属性主键 → 1NF 自动是 2NF    |
+| 把 **Full** 依赖也拆出去（给 Grade 单独建表）                                    | Full 是正常的，Grade 就应该留在 ENROLLMENT        |
+| 2NF 时把 StudentID 从原表**删掉**                                         | 它是原表主键的一部分，必须留下（同时成为外键）                 |
+| 3NF 时搬走 AdvisorName，却把 AdvisorID 也从 STUDENT **删了**                 | 原表必须**保留决定因素作外键**，否则就不知道学生的导师是谁         |
+| 只检查原表的传递依赖                                                         | 2NF 拆出来的**新表**里也可能藏着传递依赖（例题的 STUDENT）   |
+| 把箭头方向写反：`CustomerName → CustomerID`                                | 名字不唯一，决定不了 ID。决定因素通常是 ID 类的属性           |
+| 把 partial **identifier** 当成 partial **dependency**                 | 前者是弱实体映射的概念，后者是规范化的概念，完全无关              |
+| 问「第几范式」时答了不满足的那一级                                                  | 答**满足的最高一级**：卡在 2NF 就是 1NF              |
 
-### 6.7 🔴 老师的 Main Takeaway（p.40，原话要记）
+### 6.8 🔴 老师的 Main Takeaway（p.40，原话要记）
 
 - The main goal is to **remove data redundancy**.
 - 1NF 很直接：去掉多值属性。
@@ -749,13 +986,13 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 
 > **记忆口诀**：**「部分看主键的一部分，传递看非键」**。
 
-### 6.8 🟢 规范化全图（p.32）
+### 6.9 🟢 规范化全图（p.32）
 
 ![Steps in normalization](images/page_32.png)
 
 课件这张图一直画到 5NF（BCNF → 4NF → 5NF）。**这门课只考到 3NF**，后面几级知道存在就够了。
 
-### 6.9 🔴 小练习：第几范式？
+### 6.10 🔴 小练习：第几范式？
 
 **1. ORDERLINE(OrderID, ProductID, Quantity, ProductName)，主键 = OrderID + ProductID，已知 ProductID → ProductName。这张表最高满足第几范式？**
 
@@ -908,6 +1145,14 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 > <div><div>BOOK</div><table><tr><td><span>ISBN</span></td><td>Title</td><td><span>PublisherID</span></td></tr></table><div>↳ PublisherID → PUBLISHER</div></div>
 >
 > <div><div>PUBLISHER</div><table><tr><td><span>PublisherID</span></td><td>PublisherName</td><td>PublisherCity</td></tr></table></div>
+
+**给一张大表找 FD，什么时候可以确定已经找齐、可以停了？**
+
+> 按三层检查：① 整个主键决定什么（Full）；② 主键的每个真子集单独决定什么（Partial）；③ **每个非键列**轮流放到箭头左边，看它能不能决定另一个非键列（Transitive）。第三层把所有非键列都检查过一遍，就可以停。最容易漏的是第三层，例如 Lab 5-02 的 `Contact_Person → Position`：职位是人的属性，不是项目的属性。
+
+**Lab 5-02 里，为什么 2NF 的 PROJECT\_CONTACT 表还保留着 Position？它什么时候才被拆走？**
+
+> 2NF 只消除部分依赖。Position 通过 Contact\_Person 间接依赖 `Project_ID, Date`，和 Equipment\_No 无关，所以 2NF 时跟着 Contact\_Person 一起搬进 PROJECT\_CONTACT。但 `Contact_Person → Position` 是非键 → 非键的传递依赖，3NF 时才拆出 CONTACT(Contact\_Person, Position)，PROJECT\_CONTACT2 留下 Contact\_Person 当外键。
 
 **为什么主键只有一个属性的表，只要满足 1NF 就一定满足 2NF？**
 
