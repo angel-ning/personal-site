@@ -27,6 +27,7 @@ import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic
 import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../src/components/mdx/cardinality-logic.mjs";
 import { evaluate as evalFirewall, PRESETS as FW_PRESETS } from "../../src/components/mdx/firewall-logic.mjs";
 import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic.mjs";
+import { WALK_SCENARIOS, normalizeSteps } from "../../src/components/mdx/normalize-steps.mjs";
 import { tcpConversation, HANDSHAKE_PRESETS, simulateWindow, WINDOW_PRESETS, classifyPort, PORT_PRESETS, openConnections } from "../../src/components/mdx/tcp-logic.mjs";
 import { subnetPlan, planOptions, SUBNET_PRESETS, PLAN_PRESETS } from "../../src/components/mdx/subnet-logic.mjs";
 import { computeVendorTier, FACTORS as VENDOR_FACTORS, VENDOR_TIER_PRESETS } from "../../src/components/mdx/vendor-tier-logic.mjs";
@@ -327,6 +328,27 @@ const components = {
       ];
     });
     return [note("（网页版此处可交互：给每条函数依赖分类 Full / Partial / Transitive，再看分解到 3NF 的结果；下面是全部场景的答案）"), ...blocks];
+  },
+  NormalizeWalkthrough() {
+    const schema = (t) => t.cols.map((c) => (t.pk.includes(c) ? `_${c}_` : c)).join(", ");
+    const blocks = WALK_SCENARIOS.flatMap((s) => {
+      const steps = normalizeSteps(s);
+      const out = [para(strong(s.label))];
+      for (const st of steps) {
+        out.push(para(strong(`${st.title}`), text(st.id === "raw" ? "" : `（${st.tables.length} 张表，重复存储 ${st.redundant} 格）`)));
+        if (st.id === "raw" || st.id === "1nf") {
+          const t = st.tables[0];
+          out.push(table(t.cols, t.rows.map((r) => r.map((v) => (Array.isArray(v) ? v.join(", ") : String(v))))));
+        } else if (st.fds) {
+          out.push(table(["Functional Dependency", "类型"], st.fds.map((fd) => [fdText(fd), strong(fd.kind)])));
+        } else {
+          out.push(table(["表", "列（斜体 = 主键）", "外键"], st.tables.map((t) => [t.name, schema(t), t.fk.map((f) => `${f.col} → ${f.ref}`).join("；") || "—"])));
+        }
+        if (st.notes.length) out.push({ type: "list", ordered: false, spread: false, children: st.notes.map((n) => ({ type: "listItem", spread: false, children: [para(text(n))] })) });
+      }
+      return out;
+    });
+    return [note("（网页版此处可以一步步看原始表 → 1NF → 2NF → 3NF，并高亮每一步还在重复存储的格子；下面是三个例子每一步的结果）"), ...blocks];
   },
   ThreatActorQuiz() {
     const name = (id) => threatActorData.types.find((t) => t.id === id).en;

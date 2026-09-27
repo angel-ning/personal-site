@@ -338,123 +338,342 @@ EMPLOYEE（超类）分为 ADMINISTRATIVE（"A"）和 PROFESSIONAL（"P"），di
 
 ---
 
-## 6. 🔴 Normalization 规范化
+## 6. 🔴 Normalization 规范化（只考到 3NF）
 
-### 6.1 定义与目的（p.28）
+> **📌 这一节怎么读**
+>
+> 先用 6.1–6.2 搞懂**为什么要拆表**、**函数依赖是什么**；然后背 6.3 的**五步做题法**（这是重点）；6.4 用一道完整例题把五步走一遍；6.5 是可以点的逐步演示；6.6 是常见错误。课程只要求到 **3NF**，BCNF 以后不用管。
 
-> **Normalization**: The process of **successively decomposing** relations with anomalies to produce smaller, **well-structured relations**.
+### 6.1 🔴 为什么要规范化：一张表只讲一件事
 
-目的（四点）：
+> **Normalization**: The process of **successively decomposing** relations with anomalies to produce smaller, **well-structured relations**.（p.28）
 
-- **Minimize data redundancy**（减少冗余）← 老师 Main Takeaway 里说的**主要目标**
-- Simplify enforcement of referential integrity constraints
-- Make it easier to maintain
-- Better representation of the real world
+目的（p.28）：**Minimize data redundancy**（老师 Main Takeaway 说这是**主要目标**）；让参照完整性更容易维护；更容易维护；更贴近现实世界。
 
-### 6.2 🔴 三种 Anomalies 异常（p.29–31）
-
-**Well-structured relation**：冗余最少，增删改都不会产生不一致（anomalies）。
-
-用这张"员工+课程"混在一起的烂表举例：
+**Well-structured relation**：冗余最少，增、删、改都不会造成数据不一致（anomalies）。
 
 ![Counterexample](images/page_30.png)
 
-| 异常                            | 定义（原文）                                                                     | 例子中的表现                                 |
-| ----------------------------- | -------------------------------------------------------------------------- | -------------------------------------- |
-| **Insertion anomaly** 插入异常    | Adding new rows forces user to create duplicate data                       | 新员工**没上过课就没法录入**（Course 是主键一部分，不能空）    |
-| **Deletion anomaly** 删除异常     | Deleting rows may cause a loss of data needed for other future rows        | 删掉员工 140 → **MS Project 这门课存在过的信息也没了** |
-| **Modification anomaly** 修改异常 | Changing data in a row forces changes to other rows because of duplication | 给员工 100 加薪 → 要改**多行**                  |
+这张表的毛病在于**一行里混了两件事**：「员工是谁」（Name、Department、Salary）和「员工上过哪门课」（Course、DateCompleted）。一个员工上几门课，他的姓名、部门、工资就被**重复存几遍**。重复存储会带来三种异常：
 
-**解决**：拆成两张表（p.31）。拆完后员工 190 没上课也能录入。
+| 异常                            | 定义（p.29）                                                                   | 在这张表里（p.30）                            | 根源            |
+| ----------------------------- | -------------------------------------------------------------------------- | -------------------------------------- | ------------- |
+| **Insertion anomaly** 插入异常    | Adding new rows forces user to create duplicate data                       | 新员工**还没上过课就录不进去**（Course 是主键的一部分，不能为空） | 员工信息只能「搭着课程」存 |
+| **Deletion anomaly** 删除异常     | Deleting rows may cause a loss of data needed for other future rows        | 删掉员工 140 → **MS Project 这门课存在过的信息也没了** | 课程信息只能「搭着员工」存 |
+| **Modification anomaly** 修改异常 | Changing data in a row forces changes to other rows because of duplication | 给员工 100 加薪 → 要改**两行**，漏改一行就前后矛盾        | 同一个工资存了两遍     |
 
-<div><div>EMPLOYEE</div><table><tr><td><span>EmpID</span></td><td>Name</td><td>Department</td><td>Salary</td></tr></table></div>
+**解决办法就是拆表**：员工的事放 EMPLOYEE，上课的事放 EMPCOURSE（p.31）。拆完以后，员工 190 没上课也能录入，加薪只改一行。
 
-<div><div>EMPCOURSE</div><table><tr><td><span>EmpID</span></td><td><span>Course</span></td><td>DateCompleted</td></tr></table><div>↳ EmpID → EMPLOYEE</div></div>
+> **考点**：给一张表，让你各举一个三种异常的例子。答题格式：  
+> *Insertion: we cannot add a new \_\_\_ without also \_\_\_.* · *Deletion: deleting \_\_\_ also loses \_\_\_.* · *Modification: changing \_\_\_ requires updating multiple rows.*
 
-> **考点**：给一张表，让你**各举一个**三种异常的例子。答题格式："Insertion anomaly: we cannot add \_\_\_ without \_\_\_."
+**规范化就是用一套固定规则来找「一行里混了几件事」，再把它们拆开。** 这套规则的工具叫函数依赖。
 
-### 6.3 🔴 规范化步骤图（p.32，纯图片，文字版讲义里是空的）
+### 6.2 🔴 Functional Dependency 函数依赖：做题的唯一工具
 
-![Steps in normalization](images/page_32.png)
+> **Functional Dependency**: The value of one attribute (the **determinant**) determines the value of another attribute.（p.34）写作 `A → B`，箭头左边叫 **determinant（决定因素）**。
 
-```
-Table with multivalued attributes
-   │  Remove multivalued attributes
-   ▼
-1NF
-   │  Remove partial dependencies
-   ▼
-2NF
-   │  Remove transitive dependencies
-   ▼
-3NF
-   │  Remove remaining anomalies resulting from multiple candidate keys
-   ▼
-BCNF (Boyce-Codd)
-   │  Remove multivalued dependencies
-   ▼
-4NF
-   │  Remove remaining anomalies
-   ▼
-5NF
-```
+**「A → B」就是说：只要知道 A，B 就只有一个答案。** 比如知道学号就能确定姓名：`StudentID → StudentName`。反过来不成立：同名的学生可能有好几个，所以 `StudentName ↛ StudentID`。
 
-本课只详细讲到 **3NF**；BCNF / 4NF / 5NF 🟢 知道顺序和各自消除什么即可。
+决定因素也可以是**组合**：`EmpID, Course → DateCompleted`。单知道员工不行（他上过好几门课），单知道课程也不行（好几个人上过），要**两个一起**才能确定完成日期。
 
-### 6.4 🔴 Functional Dependency 函数依赖（p.34–35）
+**考试里怎么找 FD？**
 
-> **Functional Dependency**: The value of one attribute (the **determinant**) determines the value of another attribute. 写作 `A → B`。
+1. **题目直接给**（最常见）：像 `EmpID → Name, Department, Salary` 这样列出来，或者画成依赖图（箭头从决定因素指向被决定的属性）。
+2. **从业务含义推**：对每个属性问一句「**知道 X，能不能确定这个值只有一个？**」。每门课有一个课名 → `CourseID → CourseTitle`；每个学生有一个导师 → `StudentID → AdvisorID`。
+3. **样本数据只能用来否定**：如果同一个 X 对应了两个不同的 Y，那 `X → Y` 一定不成立；但几行数据恰好没冲突，并不能证明依赖成立。
 
-- 知道 EmpID 就能唯一确定 Name、Department、Salary：`EmpID → Name, Department, Salary`
-- 决定因素也可以是**组合**：`EmpID, Course → DateCompleted`（要同时知道谁 + 哪门课，才知道完成日期）
+**两个名词**，后面每一步都要用到：
 
-> **小白理解**："A 决定 B" = 只要 A 一样，B 一定一样。像学号决定姓名。
->
-> **注意**：`A → B` 是函数依赖的写法（考试也这样写），和表结构的 short text 不是一回事，保留。
+- **Key attribute（键属性）**：主键里的列。
+- **Non-key attribute（非键属性）**：主键以外的所有列。
 
-### 6.5 🔴 三个范式——定义 + 转换步骤
+#### 🔴 三种依赖：只看箭头左边
 
-| 范式      | 条件                                           | 要消除的问题                        | 转换方法                                                |
-| ------- | -------------------------------------------- | ----------------------------- | --------------------------------------------------- |
-| **1NF** | **No multivalued attributes**（每格单值）          | 多值属性 / repeating groups       | 把多值**摊开成多行**，公共值重复填写                                |
-| **2NF** | 1NF + **no partial functional dependencies** | **部分依赖**：非键属性只依赖于**复合主键的一部分** | 为每个部分依赖的 determinant 建新表，以它为 PK；把只依赖它的属性搬过去         |
-| **3NF** | 2NF + **no transitive dependencies**         | **传递依赖**：**两个非键属性之间**的依赖      | 为每个非键 determinant 建新表，以它为 PK；搬走依赖它的属性；**原表保留它作 FK** |
-
-**2NF 例子（p.36–37）**
+| 箭头左边（determinant）是……    | 名字                                   | 要不要处理    | 课件例子                                                   |
+| ----------------------- | ------------------------------------ | -------- | ------------------------------------------------------ |
+| **整个主键**                | **Full** functional dependency（完全依赖） | ✅ 正常，不用动 | `EmpID, Course → DateCompleted`                        |
+| **主键的一部分**（只可能出现在复合主键里） | **Partial** dependency（部分依赖）         | ❌ 违反 2NF | `EmpID → Name, Department, Salary`（主键是 EmpID + Course） |
+| **一个非键属性**              | **Transitive** dependency（传递依赖）      | ❌ 违反 3NF | `CustomerID → CustomerName`（主键是 OrderID）               |
 
 ![Partial dependency](images/page_36.png)
 
-转换前（1NF，主键 = EmpID + Course）：
-
-<div><div>EMP COURSE</div><table><tr><td><span>EmpID</span></td><td><span>Course</span></td><td>Name</td><td>Department</td><td>Salary</td><td>DateCompleted</td></tr></table></div>
-
-- `EmpID → Name, Department, Salary` ← **部分依赖**（只依赖主键的一部分 EmpID）
-- `EmpID, Course → DateCompleted` ← 完全依赖
-
-转换后（2NF）：
-
-<div><div>EMPLOYEE</div><table><tr><td><span>EmpID</span></td><td>Name</td><td>Department</td><td>Salary</td></tr></table></div>
-
-<div><div>EMPCOURSE</div><table><tr><td><span>EmpID</span></td><td><span>Course</span></td><td>DateCompleted</td></tr></table><div>↳ EmpID → EMPLOYEE</div></div>
-
-**3NF 例子（p.38–39）**
-
 ![Transitive dependency](images/page_38.png)
 
-转换前（2NF，主键 = OrderID）：
+> **💡 为什么叫「传递」**
+>
+> 在 CUSTOMERORDER 里，`OrderID → CustomerID`，`CustomerID → CustomerName`，所以 OrderID 是**经过** CustomerID 间接决定 CustomerName 的：OrderID → CustomerID → CustomerName，像接力一样传过去。课件的定义更直接：**functional dependency between two (or more) non-key attributes**，也就是两个非键属性之间的依赖（p.38）。
 
-<div><div>CUSTOMERORDER</div><table><tr><td><span>OrderID</span></td><td>OrderDate</td><td>CustomerID</td><td>CustomerName</td><td>CustomerAddress</td></tr></table></div>
+> **🧠 记忆口诀**
+>
+> 分类只问一个问题：**「箭头左边是什么？」**  
+> 整个主键 → Full（没问题）· 主键的一部分 → Partial（2NF 拆）· 非键属性 → Transitive（3NF 拆）
+>
+> 英文口诀：每个非键属性都必须依赖 **the key**（1NF）、**the whole key**（2NF）、**and nothing but the key**（3NF）。
 
-- `OrderID → OrderDate, CustomerID`
-- `CustomerID → CustomerName, CustomerAddress` ← **传递依赖**（CustomerID 不是主键），即 OrderID → CustomerID → CustomerName
+### 6.3 🔴🔴 五步做题法（从任何一张表到 3NF）
 
-转换后（3NF）：
+| 步骤             | 做什么                                                                                                | 课件规则原文                                                                                                                                                                                                                                                |
+| -------------- | -------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **① 找主键**      | 列出所有属性，确定主键。有多值属性的话，先做 ②，摊开之后**重新**找主键                                                             | —                                                                                                                                                                                                                                                     |
+| **② → 1NF**    | 检查每一格是不是**只有一个值**。有多值（一个格子里写了好几门课）就**摊开成多行**，其他列的公共值每行重复填。摊开后原来的 ID 不再唯一，主键通常变成「原 ID + 被摊开那一组的 ID」 | Spread values into their own rows, and repeat common values as needed（p.33）                                                                                                                                                                           |
+| **③ 写 FD 并分类** | 写出所有函数依赖，按 6.2 的表分成 Full / Partial / Transitive                                                    | Identify the primary key attributes（p.40）                                                                                                                                                                                                             |
+| **④ → 2NF**    | 对每个**部分依赖**的决定因素：**建一张新表，用它当主键**，把**只依赖它**的属性搬过去。原表留下完整主键和依赖整个主键的属性；主键里被拆出去的那一部分，同时成为指向新表的外键       | Create a new relation for each determinant involved in a partial dependency; use the determinant as the new relation's primary key. Move the non-key attributes that depend only on that determinant to the new relation.（p.37）                       |
+| **⑤ → 3NF**    | 在**每张表**里找传递依赖。对每个**非键决定因素**：**建一张新表，用它当主键**，把依赖它的属性搬过去，**原表留下它作外键**                               | For each non-key determinant, create a new relation and use the determinant as its primary key. Move to the new relation all attributes that depend only on that determinant. Retain the determinant in the original relation as a foreign key.（p.39） |
 
-<div><div>ORDER</div><table><tr><td><span>OrderID</span></td><td>OrderDate</td><td><span>CustomerID</span></td></tr></table><div>↳ CustomerID → CUSTOMER（原表保留 determinant 作外键）</div></div>
+**最后检查三件事：**
 
-<div><div>CUSTOMER</div><table><tr><td><span>CustomerID</span></td><td>CustomerName</td><td>CustomerAddress</td></tr></table></div>
+1. **每张表**的每个非键属性都依赖「整个主键，而且只依赖主键」。
+2. **没有丢东西**：原表的每一列都还在某张表里；靠外键可以把各表连回原来的信息。
+3. **画图**：graphical representation，主键实线下划线、外键虚线下划线，外键画**箭头指向**被引用的主键。
 
-下面这个互动组件把「判断 Full / Partial / Transitive，再分解到 3NF」变成可以自己点的练习，切换按钮可以换四个不同的场景（包括上面两个课件例子，以及本笔记自测题 Q10、Q11 的表）：
+#### 「这张表现在是第几范式？」判断流程
+
+```
+每一格都是单值吗？
+  └─ 否 → 不是 1NF（未规范化）
+  └─ 是 → 至少 1NF。主键是单个属性吗？
+            └─ 是 → 不可能有部分依赖，至少 2NF，直接看传递依赖
+            └─ 否 → 有部分依赖吗？
+                      └─ 有 → 只是 1NF
+                      └─ 没有 → 至少 2NF
+          （至少 2NF 之后）有非键 → 非键的传递依赖吗？
+                      └─ 有 → 只是 2NF
+                      └─ 没有 → 3NF ✅
+```
+
+> **⚠️ 踩坑提醒**
+>
+> 问「第几范式」时，答的是**满足的最高那一级**。一张表同时有部分依赖和传递依赖，答案是 **1NF**（先卡在 2NF），不是「2NF 和 3NF 都不满足」。
+
+### 6.4 🔴 完整例题：三步都要做
+
+**题目**：把下面这张选课登记表规范化到 3NF。业务规则：每个学生只有一个导师；每门课只有一个课名；成绩取决于「哪个学生上哪门课」。
+
+| StudentID | StudentName | AdvisorID | AdvisorName | CourseID                     | CourseTitle                    | Grade     |
+| --------- | ----------- | --------- | ----------- | ---------------------------- | ------------------------------ | --------- |
+| S1        | Amy         | A7        | Dr. Lee     | ISOM5260, ISOM5180, ISOM5070 | Database, Networks, Cyber Risk | A, B+, A- |
+| S2        | Ben         | A7        | Dr. Lee     | ISOM5260, ISOM5070           | Database, Cyber Risk           | B, A      |
+| S3        | Cara        | A9        | Dr. Wong    | ISOM5180                     | Networks                       | A         |
+
+**① + ② → 1NF。** CourseID、CourseTitle、Grade 一格里有多个值，不是 1NF。把它们摊开，每门课一行，学生和导师信息重复填：
+
+| StudentID | StudentName | AdvisorID | AdvisorName | CourseID | CourseTitle | Grade |
+| --------- | ----------- | --------- | ----------- | -------- | ----------- | ----- |
+| S1        | Amy         | A7        | Dr. Lee     | ISOM5260 | Database    | A     |
+| S1        | Amy         | A7        | Dr. Lee     | ISOM5180 | Networks    | B+    |
+| S1        | Amy         | A7        | Dr. Lee     | ISOM5070 | Cyber Risk  | A-    |
+| S2        | Ben         | A7        | Dr. Lee     | ISOM5260 | Database    | B     |
+| S2        | Ben         | A7        | Dr. Lee     | ISOM5070 | Cyber Risk  | A     |
+| S3        | Cara        | A9        | Dr. Wong    | ISOM5180 | Networks    | A     |
+
+摊开后 S1 出现了三行，StudentID 不再唯一。**新主键 = StudentID + CourseID**。
+
+<div><div>STUDENT ENROLLMENT (1NF)</div><table><tr><td><span>StudentID</span></td><td><span>CourseID</span></td><td>StudentName</td><td>AdvisorID</td><td>AdvisorName</td><td>CourseTitle</td><td>Grade</td></tr></table></div>
+
+**③ 写 FD 并分类**（主键 = StudentID + CourseID）：
+
+| FD                                   | 箭头左边是……    | 类型                   |
+| ------------------------------------ | ---------- | -------------------- |
+| `StudentID → StudentName, AdvisorID` | 主键的**一部分** | **Partial** ❌ 2NF    |
+| `CourseID → CourseTitle`             | 主键的**一部分** | **Partial** ❌ 2NF    |
+| `StudentID, CourseID → Grade`        | **整个**主键   | **Full** ✅           |
+| `AdvisorID → AdvisorName`            | **非键**属性   | **Transitive** ❌ 3NF |
+
+**④ → 2NF。** 两个部分依赖的决定因素 StudentID、CourseID，各建一张表：
+
+- **STUDENT**（主键 StudentID）：搬走 StudentName、AdvisorID，**还有 AdvisorName**。AdvisorName 通过 AdvisorID 间接依赖 StudentID，和 CourseID 没有关系，也属于「只依赖 StudentID」的属性，一起搬。
+- **COURSE**（主键 CourseID）：搬走 CourseTitle。
+- 原表只剩 StudentID + CourseID + Grade，改名 **ENROLLMENT**。StudentID、CourseID 既是主键的一部分，又分别是指向 STUDENT、COURSE 的外键。
+
+<div><div>STUDENT</div><table><tr><td><span>StudentID</span></td><td>StudentName</td><td>AdvisorID</td><td>AdvisorName</td></tr></table></div>
+
+<div><div>COURSE</div><table><tr><td><span>CourseID</span></td><td>CourseTitle</td></tr></table></div>
+
+<div><div>ENROLLMENT</div><table><tr><td><span>StudentID</span></td><td><span>CourseID</span></td><td>Grade</td></tr></table><div>↳ StudentID → STUDENT；CourseID → COURSE</div></div>
+
+**⑤ → 3NF。** 逐张表查传递依赖：COURSE、ENROLLMENT 都没有；**STUDENT 里还有 `AdvisorID → AdvisorName`**，AdvisorID 不是 STUDENT 的主键。于是新建 **ADVISOR** 表，STUDENT 留下 AdvisorID 当外键：
+
+<div><div>STUDENT</div><table><tr><td><span>StudentID</span></td><td>StudentName</td><td><span>AdvisorID</span></td></tr></table><div>↳ AdvisorID → ADVISOR</div></div>
+
+<div><div>ADVISOR</div><table><tr><td><span>AdvisorID</span></td><td>AdvisorName</td></tr></table></div>
+
+<div><div>COURSE</div><table><tr><td><span>CourseID</span></td><td>CourseTitle</td></tr></table></div>
+
+<div><div>ENROLLMENT</div><table><tr><td><span>StudentID</span></td><td><span>CourseID</span></td><td>Grade</td></tr></table><div>↳ StudentID → STUDENT；CourseID → COURSE</div></div>
+
+**检查**：7 个属性一个不少；每张表的非键属性都只依赖本表的整个主键；ENROLLMENT → STUDENT → ADVISOR 和 ENROLLMENT → COURSE 靠外键连得回去。「Dr. Lee」原来存了 5 次，现在只存 1 次。
+
+> **🎯 英文答题模板**
+>
+> *"The relation is in 1NF but not 2NF because StudentName and AdvisorID depend only on StudentID, and CourseTitle depends only on CourseID — both are parts of the composite primary key (partial dependencies). To reach 2NF, we create STUDENT with StudentID as its primary key and COURSE with CourseID as its primary key, leaving Grade in ENROLLMENT. STUDENT is not yet in 3NF because AdvisorName depends on AdvisorID, a non-key attribute (transitive dependency). To reach 3NF, we move AdvisorID and AdvisorName into a new ADVISOR relation and keep AdvisorID in STUDENT as a foreign key."*
+
+### 6.5 🔴 自己点一遍：原始表 → 1NF → 2NF → 3NF
+
+下面的演示用样本数据一步步做规范化。**黄底格子 = 只因为坏依赖才重复存储的值**，每做一步，右上角的「重复存储」格数都会变少，到 3NF 归零。除了上面的例题，还可以切换到课件的两个例子：
+
+- **EMP COURSE**：要做 1NF 和 2NF，做完 2NF 就已经是 3NF（没有传递依赖）。
+- **CUSTOMERORDER**：主键是单属性，1NF 直接就是 2NF，只需要做 3NF。
+
+*（网页版此处可以一步步看原始表 → 1NF → 2NF → 3NF，并高亮每一步还在重复存储的格子；下面是三个例子每一步的结果）*
+
+**选课表（三步都要做）**
+
+**原始表**
+
+| StudentID | StudentName | AdvisorID | AdvisorName | CourseID                     | CourseTitle                    | Grade     |
+| --------- | ----------- | --------- | ----------- | ---------------------------- | ------------------------------ | --------- |
+| S1        | Amy         | A7        | Dr. Lee     | ISOM5260, ISOM5180, ISOM5070 | Database, Networks, Cyber Risk | A, B+, A- |
+| S2        | Ben         | A7        | Dr. Lee     | ISOM5260, ISOM5070           | Database, Cyber Risk           | B, A      |
+| S3        | Cara        | A9        | Dr. Wong    | ISOM5180                     | Networks                       | A         |
+
+- CourseID、CourseTitle、Grade 一格里有多个值 → 不是 relation，连 1NF 都不是。
+
+**1NF：去掉多值属性**（1 张表，重复存储 13 格）
+
+| StudentID | StudentName | AdvisorID | AdvisorName | CourseID | CourseTitle | Grade |
+| --------- | ----------- | --------- | ----------- | -------- | ----------- | ----- |
+| S1        | Amy         | A7        | Dr. Lee     | ISOM5260 | Database    | A     |
+| S1        | Amy         | A7        | Dr. Lee     | ISOM5180 | Networks    | B+    |
+| S1        | Amy         | A7        | Dr. Lee     | ISOM5070 | Cyber Risk  | A-    |
+| S2        | Ben         | A7        | Dr. Lee     | ISOM5260 | Database    | B     |
+| S2        | Ben         | A7        | Dr. Lee     | ISOM5070 | Cyber Risk  | A     |
+| S3        | Cara        | A9        | Dr. Wong    | ISOM5180 | Networks    | A     |
+
+- 主键 = StudentID + CourseID：摊开以后同一个 StudentID 出现好几行，单靠 StudentID 已经不唯一；要 StudentID + CourseID 才能锁定一行。
+
+**找函数依赖并分类**（1 张表，重复存储 13 格）
+
+| Functional Dependency              | 类型             |
+| ---------------------------------- | -------------- |
+| StudentID → StudentName, AdvisorID | **partial**    |
+| CourseID → CourseTitle             | **partial**    |
+| StudentID, CourseID → Grade        | **full**       |
+| AdvisorID → AdvisorName            | **transitive** |
+
+**2NF：消除部分依赖**（3 张表，重复存储 1 格）
+
+| 表          | 列（斜体 = 主键）                                         | 外键                                    |
+| ---------- | -------------------------------------------------- | ------------------------------------- |
+| STUDENT    | \_StudentID\_, StudentName, AdvisorID, AdvisorName | —                                     |
+| COURSE     | \_CourseID\_, CourseTitle                          | —                                     |
+| ENROLLMENT | \_StudentID\_, \_CourseID\_, Grade                 | StudentID → STUDENT；CourseID → COURSE |
+
+- StudentID 是主键的一部分 → 新表 STUDENT，搬走 StudentName、AdvisorID、AdvisorName（AdvisorName 通过 AdvisorID 间接依赖 StudentID，也只跟它有关，一起搬）。
+- CourseID 是主键的一部分 → 新表 COURSE，搬走 CourseTitle。
+- 原表只剩主键 + 真正依赖整个主键的属性，改名 ENROLLMENT；主键里的每一部分同时是指向新表的外键。
+
+**3NF：消除传递依赖**（4 张表，重复存储 0 格）
+
+| 表          | 列（斜体 = 主键）                            | 外键                                    |
+| ---------- | ------------------------------------- | ------------------------------------- |
+| STUDENT    | \_StudentID\_, StudentName, AdvisorID | AdvisorID → ADVISOR                   |
+| ADVISOR    | \_AdvisorID\_, AdvisorName            | —                                     |
+| COURSE     | \_CourseID\_, CourseTitle             | —                                     |
+| ENROLLMENT | \_StudentID\_, \_CourseID\_, Grade    | StudentID → STUDENT；CourseID → COURSE |
+
+- STUDENT 里 AdvisorID 不是主键却决定 AdvisorName → 新表 ADVISOR；STUDENT 保留 AdvisorID 作外键。
+
+**EMP COURSE（课件 p.30–37）**
+
+**原始表**
+
+| EmpID | Name        | Department | Salary | Course            | DateCompleted            |
+| ----- | ----------- | ---------- | ------ | ----------------- | ------------------------ |
+| 100   | Peter Lau   | IT         | 35000  | C++, Java         | 21-JAN-2024, 26-MAR-2024 |
+| 110   | John Chan   | MARK       | 33000  | CSR, CRM-1        | 23-DEC-2024, 4-MAY-2024  |
+| 150   | Queenie Lee | ACCT       | 20000  | Tax Acct, Costing | 20-MAY-2024, 20-AUG-2024 |
+
+- Course、DateCompleted 一格里有多个值 → 不是 relation，连 1NF 都不是。
+
+**1NF：去掉多值属性**（1 张表，重复存储 9 格）
+
+| EmpID | Name        | Department | Salary | Course   | DateCompleted |
+| ----- | ----------- | ---------- | ------ | -------- | ------------- |
+| 100   | Peter Lau   | IT         | 35000  | C++      | 21-JAN-2024   |
+| 100   | Peter Lau   | IT         | 35000  | Java     | 26-MAR-2024   |
+| 110   | John Chan   | MARK       | 33000  | CSR      | 23-DEC-2024   |
+| 110   | John Chan   | MARK       | 33000  | CRM-1    | 4-MAY-2024    |
+| 150   | Queenie Lee | ACCT       | 20000  | Tax Acct | 20-MAY-2024   |
+| 150   | Queenie Lee | ACCT       | 20000  | Costing  | 20-AUG-2024   |
+
+- 主键 = EmpID + Course：摊开后 EmpID 重复出现，要 EmpID + Course 才能唯一确定一行（p.35）。
+
+**找函数依赖并分类**（1 张表，重复存储 9 格）
+
+| Functional Dependency            | 类型          |
+| -------------------------------- | ----------- |
+| EmpID → Name, Department, Salary | **partial** |
+| EmpID, Course → DateCompleted    | **full**    |
+
+**2NF：消除部分依赖**（2 张表，重复存储 0 格）
+
+| 表         | 列（斜体 = 主键）                           | 外键               |
+| --------- | ------------------------------------ | ---------------- |
+| EMPLOYEE  | \_EmpID\_, Name, Department, Salary  | —                |
+| EMPCOURSE | \_EmpID\_, \_Course\_, DateCompleted | EmpID → EMPLOYEE |
+
+- EmpID 是主键的一部分 → 新表 EMPLOYEE，搬走 Name、Department、Salary。
+- 原表只剩主键 + 真正依赖整个主键的属性，改名 EMPCOURSE；主键里的每一部分同时是指向新表的外键。
+
+**3NF：消除传递依赖**（2 张表，重复存储 0 格）
+
+| 表         | 列（斜体 = 主键）                           | 外键               |
+| --------- | ------------------------------------ | ---------------- |
+| EMPLOYEE  | \_EmpID\_, Name, Department, Salary  | —                |
+| EMPCOURSE | \_EmpID\_, \_Course\_, DateCompleted | EmpID → EMPLOYEE |
+
+- 每张表里都没有「非键 → 非键」的依赖，2NF 就已经是 3NF。
+
+**CUSTOMERORDER（课件 p.38–39）**
+
+**原始表**
+
+| OrderID | OrderDate   | CustomerID | CustomerName         | CustomerAddress |
+| ------- | ----------- | ---------- | -------------------- | --------------- |
+| 1001    | 21-OCT-2024 | C1         | Contemporary Casuals | Gainesville     |
+| 1002    | 21-OCT-2024 | C8         | California Classics  | Santa Clara     |
+| 1003    | 22-OCT-2024 | C1         | Contemporary Casuals | Gainesville     |
+| 1004    | 22-OCT-2024 | C1         | Contemporary Casuals | Gainesville     |
+
+- 每格都是单值。
+
+**1NF：去掉多值属性**（1 张表，重复存储 4 格）
+
+| OrderID | OrderDate   | CustomerID | CustomerName         | CustomerAddress |
+| ------- | ----------- | ---------- | -------------------- | --------------- |
+| 1001    | 21-OCT-2024 | C1         | Contemporary Casuals | Gainesville     |
+| 1002    | 21-OCT-2024 | C8         | California Classics  | Santa Clara     |
+| 1003    | 22-OCT-2024 | C1         | Contemporary Casuals | Gainesville     |
+| 1004    | 22-OCT-2024 | C1         | Contemporary Casuals | Gainesville     |
+
+- 主键 = OrderID：没有多值属性，原表已经是 1NF；OrderID 本身唯一。
+
+**找函数依赖并分类**（1 张表，重复存储 4 格）
+
+| Functional Dependency                      | 类型             |
+| ------------------------------------------ | -------------- |
+| OrderID → OrderDate, CustomerID            | **full**       |
+| CustomerID → CustomerName, CustomerAddress | **transitive** |
+
+**2NF：消除部分依赖**（1 张表，重复存储 4 格）
+
+| 表             | 列（斜体 = 主键）                                                        | 外键 |
+| ------------- | ----------------------------------------------------------------- | -- |
+| CUSTOMERORDER | \_OrderID\_, OrderDate, CustomerID, CustomerName, CustomerAddress | —  |
+
+- 主键只有一个属性 → 不可能有部分依赖 → 1NF 自动就是 2NF。
+
+**3NF：消除传递依赖**（2 张表，重复存储 0 格）
+
+| 表        | 列（斜体 = 主键）                                    | 外键                    |
+| -------- | --------------------------------------------- | --------------------- |
+| ORDER    | \_OrderID\_, OrderDate, CustomerID            | CustomerID → CUSTOMER |
+| CUSTOMER | \_CustomerID\_, CustomerName, CustomerAddress | —                     |
+
+- CUSTOMERORDER 里 CustomerID 不是主键却决定 CustomerName、CustomerAddress → 新表 CUSTOMER；原表（改名 ORDER）保留 CustomerID 作外键。
+
+光会分类还不够熟的话，用下面这个练习专门练「这条依赖是 Full / Partial / Transitive」：
 
 *（网页版此处可交互：给每条函数依赖分类 Full / Partial / Transitive，再看分解到 3NF 的结果；下面是全部场景的答案）*
 
@@ -506,25 +725,92 @@ BCNF (Boyce-Codd)
 | BOOK      | \_ISBN\_, Title, PublisherID                  | PublisherID → PUBLISHER |
 | PUBLISHER | \_PublisherID\_, PublisherName, PublisherCity | —                       |
 
-### 6.6 🔴 老师的 Main Takeaway（p.40，原话要记）
+### 6.6 🔴 常见错误
+
+| 错误                                                 | 为什么错 / 正确做法                             |
+| -------------------------------------------------- | --------------------------------------- |
+| 1NF 摊开之后**没重新定主键**，还用 StudentID                    | 摊开后 StudentID 重复出现，已经不唯一；主键要加上被摊开那组的 ID |
+| 单属性主键的表还在找部分依赖                                     | 部分依赖要求主键是**复合**的；单属性主键 → 1NF 自动是 2NF    |
+| 把 **Full** 依赖也拆出去（给 Grade 单独建表）                    | Full 是正常的，Grade 就应该留在 ENROLLMENT        |
+| 2NF 时把 StudentID 从原表**删掉**                         | 它是原表主键的一部分，必须留下（同时成为外键）                 |
+| 3NF 时搬走 AdvisorName，却把 AdvisorID 也从 STUDENT **删了** | 原表必须**保留决定因素作外键**，否则就不知道学生的导师是谁         |
+| 只检查原表的传递依赖                                         | 2NF 拆出来的**新表**里也可能藏着传递依赖（例题的 STUDENT）   |
+| 把箭头方向写反：`CustomerName → CustomerID`                | 名字不唯一，决定不了 ID。决定因素通常是 ID 类的属性           |
+| 把 partial **identifier** 当成 partial **dependency** | 前者是弱实体映射的概念，后者是规范化的概念，完全无关              |
+| 问「第几范式」时答了不满足的那一级                                  | 答**满足的最高一级**：卡在 2NF 就是 1NF              |
+
+### 6.7 🔴 老师的 Main Takeaway（p.40，原话要记）
 
 - The main goal is to **remove data redundancy**.
 - 1NF 很直接：去掉多值属性。
-- **区分部分依赖和传递依赖的关键是：先认清主键是哪些属性。**
+- **区分部分依赖和传递依赖的关键：先认清主键是哪些属性。**
   - Determinant 是**主键的一部分** → **partial**（违反 2NF）
-  - Determinant **不是主键**（是非键属性） → **transitive**（违反 3NF）
+  - Determinant **不是主键** → **transitive**（违反 3NF）
 
-> **记忆口诀**：**"部分看主键的一部分，传递看非键"**  
-> 2NF 问："**整个**主键吗？"（the whole key）；3NF 问："**只有**主键吗？"（nothing but the key）
->
-> 英文经典口诀：*Every non-key attribute must depend on **the key** (1NF), **the whole key** (2NF), and **nothing but the key** (3NF).*
->
-> **踩坑提醒**：如果主键是**单个属性**，就**不可能**有部分依赖 → 满足 1NF 就自动满足 2NF。部分依赖只在**复合主键**时才会出现。
->
-> **踩坑提醒 2**：Partial **identifier**（弱实体的部分标识符，mapping 概念）≠ Partial **dependency**（部分依赖，normalization 概念）。
+> **记忆口诀**：**「部分看主键的一部分，传递看非键」**。
 
-> **英文模范答句**：  
-> *"The relation is in 2NF but not 3NF because CustomerName and CustomerAddress are transitively dependent on OrderID through CustomerID, a non-key attribute. To reach 3NF, we move CustomerID, CustomerName and CustomerAddress into a new CUSTOMER relation with CustomerID as its primary key, and retain CustomerID in ORDER as a foreign key."*
+### 6.8 🟢 规范化全图（p.32）
+
+![Steps in normalization](images/page_32.png)
+
+课件这张图一直画到 5NF（BCNF → 4NF → 5NF）。**这门课只考到 3NF**，后面几级知道存在就够了。
+
+### 6.9 🔴 小练习：第几范式？
+
+**1. ORDERLINE(OrderID, ProductID, Quantity, ProductName)，主键 = OrderID + ProductID，已知 ProductID → ProductName。这张表最高满足第几范式？**
+
+- A. 不是 1NF
+- B. 1NF
+- C. 2NF
+- D. 3NF
+
+> **答案：B**
+>
+> ProductID 是复合主键的一部分，它决定 ProductName → 部分依赖 → 不满足 2NF。每格都是单值，所以满足 1NF。
+
+**2. EMPLOYEE(EmpID, Name, DeptID, DeptName)，主键 = EmpID，已知 DeptID → DeptName。这张表最高满足第几范式？**
+
+- A. 1NF
+- B. 2NF
+- C. 3NF
+- D. 不是 1NF
+
+> **答案：B**
+>
+> 主键是单属性 → 不可能有部分依赖 → 至少 2NF。DeptID 是非键属性却决定 DeptName → 传递依赖 → 不满足 3NF。
+
+**3. 把 EMPLOYEE(EmpID, Name, DeptID, DeptName) 转成 3NF，正确的结果是：**
+
+- A. EMPLOYEE(EmpID, Name) 和 DEPT(DeptID, DeptName)
+- B. EMPLOYEE(EmpID, Name, DeptID) 和 DEPT(DeptID, DeptName)，DeptID 是指向 DEPT 的外键
+- C. EMPLOYEE(EmpID, Name, DeptName) 和 DEPT(DeptID)
+- D. EMPLOYEE(EmpID, DeptID, DeptName) 和 NAME(EmpID, Name)
+
+> **答案：B**
+>
+> 3NF 的规则：非键决定因素 DeptID 建新表并当主键，搬走 DeptName；**原表保留 DeptID 作外键**。A 把 DeptID 删了，员工和部门就断了联系。
+
+**4. 表 R(A, B, C, D)，主键 = A + B，FD：A, B → C；B → D。哪一条违反了哪个范式？**
+
+- A. A, B → C 违反 2NF
+- B. B → D 是部分依赖，违反 2NF
+- C. B → D 是传递依赖，违反 3NF
+- D. 没有违反，已经是 3NF
+
+> **答案：B**
+>
+> B 是复合主键 A + B 的一部分 → 部分依赖 → 违反 2NF。A, B → C 依赖整个主键，是完全依赖。
+
+**5. 表 R(A, B, C, D)，主键 = A，FD：A → B, C；C → D。规范化到 3NF 后应该是：**
+
+- A. R1(A, B, C) 和 R2(C, D)，R1 的 C 是指向 R2 的外键
+- B. R1(A, B) 和 R2(C, D)
+- C. R1(A, B, C, D) 已经是 3NF
+- D. R1(A, B, D) 和 R2(A, C)
+
+> **答案：A**
+>
+> C 是非键属性且决定 D → 传递依赖。以 C 为主键建 R2(C, D)，原表保留 C 当外键。
 
 ---
 
@@ -550,7 +836,7 @@ BCNF (Boyce-Codd)
 | Determinant              | 决定因素                           | 箭头左边的属性                             |
 | Partial dependency       | 部分依赖                           | 非键属性依赖于复合主键的一部分 → 违反 2NF            |
 | Transitive dependency    | 传递依赖                           | 非键属性之间的依赖 → 违反 3NF                  |
-| 1NF / 2NF / 3NF / BCNF   | 第一/二/三范式 / BC 范式               | 见 6.3–6.5                           |
+| 1NF / 2NF / 3NF          | 第一 / 二 / 三范式                   | 无多值 / 无部分依赖 / 无传递依赖，做法见 6.3         |
 | SDLC                     | Systems Development Life Cycle | 系统开发生命周期                            |
 
 ---
@@ -625,4 +911,4 @@ BCNF (Boyce-Codd)
 
 **为什么主键只有一个属性的表，只要满足 1NF 就一定满足 2NF？**
 
-> 因为 **partial dependency 的定义是"非键属性依赖于复合主键的一部分"**——它要求主键本身是复合的（至少两个属性），才谈得上"主键的一部分"。如果主键只有一个属性，就不存在比它更小的、有意义的真子集可以充当 determinant，也就**不可能出现部分依赖**。所以单属性主键的表，只要满足 1NF（无多值属性），就自动满足 2NF——这也是为什么 6.6 节口诀强调"部分依赖只在复合主键时才会出现"。
+> 因为 **partial dependency 的定义是"非键属性依赖于复合主键的一部分"**——它要求主键本身是复合的（至少两个属性），才谈得上"主键的一部分"。如果主键只有一个属性，就不存在比它更小的、有意义的真子集可以充当 determinant，也就**不可能出现部分依赖**。所以单属性主键的表，只要满足 1NF（无多值属性），就自动满足 2NF——这也是 6.3 判断流程里「主键是单个属性 → 至少 2NF」这一步的依据。

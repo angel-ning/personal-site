@@ -347,6 +347,25 @@ body {
 .ra-table .ra-out { opacity: .3; }
 .ra-keep td.ra-out { background: transparent; }
 
+/* NormalizeWalkthrough (ISOM 5260 week 4) */
+.nw-tables { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: .4em 1em; margin-top: .4em; }
+.nw-table { min-width: 0; }
+.nw-name { margin-top: .6em; font-size: 12.5px; font-weight: 600; font-family: var(--font-mono); }
+.nw-table .ra-table { margin-top: .2em; }
+.nw-pk { text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+.nw-fk { text-decoration: underline dashed; text-decoration-thickness: 1.5px; text-underline-offset: 3px; }
+.nw-dup { background: var(--mark); }
+.nw-legend { padding: 0 .3em; border-radius: 3px; }
+.nw-multi { background: color-mix(in oklab, var(--c-exam) 12%, transparent); }
+.nw-fkline { font-size: 12px; color: var(--fg-3); margin-top: .2em; }
+.nw-fds { display: grid; gap: .3em; margin-top: .6em; }
+.nw-fd { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3em .7em; border-left: 3px solid var(--line); padding: .15em .6em; font-size: 13px; }
+.nw-fd code { font-family: var(--font-mono); }
+.nw-fd span { color: var(--fg-3); font-size: 12px; }
+.nw-full { border-color: var(--c-tip); } .nw-full b { color: var(--c-tip); }
+.nw-partial { border-color: var(--c-warn); } .nw-partial b { color: var(--c-warn); }
+.nw-trans { border-color: var(--c-exam); } .nw-trans b { color: var(--c-exam); }
+.nw-notes { margin-top: .6em; padding-left: 1.2em; list-style: disc; font-size: 13px; color: var(--fg-2); display: grid; gap: .2em; }
 /* SqlPipelineLab / JoinLab / GrantLab (ISOM 5260 week 5) */
 .sp-wide { max-width: 100%; }
 .lab-controls .lab-select { max-width: 100%; }

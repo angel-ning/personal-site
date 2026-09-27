@@ -89,6 +89,7 @@ tags: [IPv4, NAT, DHCP]
 | `<SqlPipelineLab />` | SELECT 逻辑执行顺序：FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY 逐步看中间表（含报错示例） |
 | `<JoinLab />` | INNER / LEFT / RIGHT / FULL join 与 self-join，补 NULL 的行高亮 |
 | `<GrantLab />` | GRANT / REVOKE 权限矩阵：角色、WITH GRANT OPTION、连锁撤销 |
+| `<NormalizeWalkthrough />` | 规范化逐步演示：原始表 → 1NF → 2NF → 3NF，样本数据 + 高亮重复存储的格子 |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 
