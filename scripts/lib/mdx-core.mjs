@@ -24,6 +24,7 @@ import { computeInsurance, INSURANCE_PRESETS, fmtM as fmtInsM } from "../../src/
 import { CAPACITY, HALFOPEN_TIMEOUT, runScript } from "../../src/components/mdx/syn-flood-logic.mjs";
 import { MODES, scenarioLabel, verifyPki } from "../../src/components/mdx/pki-logic.mjs";
 import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic.mjs";
+import { computeTimeline, TIMELINE_PRESETS, fmtH, computeAle, ALE_PRESETS, fmtUsd } from "../../src/components/mdx/bia-logic.mjs";
 import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../src/components/mdx/cardinality-logic.mjs";
 import { evaluate as evalFirewall, PRESETS as FW_PRESETS } from "../../src/components/mdx/firewall-logic.mjs";
 import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic.mjs";
@@ -44,6 +45,7 @@ const cardinalityItems = readJson("src/components/mdx/data/cardinality-items.jso
 const normalizationScenarios = readJson("src/components/mdx/data/normalization-scenarios.json");
 const threatActorData = readJson("src/components/mdx/data/threat-actor-items.json");
 const firewallRules = readJson("src/components/mdx/data/firewall-rules.json");
+const irPhaseData = readJson("src/components/mdx/data/ir-phase-items.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -293,6 +295,46 @@ const components = {
     return [
       note("（网页版此处可交互：自己调 Asset Value / Likelihood / Probable Loss 等参数，实时看 Heat Map 落点；下表是几个例子的结果）"),
       table(["场景", "Loss Frequency", "Loss Magnitude", "Calculated Risk", "Heat Map", "决定"], rows),
+    ];
+  },
+  BiaTimeLab() {
+    const rows = TIMELINE_PRESETS.filter((p) => p.id !== "custom").map((p) => {
+      const r = computeTimeline(p);
+      return [
+        p.label,
+        `${fmtH(p.rto)} + ${fmtH(p.wrt)} = ${fmtH(r.downtime)} vs MTD ${fmtH(p.mtd)}`,
+        r.mtdOk ? "达标" : strong(`超出 ${fmtH(-r.slack)}`),
+        `备份间隔 ${fmtH(p.backupInterval)} vs RPO ${fmtH(p.rpoTarget)}`,
+        r.rpoOk ? "达标" : strong("不达标"),
+      ];
+    });
+    return [
+      note("（网页版此处可交互：自己调备份间隔、RPO、RTO、WRT、MTD，时间轴实时变化；下表是几个预设场景的结果）"),
+      table(["场景", "停机 = RTO + WRT", "MTD", "数据丢失", "RPO"], rows),
+    ];
+  },
+  AleCalculator() {
+    const rows = ALE_PRESETS.map((p) => {
+      const r = computeAle(p);
+      return [
+        p.label,
+        `${fmtUsd(p.av)} × ${p.efPct}% = ${fmtUsd(r.sle)}`,
+        `${fmtUsd(r.sle)} × ${p.aro} = ${fmtUsd(r.ale)}`,
+        fmtUsd(r.aleAfter),
+        fmtUsd(p.acs),
+        r.worth ? `${fmtUsd(r.cba)}（划算）` : strong(`${fmtUsd(r.cba)}（不划算）`),
+      ];
+    });
+    return [
+      note("（网页版此处可交互：自己填 AV / EF / ARO 和控制后的数值；下表是预设场景的结果）"),
+      table(["场景", "SLE = AV × EF", "ALE = SLE × ARO", "控制后 ALE", "ACS", "CBA"], rows),
+    ];
+  },
+  IrPhaseQuiz() {
+    const name = (id) => irPhaseData.phases.find((p) => p.id === id).en;
+    return [
+      note("（网页版此处是「这一步属于 IR 哪个阶段」的点选练习；下表是全部题目和答案）"),
+      table(["动作", "阶段", "理由"], irPhaseData.items.map((it) => [it.text, strong(name(it.phase)), it.why])),
     ];
   },
   PmrQuiz() {

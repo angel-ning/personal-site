@@ -31,6 +31,9 @@ import { JoinLab } from "./join-lab";
 import { GrantLab } from "./grant-lab";
 import { NormalizeWalkthrough } from "./normalize-walkthrough";
 import { FdFinderLab } from "./fd-finder-lab";
+import { BiaTimeLab } from "./bia-time-lab";
+import { AleCalculator } from "./ale-calculator";
+import { IrPhaseQuiz } from "./ir-phase-quiz";
 import { collisionRows, collisionSvg } from "./collision-map.mjs";
 
 // Components available inside .mdx notes. scripts/mdx-to-md.mjs knows how to turn
@@ -179,5 +182,5 @@ export function Mk({ t, children }: { t: "e" | "a" | "v" | "c"; children: ReactN
 }
 
 export function noteComponents(assetBase: string) {
-  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab, PmrQuiz, CardinalityLab, NormalizationLab, ThreatActorQuiz, FirewallRuleLab, VendorTierCalculator, TcpHandshakeLab, WindowLab, PortLab, SubnetLab, SubnetPlanner, SqlPipelineLab, JoinLab, GrantLab, NormalizeWalkthrough, FdFinderLab };
+  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab, PmrQuiz, CardinalityLab, NormalizationLab, ThreatActorQuiz, FirewallRuleLab, VendorTierCalculator, TcpHandshakeLab, WindowLab, PortLab, SubnetLab, SubnetPlanner, SqlPipelineLab, JoinLab, GrantLab, NormalizeWalkthrough, FdFinderLab, BiaTimeLab, AleCalculator, IrPhaseQuiz };
 }

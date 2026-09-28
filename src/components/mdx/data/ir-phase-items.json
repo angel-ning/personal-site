@@ -1,0 +1,75 @@
+{
+  "phases": [
+    { "id": "prep", "en": "Preparation", "zh": "准备" },
+    { "id": "detect", "en": "Detection & Analysis", "zh": "检测与分析" },
+    { "id": "contain", "en": "Containment, Eradication & Recovery", "zh": "遏制、根除与恢复" },
+    { "id": "post", "en": "Post-Incident Activity", "zh": "事后活动" }
+  ],
+  "items": [
+    {
+      "text": "事发前：Colonial 给全体员工定期做模拟钓鱼演练，并规定从 CEO 到现场操作员每个人都有 stop-work authority（发现系统安全有风险就可以叫停作业）。",
+      "phase": "prep",
+      "why": "事故还没发生时做的培训、授权、演练，都是在为事故「备好工具和规矩」——属于 Preparation。正因为提前授权，5 月 7 日早上控制室员工才敢直接关停管道。"
+    },
+    {
+      "text": "5 月 7 日凌晨约 5 点，控制室员工在计费和会计系统里发现被锁的数据和勒索信，立即上报主管。",
+      "phase": "detect",
+      "why": "发现征兆（indicator）、确认事故确实发生，是 NIST 清单第 1 步 Determine whether an incident has occurred。"
+    },
+    {
+      "text": "和公司 IT 商量后下达 stop-work order，15 分钟内关停全部 5,500 英里管道，目的是防止恶意软件蔓延到管道的 OT 控制系统。",
+      "phase": "contain",
+      "why": "目标是「不让它扩散」，这就是 Contain the incident（清单第 5 步）。它也是课件 Reaction 一栏的 containment strategy：把可能被波及的系统先断开。"
+    },
+    {
+      "text": "关停管道的同时，指示员工不要登录公司网络。",
+      "phase": "contain",
+      "why": "限制攻击者和恶意软件继续利用被感染的网络，属于遏制措施（类似 Disable compromised accounts / services）。"
+    },
+    {
+      "text": "当天高管给 FBI、CISA、能源部等十来个联邦机构打电话通报事件。",
+      "phase": "detect",
+      "why": "容易选错。NIST 清单把 Report the incident to the appropriate internal personnel and external organizations（第 3 步）放在 Detection & Analysis 阶段：确认事故、定好优先级后就要通报，不是等到事后。"
+    },
+    {
+      "text": "Mandiant 扫描整个网络，判断攻击者到底深入到哪里，结论是没有证据显示攻击者进入了更关键的 OT 系统。",
+      "phase": "detect",
+      "why": "确定影响范围、寻找关联信息，是分析工作（清单 1.1–1.3）。先要知道「波及了什么」，才能决定遏制和恢复的范围。"
+    },
+    {
+      "text": "按功能影响、信息影响、恢复难度判断这次事故的优先级。",
+      "phase": "detect",
+      "why": "清单第 2 步 Prioritize handling the incident based on the relevant factors (functional impact, information impact, recoverability effort)，属于 Detection & Analysis。"
+    },
+    {
+      "text": "获取并保全证据：做受感染服务器的磁盘镜像、保存日志，并记录证据保管链。",
+      "phase": "contain",
+      "why": "也容易选错。NIST 把 Acquire, preserve, secure, and document evidence（第 4 步）放在 Containment, Eradication & Recovery 阶段的开头：在清除、重装之前先把证据留住，否则一重装就没了。"
+    },
+    {
+      "text": "从被感染的主机上清除勒索软件，并修补被利用的漏洞（例如停用那个遗留的 VPN 账户）。",
+      "phase": "contain",
+      "why": "Eradicate the incident（清单第 6 步，6.1 修补被利用的漏洞、6.2 清除恶意软件）。"
+    },
+    {
+      "text": "解密工具太慢，Colonial 主要用备份恢复系统，并分阶段重启管道。",
+      "phase": "contain",
+      "why": "Recover from the incident：让受影响系统回到可运行状态并确认运作正常（清单 7.1–7.2）。"
+    },
+    {
+      "text": "恢复运行后，Mandiant 安装新的检测工具，监控攻击者会不会再来（二次攻击）。",
+      "phase": "contain",
+      "why": "清单 7.3 If necessary, implement additional monitoring to look for future related activity，仍属于 Recovery 这一段，不是 Post-Incident。"
+    },
+    {
+      "text": "写一份事后跟进报告，记录每个行动的 who / what / when / where / why / how。",
+      "phase": "post",
+      "why": "Create a follow-up report（清单第 8 步）。课件 p.27：这份文档事后可以当案例检查决策是否正确，也能证明组织尽了一切努力阻止事故扩散。"
+    },
+    {
+      "text": "召开 lessons learned 会议，把「要不要付赎金、谁来决定」写进应急计划（国会听证时议员批评它的计划里完全没有赎金条款）。",
+      "phase": "post",
+      "why": "Hold a lessons learned meeting（第 9 步），并用结论更新计划、政策、流程。更新后的计划又成为下一轮的 Preparation，这就是课件强调的 loop process。"
+    }
+  ]
+}
