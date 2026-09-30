@@ -1,10 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import data from "./data/ir-phase-items.json";
+import nist from "./data/ir-phase-items.json";
+import picerl from "./data/ir-picerl-items.json";
 
-// "Which NIST incident response phase is this?" — items are Colonial Pipeline actions plus NIST checklist steps.
-export function IrPhaseQuiz() {
+// "Which incident response phase is this?"
+// set="nist" (default): NIST 4 phases — Colonial Pipeline actions plus NIST checklist steps (ISOM 5280 Lesson 6).
+// set="picerl": the six conventional stages — ransomware timeline and checklist (ISOM 5070 Week 6 p.5, p.8, p.11).
+const SETS = { nist, picerl };
+
+export function IrPhaseQuiz({ set = "nist" }: { set?: keyof typeof SETS }) {
+  const data = SETS[set] ?? nist;
   const [pos, setPos] = useState(0);
   const [picked, setPicked] = useState<string | null>(null);
   const [score, setScore] = useState(0);

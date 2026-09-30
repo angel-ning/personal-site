@@ -24,7 +24,8 @@ import { computeInsurance, INSURANCE_PRESETS, fmtM as fmtInsM } from "../../src/
 import { CAPACITY, HALFOPEN_TIMEOUT, runScript } from "../../src/components/mdx/syn-flood-logic.mjs";
 import { MODES, scenarioLabel, verifyPki } from "../../src/components/mdx/pki-logic.mjs";
 import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic.mjs";
-import { computeTimeline, TIMELINE_PRESETS, fmtH, computeAle, ALE_PRESETS, fmtUsd } from "../../src/components/mdx/bia-logic.mjs";
+import { computeTimeline, TIMELINE_PRESETS, MTPD_PRESETS, fmtH, computeAle, ALE_PRESETS, fmtUsd } from "../../src/components/mdx/bia-logic.mjs";
+import { classifySeverity, SEVERITY_PRESETS, DIMENSIONS as SEVERITY_DIMENSIONS } from "../../src/components/mdx/severity-logic.mjs";
 import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../src/components/mdx/cardinality-logic.mjs";
 import { evaluate as evalFirewall, PRESETS as FW_PRESETS } from "../../src/components/mdx/firewall-logic.mjs";
 import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic.mjs";
@@ -46,6 +47,7 @@ const normalizationScenarios = readJson("src/components/mdx/data/normalization-s
 const threatActorData = readJson("src/components/mdx/data/threat-actor-items.json");
 const firewallRules = readJson("src/components/mdx/data/firewall-rules.json");
 const irPhaseData = readJson("src/components/mdx/data/ir-phase-items.json");
+const irPicerlData = readJson("src/components/mdx/data/ir-picerl-items.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -297,7 +299,24 @@ const components = {
       table(["场景", "Loss Frequency", "Loss Magnitude", "Calculated Risk", "Heat Map", "决定"], rows),
     ];
   },
-  BiaTimeLab() {
+  BiaTimeLab(_node, a) {
+    if (a.variant === "mtpd") {
+      const rows = MTPD_PRESETS.filter((p) => p.id !== "custom").map((p) => {
+        const r = computeTimeline(p);
+        return [
+          p.label,
+          `RTO ${fmtH(p.rto)} vs MTPD ${fmtH(p.mtd)}`,
+          r.mtdOk ? "达标" : strong(`超出 ${fmtH(-r.slack)}`),
+          `备份间隔 ${fmtH(p.backupInterval)} vs RPO ${fmtH(p.rpoTarget)}`,
+          r.rpoOk ? "达标" : strong("不达标"),
+          p.fallback,
+        ];
+      });
+      return [
+        note("（网页版此处可交互：自己调备份间隔、RPO、RTO、MTPD，时间轴实时变化；下表是 p.33 各项服务和两个反例的结果）"),
+        table(["服务", "RTO vs MTPD", "停机", "数据丢失", "RPO", "最低持续安排"], rows),
+      ];
+    }
     const rows = TIMELINE_PRESETS.filter((p) => p.id !== "custom").map((p) => {
       const r = computeTimeline(p);
       return [
@@ -330,11 +349,23 @@ const components = {
       table(["场景", "SLE = AV × EF", "ALE = SLE × ARO", "控制后 ALE", "ACS", "CBA"], rows),
     ];
   },
-  IrPhaseQuiz() {
-    const name = (id) => irPhaseData.phases.find((p) => p.id === id).en;
+  IrPhaseQuiz(_node, a) {
+    const data = a.set === "picerl" ? irPicerlData : irPhaseData;
+    const name = (id) => data.phases.find((p) => p.id === id).en;
     return [
       note("（网页版此处是「这一步属于 IR 哪个阶段」的点选练习；下表是全部题目和答案）"),
-      table(["动作", "阶段", "理由"], irPhaseData.items.map((it) => [it.text, strong(name(it.phase)), it.why])),
+      table(["动作", "阶段", "理由"], data.items.map((it) => [it.text, strong(name(it.phase)), it.why])),
+    ];
+  },
+  SeverityLadder() {
+    const rows = SEVERITY_PRESETS.map((p) => {
+      const r = classifySeverity(p.picks);
+      const facts = SEVERITY_DIMENSIONS.map((d) => d.options[p.picks[d.id]]).filter((o) => o.level > 1).map((o) => `${o.label}（L${o.level}）`);
+      return [p.label, facts.join("；") || "全部最低一档", strong(`Level ${r.level.n} · ${r.level.en}`), r.level.lead];
+    });
+    return [
+      note("（网页版此处可交互：按五个维度点选事件特征，取最严重的一维定级；下表是预设场景的结果）"),
+      table(["场景", "触发升级的特征", "级别", "谁来领导"], rows),
     ];
   },
   PmrQuiz() {

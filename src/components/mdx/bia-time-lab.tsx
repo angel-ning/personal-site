@@ -1,18 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { computeTimeline, fmtH, TIMELINE_PRESETS } from "./bia-logic.mjs";
+import { computeTimeline, fmtH, MTPD_PRESETS, TIMELINE_PRESETS } from "./bia-logic.mjs";
 
 type Input = { rpoTarget: number; backupInterval: number; rto: number; wrt: number; mtd: number };
 
-// Recovery timeline from Lesson 6 p.12: last backup → incident → systems recovered → resume operations.
-export function BiaTimeLab() {
-  const [preset, setPreset] = useState(TIMELINE_PRESETS[0].id);
-  const [input, setInput] = useState<Input>(TIMELINE_PRESETS[0]);
+// Recovery timeline from ISOM 5280 Lesson 6 p.12: last backup → incident → systems recovered → resume operations.
+// variant="mtpd": ISOM 5070 Week 6 p.33 — MTPD / RTO / RPO only (no WRT), presets are the slide's services.
+export function BiaTimeLab({ variant = "wrt" }: { variant?: "wrt" | "mtpd" }) {
+  const mtpd = variant === "mtpd";
+  const presets = mtpd ? MTPD_PRESETS : TIMELINE_PRESETS;
+  const MTD = mtpd ? "MTPD" : "MTD";
+  const [preset, setPreset] = useState(presets[0].id);
+  const [input, setInput] = useState<Input>(presets[0]);
   const r = computeTimeline(input) as ReturnType<typeof computeTimeline>;
+  const fallback = mtpd ? (presets.find((p) => p.id === preset) as { fallback?: string } | undefined)?.fallback : "";
 
   const pick = (id: string) => {
-    const p = TIMELINE_PRESETS.find((x) => x.id === id)!;
+    const p = presets.find((x) => x.id === id)!;
     setPreset(id);
     setInput(p);
   };
@@ -54,12 +59,12 @@ export function BiaTimeLab() {
   return (
     <div className="lab not-prose">
       <div className="lab-head">
-        <span className="lab-kicker">Interactive · BIA 时间线 RPO / RTO / WRT / MTD</span>
-        <span className="text-[12px] text-fg-3">要求：RTO + WRT ≤ MTD，备份间隔 ≤ RPO</span>
+        <span className="lab-kicker">Interactive · BIA 时间线 {mtpd ? "RPO / RTO / MTPD" : "RPO / RTO / WRT / MTD"}</span>
+        <span className="text-[12px] text-fg-3">{mtpd ? "要求：RTO ≤ MTPD，备份间隔 ≤ RPO" : "要求：RTO + WRT ≤ MTD，备份间隔 ≤ RPO"}</span>
       </div>
 
       <div className="lab-controls">
-        {TIMELINE_PRESETS.map((p) => (
+        {presets.map((p) => (
           <button key={p.id} type="button" className={`lab-btn ${preset === p.id ? "lab-btn-on" : ""}`} onClick={() => pick(p.id)}>
             {p.label}
           </button>
@@ -69,8 +74,8 @@ export function BiaTimeLab() {
         {field("备份间隔", "backupInterval", "多久做一次备份；事故最坏发生在下一次备份前一刻")}
         {field("RPO 目标", "rpoTarget", "业务最多能容忍丢多少时间的数据")}
         {field("RTO", "rto", "把系统本身恢复起来要多久")}
-        {field("WRT", "wrt", "系统恢复后，补数据 + 测试验证要多久")}
-        {field("MTD", "mtd", "业务最多能停多久")}
+        {!mtpd && field("WRT", "wrt", "系统恢复后，补数据 + 测试验证要多久")}
+        {field(MTD, "mtd", "业务最多能停多久（超过这个时长，伤害就不可接受）")}
       </div>
 
       <div className="mt-4 text-[11px] text-fg-3">
@@ -78,8 +83,8 @@ export function BiaTimeLab() {
           {[
             ["var(--c-board)", "数据丢失窗口（上次备份 → 事故）"],
             ["var(--c-exam)", "RTO 系统恢复"],
-            ["var(--c-warn)", "WRT 补数据 + 验证"],
-            ["var(--c-tip)", "距 MTD 的余量"],
+            ...(mtpd ? [] : [["var(--c-warn)", "WRT 补数据 + 验证"]]),
+            ["var(--c-tip)", `距 ${MTD} 的余量`],
           ].map(([c, t]) => (
             <span key={t} className="inline-flex items-center gap-1">
               <i className="inline-block h-2.5 w-2.5 rounded-sm" style={{ background: `color-mix(in oklab, ${c} 45%, transparent)` }} />
@@ -99,7 +104,7 @@ export function BiaTimeLab() {
             className="border-t-2 pt-0.5 text-center"
             style={{ width: pct(input.mtd), borderColor: r.mtdOk ? "var(--c-tip)" : "var(--c-exam)" }}
           >
-            MTD = {fmtH(input.mtd)}
+            {MTD} = {fmtH(input.mtd)}
           </div>
         </div>
       </div>
@@ -107,9 +112,16 @@ export function BiaTimeLab() {
       <table className="lab-table">
         <tbody>
           <tr>
-            <th>停机总时长 = RTO + WRT</th>
+            <th>{mtpd ? "停机时长 = RTO" : "停机总时长 = RTO + WRT"}</th>
             <td className="font-mono">
-              {fmtH(input.rto)} + {fmtH(input.wrt)} = <b>{fmtH(r.downtime)}</b>（MTD {fmtH(input.mtd)}）
+              {mtpd ? (
+                <b>{fmtH(r.downtime)}</b>
+              ) : (
+                <>
+                  {fmtH(input.rto)} + {fmtH(input.wrt)} = <b>{fmtH(r.downtime)}</b>
+                </>
+              )}
+              （{MTD} {fmtH(input.mtd)}）
             </td>
           </tr>
           <tr>
@@ -118,13 +130,23 @@ export function BiaTimeLab() {
               = 备份间隔 <b>{fmtH(r.worstDataLoss)}</b>（RPO 目标 {fmtH(input.rpoTarget)}）
             </td>
           </tr>
+          {fallback && (
+            <tr>
+              <th>最低持续安排</th>
+              <td>{fallback}</td>
+            </tr>
+          )}
         </tbody>
       </table>
 
       <p className={`lab-decision ${r.mtdOk ? "lab-forward" : "lab-flood"}`}>
-        <b>{r.mtdOk ? `停机时间达标：还剩 ${fmtH(r.slack)} 余量` : `超出 MTD ${fmtH(-r.slack)}：业务撑不住`}</b>
+        <b>{r.mtdOk ? `停机时间达标：还剩 ${fmtH(r.slack)} 余量` : `超出 ${MTD} ${fmtH(-r.slack)}：业务撑不住`}</b>
         <span>
-          {r.mtdOk
+          {mtpd
+            ? r.mtdOk
+              ? "RTO 在 MTPD 以内：系统在业务「受不了」之前就能恢复到约定的最低水平，中间靠最低持续安排（手工流程等）顶住。"
+              : "RTO 超过了 MTPD：等系统恢复时伤害已经不可接受。要么投钱缩短 RTO（热备、failover），要么准备更强的手工替代流程。"
+            : r.mtdOk
             ? "系统恢复（RTO）加上补数据、测试验证（WRT）都在业务能容忍的最长停机时间以内。"
             : "只看 RTO 会误以为「系统两小时就起来了」，但业务真正恢复要等 WRT 结束。要么缩短 RTO / WRT（热备、自动化验证），要么这个系统需要更高等级的灾备方案。"}
         </span>

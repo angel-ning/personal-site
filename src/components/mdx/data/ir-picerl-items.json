@@ -1,0 +1,72 @@
+{
+  "phases": [
+    { "id": "prep", "en": "Preparation", "zh": "准备" },
+    { "id": "ident", "en": "Identification", "zh": "识别 / 研判" },
+    { "id": "contain", "en": "Containment", "zh": "遏制" },
+    { "id": "erad", "en": "Eradication", "zh": "根除" },
+    { "id": "recov", "en": "Recovery", "zh": "恢复" },
+    { "id": "post", "en": "Post Mortem", "zh": "事后复盘" }
+  ],
+  "items": [
+    {
+      "text": "事发前：公司每季度针对「勒索软件加密共享盘」跑一次桌面演练（tabletop exercise），并把离线、不可篡改的备份做了恢复测试。",
+      "phase": "prep",
+      "why": "演练、备份、日志、playbook 都是在事故发生之前备好的「工具和肌肉记忆」——属于 Preparation（p.5 第 1 条：run exercises、backups）。"
+    },
+    {
+      "text": "事发前：董事会书面授权 incident commander 可以直接隔离服务器、禁用账号、封锁供应商访问，不需要层层审批。",
+      "phase": "prep",
+      "why": "p.15「Speed comes from decisions made before the incident」——决策权要在事前授予，这是 Preparation 里的 decision rights，不是事中才去争取。"
+    },
+    {
+      "text": "09:15 SOC 收到「财务共享盘被快速加密」的告警，先确认这是真实事件而不是误报，开一张高严重度工单并指定 incident commander。",
+      "phase": "ident",
+      "why": "Triage alerts、validate telemetry、定 severity——这是 Identification。「Not every alert qualifies as an incident」，先确认是不是事件，才谈得上后面的动作。"
+    },
+    {
+      "text": "09:20 分析员列出受影响的终端、账号、共享盘、IP 和可疑进程，同时保全日志、EDR 数据和内存 / 磁盘镜像。",
+      "phase": "ident",
+      "why": "Establish scope（影响范围）是 Identification 的核心；同步保全证据是 p.8 checklist 的「Preserve evidence」，要在改动系统之前做。"
+    },
+    {
+      "text": "09:25 IT 把中毒的终端从网络隔离，禁用被盗账号和会话，封锁攻击者的域名 / IP，必要时把受影响网段断开。",
+      "phase": "contain",
+      "why": "目的是「止血」：阻止继续加密和横向移动（lateral movement）。隔离、禁用、封锁都是临时性的、可逆的动作——Containment。"
+    },
+    {
+      "text": "一名员工账号出现异常登录，SOC 立刻吊销该用户的 OAuth token、强制下线所有会话，并限制该网段的出站流量。",
+      "phase": "contain",
+      "why": "p.8「Contain proportionately」的例子原话：revoking OAuth tokens、restricting egress。先切断攻击者的控制通道，还没到清除根源那一步。"
+    },
+    {
+      "text": "11:30 团队清除恶意软件和持久化机制，修补被利用的漏洞，重置受影响的凭证和密钥，用可信的 gold image 重装被攻陷的设备。",
+      "phase": "erad",
+      "why": "Eradication = 把原因彻底去掉（remove persistence、patch、rotate credentials、rebuild）。p.11 的解释：「Eradicates the cause rather than merely deleting visible files」。"
+    },
+    {
+      "text": "Day 1–2 从经过验证的离线备份，把文件服务器恢复到一个干净、隔离的恢复环境，校验数据完整性和应用依赖之后再接回生产网络。",
+      "phase": "recov",
+      "why": "Restore from known-good backups、validate、progressively return to production——Recovery。重点是「干净地」恢复，避免把中毒的系统或数据重新带回来。"
+    },
+    {
+      "text": "Day 2–7 恢复上线后，对相关系统做加强监控（heightened monitoring），确认运营恢复正常。",
+      "phase": "recov",
+      "why": "p.5 把 heightened monitoring 写在 Recovery 阶段：系统刚回到生产，要盯紧有没有复发，这仍是恢复的一部分，还不是复盘。"
+    },
+    {
+      "text": "事件结束后，团队重建完整时间线，做根因分析（root-cause analysis），并把整改项分配给具体负责人，定截止日期和预算。",
+      "phase": "post",
+      "why": "Forensics、timeline、root-cause analysis、control improvements——Post Mortem。p.7 强调整改要有 owner、due date、funding，否则复盘只是走过场。"
+    },
+    {
+      "text": "根据这次事件评估监管通知义务、写高管报告，并更新下一次桌面演练的剧本。",
+      "phase": "post",
+      "why": "Regulatory reporting、metrics、tabletop updates 都列在 p.5 的 Post Mortem 里。更新演练剧本会反过来喂给下一轮 Preparation，IR 是一个循环。"
+    },
+    {
+      "text": "告警显示管理员账号在凌晨从两个国家同时登录，分析员需要先判断：是否涉及特权访问？攻击者是否仍在控制？",
+      "phase": "ident",
+      "why": "p.8「Validate the alert」：判断是否为真实事件、涉及哪些资产和身份、特权访问是否被牵连、攻击者是否仍在活动——还在搞清楚状况，属于 Identification。"
+    }
+  ]
+}

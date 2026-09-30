@@ -27,6 +27,20 @@ export const TIMELINE_PRESETS = [
   { id: "custom", label: "自定义", rpoTarget: 4, backupInterval: 4, rto: 8, wrt: 4, mtd: 24 },
 ];
 
+// ISOM 5070 Week 6 p.33: MTPD / RTO / RPO per investment-management service. That slide has no WRT,
+// so wrt = 0 and the check becomes RTO ≤ MTPD. Where the slide gives a range, the lower end is used;
+// 1 business day is counted as 24 h to keep one unit.
+export const MTPD_PRESETS = [
+  { id: "trade", label: "交易执行 / 订单管理", rpoTarget: 0.25, backupInterval: 0.25, rto: 1, wrt: 0, mtd: 2, fallback: "人工下单流程 + 双人审批 + 电话录音确认" },
+  { id: "valuation", label: "组合估值 / 风险监控", rpoTarget: 1, backupInterval: 1, rto: 4, wrt: 0, mtd: 24, fallback: "备用风险环境 + 受控的 spreadsheet 敞口报告" },
+  { id: "cash", label: "资金划转 / 支付控制", rpoTarget: 0.25, backupInterval: 0.25, rto: 2, wrt: 0, mtd: 4, fallback: "银行网银后备 + 职责分离核验 + 电话回拨确认" },
+  { id: "investor", label: "投资者报告", rpoTarget: 24, backupInterval: 24, rto: 24, wrt: 0, mtd: 48, fallback: "用上一期数据 + 受控的人工制作 + 通知客户" },
+  { id: "email", label: "企业邮件 / 协作", rpoTarget: 4, backupInterval: 4, rto: 4, wrt: 0, mtd: 24, fallback: "应急协作渠道 + 预先建好的电话 / 短信 call tree" },
+  { id: "trade-slow", label: "✗ 交易系统，但恢复要 3 小时", rpoTarget: 0.25, backupInterval: 0.25, rto: 3, wrt: 0, mtd: 2, fallback: "RTO 超过 MTPD：人工下单流程必须撑过这个缺口，否则伤害不可接受" },
+  { id: "cash-backup", label: "✗ 支付系统，但每 4 小时才备份", rpoTarget: 0.25, backupInterval: 4, rto: 2, wrt: 0, mtd: 4, fallback: "RPO 不达标：最坏会丢 4 小时的支付指令，要逐笔对账补录（p.35 reconciliation controls）" },
+  { id: "custom", label: "自定义", rpoTarget: 1, backupInterval: 1, rto: 4, wrt: 0, mtd: 8, fallback: "" },
+];
+
 export const fmtH = (h) => {
   if (h < 1) return `${Math.round(h * 60)} 分钟`;
   return `${Number(h.toFixed(2))} 小时`;
