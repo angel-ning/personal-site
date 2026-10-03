@@ -373,7 +373,7 @@ export function runJoin({ data = "order", type = "INNER", extraOrder = false, on
 }
 
 // ---------- DCL: GRANT / REVOKE (p.20–23) ----------
-export const DCL_USERS = ["manager", "sales_user", "alice", "bob"];
+export const DCL_USERS = ["manager", "sales_user", "alice", "bob", "carol"];
 export const DCL_ROLE = "order_clerk_role";
 export const DCL_PRIVS = [
   ["Customer_T", "SELECT"],
@@ -391,7 +391,7 @@ export const DCL_STATEMENTS = [
   { id: "r0", by: "owner", sql: "CREATE ROLE order_clerk_role;", op: { kind: "createRole" } },
   { id: "g5", by: "owner", sql: "GRANT SELECT, INSERT, UPDATE ON Order_T TO order_clerk_role;", op: { kind: "grant", privs: ["SELECT", "INSERT", "UPDATE"], obj: "Order_T", to: [DCL_ROLE] } },
   { id: "g6", by: "owner", sql: "GRANT SELECT ON Order_T TO order_clerk_role WITH GRANT OPTION;", op: { kind: "grant", privs: ["SELECT"], obj: "Order_T", to: [DCL_ROLE], wgo: true } },
-  { id: "g7", by: "owner", sql: "GRANT order_clerk_role TO alice, bob;", op: { kind: "grantRole", to: ["alice", "bob"] } },
+  { id: "g7", by: "owner", sql: "GRANT order_clerk_role TO alice, bob, carol;", op: { kind: "grantRole", to: ["alice", "bob", "carol"] } },
   { id: "v1", by: "owner", sql: "REVOKE SELECT ON Customer_T FROM manager;", op: { kind: "revoke", privs: ["SELECT"], obj: "Customer_T", from: "manager" } },
   { id: "v2", by: "owner", sql: "REVOKE SELECT ON Customer_T FROM sales_user;", op: { kind: "revoke", privs: ["SELECT"], obj: "Customer_T", from: "sales_user" } },
   { id: "v3", by: "owner", sql: "REVOKE INSERT, UPDATE ON Order_T FROM order_clerk_role;", op: { kind: "revoke", privs: ["INSERT", "UPDATE"], obj: "Order_T", from: DCL_ROLE } },

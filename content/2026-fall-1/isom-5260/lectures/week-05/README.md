@@ -22,6 +22,15 @@ tags: [SQL, DDL, DML, DCL, SELECT, GROUP BY, JOIN, Oracle]
 >
 > 课件使用的是 **Oracle** 语法（`VARCHAR2`、`SYSDATE`、表别名不能加 `AS`），和 lab 里的 SQL Developer 一致。
 
+> **📌 课件更新（10 月 3 日版）**
+>
+> 老师更新了 Lecture 5 的课件，本笔记已按新版修改：
+>
+> - **DCL 重排**：新增 p.22「Users vs. Roles」，REVOKE 移到 p.23，删掉了旧版的「Roles & Best Practices」页（见 5.2–5.4）
+> - p.29 日期比较改用 `DATE '2026-09-30'`；p.36 分析函数从 `TOP` 改成 `RANK`
+> - p.37 的规则改成更直接的「不能混用聚合和非聚合列」；p.41–42 的例子统一用 `COUNT(*)`
+> - p.52 不列列名的 INSERT 只保留一行 VALUES
+
 ---
 
 ## 0. 核心地图（先建立整体框架）
@@ -277,15 +286,51 @@ DROP TABLE Customer_T;                                                       -- 
 
 DCL 的目的：**controls who can do what on database objects**。
 
-### 5.2 GRANT 与 REVOKE（p.21–22）
+### 5.2 GRANT：授予权限（p.21）
 
 ```sql
-GRANT SELECT ON Customer_T TO sales_user;                         -- 给用户
-GRANT SELECT, INSERT, UPDATE ON Order_T TO order_clerk_role;      -- 给角色
-GRANT SELECT ON Customer_T TO manager WITH GRANT OPTION;          -- 允许他再转授给别人
+GRANT SELECT ON Customer_T TO sales_user;                         -- 给用户（user name）
+GRANT SELECT, INSERT, UPDATE ON Order_T TO order_clerk_role;      -- 给角色（role name）
+GRANT SELECT ON Customer_T TO manager WITH GRANT OPTION;          -- 允许 manager 再转授给别人
+```
 
-REVOKE SELECT ON Customer_T FROM sales_user;
-REVOKE INSERT, UPDATE ON Order_T FROM order_clerk_role;
+> **⚠️ 踩坑提醒**
+>
+> p.21 的 Note：**`WITH GRANT OPTION` 不能用于把对象权限授给角色**。只能授给具体的用户。
+
+### 5.3 Users vs. Roles（p.22）
+
+![用户是账号，角色是一组权限的集合](images/page_22.png)
+
+*用户是账号，角色是一组权限的集合（Slide 22）*
+
+| 概念          | 课件原文                                                                              | 例子                            |
+| ----------- | --------------------------------------------------------------------------------- | ----------------------------- |
+| **User 用户** | A user is simply a **database account**                                           | sales\_user、manager、alice、bob |
+| **Role 角色** | A role is a **named collection of privileges** that can be assigned to many users | order\_clerk\_role            |
+
+**Best practice（课件标红）**：先建角色 → 把权限授给角色 → 再把角色分配给多个用户。
+
+```sql
+CREATE ROLE order_clerk_role;                                  -- ① 建一个空角色
+GRANT SELECT, INSERT, UPDATE ON Order_T TO order_clerk_role;   -- ② 权限给角色
+GRANT order_clerk_role TO alice, bob, carol;                   -- ③ 角色给人
+```
+
+> **💡 小白理解**
+>
+> 角色就像「岗位说明书」：店员这个岗位能查、能录、能改订单。新来一个店员，只要把角色给他，不用一条条授权；岗位要多一项权限，改角色一次，所有店员一起生效。
+
+### 5.4 REVOKE：收回权限（p.23）
+
+![REVOKE 的三种用法和两条规则](images/page_23.png)
+
+*REVOKE 的三种用法和两条规则（Slide 23）*
+
+```sql
+REVOKE SELECT ON Customer_T FROM sales_user;             -- 从用户收回
+REVOKE INSERT, UPDATE ON Order_T FROM order_clerk_role;  -- 从角色收回
+REVOKE order_clerk_role FROM alice;                      -- 从用户身上收回整个角色
 ```
 
 > **🎯 考点**
@@ -293,30 +338,20 @@ REVOKE INSERT, UPDATE ON Order_T FROM order_clerk_role;
 > 课件里三条要背的规则（全是选择题素材）：
 >
 > 1. **`WITH GRANT OPTION` 不能用于把对象权限授给角色**（p.21 Note）
-> 2. 如果权限是 `WITH GRANT OPTION` 授出的，**撤销它时，这个用户转授给别人的权限也会被连带撤销**（cascade，p.22）
-> 3. **从用户身上撤销一个角色 = 撤销这个角色带来的所有权限**（p.22）
+> 2. 如果权限是 `WITH GRANT OPTION` 授出的，**撤销它时，这个用户转授给别人的权限也会被连带撤销**（cascade，p.23）
+> 3. **从用户身上撤销一个角色 = 撤销这个角色带来的所有权限**（p.23）
 >
 > 注意介词：`GRANT … TO`，`REVOKE … FROM`。
 
-### 5.3 角色与最佳实践（p.23）
-
-```sql
-GRANT CREATE ROLE TO manager;                              -- 系统权限：允许 manager 建角色
-CREATE ROLE order_clerk_role;                              -- 建一个空角色
-GRANT SELECT, INSERT, UPDATE ON Order_T TO order_clerk_role;   -- 权限先给角色
-GRANT order_clerk_role TO alice, bob;                      -- 再把角色给人
-REVOKE order_clerk_role FROM alice;                        -- alice 换岗，收回角色
-```
-
-| 最佳实践                                                               | 中文            | 为什么                                 |
-| ------------------------------------------------------------------ | ------------- | ----------------------------------- |
-| Principle of **Least Privilege**                                   | 最小权限原则        | 只给完成工作所必需的权限，出事时损失最小                |
-| Prefer **roles** over granting privileges directly to users        | 优先通过角色授权      | 100 个店员共用一个角色：改一次角色，全员生效；有人离职只需收回角色 |
-| **Review** privileges regularly, revoke promptly when roles change | 定期审查，岗位变动及时收回 | 防止「权限蔓延」（换了三个岗位，手上攒了三份权限）           |
-
-> **💼 业务视角**
+> **➕ 课外补充：权限管理的原则**
 >
-> 角色（role）就是把「岗位」和「人」解耦：权限跟着**岗位**走，人只是被分配到岗位上。这和 ISOM 5070 里讲的访问控制（RBAC、least privilege、定期 access review）是同一套思路，只是这里落到了 SQL 语句上。
+> 新版课件删掉了旧版 p.23 的「Roles & Best Practices」页，下面这些不再是课件原文，了解即可：
+>
+> - **Principle of Least Privilege 最小权限原则**：只给完成工作所必需的权限。
+> - **定期审查权限**，岗位变动时及时收回，防止换了几个岗位后手上攒了几份权限。
+> - 建角色本身也需要系统权限：`GRANT CREATE ROLE TO manager;`
+>
+> 这和 ISOM 5070 讲的访问控制（RBAC、least privilege、access review）是同一套思路。
 
 下面这个实验按课件的语句一步步执行，看权限矩阵怎么变。建议按「按课件顺序走下一步」走一遍，特别留意 **第 4 步（sales\_user 没有 GRANT OPTION 却想转授）**、**第 7 步（给角色加 WITH GRANT OPTION）** 和 **第 9 步（撤销 manager 时 bob 被连带撤销）**：
 
@@ -331,22 +366,23 @@ REVOKE order_clerk_role FROM alice;                        -- alice 换岗，收
 | 5  | owner       | `CREATE ROLE order_clerk_role;`                                  | ✓ | 建好一个空角色：它本身还没有任何权限，要先把权限授给角色，再把角色授给用户。                                             |
 | 6  | owner       | `GRANT SELECT, INSERT, UPDATE ON Order_T TO order_clerk_role;`   | ✓ | 表的所有者把 SELECT, INSERT, UPDATE ON Order\_T 授给 order\_clerk\_role。                   |
 | 7  | owner       | `GRANT SELECT ON Order_T TO order_clerk_role WITH GRANT OPTION;` | ✗ | ORA-01926：不能把 WITH GRANT OPTION 授给角色（p.21 的 Note）。                                 |
-| 8  | owner       | `GRANT order_clerk_role TO alice, bob;`                          | ✓ | alice、bob 获得了角色里的全部权限——以后改角色的权限，所有成员一起变。                                           |
+| 8  | owner       | `GRANT order_clerk_role TO alice, bob, carol;`                   | ✓ | alice、bob、carol 获得了角色里的全部权限——以后改角色的权限，所有成员一起变。                                     |
 | 9  | owner       | `REVOKE SELECT ON Customer_T FROM manager;`                      | ✓ | 撤销 manager 的 SELECT ON Customer\_T。连锁撤销：bob 的 SELECT ON Customer\_T（由 manager 转授）。 |
 | 10 | owner       | `REVOKE order_clerk_role FROM alice;`                            | ✓ | alice 失去角色带来的所有权限（直接授给该用户的权限不受影响）。                                                 |
 | 11 | owner       | `REVOKE INSERT, UPDATE ON Order_T FROM order_clerk_role;`        | ✓ | 撤销 order\_clerk\_role 的 INSERT, UPDATE ON Order\_T。                                |
 
 **最终权限矩阵**
 
-| 用户 / 角色                   | SELECT ON Customer\_T | SELECT ON Order\_T | INSERT ON Order\_T | UPDATE ON Order\_T |
-| ------------------------- | --------------------- | ------------------ | ------------------ | ------------------ |
-| manager                   | —                     | —                  | —                  | —                  |
-| sales\_user               | ✓                     | —                  | —                  | —                  |
-| alice                     | —                     | —                  | —                  | —                  |
-| bob（+ order\_clerk\_role） | —                     | ✓（经由角色）            | —                  | —                  |
-| order\_clerk\_role        | —                     | ✓                  | —                  | —                  |
+| 用户 / 角色                     | SELECT ON Customer\_T | SELECT ON Order\_T | INSERT ON Order\_T | UPDATE ON Order\_T |
+| --------------------------- | --------------------- | ------------------ | ------------------ | ------------------ |
+| manager                     | —                     | —                  | —                  | —                  |
+| sales\_user                 | ✓                     | —                  | —                  | —                  |
+| alice                       | —                     | —                  | —                  | —                  |
+| bob（+ order\_clerk\_role）   | —                     | ✓（经由角色）            | —                  | —                  |
+| carol（+ order\_clerk\_role） | —                     | ✓（经由角色）            | —                  | —                  |
+| order\_clerk\_role          | —                     | ✓                  | —                  | —                  |
 
-### 5.4 🟢 查权限的数据字典视图（p.24）
+### 5.5 🟢 查权限的数据字典视图（p.24）
 
 | 视图               | 权限类别   | 范围   | 显示什么                   |
 | ---------------- | ------ | ---- | ---------------------- |
@@ -404,7 +440,7 @@ SELECT ProductDescription, ProductStandardPrice
 | `>=`、`<=`   | 大于等于、小于等于 |
 
 - 数字按大小比，**文本按字母顺序比**（一定用**单引号** `'Cherry'`），日期按先后比。
-- `WHERE OrderDate > '24-OCT-2018'`：Oracle 会把这个字符串按默认日期格式转换成日期再比较。
+- `WHERE OrderDate > DATE '2026-09-30'`（p.29）：`DATE 'YYYY-MM-DD'` 是标准的**日期字面量**，明确告诉 Oracle「这是一个日期」，按先后比较，不依赖数据库的默认日期格式。
 
 ### 6.4 🔴 LIKE 与通配符（p.30）
 
@@ -467,16 +503,22 @@ SELECT UPPER('product: ' || ProductID), ProductStandardPrice FROM Product_T;
 -- || 是 Oracle 的字符串拼接：'product: ' || 1 → 'product: 1'，UPPER 再变成 'PRODUCT: 1'
 ```
 
-| 类型      | 例子                                      |
-| ------- | --------------------------------------- |
-| 数学 / 聚合 | `MIN`、`MAX`、`COUNT`、`SUM`、`AVG`、`ROUND` |
-| 字符串     | `LOWER`（转小写）、`UPPER`（转大写）               |
-| 日期      | `NEXT_DAY`（下一个星期几）、`ADD_MONTHS`（加减若干个月） |
-| 分析      | `TOP`（前 n 名，例如年销售额前 5 的客户）              |
+| 类型      | 例子                                       |
+| ------- | ---------------------------------------- |
+| 数学 / 聚合 | `MIN`、`MAX`、`COUNT`、`SUM`、`AVG`、`ROUND`  |
+| 字符串     | `LOWER`（转小写）、`UPPER`（转大写）                |
+| 日期      | `NEXT_DAY`（下一个星期几）、`ADD_MONTHS`（加减若干个月）  |
+| 分析      | `RANK`（按 `OVER()` 里的 `ORDER BY` 给每一行排名次） |
 
-> **➕ 课外补充**
+> **➕ 课外补充：RANK 怎么用**
 >
-> 课件把 `TOP` 列为分析函数，但 `TOP n` 其实是 SQL Server 的写法；Oracle 12c 以后用 `FETCH FIRST 5 ROWS ONLY`，旧版用 `ROWNUM`。概念一样：取前 n 名。
+> ```sql
+> SELECT ProductDescription, ProductStandardPrice,
+>        RANK() OVER (ORDER BY ProductStandardPrice DESC) AS PriceRank
+>   FROM Product_T;
+> ```
+>
+> 结果是**每一行都保留**，多出一列名次：Dining Table 800 排 1，8-Drawer Desk 750 排 2……价格相同的并列同一名次，下一名会跳号（1, 2, 2, 4）。这是它和聚合函数的区别：聚合函数把多行压成一行，`RANK` 不减少行数。（旧版课件这一格写的是 `TOP`，新版改成了 `RANK`。）
 
 ### 6.8 🔴 聚合函数（Aggregate Functions，p.37–38）
 
@@ -491,7 +533,9 @@ SELECT ProductID, COUNT(*) FROM Product_T;  -- ❌ 报错
 
 > **🎯 考点：聚合函数和普通列不能混用**
 >
-> **SELECT 列表里不能同时出现聚合函数和没有聚合的普通列——除非那些普通列出现在 GROUP BY 里。**
+> **A SELECT list cannot mix aggregate functions and non-aggregated columns.**（p.37）SELECT 列表里不能同时出现聚合函数和没有聚合的普通列。
+>
+> 例外在 p.41：普通列如果是 **GROUP BY 的分组键**，就可以和聚合函数一起出现（见 6.11）。
 >
 > `SELECT ProductID, COUNT(*) FROM Product_T;` 为什么错？COUNT(\*) 把 8 行压成 1 个数，ProductID 却有 8 个值——结果只有一行，放哪个 ProductID？Oracle 报 `ORA-00937: not a single-group group function`。
 
@@ -535,15 +579,15 @@ SELECT CustomerName, CustomerState FROM Customer_T
 *GROUP BY：选出来的列必须是分组键或聚合值（课件用红叉标出了错误写法）（Slide 41）*
 
 ```sql
-SELECT CustomerState, CustomerCity, COUNT(CustomerCity) FROM Customer_T
+SELECT CustomerState, CustomerCity, COUNT(*) FROM Customer_T
  GROUP BY CustomerState, CustomerCity;            -- ✅ 每个 (州, 城市) 组合一组
 
-SELECT CustomerState, CustomerName, COUNT(CustomerCity) FROM Customer_T
+SELECT CustomerState, CustomerName, COUNT(*) FROM Customer_T
  GROUP BY CustomerState;                          -- ❌ CustomerName 既不是分组键也不是聚合值
 
-SELECT CustomerState, COUNT(CustomerState) FROM Customer_T
+SELECT CustomerState, COUNT(*) FROM Customer_T
  GROUP BY CustomerState
-HAVING COUNT(CustomerState) > 1;                  -- ✅ 只留客户数 > 1 的州：CA 2、FL 3、NJ 2
+HAVING COUNT(*) > 1;                              -- ✅ 只留客户数 > 1 的州：CA 2、FL 3、NJ 2
 ```
 
 | 规则                                                                               | 解释                                    |
@@ -917,15 +961,14 @@ VALUES (1, 175, 'End Table');
 
 -- 不列列名：必须按表定义的顺序给出所有列
 INSERT INTO Product_T VALUES
-  (1, 'End Table', 'Cherry', 175, 8),
-  (2, 'Coffee Table', 'Natural Ash', 200.00, 2);
+  (1, 'End Table', 'Cherry', 175, 8);
 
 -- 用查询结果插入：目标表和源表的列要兼容且顺序一致
 INSERT INTO FLCustomer_T
   SELECT * FROM Customer_T WHERE CustomerState = 'FL';
 
-DELETE FROM Customer_T WHERE CustomerState = 'FL';   -- 删符合条件的行
 DELETE FROM Customer_T;                              -- 删所有行（表还在！）
+DELETE FROM Customer_T WHERE CustomerState = 'FL';   -- 删符合条件的行
 
 UPDATE Product_T
    SET ProductStandardPrice = 775
@@ -937,7 +980,6 @@ UPDATE Product_T
 > 1. **`UPDATE` / `DELETE` 忘写 `WHERE` = 改 / 删整张表**。这是现实中最常见的事故之一。
 > 2. `INSERT` 没列出的列：有 `DEFAULT` 就用默认值，否则是 NULL；如果那列是 `NOT NULL` 又没有默认值，就报错。
 > 3. 插入 / 删除受外键约束：往 Order\_T 插一张 CustomerID = 99 的订单（客户不存在）会违反 referential integrity；删除一个还有订单的客户也会被拒绝。
-> 4. 一条 `INSERT … VALUES (…), (…)` 插多行是较新的语法（Oracle 23ai 起支持）；旧版 Oracle 要写多条 INSERT 或用 `INSERT ALL`。
 
 > **➕ 课外补充：DELETE vs TRUNCATE vs DROP**
 >
@@ -1119,7 +1161,7 @@ UPDATE Product_T
 
 > **答案：B**
 >
-> 聚合函数把 8 行压成 1 行，ProductID 却有 8 个值。SELECT 列表里不能混用聚合和非聚合列，除非非聚合列在 GROUP BY 里（p.37）。
+> 聚合函数把 8 行压成 1 行，ProductID 却有 8 个值。SELECT 列表里不能混用聚合和非聚合列（p.37）；要按 ProductID 分别计数，就得加 GROUP BY ProductID（p.41）。
 
 **13. SELECT ProductStandardPrice \* 1.1 AS NewPrice FROM Product\_T WHERE NewPrice > 300; What happens?**
 
