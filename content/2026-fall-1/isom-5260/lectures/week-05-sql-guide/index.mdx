@@ -116,19 +116,23 @@ tags: [SQL, CREATE TABLE, SELECT, JOIN, COMMIT, Oracle, 学习版]
 
 ### 4.1 CREATE TABLE
 
+> 读格式的方法：**中文**的地方换成你自己的表名、列名、值；`[ ]` 里的部分可以不写；`…` 表示可以重复写多个；其余的英文（关键字、括号、逗号）照抄。
+
 **格式**
 
 ```sql
 CREATE TABLE 表名 (
     列名  数据类型  [DEFAULT 默认值]  [NOT NULL],
-    列名  数据类型,
+    列名  数据类型  …,
     …,
-    CONSTRAINT 约束名 PRIMARY KEY (列),
-    CONSTRAINT 约束名 FOREIGN KEY (列) REFERENCES 父表(列)
+    CONSTRAINT 约束名 PRIMARY KEY (列名 [, 列名 …]),
+    CONSTRAINT 约束名 FOREIGN KEY (列名) REFERENCES 父表名(父表的列名)
 );
 ```
 
-先写所有列，再写约束；每项之间用逗号，**最后一项后面没有逗号**。
+先写所有列，再写约束；每项之间用逗号，**最后一项后面没有逗号**。每一列的顺序固定是：**列名 → 数据类型 → DEFAULT → NOT NULL**。
+
+**例子**
 
 ```sql
 CREATE TABLE Order_T (
@@ -157,25 +161,60 @@ Script Output：`Table ORDER_T created.`（如果你已经跑过老师的脚本�
 
 **常用数据类型**
 
-| 类型 | 存什么 | 例子 |
-|---|---|---|
-| `NUMBER(p, s)` / `DECIMAL(p, s)` | 数字：共 p 位，其中 s 位小数 | `NUMBER(11,0)` 整数 ID；`DECIMAL(6,2)` 价格，最大 9999.99 |
-| `INTEGER` | 整数 | `ProductLineID` |
-| `VARCHAR2(n)` | 长度不定的文字，最多 n 个字符（**必须写 n**） | `VARCHAR2(25)` 名字 |
-| `CHAR(n)` | 固定长度的文字 | `CHAR(2)` 州缩写 FL |
-| `DATE` | 日期 | `OrderDate` |
+| 类型 | 格式 | 括号里写什么 | 例子 |
+|---|---|---|---|
+| 数字 | `NUMBER(总位数, 小数位数)`、`DECIMAL(总位数, 小数位数)` | 两个整数：一共几位数字、其中几位是小数 | `NUMBER(11,0)`：最多 11 位的整数（ID）<br />`DECIMAL(6,2)`：共 6 位、2 位小数，最大 9999.99（价格） |
+| 整数 | `INTEGER` | 不用括号 | `ProductLineID INTEGER` |
+| 长短不一的文字 | `VARCHAR2(最大长度)` | **一个整数**：这一列最多能存几个字符。括号和数字都**不能省略** | `VARCHAR2(25)`：最多 25 个字符，存 `'Value Furniture'`（15 个字符）只占 15 个 |
+| 定长的文字 | `CHAR(长度)` | 一个整数：每个值都正好这么长，不够的补空格 | `CHAR(2)`：州缩写 FL、TX |
+| 日期 | `DATE` | 不用括号 | `OrderDate DATE` |
+
+**文字和数字的长度定多少？**
+
+建表时括号里的数字要**定得比现有数据大一些**，原因是：
+
+- 定小了，以后插入更长的值会直接报错（`ORA-12899: value too large for column`）；表里有了数据之后，Oracle 不允许把列改短（`ORA-01441`）。
+- 定大了几乎没有代价：`VARCHAR2` 按**实际长度**存，`VARCHAR2(50)` 存 15 个字符的名字也只占 15 个字符的空间。上限是 4000。
+- 只有**每个值都一样长**的列（州缩写、性别代码）才用 `CHAR`，长度就是那个固定值，不用留余量。
+
+**确定的方法**：
+
+1. **看现有数据最长有多长**。手上有样例数据就数一数；数据已经在数据库里的话，可以直接查：`SELECT MAX(LENGTH(CustomerName)) FROM Customer_T;`（数字列用 `MAX(列)` 看最大值有几位）。
+2. **想想以后会不会更长**：名字、地址、描述这类自由填写的内容，以后很可能出现更长的值；编号、代码通常有固定规则。
+3. **在最长值的基础上留出余量**，取一个整一点的数（例如最长 20 → 定 25 或 30；描述类可以更宽松，定 50）。
+
+老师的脚本就是这样定的（现有最长值可以对照附录里的数据）：
+
+| 列 | 现有数据里最长的值 | 长度 | 定的类型 | 余量 |
+|---|---|---|---|---|
+| CustomerName | `Contemporary Casuals` | 20 | `VARCHAR2(25)` | +5 |
+| CustomerAddress | `2400 Rocky Point Dr.` | 20 | `VARCHAR2(30)` | +10 |
+| CustomerCity | `Battle Creek` | 12 | `VARCHAR2(20)` | +8 |
+| CustomerPostalCode | `32601-2871` | 10 | `VARCHAR2(15)` | +5 |
+| ProductDescription | `Entertainment Center` | 20 | `VARCHAR2(50)` | 描述类，留得宽 |
+| ProductFinish | `Natural Maple` | 13 | `VARCHAR2(20)` | +7 |
+| CustomerState | `FL`（永远 2 个字母） | 2 | `CHAR(2)` | 定长，不留 |
+| ProductStandardPrice | 800 | 3 位整数 | `DECIMAL(6,2)`（最大 9999.99） | 整数部分多留 1 位 |
+
+<Callout type="warn" title="定小了会怎样：课件 p.13 的邮编">
+
+课件 p.13 把 CustomerPostalCode 定成了 `VARCHAR2(9)`，但数据里的邮编是 `32601-2871` 这种格式（5 位 + 连字符 + 4 位 = **10 个字符**），插入时会报 `ORA-12899`。老师的脚本把它改成了 `VARCHAR2(15)`。所以定长度时要看**真实数据的格式**，不能只凭印象（「邮编是 5 位数」）。
+
+</Callout>
 
 **约束：什么时候用，怎么写**
 
-| 约束 | 什么时候用 | 写法 |
-|---|---|---|
-| `NOT NULL` | 这一列必须填 | `CustomerName VARCHAR2(25) NOT NULL` |
-| `DEFAULT` | 不填时自动给一个值 | `OrderDate DATE DEFAULT SYSDATE` |
-| `PRIMARY KEY` | 唯一找到一行的列（自带「不能空 + 不能重复」） | `CONSTRAINT Customer_PK PRIMARY KEY (CustomerID)` |
-| 复合主键 | 要两列一起才能确定一行（M:N 拆出来的表） | `CONSTRAINT OrderLine_PK PRIMARY KEY (OrderID, ProductID)` |
-| `FOREIGN KEY` | 这一列的值必须在另一张表里存在 | `CONSTRAINT Order_FK FOREIGN KEY (CustomerID) REFERENCES Customer_T(CustomerID)` |
-| `UNIQUE` | 不是主键但也不能重复（其他候选键） | `CONSTRAINT Email_UQ UNIQUE (Email)` |
-| `CHECK` | 值有范围或清单限制 | `CHECK (ProductFinish IN ('Cherry', 'Walnut', …))`、`CHECK (Price >= 0)` |
+| 约束 | 什么时候用 | 格式 | 例子 |
+|---|---|---|---|
+| `NOT NULL` | 这一列必须填 | `列名 数据类型 NOT NULL` | `CustomerName VARCHAR2(25) NOT NULL` |
+| `DEFAULT` | 不填时自动给一个值 | `列名 数据类型 DEFAULT 默认值` | `OrderDate DATE DEFAULT SYSDATE` |
+| `PRIMARY KEY` | 唯一找到一行的列（自带「不能空 + 不能重复」） | `CONSTRAINT 约束名 PRIMARY KEY (列名)` | `CONSTRAINT Customer_PK PRIMARY KEY (CustomerID)` |
+| 复合主键 | 要两列一起才能确定一行（M:N 拆出来的表） | `CONSTRAINT 约束名 PRIMARY KEY (列名1, 列名2)` | `CONSTRAINT OrderLine_PK PRIMARY KEY (OrderID, ProductID)` |
+| `FOREIGN KEY` | 这一列的值必须在另一张表里存在 | `CONSTRAINT 约束名 FOREIGN KEY (列名) REFERENCES 父表名(父表的列名)` | `CONSTRAINT Order_FK FOREIGN KEY (CustomerID) REFERENCES Customer_T(CustomerID)` |
+| `UNIQUE` | 不是主键但也不能重复（其他候选键） | `CONSTRAINT 约束名 UNIQUE (列名)` | `CONSTRAINT Email_UQ UNIQUE (Email)` |
+| `CHECK` | 值有范围或清单限制 | `CONSTRAINT 约束名 CHECK (条件)` | `CHECK (ProductFinish IN ('Cherry', 'Walnut', …))`、`CHECK (Price >= 0)` |
+
+约束名自己起，课件的习惯是 `表名_PK`、`表名_FK`。
 
 **约束在做什么**：在 SQL Developer 里依次跑下面三条，看哪条成功、哪条被拦下、报的是什么错，再对照上面的约束表想想是哪条规则在起作用。跑完记得 `ROLLBACK;`。
 
@@ -205,7 +244,7 @@ VALUES (1001, 1);    -- ③ 1001 号订单已经有了
 
 1. **复合主键只写一条**：`PRIMARY KEY (OrderID, ProductID)`。在两列后面各写一个 `PRIMARY KEY` 会报 ORA-02260（一张表只能有一个主键）。外键则是引用几张父表就写几条。
 2. **先建父表，再建子表**：外键引用的表必须已经存在。删表顺序相反。
-3. **`(p, s)` 只属于数字类型**；`VARCHAR2` 括号里只有一个数字，而且不能省略。
+3. **两个数字 `(总位数, 小数位数)` 只属于数字类型**；`VARCHAR2` 括号里只有一个数字（最大长度），而且不能省略。
 4. 主键自动 NOT NULL；外键可以为空。
 
 </Callout>
@@ -243,7 +282,25 @@ CREATE TABLE SUBJECT_OFFER2 (
 
 ### 4.2 ALTER TABLE 与 DROP TABLE
 
-| 想做什么 | 写法 | 写不写 COLUMN |
+表已经建好了，想改它的**结构**（加列、改列、删列、加约束），不用删了重建，用 ALTER TABLE。
+
+**格式**
+
+```sql
+ALTER TABLE 表名 ADD 列名 数据类型 [DEFAULT 默认值] [NOT NULL];   -- 加一列
+ALTER TABLE 表名 ADD (列名 数据类型, 列名 数据类型 …);            -- 一次加几列
+ALTER TABLE 表名 MODIFY 列名 新的数据类型;                         -- 改类型 / 长度
+ALTER TABLE 表名 DROP COLUMN 列名;                                -- 删一列
+ALTER TABLE 表名 DROP (列名, 列名 …);                             -- 一次删几列
+ALTER TABLE 表名 RENAME COLUMN 旧列名 TO 新列名;                   -- 改列名
+ALTER TABLE 表名 ADD CONSTRAINT 约束名 约束内容;                   -- 加约束
+ALTER TABLE 表名 DROP CONSTRAINT 约束名;                           -- 删约束
+DROP TABLE 表名 [CASCADE CONSTRAINTS];                            -- 删整张表
+```
+
+**例子**
+
+| 想做什么 | 例子 | 写不写 COLUMN |
 |---|---|---|
 | 加一列 | `ALTER TABLE Customer_T ADD CustomerType VARCHAR2(10) DEFAULT 'Commercial';` | ❌ 不写 |
 | 一次加几列 | `ALTER TABLE School ADD (Address VARCHAR2(255), Email VARCHAR2(30));` | ❌ 不写，用括号 |
@@ -252,7 +309,10 @@ CREATE TABLE SUBJECT_OFFER2 (
 | 一次删几列 | `ALTER TABLE School DROP (Address, Email);` | ❌ 不写，用括号 |
 | 改列名 | `ALTER TABLE School RENAME COLUMN Address TO Addr;` | ✅ **要写** |
 | 加约束 | `ALTER TABLE Order_T ADD CONSTRAINT Order_FK FOREIGN KEY (CustomerID) REFERENCES Customer_T(CustomerID);` | 写 CONSTRAINT |
+| 删约束 | `ALTER TABLE Product_T DROP CONSTRAINT Product_Finish_CHK;` | 写 CONSTRAINT |
 | 删整张表 | `DROP TABLE Customer_T;` | — |
+
+在 SQL Developer 里试一下加列：
 
 ```sql
 ALTER TABLE Customer_T
@@ -291,6 +351,17 @@ ADD CustomerType VARCHAR2(10) DEFAULT 'Commercial';
 
 ### 5.1 六个子句，以及执行顺序
 
+**完整格式**（只有 SELECT 和 FROM 是必须的，其余按需要加，但**顺序不能换**）
+
+```sql
+SELECT [DISTINCT] 列名 [AS 别名], 表达式 [AS 别名], …
+FROM 表名 [表别名]
+[WHERE 行条件]
+[GROUP BY 列名, …]
+[HAVING 组条件]
+[ORDER BY 列名 [ASC | DESC], …];
+```
+
 | 写的顺序 | 作用 | 执行顺序 |
 |---|---|---|
 | `SELECT` | 要哪些列 | 5 |
@@ -310,6 +381,8 @@ ADD CustomerType VARCHAR2(10) DEFAULT 'Commercial';
 ### 5.2 SELECT … FROM：选列、去重、计算
 
 **选列**：SELECT 后面写要哪些列，`*` 表示全部列。
+
+格式：`SELECT 列名1, 列名2, … FROM 表名;` 或 `SELECT * FROM 表名;`
 
 ```sql
 SELECT ProductDescription, ProductStandardPrice
@@ -332,6 +405,8 @@ FROM Product_T;
 </Result>
 
 **DISTINCT 去重**：紧跟在 SELECT 后面，重复的行只留一行。
+
+格式：`SELECT DISTINCT 列名1 [, 列名2 …] FROM 表名;`（写了多列时，是这几列的**组合**不重复）
 
 ```sql
 SELECT DISTINCT CustomerState
@@ -361,6 +436,8 @@ ORDER BY CustomerState;
 
 **计算和列别名**：SELECT 里可以写算式，每一行算一次（表里的数据不变）；`AS 别名` 给结果列起名，AS 可以省略。
 
+格式：`SELECT 列名, 表达式 [AS 别名] FROM 表名;`，表达式可以用 `+ - * /`，文字用 `||` 拼接。
+
 ```sql
 SELECT ProductID, ProductStandardPrice,
        ProductStandardPrice * 1.1 AS Plus10Percent
@@ -381,14 +458,16 @@ WHERE ProductID <= 3;
 
 ### 5.3 🔴 WHERE：只要满足条件的行
 
-| 写法 | 意思 |
-|---|---|
-| `=`、`<>`、`>`、`<`、`>=`、`<=` | 比较。文字用**单引号**、区分大小写；日期写 `DATE 'YYYY-MM-DD'` |
-| `LIKE` | `%` = 任意多个字符，`_` = 正好一个字符 |
-| `BETWEEN a AND b` | 在 a 和 b 之间，**包含两端** |
-| `IN (…)` | 在清单里 |
-| `IS NULL` / `IS NOT NULL` | 是不是空值（**不能写 `= NULL`**） |
-| `AND` / `OR` / `NOT` | 组合条件，**AND 比 OR 先算** |
+**格式**：`SELECT … FROM 表名 WHERE 条件;`，条件有下面几种写法：
+
+| 条件 | 格式 | 意思 |
+|---|---|---|
+| 比较 | `列名 = 值`（还有 `<>`、`>`、`<`、`>=`、`<=`） | 文字用**单引号**、区分大小写；日期写 `DATE 'YYYY-MM-DD'` |
+| 模糊匹配 | `列名 LIKE '模式'` | 模式里 `%` = 任意多个字符，`_` = 正好一个字符 |
+| 范围 | `列名 BETWEEN 下限 AND 上限` | **包含两端** |
+| 清单 | `列名 IN (值1, 值2, …)` | 等于其中任何一个 |
+| 空值 | `列名 IS NULL` / `列名 IS NOT NULL` | **不能写 `= NULL`** |
+| 组合 | `条件1 AND 条件2`、`条件1 OR 条件2`、`NOT 条件` | **AND 比 OR 先算**，拿不准就加括号 |
 
 （下面的例子没写 ORDER BY，SQL Developer 一般按插入顺序显示，但顺序不保证。）
 
@@ -564,7 +643,9 @@ WHERE (ProductDescription LIKE '%Desk'
 
 ### 5.4 🔴 ORDER BY：排序
 
-默认升序 `ASC`，降序写 `DESC`，**DESC 只管紧挨着它的那一列**；多列时先按第一列排，第一列相同再按第二列。
+**格式**：`SELECT … FROM … [WHERE …] ORDER BY 列名1 [ASC | DESC], 列名2 [ASC | DESC], …;`（ORDER BY 永远写在最后）
+
+默认升序 `ASC`，降序写 `DESC`，**DESC 只管紧挨着它的那一列**；多列时先按第一列排，第一列相同再按第二列。ORDER BY 后面也可以写列别名。
 
 ```sql
 SELECT CustomerState, CustomerName
@@ -591,12 +672,15 @@ State 升序；同一个州里 Name 降序。
 
 ### 5.5 🔴 聚合函数：把很多行压成一个数
 
+**格式**：`SELECT 聚合函数(列名), … FROM 表名 [WHERE …];`
+
 | 函数 | 算什么 | NULL |
 |---|---|---|
 | `COUNT(*)` | 有几行 | 每行都算 |
 | `COUNT(列)` | 这一列**不是空**的有几行 | 跳过 |
 | `SUM(列)` / `AVG(列)` | 总和 / 平均 | 跳过 |
 | `MIN(列)` / `MAX(列)` | 最小 / 最大 | 跳过 |
+| `COUNT(DISTINCT 列)` | 这一列有几种**不同**的值 | 跳过 |
 
 ```sql
 SELECT COUNT(*), COUNT(CustomerPostalCode)
@@ -637,6 +721,15 @@ FROM Product_T;
 上面的 `COUNT(*)` 是把**整张表**压成一个数。如果题目问「**每条**产品线各有几个产品」，我们要的不是一个数，而是**每条产品线一个数**。GROUP BY 就是干这个的：
 
 > **GROUP BY 某列 = 按这一列的值把行分成几堆，然后每一堆各压成一行。**
+
+**格式**
+
+```sql
+SELECT 分组的列, 聚合函数(列名), …
+FROM 表名
+[WHERE 行条件]
+GROUP BY 分组的列 [, 分组的列 …];
+```
 
 用 Product_T 走一遍：`SELECT ProductLineID, COUNT(*), AVG(ProductStandardPrice) FROM Product_T GROUP BY ProductLineID;`
 
@@ -684,6 +777,18 @@ GROUP BY ProductLineID;
 - **WHERE 在分堆之前**，一行一行地挑：「哪些**行**参与分组」
 - **HAVING 在分堆之后**，一堆一堆地挑：「哪些**堆**留在结果里」
 
+**格式**：HAVING 紧跟在 GROUP BY 后面
+
+```sql
+SELECT 分组的列, 聚合函数(列名)
+FROM 表名
+[WHERE 行条件]
+GROUP BY 分组的列
+HAVING 含聚合函数的条件;
+```
+
+**例子**
+
 ```sql
 SELECT ProductLineID, COUNT(*)
 FROM Product_T
@@ -708,7 +813,34 @@ HAVING COUNT(*) >= 3;              -- ③ 最后挑堆
 
 ### 5.8 🔴 多表：JOIN … ON 与 FROM a, b WHERE
 
-两种写法做的是同一件事——按「外键 = 主键」把两张表的行配对：
+两种写法做的是同一件事——按「外键 = 主键」把两张表的行配对。
+
+**格式**
+
+```sql
+-- 写法 1：JOIN … ON
+SELECT 列名, …
+FROM 表1 别名1 [INNER] JOIN 表2 别名2
+  ON 别名1.外键 = 别名2.主键
+[WHERE …];
+
+-- 写法 2：FROM 表1, 表2 WHERE
+SELECT 列名, …
+FROM 表1 别名1, 表2 别名2
+WHERE 别名1.外键 = 别名2.主键 [AND 其他条件];
+
+-- 外连接：保留左表（或右表）配不上的行
+SELECT 列名, …
+FROM 表1 别名1 LEFT [OUTER] JOIN 表2 别名2      -- 也可以是 RIGHT / FULL
+  ON 别名1.外键 = 别名2.主键;
+
+-- 三张表：每多一张表，多一个 JOIN … ON
+SELECT 列名, …
+FROM 表1 a JOIN 表2 b ON a.键 = b.键
+           JOIN 表3 c ON b.键 = c.键;
+```
+
+**例子**
 
 ```sql
 -- 写法 1：JOIN … ON（课件写法）
@@ -890,13 +1022,13 @@ ORDER BY c.CustomerID;
 
 ## 6. 🔴 DML：INSERT / UPDATE / DELETE 改数据
 
-| 命令 | 格式 |
-|---|---|
-| INSERT（全部列） | `INSERT INTO 表 VALUES (…);`，按建表顺序给出**每一列** |
-| INSERT（部分列） | `INSERT INTO 表 (列, …) VALUES (…);`，没写的列用 DEFAULT 或 NULL |
-| INSERT（查询结果） | `INSERT INTO 表 SELECT …;` |
-| UPDATE | `UPDATE 表 SET 列 = 新值 WHERE 条件;` |
-| DELETE | `DELETE FROM 表 WHERE 条件;` |
+| 命令 | 格式 | 说明 |
+|---|---|---|
+| INSERT（全部列） | `INSERT INTO 表名 VALUES (值1, 值2, …);` | 按建表时的列顺序给出**每一列**的值 |
+| INSERT（部分列） | `INSERT INTO 表名 (列名1, 列名2, …) VALUES (值1, 值2, …);` | 值和列一一对应；没写的列用 DEFAULT 或 NULL |
+| INSERT（查询结果） | `INSERT INTO 表名 SELECT … FROM 另一张表 [WHERE …];` | 一次插入查询出来的所有行 |
+| UPDATE | `UPDATE 表名 SET 列名 = 新值 [, 列名 = 新值 …] [WHERE 条件];` | 不写 WHERE = 改所有行 |
+| DELETE | `DELETE FROM 表名 [WHERE 条件];` | 不写 WHERE = 删所有行（表还在） |
 
 **INSERT：多了一行**
 
@@ -1026,6 +1158,13 @@ WHERE CustomerID = 20;
 
 ## 8. 🔴 TCL：COMMIT / ROLLBACK 存档与回档
 
+**格式**
+
+```sql
+COMMIT;      -- 存档
+ROLLBACK;    -- 回档
+```
+
 INSERT / UPDATE / DELETE 执行完，修改还只是「草稿」：
 
 - `COMMIT;` = **存档**：修改永久生效，别人也能看到。
@@ -1043,6 +1182,19 @@ INSERT / UPDATE / DELETE 执行完，修改还只是「草稿」：
 |---|---|---|
 | 是什么 | 一个数据库**账号** | 一组**权限的集合**（像一个岗位） |
 | 例子 | alice、sales_user | order_clerk_role |
+
+**格式**
+
+```sql
+GRANT 权限 [, 权限 …] ON 表名 TO 用户或角色 [WITH GRANT OPTION];   -- 给对象权限
+REVOKE 权限 [, 权限 …] ON 表名 FROM 用户或角色;                     -- 收回对象权限
+GRANT 系统权限 TO 用户;                                            -- 例如 GRANT CREATE TABLE TO alice;
+CREATE ROLE 角色名;                                                -- 建角色
+GRANT 角色名 TO 用户 [, 用户 …];                                    -- 把角色给人
+REVOKE 角色名 FROM 用户;                                            -- 收回角色
+```
+
+权限可以是 `SELECT`、`INSERT`、`UPDATE`、`DELETE`，或者 `ALL`。
 
 **最佳做法**：先建角色 → 把权限给角色 → 再把角色给人。
 
