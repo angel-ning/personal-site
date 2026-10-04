@@ -473,3 +473,59 @@ body {
 .sb-h { color: var(--c-extra); }
 .sub-legend { display: block; margin-top: .2em; font-size: .92em; color: var(--fg-2); }
 .sub-and td { vertical-align: middle; }
+
+/* <SqlExercise> / <SqlTables> / <SqlScript> / <SqlProgress>: ISOM 5260 SQL practice book */
+.sqx + .sqx { margin-top: .8em; }
+.sqx-done { border-color: color-mix(in oklab, var(--c-tip) 45%, var(--line-strong)); }
+.sqx-title { margin-top: .4em; font-weight: 600; font-size: 1.02em; }
+.sqx-check { color: var(--c-tip); }
+.sqx-q { margin-top: .3em; line-height: 1.6; color: var(--fg-2); }
+.sqx-q code, .sqx-hint code, .sqx-free code, .sqx .lab-decision code, .sp-hint code { font-family: var(--font-mono); font-size: .92em; background: var(--subtle); padding: 0 .3em; border-radius: 4px; }
+.sqx-actions { display: flex; flex-wrap: wrap; gap: .45em; margin-top: .7em; }
+.sqx-hint { margin-top: .6em; padding: .45em .7em; border-radius: 8px; background: var(--subtle); font-size: .95em; }
+.sqx-answer { margin-top: .4em; }
+.sqx-step + .sqx-step { margin-top: .6em; padding-top: .5em; border-top: 1px dashed var(--line); }
+.sqx-label { margin-top: .7em; font-family: var(--font-mono); font-size: 11.5px; color: var(--fg-3); }
+.sqx-code { position: relative; }
+.sqx-code .sp-sql { padding-right: 4.2em; }
+.sqx-copy { position: absolute; top: .45em; right: .45em; display: inline-flex; gap: .4em; align-items: center; font-size: 12px; border: 1px solid var(--line); border-radius: 6px; padding: .05em .5em; background: var(--surface); }
+.sqx-copy:hover { border-color: var(--accent); color: var(--accent); }
+.sqx-copy > span { position: absolute; right: 0; top: 100%; margin-top: .2em; white-space: nowrap; font-size: 11.5px; }
+.sqx-copy-wide { display: inline-flex; gap: .5em; align-items: center; }
+.sqx-expect .ra-table { margin-top: .35em; }
+.sqx-grid td.sqx-num { text-align: right; font-variant-numeric: tabular-nums; }
+.sqx-out { margin-top: .35em; font-family: var(--font-mono); font-size: .88em; padding: .45em .7em; border-radius: 6px; background: var(--subtle); overflow-x: auto; }
+.sqx-err { background: color-mix(in oklab, var(--c-exam) 9%, transparent); color: var(--c-exam); }
+.sqx-ok { background: color-mix(in oklab, var(--c-tip) 9%, transparent); color: var(--c-tip); }
+.sqx-free { margin-top: .35em; line-height: 1.6; }
+.sqx .lab-decision span { line-height: 1.65; }
+.sqx-bar { margin-top: .7em; height: 6px; border-radius: 999px; background: var(--subtle); overflow: hidden; }
+.sqx-bar > span { display: block; height: 100%; background: var(--c-tip); transition: width .3s; }
+.sqx-sections { display: flex; flex-wrap: wrap; gap: .3em .9em; margin-top: .6em; font-size: 12.5px; color: var(--fg-3); }
+.sqx-sections b { font-family: var(--font-mono); font-weight: 500; color: var(--fg-2); }
+.sqx-sections .sqx-sec-full b { color: var(--c-tip); }
+.sqx-tablebox { max-height: 26em; overflow-y: auto; margin-top: .4em; }
+.sqx-tablebox thead th { position: sticky; top: 0; }
+.sqx-details { margin-top: .7em; font-size: 13px; }
+.sqx-details summary { cursor: pointer; color: var(--fg-3); }
+.sqx-script { max-height: 24em; overflow: auto; }
+
+/* <CommandSortQuiz> */
+.csq-list { list-style: decimal; padding-left: 1.4em; margin-top: .6em; display: grid; gap: .55em; }
+.csq-item code { font-family: var(--font-mono); font-size: 12.5px; background: var(--subtle); padding: .1em .4em; border-radius: 4px; word-break: break-word; }
+.csq-opts { display: flex; flex-wrap: wrap; gap: .35em; margin-top: .35em; }
+.csq-opts .lab-btn:disabled { opacity: .45; }
+.csq-opts .csq-right { opacity: 1 !important; border-color: var(--c-tip); color: var(--c-tip); background: color-mix(in oklab, var(--c-tip) 10%, transparent); }
+.csq-opts .csq-wrong { opacity: 1 !important; border-color: var(--c-exam); color: var(--c-exam); background: color-mix(in oklab, var(--c-exam) 9%, transparent); }
+.csq-why { margin-top: .3em; font-size: 13px; color: var(--fg-2); }
+.csq-ok b { color: var(--c-tip); }
+.csq-no b { color: var(--c-exam); }
+
+/* <Result>: a query result folded under its SQL */
+.sqr { margin: -.4em 0 1.2em; border: 1px dashed var(--line-strong); border-radius: 8px; padding: .35em .8em; font-size: .93em; }
+.sqr summary { cursor: pointer; font-family: var(--font-mono); font-size: 12px; color: var(--fg-3); list-style-position: inside; }
+.sqr[open] summary { color: var(--c-tip); }
+.sqr-body { margin-top: .5em; overflow-x: auto; }
+.sqr-body table { margin: 0 !important; font-size: 12.5px; white-space: nowrap; }
+.sqr-body > * + * { margin-top: .45em; }
+.sqr-body p { font-size: 13px; color: var(--fg-2); }

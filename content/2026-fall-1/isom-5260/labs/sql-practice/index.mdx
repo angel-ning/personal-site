@@ -1,0 +1,363 @@
+---
+title:
+  en: "SQL Practice Book · Run It in SQL Developer"
+  zh: "SQL 练习册 · 配合 SQL Developer 使用"
+summary:
+  en: "83 graded exercises on the lecture's Pine Valley tables and the Lab 6 school tables — SELECT, WHERE, functions, GROUP BY / HAVING, joins, error-spotting, INSERT / UPDATE / DELETE with transactions, and DDL with constraints. Every exercise gives the answer SQL plus the exact result (or ORA error) Oracle should return, to compare against your own run in SQL Developer."
+  zh: "83 道分级练习，用课上的 Pine Valley 表和 Lab 6 的学校表：SELECT、WHERE、函数、GROUP BY / HAVING、JOIN、找错题、INSERT / UPDATE / DELETE 与事务、建表与约束。每道题给出答案 SQL 和 Oracle 应该返回的结果（或 ORA 报错），在 SQL Developer 里跑完对照。"
+week: 5
+date: 2026-10-04
+tags: [SQL, Oracle, SQL Developer, Lab 6, 练习]
+---
+# SQL 练习册 · 配合 SQL Developer 使用
+
+**这一页怎么用：读题 → 自己在 SQL Developer 里写 → 运行 → 点「看答案和预期结果」对照 → 一致就点「我跑过了」。**
+
+每道题都给出两样东西：**答案 SQL**（可以一键复制）和 **Oracle 应该返回的结果**——一张结果表、一个行数、一条 `1 row inserted.` 之类的提示，或者一个 `ORA-xxxxx` 报错。数据用的是老师的 `oracle demo.sql`（Pine Valley 家具公司，和第 5 周课件同一套表）和 Lab 6 的 `lab6_init.sql`（学校与科目），所以你跑出来的结果应该和这里**逐行一致**。
+
+> 难度：●○○ 照着语法写就行 · ●●○ 要想一下 · ●●● 考试陷阱 / 综合题
+> 语法讲解在 [第 5 周笔记](../../lectures/week-05/)，这里只练习。题号（b03、x01……）方便你记录哪题没对上。
+
+<Callout type="note" title="为什么不在网页里直接运行 SQL">
+
+浏览器里能跑的数据库（SQLite、PostgreSQL 的 WebAssembly 版）规则和 Oracle 不一样，最要命的是**该报错的不报错**：SQLite 允许在 WHERE 里用列别名、允许 SELECT 里混用聚合列和普通列、`VARCHAR2(5)` 能塞进 20 个字符、数字列能插入 `'abc'`——这些在 Oracle 里全是错误，也正是考试考的点。所以这一页只负责出题和给出 Oracle 的标准答案，**真正运行用 SQL Developer**（连学校的 Oracle），两边一对照，就知道自己哪里写错了。
+
+</Callout>
+
+<SqlProgress />
+
+---
+
+## 0. 第一次用：连上数据库，建好练习数据
+
+### 0.1 连接学校的 Oracle
+
+Lab 6 用的是你自己的 Oracle 账号（见 Lab 6 课件 p.13）：
+
+| 项目 | 填什么 |
+|---|---|
+| Username | ITSC 账号，**不带** `@connect.ust.hk` |
+| Password | 学号后 4 位 |
+| Hostname | `imz409.ust.hk` |
+| Port / SID | 按 lab 课上的设置 |
+
+在 SQL Developer 左上角点绿色的 **+** 新建连接，填好后点 Test，左下角显示 Status: Success 就可以 Connect。在校外连不上的话，通常是要先连学校 VPN。
+
+### 0.2 跑两个初始化脚本
+
+连上后会打开一个空白的 **Worksheet**（工作表）。把下面两个脚本分别复制进去，用 **Run Script**（F5，或工具栏 ▶ 旁边带小纸张的图标）运行整个脚本。快捷键在 Mac 上可能需要按 Fn，按了没反应就直接点工具栏按钮。
+
+<SqlScript set="pine" />
+
+<SqlScript set="lab6" />
+
+<Callout type="warn" title="跑脚本时的几个提醒">
+
+- **第一次跑**时，老师脚本开头的 4 条 `DROP TABLE` 会报 `ORA-00942: table or view does not exist`（表还不存在，删不了），**这是正常的**，后面的建表和插入会照常执行。
+- 原始的 `lab6_init.sql` 第 38 行多了一行 `===`，这里提供的版本已经**删掉**了。如果你之前用原文件跑过，用下面的 e01 和 s01 检查一下：SCHOOL、SUBJECT 应该各 20 行，SUBJECT_OFFER 70 行。
+- **任何时候结果对不上、或者数据被改乱了，重新跑一遍这两个脚本**就回到初始状态。两个脚本开头都会先删表再重建。
+
+</Callout>
+
+### 0.3 运行一条语句 vs 运行整个脚本
+
+| 操作 | 快捷键 | 运行什么 | 结果显示在 |
+|---|---|---|---|
+| Run Statement（工具栏第一个绿色 ▶） | **Ctrl + Enter** | 光标所在的那一条 | **Query Result**：表格，可以滚动、排序 |
+| Run Script（▶ 旁边带小纸张的图标） | **F5** | 整个 worksheet，从上到下 | **Script Output**：纯文字，`1 row inserted.` 之类的提示 |
+
+做练习时用 **Run Statement**：一次只跑一条，结果是表格，方便和这里对照。每条语句最后写分号 `;`，语句之间空一行，这样 SQL Developer 能分清「光标所在的那一条」到哪里结束。
+
+<Callout type="tip" title="怎么读结果">
+
+- **表头都是大写**：Oracle 会把没加双引号的名字统一转成大写，所以你写 `CustomerName`，表头显示 `CUSTOMERNAME`。
+- **`(null)`** 表示空值（这一格没有数据），不是文字 "null"。
+- 行数多时 SQL Developer 默认只先取 50 行，结果窗口上方显示 **Fetched 50 rows**；往下滚到底会继续取，变成 **All Rows Fetched: N**。
+- **日期**默认显示成 `21-OCT-24`（日-月-年），这是 SQL Developer 的 NLS 设置决定的。
+- 数字末尾的 0 会被省掉：`170.0` 显示为 `170`。
+
+</Callout>
+
+<Callout type="note" title="结果对不上时，按这个顺序查">
+
+1. **数据被改过？** 前面的练习改了数据又 COMMIT 了 → 重跑初始化脚本。
+2. **行的顺序不一样，但内容一样？** 没写 `ORDER BY` 时，Oracle 不保证顺序。这里的题目基本都写了 ORDER BY。
+3. **日期显示格式不一样？** NLS 设置不同，日期本身没错。
+4. **报错代码一样，但信息不一样？** 报错信息里的 `<你的用户名>` 会显示你自己的账号；Oracle 23ai 的报错信息比 19c 更长。**只要 ORA 编号一致就算对上了。**
+5. 还是不对：记下题号，可能是这里的预期结果写错了。
+
+</Callout>
+
+<SqlExercise id="e01" />
+
+<SqlExercise id="e02" />
+
+---
+
+## 1. 认识数据
+
+做题前先看一眼表里有什么。下面的数据和你跑完初始化脚本之后的数据**完全一样**。
+
+### 1.1 Pine Valley Furniture（课件第 5 周的表）
+
+<SqlTables set="pine" />
+
+四张表的关系（第 4 周画的 ER 图映射过来的）：
+
+- 一位**客户**（Customer_T）可以下多张**订单**（Order_T）→ Order_T.CustomerID 是外键
+- 一张订单可以买多个**产品**（Product_T），一个产品也可以出现在多张订单里——**多对多**，所以中间拆出一张**关联表** OrderLine_T，主键是 (OrderID, ProductID) 两列一起
+- 20 位客户里只有 8 位下过单；10 个产品里有 3 个从没卖出去——后面 JOIN 的题会用到这两件事
+
+### 1.2 Lab 6：学校与科目
+
+<SqlTables set="lab6" />
+
+结构和 Pine Valley 一样是「两张实体表 + 一张关联表」：一所学校开多门科目，一门科目也被多所学校开设，SUBJECT_OFFER 记录「谁开了什么」。注意 **SCHOOL_ID 是 VARCHAR2（文字）**，这件事在 s06、s08 里会变成陷阱。
+
+---
+
+## 2. SELECT 基础
+
+`SELECT 要哪些列 FROM 哪张表;` ——最简单的查询只需要这两个子句。
+
+<SqlExercise id="b01" />
+
+<SqlExercise id="b02" />
+
+<SqlExercise id="b03" />
+
+<SqlExercise id="b04" />
+
+<SqlExercise id="b05" />
+
+<SqlExercise id="b06" />
+
+---
+
+## 3. WHERE：只要符合条件的行
+
+WHERE 逐行检查条件，留下条件为 **TRUE** 的行。这一节的 w03、w09、w10 是选择题的高频陷阱。
+
+<SqlExercise id="w01" />
+
+<SqlExercise id="w02" />
+
+<SqlExercise id="w03" />
+
+<SqlExercise id="w04" />
+
+<SqlExercise id="w05" />
+
+<SqlExercise id="w06" />
+
+<SqlExercise id="w07" />
+
+<SqlExercise id="w08" />
+
+<SqlExercise id="w09" />
+
+<SqlExercise id="w10" />
+
+<SqlExercise id="w11" />
+
+<SqlExercise id="w12" />
+
+---
+
+## 4. 计算、别名与函数
+
+SELECT 后面不只能写列名，还能写**表达式**和**函数**，每一行算一次。这些计算只影响显示，**不会改动表里的数据**。
+
+<SqlExercise id="c01" />
+
+<SqlExercise id="c02" />
+
+<SqlExercise id="c03" />
+
+<SqlExercise id="c04" />
+
+<SqlExercise id="c05" />
+
+<SqlExercise id="c06" />
+
+<SqlExercise id="c07" />
+
+---
+
+## 5. 聚合与分组：COUNT / SUM / AVG、GROUP BY、HAVING
+
+聚合函数把很多行压成一个值；GROUP BY 先分组，再每组压一次。记住执行顺序：**FROM → WHERE → GROUP BY → HAVING → SELECT → ORDER BY**。
+
+<SqlExercise id="a01" />
+
+<SqlExercise id="a02" />
+
+<SqlExercise id="a03" />
+
+<SqlExercise id="a04" />
+
+<SqlExercise id="a05" />
+
+<SqlExercise id="a06" />
+
+<SqlExercise id="a07" />
+
+<SqlExercise id="a08" />
+
+<SqlExercise id="a09" />
+
+---
+
+## 6. 多表 JOIN
+
+一张表只存一类东西（客户、订单、产品），要把它们拼在一起看，就要用**外键 = 主键**把表连起来。
+
+<SqlExercise id="j01" />
+
+<SqlExercise id="j02" />
+
+<SqlExercise id="j03" />
+
+<SqlExercise id="j04" />
+
+<SqlExercise id="j05" />
+
+<SqlExercise id="j06" />
+
+<SqlExercise id="j07" />
+
+<SqlExercise id="j08" />
+
+---
+
+## 7. 会报错吗？
+
+这一节每道题都**先猜**：会不会报错？报什么？然后再运行。考试是选择题，「下面哪条语句会报错」是最常见的题型之一。x09 是反过来的陷阱：看起来写错了，却不报错。
+
+<SqlExercise id="x01" />
+
+<SqlExercise id="x02" />
+
+<SqlExercise id="x03" />
+
+<SqlExercise id="x04" />
+
+<SqlExercise id="x05" />
+
+<SqlExercise id="x06" />
+
+<SqlExercise id="x07" />
+
+<SqlExercise id="x08" />
+
+<SqlExercise id="x09" />
+
+---
+
+## 8. 改数据：INSERT / UPDATE / DELETE 与事务
+
+<Callout type="warn" title="这一节按顺序做，中途不要 COMMIT">
+
+d01–d10 会插入、修改数据，并且故意触发各种约束错误；最后 d11 用 **ROLLBACK** 把所有修改撤销。只要中途没有 COMMIT、也没有执行 CREATE / ALTER / DROP（它们会自动提交），数据就能完全恢复。万一恢复不了，重跑初始化脚本即可。
+
+</Callout>
+
+<SqlExercise id="d01" />
+
+<SqlExercise id="d02" />
+
+d03–d07 每题都会违反一种约束。数据库替你守住了数据的正确性——这就是第 5 周讲的 PRIMARY KEY、NOT NULL、CHECK、FOREIGN KEY 的实际作用。
+
+<SqlExercise id="d03" />
+
+<SqlExercise id="d04" />
+
+<SqlExercise id="d05" />
+
+<SqlExercise id="d06" />
+
+<SqlExercise id="d07" />
+
+<SqlExercise id="d08" />
+
+<SqlExercise id="d09" />
+
+<SqlExercise id="d10" />
+
+<SqlExercise id="d11" />
+
+---
+
+## 9. 建表与约束：CREATE / ALTER / DROP
+
+t01–t05 是 Lab 6 课件里的 CLASSROOM 练习，按顺序做完，表最后会被删掉，不会留下痕迹。
+
+<SqlExercise id="t01" />
+
+<SqlExercise id="t02" />
+
+<SqlExercise id="t03" />
+
+<SqlExercise id="t04" />
+
+<SqlExercise id="t05" />
+
+<SqlExercise id="t06" />
+
+<SqlExercise id="t07" />
+
+---
+
+## 10. Lab 6 走一遍
+
+s01–s05 是 Lab 6 手册里的 Case 1–5；s07、s08 是手册里的 DML 步骤，包括手册本身的一处错误；s09–s12 是额外的练习。
+
+<SqlExercise id="s01" />
+
+<SqlExercise id="s02" />
+
+<SqlExercise id="s03" />
+
+<SqlExercise id="s04" />
+
+<SqlExercise id="s05" />
+
+<SqlExercise id="s06" />
+
+<SqlExercise id="s07" />
+
+<SqlExercise id="s08" />
+
+<SqlExercise id="s09" />
+
+<SqlExercise id="s10" />
+
+<SqlExercise id="s11" />
+
+<SqlExercise id="s12" />
+
+---
+
+## 🔴 常见 ORA 报错速查
+
+报错时先看 **ORA 编号**，再看冒号后面的英文——它通常已经告诉你是哪个名字、哪条约束出了问题。
+
+| 编号 | 英文 | 意思 | 最常见的原因 | 题 |
+|---|---|---|---|---|
+| ORA-00904 | invalid identifier | 找不到这个名字 | 列名拼错；WHERE 里用了列别名；字符串用了双引号 | x01、x05、s07 |
+| ORA-00942 | table or view does not exist | 找不到这张表 | 表名拼错；表建在别的账号下 | x08 |
+| ORA-00918 | column ambiguously defined | 列名有歧义 | 两张表都有这一列，没写表别名前缀 | x07 |
+| ORA-00933 | SQL command not properly ended | 语句没有正确结束 | 表别名加了 AS；多了或少了某个关键字 | x06 |
+| ORA-00937 | not a single-group group function | 聚合和普通列混用 | 有 COUNT / SUM 等，却没写 GROUP BY | x02 |
+| ORA-00979 | not a GROUP BY expression | 列不在 GROUP BY 里 | SELECT 里的非聚合列没写进 GROUP BY | x03 |
+| ORA-00934 | group function is not allowed here | 这里不能用聚合函数 | 在 WHERE 里用了 COUNT / SUM 等，应该放 HAVING | x04 |
+| ORA-00001 | unique constraint violated | 违反唯一约束 | 主键重复 | d03 |
+| ORA-01400 | cannot insert NULL | 不能插入空值 | NOT NULL 的列没给值 | d04 |
+| ORA-12899 | value too large for column | 文字太长 | 超过 VARCHAR2 / CHAR 的长度 | d05 |
+| ORA-01438 | value larger than specified precision | 数字太大 | 超过 NUMBER(p, s) 的位数 | t03 |
+| ORA-02290 | check constraint violated | 违反 CHECK 约束 | 值不在允许的范围或列表里 | d06 |
+| ORA-02291 | parent key not found | 外键找不到父记录 | 引用了不存在的主键值 | d07 |
+| ORA-02292 | child record found | 还有子记录引用它 | 删除被外键引用的行 | d10 |
+| ORA-02449 | unique/primary keys referenced by foreign keys | 表被外键引用 | DROP 被别的表引用的表 | t06 |
+| ORA-01722 | invalid number | 无效数字 | 把转不成数字的文字当数字用 | s08 |
+| ORA-00955 | name is already used by an existing object | 名字已被占用 | CREATE 了一张已经存在的表 | t01、t07 |

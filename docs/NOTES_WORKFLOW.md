@@ -93,6 +93,9 @@ tags: [IPv4, NAT, DHCP]
 | `<FdFinderLab />` | 找 FD：选决定因素看样本数据里有没有反例 + 「第三层扫描」（每个非键列当决定因素，区分真 FD 和样本巧合） |
 | `<IrPhaseQuiz set="nist\|picerl" />` | 「这一步属于 IR 哪个阶段」点选练习：`nist` = NIST 四阶段（ISOM 5280），`picerl` = 六阶段 + 勒索软件时间线（ISOM 5070 第 6 周） |
 | `<BiaTimeLab variant="wrt\|mtpd" />` | BIA 时间线：`wrt` = MTD / RTO / WRT / RPO（ISOM 5280），`mtpd` = MTPD / RTO / RPO + 最低持续安排（ISOM 5070 第 6 周 p.33） |
+| `<SqlExercise id="b03" />` · `<SqlTables set="pine\|lab6" />` · `<SqlScript set="…" />` · `<SqlProgress />` | ISOM 5260 SQL 练习册（`labs/sql-practice`）：题目 + 答案 SQL + Oracle 预期结果 / ORA 报错，在 SQL Developer 里对照。题目和预期结果在 `data/sql-practice.json`，由老师的 `oracle demo.sql` 和 `lab6_init.sql` 生成；不在浏览器里执行 SQL（SQLite / PostgreSQL 的规则和 Oracle 不同） |
+| `<Result>` Markdown 表格 / 文字 `</Result>` | 折叠的「看结果」，紧跟在一段示例 SQL 后面：先自己在 SQL Developer 里跑，再点开对照（ISOM 5260 SQL 学习版） |
+| `<CommandSortQuiz />` | 「这条语句属于 DDL / DML / DCL / TCL 哪一类」点选练习（题目在 `sql-commands.mjs`） |
 | `<SeverityLadder />` | 事件分级 Level 1–4：按五个维度点选特征，取最严重一维定级，显示谁来领导、必须做什么 |
 
 ### 什么时候新做一个互动组件（重要，别忘了）

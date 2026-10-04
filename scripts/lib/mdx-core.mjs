@@ -35,6 +35,8 @@ import { tcpConversation, HANDSHAKE_PRESETS, simulateWindow, WINDOW_PRESETS, cla
 import { subnetPlan, planOptions, SUBNET_PRESETS, PLAN_PRESETS } from "../../src/components/mdx/subnet-logic.mjs";
 import { computeVendorTier, FACTORS as VENDOR_FACTORS, VENDOR_TIER_PRESETS } from "../../src/components/mdx/vendor-tier-logic.mjs";
 import { runSql, runJoin, show as sqlShow, SQL_PRESETS, JOIN_TYPES, DCL_STATEMENTS, DCL_SCRIPT, DCL_USERS, DCL_ROLE, DCL_PRIVS, dclStep, dclCell, emptyDcl } from "../../src/components/mdx/sql-logic.mjs";
+import { COMMAND_ITEMS } from "../../src/components/mdx/sql-commands.mjs";
+import { findExercise, cellText as sqlxCell, parseInline, levelDots, expectSummary } from "../../src/components/mdx/sql-practice-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
@@ -48,6 +50,7 @@ const threatActorData = readJson("src/components/mdx/data/threat-actor-items.jso
 const firewallRules = readJson("src/components/mdx/data/firewall-rules.json");
 const irPhaseData = readJson("src/components/mdx/data/ir-phase-items.json");
 const irPicerlData = readJson("src/components/mdx/data/ir-picerl-items.json");
+const sqlPractice = readJson("src/components/mdx/data/sql-practice.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -590,6 +593,57 @@ const components = {
       table(["#", "执行者", "语句", "", "结果"], rows),
       para(strong("最终权限矩阵")),
       table(["用户 / 角色", ...DCL_PRIVS.map(([o, p]) => `${p} ON ${o}`)], matrix),
+    ];
+  },
+  SqlExercise(_node, a) {
+    const ex = findExercise(sqlPractice, a.id);
+    const inline = (t) => parseInline(t).map((p) => (p.t === "code" ? { type: "inlineCode", value: p.v } : p.t === "b" ? strong(p.v) : text(p.v)));
+    const out = [
+      para(strong(`${ex.id} · ${ex.title}`), text(`（${sqlPractice.sections[ex.section]} ${levelDots(ex.level)}）`)),
+      para(...inline(ex.q)),
+    ];
+    if (ex.hint) out.push(para(text("提示："), ...inline(ex.hint)));
+    const answer = ex.steps.flatMap((s, i) => {
+      const x = s.expect;
+      const blocks = [{ type: "code", lang: "sql", value: s.sql }];
+      const head = `${ex.steps.length > 1 ? `第 ${i + 1} 步 · ` : ""}预期：${expectSummary(x)}`;
+      if (x.kind === "rows" || x.kind === "contains") {
+        blocks.push(para(strong(head)));
+        if (x.rows.length) blocks.push(table(x.cols, x.rows.map((r) => r.map(sqlxCell))));
+        if (x.note || x.text) blocks.push(para(...inline(x.note ?? x.text)));
+      } else if (x.kind === "error") {
+        blocks.push(para(strong(`${ex.steps.length > 1 ? `第 ${i + 1} 步 · ` : ""}预期报错：`), { type: "inlineCode", value: `${x.code}: ${x.msg}` }));
+      } else if (x.kind === "free") {
+        blocks.push(para(strong("预期：")), para(...inline(x.text)));
+      } else {
+        blocks.push(para(strong(head)));
+      }
+      return blocks;
+    });
+    out.push({ type: "blockquote", children: [...answer, ...(ex.why ? [para(strong("为什么："), ...inline(ex.why))] : [])] });
+    return out;
+  },
+  SqlTables(_node, a) {
+    const ds = sqlPractice.datasets[a.set];
+    return ds.tables.flatMap((t) => [
+      para(strong(t.name), text(`：${t.desc}（${t.rows.length} 行）`)),
+      table(t.cols.map((c) => `${c.name}${c.key ? ` (${c.key})` : ""}`), t.rows.map((r) => r.map(sqlxCell))),
+    ]);
+  },
+  SqlScript(_node, a) {
+    const ds = sqlPractice.datasets[a.set];
+    return [note(`（网页版此处可以一键复制 ${ds.file}；完整脚本如下）`), { type: "code", lang: "sql", value: ds.script.trimEnd() }];
+  },
+  SqlProgress() {
+    return [];
+  },
+  Result(node, a) {
+    return [para(strong(`${a.label ?? "结果"}：`)), ...node.children];
+  },
+  CommandSortQuiz() {
+    return [
+      note("（网页版此处是「这条语句属于哪一类」的点选练习；下表是全部题目和答案）"),
+      table(["语句", "类别", "理由"], COMMAND_ITEMS.map((it) => [{ type: "inlineCode", value: it.sql }, strong(it.a), it.why])),
     ];
   },
 };
