@@ -26,6 +26,7 @@ import { MODES, scenarioLabel, verifyPki } from "../../src/components/mdx/pki-lo
 import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic.mjs";
 import { computeTimeline, TIMELINE_PRESETS, MTPD_PRESETS, fmtH, computeAle, ALE_PRESETS, fmtUsd } from "../../src/components/mdx/bia-logic.mjs";
 import { classifySeverity, SEVERITY_PRESETS, DIMENSIONS as SEVERITY_DIMENSIONS } from "../../src/components/mdx/severity-logic.mjs";
+import { decide as decideInvest, INITIATIVES as INVEST_ITEMS, fmtScore as fmtInvestScore, checkMix, MIX_PRESETS, fmtK as fmtInvestK, fmtPct1 as fmtInvestPct, rangeText as investRange } from "../../src/components/mdx/invest-logic.mjs";
 import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../src/components/mdx/cardinality-logic.mjs";
 import { evaluate as evalFirewall, PRESETS as FW_PRESETS } from "../../src/components/mdx/firewall-logic.mjs";
 import { classifyFd, fdText } from "../../src/components/mdx/normalization-logic.mjs";
@@ -370,6 +371,35 @@ const components = {
       note("（网页版此处可交互：按五个维度点选事件特征，取最严重的一维定级；下表是预设场景的结果）"),
       table(["场景", "触发升级的特征", "级别", "谁来领导"], rows),
     ];
+  },
+  PriorityScoreLab() {
+    const full = decideInvest(INVEST_ITEMS, "full", 1);
+    const simple = Object.fromEntries(decideInvest(INVEST_ITEMS, "simple", 1).map((x) => [x.id, x]));
+    const rows = full.map((x) => [
+      `${x.name}（${x.scenario}）`,
+      `${fmtInvestScore(x.score)}（第 ${x.rank}）`,
+      `${fmtInvestScore(simple[x.id].score)}（第 ${simple[x.id].rank}）`,
+      strong(x.verdict),
+      x.why,
+    ]);
+    return [
+      note("（网页版此处可交互：切换 p.7 / p.20 公式、改每项举措的输入和前提条件；下表是默认数值的结果。数值为示意，成本参考 p.30–34 案例）"),
+      table(["Initiative", "p.20 分数", "p.7 分数", "决定", "理由"], rows),
+    ];
+  },
+  BudgetMixLab() {
+    const blocks = MIX_PRESETS.flatMap((p) => {
+      const r = checkMix(p.shares, p.total);
+      const status = { in: "区间内", below: "低于区间", above: "高于区间", na: "—" };
+      return [
+        para(strong(`${p.label}（合计 ${fmtInvestPct(r.sum)}）`)),
+        table(
+          ["类别", "p.19 建议", "占比", "金额", "判断"],
+          r.rows.map((c) => [c.name, investRange(c), fmtInvestPct(c.pct), fmtInvestK(c.k), c.status === "in" || c.status === "na" ? status[c.status] : strong(status[c.status])]),
+        ),
+      ];
+    });
+    return [note("（网页版此处可交互：拖动每一类的预算占比、改总预算、切换「恢复能力不可靠」，并展开 p.30–35 的举措明细；下面是三个预设的结果）"), ...blocks];
   },
   PmrQuiz() {
     const name = (id) => pmrItems.categories.find((c) => c.id === id).en;

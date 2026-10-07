@@ -97,6 +97,8 @@ tags: [IPv4, NAT, DHCP]
 | `<Result>` Markdown 表格 / 文字 `</Result>` | 折叠的「看结果」，紧跟在一段示例 SQL 后面：先自己在 SQL Developer 里跑，再点开对照（ISOM 5260 SQL 学习版） |
 | `<CommandSortQuiz />` | 「这条语句属于 DDL / DML / DCL / TCL 哪一类」点选练习（题目在 `sql-commands.mjs`） |
 | `<SeverityLadder />` | 事件分级 Level 1–4：按五个维度点选特征，取最严重一维定级，显示谁来领导、必须做什么 |
+| `<PriorityScoreLab />` | 投资优先级打分（ISOM 5070 第 7 周 p.7 / p.20 两个公式）：给 p.21 的举措打分排序，再叠加「基础控制先投」和「前提不满足就先试点 / go slow」两道关（逻辑在 `invest-logic.mjs`） |
+| `<BudgetMixLab />` | 安全预算配比 vs p.19 百分比区间：p.29 案例 US$1.2M、区间中点、工具堆砌反例三个预设，拖动占比、切换「恢复能力不可靠」，展开 p.30–35 的举措明细 |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 
