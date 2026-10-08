@@ -25,6 +25,7 @@ import { CAPACITY, HALFOPEN_TIMEOUT, runScript } from "../../src/components/mdx/
 import { MODES, scenarioLabel, verifyPki } from "../../src/components/mdx/pki-logic.mjs";
 import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic.mjs";
 import { computeTimeline, TIMELINE_PRESETS, MTPD_PRESETS, fmtH, computeAle, ALE_PRESETS, fmtUsd } from "../../src/components/mdx/bia-logic.mjs";
+import { KINDS as DRILL_KINDS, makeQuestion as drillQuestion, fmtAnswer as drillAnswer } from "../../src/components/mdx/calc-drill-logic.mjs";
 import { classifySeverity, SEVERITY_PRESETS, DIMENSIONS as SEVERITY_DIMENSIONS } from "../../src/components/mdx/severity-logic.mjs";
 import { decide as decideInvest, INITIATIVES as INVEST_ITEMS, fmtScore as fmtInvestScore, checkMix, MIX_PRESETS, fmtK as fmtInvestK, fmtPct1 as fmtInvestPct, rangeText as investRange } from "../../src/components/mdx/invest-logic.mjs";
 import { symbolFor as cardSymbolFor, symbolName as cardSymbolName } from "../../src/components/mdx/cardinality-logic.mjs";
@@ -359,6 +360,16 @@ const components = {
     return [
       note("（网页版此处是「这一步属于 IR 哪个阶段」的点选练习；下表是全部题目和答案）"),
       table(["动作", "阶段", "理由"], data.items.map((it) => [it.text, strong(name(it.phase)), it.why])),
+    ];
+  },
+  CalcDrill() {
+    const rows = DRILL_KINDS.map((k) => {
+      const q = drillQuestion(k.id, 1);
+      return [k.label, q.prompt, q.answers.map((x) => `${x.label}：${drillAnswer(x)}`).join("；"), q.steps.join("；")];
+    });
+    return [
+      note("（网页版此处可交互：按题型随机出题、自己填答案检查、看步骤；下表是每种题型的一道例题）"),
+      table(["题型", "题目", "答案", "步骤"], rows),
     ];
   },
   SeverityLadder() {

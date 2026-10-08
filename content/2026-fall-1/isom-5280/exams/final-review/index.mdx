@@ -1,0 +1,751 @@
+---
+title:
+  en: "Final Review · Every Topic from Lesson 1 to 6"
+  zh: "期末总复习 · L1–L6 全部知识点"
+summary:
+  en: "Final exam scope from the last lecture, mapped lesson by lesson: what to memorise, distinguish, calculate and argue for each topic, cross-lesson threads, a calculation drill, answer templates for long questions, every slide MCQ, and a mock paper in the Assignment 1 format."
+  zh: "按老师最后一课划的范围，逐课列出每个知识点要默写、要区分、要计算还是要写分析；外加跨课主线、计算题随机练习、长题答题模板、全部课件原题，以及一套按 Assignment 1 格式出的模拟卷。"
+week: 0
+date: 2026-10-08
+unlisted: true
+tags: [FinalReview, ExamScope, ZeroTrust, PKI, RiskTreatment, BIA, IncidentResponse]
+---
+
+# ISOM 5280 期末总复习 · L1–L6 全部知识点
+
+**主题：把六节课的知识点按「期末要掌握到什么程度」重新排一遍——哪些要默写、哪些要会区分、哪些要会计算、哪些要能写成一段分析。**
+
+这一页是**总览**。每节课的详细版（课件原文、需要理解的地方、可能的问法，顶部有可以点的大纲）在单独的页面：
+
+| 课 | 详细复习页 |
+|---|---|
+| L1 | [数字信任、威胁行为者与 CIA](../final-l1/) |
+| L2 | [安全威胁与常见攻击](../final-l2/) |
+| L3 | [防护工具与 Zero Trust](../final-l3/) |
+| L4 | [密码学与 PKI](../final-l4/) |
+| L5 | [风险管理与 AI 风险](../final-l5/) |
+| L6 | [事件响应与应急规划](../final-l6/) |
+
+> 优先级标注说明（按考试重要性）：
+> 🔴 **必考核心** — 概念名称、定义、结构必须能背出来
+> 🟡 **需要理解** — 需要懂逻辑关系，能举例说明
+> 🟢 **了解即可** — 背景知识，考试大概率不会细抠
+>
+> 每个知识点还标了**掌握要求**，意思是「考试会用什么方式考这个点」：
+> - 📝 **默写**：能把名字、定义、清单原样写出来（对应「List…」「Define…」这类简答、填空）
+> - 🔍 **区分**：给一个场景或几个相似选项，能判断是哪一个（选择题的主要考法，例如 defacement 违反 CIA 哪一项）
+> - 🧮 **计算**：能用计算器算出来（L5 定量风险、L6 BIA）
+> - ✍️ **分析**：能用课上的框架写一段有结构的论述（长题，例如「Evaluate…」「Explain why…」）
+>
+> **优先级依据**：① 老师最后一节课亲口划的范围（下面第 0 节逐句对照）；② Assignment 1、2 的题型；③ 每节课件末尾的原题；④ 各课笔记里已经标好的优先级。老师点名的部分一律升为 🔴。
+
+<Callout type="note" title="网上有没有往年卷？">
+
+搜过 ISOM 5280 的 final / past paper / sample exam，**没有找到任何公开的往年卷或样题**，只搜到 HKUST research portal 上的课程条目。这门课的考题应该只在课程内部流通，所以这页的模拟卷是按 Assignment 1 的格式和老师划的范围自己出的。想找真题，可以：
+- 在 Canvas 课程页看有没有 sample paper 或复习课材料；
+- 问 TA Jeffrey 有没有 sample questions（老师上课提到会通过他发 IBM 的视频，可以顺便问）；
+- 查 HKUST Library 有没有收录这门课的 past exam papers（需要登录）。
+
+</Callout>
+
+---
+
+## 0. 考试信息与老师划的范围
+
+### 0.1 题型：和 Assignment 1 一样
+
+| 部分 | 题量 × 分值 | Assignment 1 的实际样子 | 复习对策 |
+|---|---|---|---|
+| **A 选择题** | 10 × 2 = 20 | 常出 EXCEPT 题，考定义与辨析（IDS 特征检测缺点、MFA、Worm、DoS、MAC vs DAC） | 把每课的**易混对**过一遍（本页每课都有「易混点」） |
+| **B 简答** | 4 × 10 = 40 | **有字数限制**：每格 12 词、少于 25 词、3 句话。问法是「列 2 个 + 每个给 2 个措施」「区别 + 哪个更糟 + justify」 | 用**关键词 + 短句**作答，提前练「12 词写清一个点」 |
+| **C 长题** | 2 × 20 = 40 | 一个真实事件（JLR 2025）拆成 4–5 小问：攻击路径、对手分类、为什么恢复这么久、对第三方的影响、检测与公开时间线 | 用第 10 节的**案例分析模板**，每一小问对应一节课的框架 |
+
+Assignment 2 全是长题（对称 vs 非对称 + 3 个挑战、Hybrid / TLS 里两种加密各自的角色、NIDPS vs HIDPS、tuning、IDPS 的其他价值），**这些题型也可能换个问法出现在期末**。
+
+<Callout type="warn" title="注意：期末大概率不能上网">
+
+A1 的长题要求自己上网查 JLR 的资料，期末考场上不会这样。比较可能的形式是**题目直接给一段案例描述**，让你分析。所以重点不是背案例细节，而是**拿到一段描述，能马上套上框架**（对手分类 → CIA → 哪些控制缺失 → IR 阶段 → BIA → 建议）。
+
+</Callout>
+
+### 0.2 老师原话 → 范围对照
+
+老师在最后一课按课程顺序走了一遍。逐字稿是语音转写，有些地方不清楚，下表把能确认的意思和对应的课列出来：
+
+| 老师的意思 | 对应 | 本页位置 |
+|---|---|---|
+| Lesson 1、2 讲了**新兴风险**，以及**第三方风险管理**（third party risk management） | L1 供应链案例、Deloitte 威胁分布；L2 供应链攻击、HKMA 四条建议 | §1、§2、§8.1 |
+| Lesson 2–3 花了不少时间讲某个主题（转写不清，从上下文推测是**防御纵深 / 各类工具**） | L2 攻击手法；L3 工具 | §2、§3 |
+| 讲完所有工具（firewall、IDPS、SIEM、SOAR……）后，**为什么要把它们组合在一起**？背后的原则是 **Zero Trust Architecture**，连同 authentication / authorization。「这是我最想让你们记住的」 | L3 p.10 三原则、p.47 纵深防御、p.48 四个 Right、p.60 总结页 | §3、§8.2 |
+| 密码学：对称、非对称、哈希，以及它们怎么组合成 **PKI**（数字证书、数字签名），Assignment 2 里考过 TLS。要理解的不只是加密本身，而是**它们在业务里怎么用** | L4 全课 | §4 |
+| Lesson 5：**怎么衡量风险**，以及**风险处理（risk treatment）** 很重要。「作为管理层，你怎么处理风险」 | L5 §5–9 | §5 |
+| 最后一课：**事件响应**，怎么读一个 incident，怎么做 **BIA**。「带一个简单的计算器」 | L6 全课 | §6、§9 |
+| 项目点评：AI 帮 SOC，**不要拿省人头来讲 ROI**，要讲缩短检测时间、减少损失 | L5 §4 + 小组项目 | §7、§10.2 |
+
+<Callout type="exam" title="一句话总结老师的范围">
+
+**L1–L6 全考，没有删掉哪一课。** 老师特别点名的五个重点：**第三方风险、Zero Trust（统领所有工具的原则）、PKI 的业务应用、风险处理、BIA 计算**。这五块按最高优先级复习。
+
+</Callout>
+
+---
+
+## 0.5 核心地图：六节课是一条线
+
+```
+L1  为什么要管安全？   数字经济靠信任 → 事故在增加 → 谁在攻击（6 类对手）→ 谁来防（政府 P+D+R、CISO 四个团队）→ 用什么衡量（CIA）
+         ↓
+L2  他们怎么攻击？     Malware / 截获 / 钓鱼 / 软件漏洞 / DoS / 供应链 / 密码攻击 / LLM 新威胁 → 每种破坏 CIA 的哪一项
+         ↓
+L3  我们用什么挡？     认证 + 授权 → 防火墙 → VPN → IDPS → EDR → SIEM / XDR → SOC + SOAR → 蜜罐
+                       ★ 统领原则：Zero Trust（Never trust / Least privilege / Assume breach）+ Defense in Depth
+         ↓
+L4  数据本身怎么保护？ 对称 / 非对称 / 哈希 → 签名 → 证书 → PKI → TLS（Hybrid）
+         ↓
+L5  钱该花在哪？       风险 = 威胁 ∩ 脆弱性 ∩ 后果 → 六步流程 → 定量计算 + Heat Map → 四种处理（Mitigate / Transfer / Accept / Avoid）
+                       + AI 的新风险（Shadow AI、幻觉、Prompt Injection）和 AI 用于防御
+         ↓
+L6  挡不住了怎么办？   BIA（MTD/RTO/WRT/RPO，SLE/ALE）→ IR 四阶段 → DR / BC → 取证 → 监管（CI 条例）
+```
+
+**一句话抓住整门课**：安全是**管理问题**，不是技术问题——要用**风险**决定花多少钱（L5），用 **Zero Trust 和纵深防御**组织工具（L3），用 **PKI** 建立信任（L4），并且**假设一定会出事**，提前做好 BIA 和响应计划（L6）。
+
+---
+
+## 1. Lesson 1 · 数字信任、威胁行为者与 CIA
+
+**逐课详细复习：[L1 期末复习](../final-l1/)**（每个知识点的课件原文、需要理解的地方、可能的问法）　完整笔记：[第 1 课](../../lectures/lesson-01/)
+
+| 知识点 | 优先级 | 掌握要求 | 必须能说出来的内容 | 笔记 |
+|---|---|---|---|---|
+| **CIA Triad** | 🔴 | 📝 默写 · 🔍 区分 | C = 不被未授权的人看到；I = 完整、未被篡改；A = 需要时能用。**看了 → C，改了 → I，打不开 → A**。Defacement = I；DDoS = A | §13.1 |
+| **6 类 Threat Actors** | 🔴 | 📝 默写 · 🔍 区分 | Script Kiddie（刺激，现成工具，**NO target**）/ Hacktivist（政治理念，defacement、DDoS、泄露）/ Criminal Syndicate（钱，**want low attention**，勒索、钓鱼）/ Nation-State（间谍，**APT**、零日）/ Insider（报复、钱或**疏忽**）/ Cyber Terrorist（恐惧，攻击基础设施） | §6.2 |
+| **对手的 4 个分类维度** | 🔴 | ✍️ 分析 | Internal vs External、Sophistication、Access to resources、Motivation。**长题「classify the adversary」就按这 4 维写** | §6.1 |
+| **Black / Gray / White Hat** | 🔴 | 🔍 区分 | 看**有没有授权**：受雇测试 = White；未授权但不牟利 = Gray；恶意牟利 = Black。**Green Hat 是干扰项** | §6.4 |
+| **Deloitte 威胁分布** | 🔴 | ✍️ 分析 | 外部攻击者占比都在下降（罪犯 + 恐怖分子仍合计 42% 居首）；**善意员工 4→13%、可信第三方 6→13%、恶意员工 6→11%** → 重心转向**内部与第三方** | §6.3 |
+| **Components of InfoSec（神庙）** | 🔴 | 📝 默写 | 地基 CIA → 三根柱 Computer / Data / Network Security → 横梁 Policy → 屋顶 Management / Governance。自下而上支撑，自上而下治理 | §3 |
+| **CISO 位置与四个团队** | 🔴 | 📝 默写 · ✍️ 分析 | 典型 CEO → CIO → CISO，也可向 CEO / CRO / COO / CAO 汇报（保持独立性）；CISO 要兼任 Business leader + Security expert。四个团队：**SOC**（检测）、**Security Engineering**（预防）、**Incident Response**（恢复）、**Policy & Compliance**（治理） | §12 |
+| **政府角色 P + D + R** | 🔴 | 📝 默写 | Prevention + Detection + Recovery；CSTCB、Digital Policy Office、Scameter+、攻防演练、CTF。A1 简答就考了「列出政府部门的 5 个作用」 | §7 |
+| **Cyberport 案（PCPD 五项缺失）** | 🔴 | ✍️ 分析 | 检测缺（没发现暴力破解）、**没开 MFA**、审计不足、政策不具体、**数据保留过久（40% 受害者本可避免）**。按**技术控制 vs 管理控制**分两类答 | §5.1 |
+| **Arup Deepfake（HK$200M）** | 🔴 | ✍️ 分析 | 系统没被入侵，被骗的是**人的判断** → 技术防护挡不住，要靠带外核实、双人审批、培训 | §5.2 |
+| 供应链案例（医管局承包商、Canvas） | 🟡 | 🔍 区分 | 看到「第三方平台泄露了我们的数据」→ 关键词是 **supply chain / third-party risk** | §5.3 |
+| 安全管理四原则 | 🟡 | ✍️ 分析 | 完美安全不存在，**是过程不是目标**；usability vs control 的平衡；既允许合理访问又能抵御威胁；先了解现状与目标状态 | §13.2 |
+| 事故趋势数字 | 🟡 | 📝 默写 | HKCERT：2024 年 12,536 宗（+62%），2025 年 15,877 宗（再 +17%）；钓鱼是主力；金融、社媒、电商合计 82% | §4 |
+| WEF 复杂性六因素 | 🟡 | 📝 默写 | Skills gap、AI、监管、供应链、犯罪精密化、地缘政治（A1 MCQ 考过 EXCEPT 题） | §8 |
+| Ensign 五大趋势、Cisco 五个就绪维度 | 🟢 | 📝 默写 | 勒索 / 国家 / 复杂 / 供应链 / AI；身份 / 网络 / 机器 / 云 / AI | §5.5、§9.2 |
+| 损失与人才数字 | 🟢 | — | 医疗泄露最贵（$5.3M）；中小企只有 26% 有专职安全岗（大企业 59%） | §10–11 |
+
+<Callout type="warn" title="L1 易混点">
+
+- **Snowden = Insider + Hacktivist**（两个维度：「他在哪」和「他为什么」），不是 State actor，也不是 APT（APT 是手法不是人）。
+- **Hacktivist vs Cyber Terrorist**：前者要传达观点，后者要制造恐惧。
+- **Nonrepudiation 不属于 CIA**，是干扰项。
+- **CIO ≠ CISO**；L6 的条例里 CIO 又指「关键基础设施营运者」。
+
+</Callout>
+
+<ThreatActorQuiz />
+
+---
+
+## 2. Lesson 2 · 安全威胁与常见攻击
+
+**逐课详细复习：[L2 期末复习](../final-l2/)**（每个知识点的课件原文、需要理解的地方、可能的问法）　完整笔记：[第 2 课](../../lectures/lesson-02/)
+
+| 知识点 | 优先级 | 掌握要求 | 必须能说出来的内容 | 笔记 |
+|---|---|---|---|---|
+| **四种 Malware** | 🔴 | 🔍 区分 | Virus 要宿主文件；**Worm 不要宿主、不要用户操作，传播最快**；Trojan 伪装、靠用户安装、不自我复制；Ransomware 加密勒索 | §2.1 |
+| **RaaS 三个角色** | 🔴 | 📝 默写 | Initial Access Broker（卖初始访问）、Operator / Developer（开发、抽成）、Affiliate（执行）。**Crypto Miner 不是其中之一**。管理含义：降低了攻击门槛 | §2.2 |
+| **Threat / Vulnerability / Exploit / Attack / Risk** | 🔴 | 🔍 区分 | Vulnerability = 墙上的洞；Threat = 有人可能钻；Exploit = 钻洞的工具；Attack = 真的钻进来了。L5 又复习了一遍 | §1 |
+| **通信截获三种** | 🔴 | 🔍 区分 | Sniffing（偷听）、IP Spoofing（冒充可信来源）、MITM（插在中间，能**篡改**）。都主要破坏 C；对策是加密（VPN / TLS） | §3 |
+| **Phishing / Social Engineering** | 🔴 | ✍️ 分析 | 「It is not technical, but a social one」；AI 让 spear-phishing、deepfake 更容易。对策：演练培训、MFA、网络分段、最小权限、关掉不必要服务 | §4 |
+| **SQLi / Buffer Overflow / XSS** | 🔴 | 📝 默写 · 🔍 区分 | Primary Target：SQLi → **数据库**；Buffer Overflow → **内存**（C/C++ 易受影响）；XSS → **访问者的浏览器**。对程序缺陷**无效的控制是「加 IT 预算」** | §5.2 |
+| **DoS vs DDoS；三种 DDoS** | 🔴 | 🔍 区分 · ✍️ 分析 | DoS 单一来源，DDoS 来自 botnet 多源，更难按来源封堵。Volumetric（塞带宽，UDP / ICMP flood）、**Protocol（占状态表，SYN flood）**、Application L7（模仿正常请求，HTTP flood、Slowloris） | §6 |
+| **供应链攻击 + HKMA 四条建议** | 🔴 | ✍️ 分析 | 攻击者不打你，打你的供应商（SolarWinds Orion 更新被植入 Sunburst）。HKMA：全生命周期识别评估缓解、评估关键第三方、威胁情报覆盖第三方并共享、场景化应急演练。**四个自问**：规模化单点故障？分包商透明吗？过度集中？演练过供应商失效吗？ | §7 |
+| **密码攻击** | 🟡 | 📝 默写 · ✍️ 分析 | Guessing、Dictionary、Brute force、Rainbow table（前提是偷到哈希文件）、**Credential Stuffing（撞库）**。对策：长且唯一的密码、加盐哈希、限速锁定、MFA、passkey。A1 简答原题 | §8 |
+| OWASP Top 10 | 🟢 | 📝 默写 | 知道它是行业公认的十大 Web 风险清单；A01 Broken Access Control | §5.1 |
+| LLM 的泄露与投毒 | 🟢 | 🔍 区分 | Leakage 破坏 C（训练数据记忆、RAG 泄露）；Poisoning 破坏 I（数据污染、后门）。**把外部文本当数据，不当指令** | §9 |
+
+<Callout type="warn" title="L2 易混点">
+
+- SYN Flood 是 **Protocol attack**，不是 Volumetric。
+- Rainbow table 要先**偷到密码哈希文件**；Credential stuffing 用的是**别处泄露的明文账密**，靠的是用户重复使用密码。
+- MITM 比 Sniffing 危险，因为能**改**内容（破坏 I），不只是看。
+
+</Callout>
+
+<SynFloodLab />
+
+---
+
+## 3. Lesson 3 · 防护工具与 Zero Trust ★老师最强调
+
+**逐课详细复习：[L3 期末复习](../final-l3/)**（每个知识点的课件原文、需要理解的地方、可能的问法）　完整笔记：[第 3 课](../../lectures/lesson-03/)（内容最多，§37 易混对照和 §40 自测题一定要做）
+
+### 3.1 访问控制
+
+| 知识点 | 优先级 | 掌握要求 | 必须能说出来的内容 | 笔记 |
+|---|---|---|---|---|
+| **Authentication vs Authorization** | 🔴 | 🔍 区分 | 认证 = 你是谁（先）；授权 = 你能做什么（后） | §37.9 |
+| **MFA 三类因素** | 🔴 | 📝 默写 · 🔍 区分 | Know / Have / Are，**必须跨类别**。密码 + 安全问题 = 两个 Know，不是 MFA。passcode + 人脸 = Know + Are | §4 |
+| **访问控制树** | 🔴 | 📝 默写 · 🔍 区分 | Discretionary（**用户**决定）vs Nondiscretionary（**组织**决定）→ Lattice-based → **Mandatory**（密级标签，系统强制）/ **Role-based、Task-based**。层级不能拍平 | §6 |
+| 授权的四个维度 | 🟡 | 📝 默写 | subject 对 object 的权限：**if, when, from where, especially how** | §5 |
+| NIST 密码护栏 | 🟡 | 🔍 区分 | 比对泄露库 / 字典词 / 重复连续字符 / 场景相关词 + **限制失败次数**；**不再要求**定期改密和强制复杂度 | §3 |
+
+### 3.2 Zero Trust 与整体策略（老师说的「最大的礼物」）
+
+| 知识点 | 优先级 | 掌握要求 | 必须能说出来的内容 | 笔记 |
+|---|---|---|---|---|
+| **ZTA 定义** | 🔴 | 📝 默写 | 不因为**网络位置**（内网 vs 互联网）或**资产归属**（公司设备 vs 个人设备）就默认信任 | §7 |
+| **ZTA 三原则** | 🔴 | 📝 默写 · ✍️ 分析 | **Never Trust, Always Verify**；**Least Privilege Access**；**Assume Breach / Continuous Verification** | §7 |
+| **四个 Right（落地）** | 🔴 | 📝 默写 | Right Users（身份治理、行为分析、**PAM** 防内鬼）；Right Authentication（**MFA** + 按用户、设备、时间、地点**动态风险评分**）；Right Data（数据分级、端到端加密、**DAM**）；Right Reason（云访问审计、欺诈检测、配置管理） | §32 |
+| **Defense in Depth** | 🔴 | 📝 默写 · ✍️ 分析 | **Multiple, independent, overlapping** controls 保护关键资产。p.47 总装图：Screened Router → Perimeter FW → IDPS → DMZ → Internal FW → Endpoint，日志全部汇入 SIEM | §31 |
+| **Summary 四条策略（p.60）** | 🔴 | 📝 默写 · ✍️ 分析 | **Least Privilege**（限制横向移动）、**Defense in Depth**、**Fail-Safe Defaults / Zero Trust**（默认拒绝）、**Simplicity & Auditability**（越简单越少出错） | §36 |
+| **S = P + D + R** | 🔴 | ✍️ 分析 | 预防一定会失败 → 必须有检测；检测必须有响应。和 Assume Breach 是同一个思想 | §21 |
+
+<Callout type="exam" title="为什么说 Zero Trust 把所有工具串起来了">
+
+老师的原话是：讲完所有工具，「why putting all those together」——背后的原则是 Zero Trust。答题时可以这样串：
+
+- **Never trust, always verify** → 每次访问都认证（MFA）+ 授权（RBAC、最小权限），NGFW 的 Identity Awareness 按**身份**而不是按 IP 放行；
+- **Least privilege** → RBAC / TBAC、PAM、微分段，被攻陷后**限制横向移动**；
+- **Assume breach** → 既然一定会被突破，就需要 IDPS、EDR、SIEM / XDR 去**检测**，SOC + SOAR 去**响应**，蜜罐去**引开和收集情报**；
+- **Fail-safe defaults** → 防火墙规则表最后一条 Any-Any-Deny。
+
+工具是零件，**Zero Trust 是设计图**，Defense in Depth 是摆放方式。
+
+</Callout>
+
+### 3.3 防火墙与架构
+
+| 知识点 | 优先级 | 掌握要求 | 必须能说出来的内容 | 笔记 |
+|---|---|---|---|---|
+| **三种防火墙** | 🔴 | 🔍 区分 | Stateless（L3，只看包头，最快最弱）/ **Stateful**（L3–L4，用 **state table** 跟踪连接）/ Application Proxy（L5–L7，把连接切成两段，最慢最安全） | §37.1 |
+| **规则表（p.18）** | 🔴 | 🔍 区分 · ✍️ 分析 | **自上而下逐条匹配**；第 6、7 条 Telnet 顺序不能调换；第 8、9 条体现 DMZ 两跳；最后一条 **Default Deny**。端口：7 ping / 20-21 FTP / 23 Telnet / 25 SMTP / 53 DNS / 80 HTTP / 110 POP3 | §12 |
+| **Screened Host vs Screened Subnet (DMZ)** | 🔴 | 🔍 区分 | 区别在**堡垒主机是否隔离在独立 DMZ**。Screened Subnet 用两个路由器，攻陷后攻击者只在 DMZ | §37.3 |
+| Network vs Host-based firewall | 🔴 | 🔍 区分 | 网络型护全网、粒度粗；主机型装在单机、更细。**单一外部来源打多台内网主机，最快的办法是加一条网络防火墙规则**（L3 原题） | §9 |
+| NGFW | 🟡 | 📝 默写 | FW + IDS/IPS + DPI + Identity Awareness + Threat Intelligence | §30 |
+| VPN 两种模式 | 🟡 | 🔍 区分 | Tunnel 加密整个包（含包头）；Transport 只加密 payload。**课件说 Remote Access 属于 Transport**；VPN 的 CIA 里 **A = Authentication** | §20 |
+| Case Study：选哪个架构 | 🟡 | ✍️ 分析 | 不直接选边，**基于风险决定**；问 TCO、合规、扩展性；注意顾问的**利益冲突** | §19 |
+
+<FirewallRuleLab />
+
+### 3.4 检测与响应工具
+
+| 知识点 | 优先级 | 掌握要求 | 必须能说出来的内容 | 笔记 |
+|---|---|---|---|---|
+| **Firewall vs IDS vs IPS** | 🔴 | 🔍 区分 | 防火墙 = 门锁（P，inline）；IDS = 摄像头（D，旁路，**只告警**）；IPS = 会动手的保安（D + R，inline） | §37.4 |
+| **TP / FP / FN / Noise** | 🔴 | 🔍 区分 · ✍️ 分析 | Positive / Negative 看「报没报」，True / False 看「对不对」。**False Negative 最严重**；误报太多会让分析师麻木，最后导致漏报。Noise = 准确但无威胁 | §23 |
+| **三种检测方法** | 🔴 | 🔍 区分 | Signature（已知坏特征，抓不到新攻击 → FN）/ Anomaly（自学正常基线，**clipping level**，易 FP）/ SPA（厂商协议规范，= DPI） | §24 |
+| **NIDS vs HIDS** | 🔴 | ✍️ 分析 | 网络型看**网络包**的异常模式，看不到加密内容；主机型看**主机文件变更和用户行为**，看不到别的机器。A2 原题 | §21 |
+| **IDPS 的三个 benefit** | 🔴 | ✍️ 分析 | 入侵检测（事中）、**数据收集与取证**（事后，向管理层证明预算）、**QA 与合规**（长期治理）。A2 原题 | §22 |
+| Tuning | 🔴 | ✍️ 分析 | 同时压低 FP 和 FN；**持续**的工作，因为网络、业务、攻击手法一直在变。A2 原题 | §23 |
+| Passive vs Active | 🟡 | 🔍 区分 | Active 的四个动作：断会话、封来源、改防火墙规则、替换恶意内容 | §25 |
+| Intrusion vs Incident | 🔴 | 🔍 区分 | Intrusion = 尝试（撬锁）；Incident = 造成影响的事。误删数据库是 incident 不是 intrusion | §37.11 |
+| **SIEM** | 🔴 | 📝 默写 · ✍️ 分析 | 核心价值 = **Correlation（关联分析）**；五项能力：实时监控、事件响应、用户监控、威胁情报、分析检测 | §29 |
+| **SIEM / XDR / SOAR / SOC** | 🔴 | 🔍 区分 | SIEM 收日志关联（D）；XDR 跨端点 + 身份 + 邮件 + 云，还能响应（D + R）；SOAR 按 **playbook** 自动处置（R）；**SOC 是组织（人 + 流程），不是软件** | §34 |
+| FIND / CONFIRM / FIX | 🟡 | ✍️ 分析 | 1M+ 每日情报、只有 20% 被索引、75% 没有 playbook → 需要 AI 分诊 + SOAR | §33 |
+| EDR、端点是最弱一环 | 🟡 | 📝 默写 | 数量多种类杂、终端用户、本地管理员权限 | §27–28 |
+| **Honeypot** | 🔴 | 📝 默写 · ✍️ 分析 | 三个目的 **Divert / Collect / Delay**；误报近乎为零；问题：法律伦理、被反向利用当跳板、老练攻击者能识别 | §35 |
+
+<Callout type="warn" title="L3 易混点（最容易丢分的一课）">
+
+- **Stateful Firewall ≠ Stateful Protocol Analysis**：前者是防火墙，跟踪连接；后者是 IDPS 检测方法，跟踪协议阶段。
+- **Dynamic** 是干扰项，技术名称叫 **Stateful** inspection。
+- 访问控制树：Mandatory 和 RBAC **都在 Nondiscretionary 下面**。
+- **Noise ≠ False Positive**。
+- EDR 只看端点，**XDR 的 X = eXtended**。
+
+</Callout>
+
+---
+
+## 4. Lesson 4 · 密码学与 PKI ★老师点名
+
+**逐课详细复习：[L4 期末复习](../final-l4/)**（每个知识点的课件原文、需要理解的地方、可能的问法）　完整笔记：[第 4 课](../../lectures/lesson-04/)
+
+| 知识点 | 优先级 | 掌握要求 | 必须能说出来的内容 | 笔记 |
+|---|---|---|---|---|
+| **加密 = 算法 + 密钥** | 🔴 | 📝 默写 | Plaintext → Ciphertext；**Key** 是配合算法把明文变成密文的信息（原题）。密钥比算法更重要 | §1、§7 |
+| **对称加密** | 🔴 | 📝 默写 · ✍️ 分析 | 同一把密钥，快（适合大量数据），AES。**三个挑战**：密钥分发、密钥数量随人数爆炸 n(n-1)/2、**不能提供不可抵赖**（A2 原题） | §2 |
+| **非对称加密** | 🔴 | 📝 默写 · 🔍 区分 | 公钥 + 私钥；**用 Bob 的公钥加密 → 只有 Bob 的私钥能解**（保密）；**用自己的私钥签名 → 别人用我的公钥验证**（真实性）。RSA、Diffie-Hellman、ECC；比对称慢 1,000–10,000 倍 | §3 |
+| **Hashing** | 🔴 | 📝 默写 · 🔍 区分 | 任意长度 → 固定长度；单向不可逆、确定性、雪崩效应、抗碰撞。**不需要密钥**（原题）。用途：存密码、完整性校验、数字签名 | §4 |
+| **Hash → 签名 → 证书 三级跳** | 🔴 | ✍️ 分析 | ① 只有 Hash：中间人能改内容再重算哈希 → 只有脆弱的完整性；② + **数字签名**（发送方私钥加密摘要）：证明是谁发的 + 发现篡改，但不知道公钥是不是真的属于对方；③ + **数字证书**（CA 背书公钥和身份的绑定）：堵住冒充 | §5 |
+| **PKI 的价值** | 🔴 | ✍️ 分析 | 让互不认识的双方能规模化地建立信任；组成：CA、Certificate Enrollment、Verification、**Revocation**；带来身份验证 + 机密性与完整性保护 | §5.3 |
+| **Hybrid / TLS** | 🔴 | ✍️ 分析 | 握手阶段用**非对称**（配合服务器证书验证身份、安全地协商 session key）；传输阶段用**对称**（快，扛大流量）。A2 原题：各自的角色 | §5.4 |
+| 密码学四个目标 | 🟡 | 📝 默写 | Confidentiality、Integrity、Authentication、**Nonrepudiation** | §5.3 |
+| Blockchain | 🟡 | 🔍 区分 | 每个 Block 存上一个 Block 的哈希 → 极难篡改；P2P、分布式账本、强制用 PKI。**提供完整性，不提供机密性**（账本公开） | §6 |
+| 风险与最佳实践 | 🟡 | 📝 默写 | 风险：密钥被盗、内部威胁、算法过时；最佳实践：密钥管理、分层防御、定期审计、用户教育 | §7 |
+| 量子计算 | 🟢 | ✍️ 分析 | 能在几分钟内破解 RSA；现在就要盘点加密资产、规划 PQC 迁移（Harvest Now, Decrypt Later） | §7 |
+| Substitution vs Transposition | 🟢 | 🔍 区分 | 一个换字母本身，一个换位置 | §1 |
+
+<Callout type="exam" title="老师要的是「业务里怎么用」">
+
+老师特别说不要只会加密本身，要知道**它在业务里怎么组合起来用**。准备三个应用场景，每个说清用了哪几种技术：
+
+| 场景 | 用了什么 | 解决了什么 |
+|---|---|---|
+| **网银 HTTPS 登录** | 证书（验证服务器身份）+ 非对称（协商 session key）+ 对称（AES 加密传输）+ 哈希（完整性） | 不被冒充、不被窃听、不被篡改 |
+| **电子合同 / 网购下单** | 哈希 + 发送方私钥签名 + 证书 | 真实性 + 完整性 + **不可抵赖** |
+| **Passkey 无密码登录**（L6 开场） | 设备存私钥、银行存公钥、随机 challenge 签名、绑定域名 | 防重放、服务器被攻破也没密码可偷、防钓鱼 |
+
+</Callout>
+
+<PkiTrustLab />
+
+<Callout type="warn" title="L4 易混点">
+
+- **签名用发送方的私钥**，验证用发送方的公钥；**加密保密用接收方的公钥**。最常考的就是「用谁的哪把钥匙」。
+- Private-key encryption = **对称**加密的别名，不要和「私钥」搞混。
+- 哈希单独**不能**证明是谁发的。
+
+</Callout>
+
+---
+
+## 5. Lesson 5 · 风险管理与 AI 风险 ★老师点名
+
+**逐课详细复习：[L5 期末复习](../final-l5/)**（每个知识点的课件原文、需要理解的地方、可能的问法）　完整笔记：[第 5 课](../../lectures/lesson-05/)
+
+| 知识点 | 优先级 | 掌握要求 | 必须能说出来的内容 | 笔记 |
+|---|---|---|---|---|
+| **Risk 的定义** | 🔴 | 📝 默写 | Risk = **Threat ∩ Vulnerability ∩ Consequence**；风险管理 = 识别风险、评估相对量级、**降到可接受水平**。三原则：连到 CIA、**是管理问题不只是技术问题**、没有零风险 | §5.2 |
+| **Risk Appetite** | 🔴 | 📝 默写 | 组织为实现战略目标**愿意承担**的风险的数量和类型（ISO 31000），应该上董事会议程 | §5.3 |
+| **六步流程** | 🔴 | 📝 默写 | Context → Identify → Analyze → **Evaluate（和风险胃口比）** → Treat → Summarize | §6 |
+| 资产六大类 | 🟡 | 📝 默写 | People、Procedures、Data、Software、Hardware、Networking | §7.1 |
+| TVA 矩阵 | 🟡 | 🔍 区分 | 威胁 × 脆弱性 × 资产交叉定位，按颜色排处理优先级 | §7.2 |
+| **定量风险评估** | 🔴 | 🧮 计算 | ① Loss Frequency = Attack Likelihood × Success Probability；② Loss Magnitude = Asset Value × Probable Loss；③ Risk = ① × ②（± 不确定性）；④ 和 Risk Appetite 比，**按区间上限判断** | §8 |
+| Heat Map | 🔴 | 🔍 区分 | Likelihood × Impact（各 1–5）→ Low / Medium / High / Critical | §8 |
+| **四种 Risk Treatment** | 🔴 | 📝 默写 · 🔍 区分 · ✍️ 分析 | **Mitigation**（加控制降低可能性，首选）；**Transference**（保险、外包、SLA）；**Acceptance**（评估后认为不划算，主动不处理）；**Avoidance / Termination**（有意识地移除资产或停止活动）。原题：加控制降低剩余风险 = Mitigation | §9 |
+| 风险管理失败 | 🟡 | ✍️ 分析 | 没纳入考量、指标不对、没向高层沟通、没持续监控、没真正管理 | §10 |
+| NIST CSF 2.0 | 🟡 | 📝 默写 | Govern、Identify、Protect、Detect、Respond、Recover（Govern 是新加的） | §6 |
+| **Gen AI vs Agentic AI** | 🟡 | 🔍 区分 · ✍️ 分析 | Gen AI 生成内容；Agentic AI 自己调用工具去执行 → 风险从「内容错」升级到「动作错」 | §1 |
+| **AI 风险三栏** | 🟡 | 🔍 区分 | AI for risk management / **Risks from using AI**（幻觉、偏见、不可解释、漂移、对抗操纵）/ **Risks from others using AI**（超个性化钓鱼、deepfake、合成身份） | §1.1 |
+| Shadow AI | 🟡 | ✍️ 分析 | 未经批准使用 AI → 数据外泄（Samsung 2023）；对策是治理政策 + 培训，**How, not No** | §3 |
+| AI 用于防御 | 🟡 | ✍️ 分析 | NGFW 的 ML 检测、IDPS / EDR / XDR 的深度学习分类、威胁狩猎、UEBA、Agentic Testing；AI 治理六支柱 | §4 |
+
+<Callout type="exam" title="风险处理的答题方法（管理层视角）">
+
+老师说「作为管理层，你怎么处理风险」很重要。给一个场景时，按这个顺序判断：
+
+1. 风险有没有**超出风险胃口**？没超出 → 可以 Accept（要写明是评估过后的决定）。
+2. 超出了，能不能**自己加控制**降下来，而且控制成本低于降低的损失（CBA ≥ 0）？→ **Mitigation**。
+3. 自己降不下来或不划算，能不能**转给别人**（买保险、外包给有能力的供应商、用 SLA 约束）？→ **Transference**。注意：转移的是财务后果，**声誉和监管责任转不出去**。
+4. 资产或业务本身不值得保护，或者保护成本超过它的价值 → **Avoidance**（关掉、下线、不做这项业务）。
+
+一个风险可以组合使用：例如勒索软件风险，先 Mitigate（MFA、EDR、备份），剩余风险再 Transfer（网络保险）。
+
+</Callout>
+
+<RiskAssessmentLab />
+
+---
+
+## 6. Lesson 6 · 事件响应与应急规划 ★老师点名（带计算器）
+
+**逐课详细复习：[L6 期末复习](../final-l6/)**（每个知识点的课件原文、需要理解的地方、可能的问法）　完整笔记：[第 6 课](../../lectures/lesson-06/)，案例：[Colonial Pipeline 解析](../../readings/colonial-pipeline-2021/)
+
+| 知识点 | 优先级 | 掌握要求 | 必须能说出来的内容 | 笔记 |
+|---|---|---|---|---|
+| **CP 四大组件** | 🔴 | 📝 默写 | **BIA**（其他三份的输入）、**IR plan**、**DR plan**（原址重建）、**BC plan**（备用地点继续运作） | §2.1 |
+| **BIA 时间指标** | 🔴 | 📝 默写 · 🧮 计算 | MTD（最多能停多久）、RTO（系统修好）、WRT（补数据、验证）、RPO（最多丢多少数据，**往回看，决定备份频率**）。**MTD ≥ RTO + WRT** | §4 |
+| **BIA 金钱指标** | 🔴 | 🧮 计算 | **SLE = AV × EF**；**ALE = SLE × ARO**（ARO 可以小于 1）；**CBA = ALE前 − ALE后 − ACS**，大于 0 才值得 | §5 |
+| Cost balance point | 🟡 | ✍️ 分析 | 中断成本随时间上升，恢复成本随允许时间下降，交点总成本最低；MTD 是硬上限 | §6 |
+| NIST CP 七步、BIA 三阶段 | 🟡 | 📝 默写 | 政策 → BIA → 预防控制 → 应急策略 → 写计划 → 测试培训演练 → 更新维护 | §3 |
+| **CP 团队负责人** | 🔴 | 🔍 区分 | CPMT → **COO**；IR → **CISO**；DR → 业务运营经理；BC → 信息系统与服务经理；危机管理 → **法律顾问** | §3.3 |
+| **NIST IR 四阶段** | 🔴 | 📝 默写 · ✍️ 分析 | Preparation → Detection & Analysis → **Containment, Eradication & Recovery** → Post-Incident Activity；**两条回路**，是 loop process | §8 |
+| **NIST checklist 的位置** | 🔴 | 🔍 区分 | **通报在 Detection & Analysis**（不是事后）；**保全证据是 Containment 阶段第一步**；加强监控属于 Recovery | §9 |
+| Reaction vs Recovery | 🟡 | 🔍 区分 | Reaction：按 alert roster 通知、记录、遏制（断网、停账户、改防火墙规则、停服务）；Recovery：取证评估损害、修漏洞、升级防护、**恢复信心**、事后复盘 | §10 |
+| **Incident vs Disaster** | 🔴 | 🔍 区分 | 看**范围和能否控制**，不看攻击类型。无法遏制或无法快速恢复 → disaster → 启动 DR | §13 |
+| 测试三种策略 | 🟡 | 📝 默写 | Checklist → Tabletop（桌面推演）→ Simulation；每次演练后改进计划 | §7 |
+| 数字取证 | 🟡 | 📝 默写 | 保全、识别、提取、记录、解读；两个目的：**调查不当行为、根因分析**；多数组织**自己收集，外包分析** | §14 |
+| Reporting（who / what / when / where / why / how） | 🟡 | 📝 默写 | 用于事后检讨，以及证明组织已尽力 | §11 |
+| KPMG 四个缺口 | 🟡 | ✍️ 分析 | 关键资产没记录、危机团队职责不清、IR 计划无效、数据保留不足 | §12.1 |
+| **Colonial Pipeline** | 🔴 | ✍️ 分析 | 入口：**没 MFA、已不用但没停用的遗留 VPN 账户**；主动关停管道 6 天；付了 75 BTC（约 $4.4M），FBI 追回 63.7 BTC；没有 CISO。三道讨论题：处理是否恰当、高管角色、该不该付赎金 | §15 + Readings |
+| **香港 CI 条例** | 🔴 | 📝 默写 | 2026 年生效；类别 1（必要服务）/ 类别 2（重要社会经济活动），政府不适用。义务：**专责单位、每年风险评估、每两年独立审计、严重事件 12 小时内报告**（课件写其他事件 24 小时，正式条例是 48 小时） | §16 |
+| HKMA BCP → Operational Resilience | 🟢 | ✍️ 分析 | 从「资产坏了怎么修」转向「关键服务能否在可容忍时间内继续」 | §2.3 |
+
+<IrPhaseQuiz />
+
+---
+
+## 7. 小组项目与 AI SOC（老师最后一课的点评）
+
+这部分不是课件内容，但老师在最后一课专门讲了，**很可能变成长题的一个角度**。
+
+| 老师的点评 | 背后的道理 | 答题怎么用 |
+|---|---|---|
+| 很多组说 AI 能省 30% 人力 → 5 个人省 1.5 个 | 管理上不现实：有人离职、病假、产假，最后一个人也省不下来 | **不要把「裁员 / 省人头」当成 AI 的主要收益** |
+| 跟董事会提案时先讲省成本 → 很难推，落地时员工会抵触（「你要砍我的工作」） | 变革管理：先讲成本，执行层就会抵触 | 讲 AI **把人从重复的分诊工作里解放出来**，去做更高价值的分析 |
+| 更好的讲法：**缩短检测时间（detection time）** | 损失和攻击者驻留时间（dwell time）成正比；勒索、加密资产这类场景，时间就是钱 | 用 **MTTD / MTTR 缩短 → 损失下降** 来量化，可以接 L6 的 ALE：检测更快 → EF 下降 → SLE、ALE 下降 |
+| 推荐 IBM 的视频：AI 怎么分别帮 **prevention、detection、response** | 结构化地说 AI 能帮什么 | 按 P / D / R 三段组织答案（L3 的 S = P + D + R） |
+
+<Callout type="todo" title="待补：IBM 视频">
+
+老师说会通过 Jeffrey 把 IBM 的视频发出来（讲 AI 在安全里怎么分 prevention / detection / response 帮忙）。拿到后把要点补到这里。在那之前，可以先用课上的内容按 P / D / R 归类：
+
+- **Prevention**：NGFW 的机器学习规则调优、AI 辅助的漏洞优先级排序、钓鱼邮件过滤；
+- **Detection**：UEBA 学习正常基线、深度学习分类器检测新型入侵（不依赖特征库）、AI Triage 给海量告警排优先级（解决「只有 20% 情报被索引」）；
+- **Response**：SOAR playbook 自动处置（解决「75% 没有 playbook」）、自动隔离端点、生成事件摘要给分析师。
+
+AI 自身的风险（L5）也要一起写：幻觉、Prompt Injection、模型被投毒、Shadow AI、不可解释性。
+
+</Callout>
+
+---
+
+## 8. 跨课主线：一个主题在几节课里出现
+
+长题最容易拿高分的写法，是**把一个主题在不同课里的内容串起来**。下面是六条贯穿全课的主线。
+
+### 8.1 🔴 第三方 / 供应链风险（老师点名）
+
+| 课 | 出现在哪 |
+|---|---|
+| L1 | 医管局承包商泄露 56,000+ 患者数据；Canvas 泄露 72,571 名师生数据；Deloitte「可信第三方」6% → 13%；HKMA：AI、DLT、高性能计算都**高度依赖外部平台和第三方**；Ensign 趋势 4；WEF 复杂性中的供应链相互依赖 |
+| L2 | 供应链攻击定义；**SolarWinds**；Holistic dependency 图（业务伙伴、数据供应商、外包、公有云、SaaS）；四个自问；HKMA 四条建议；M&S 因第三方外包被攻击；OWASP A03 Software Supply Chain Failures |
+| L3 | Defense in Depth 和 Zero Trust 不因为对方是「合作伙伴」就默认信任 |
+| L5 | AI 用于第三方风险（扫合同、SOC 报告、新闻、财务）；**Transference** 靠 SLA，但责任转不出去 |
+| L5 讨论 | **CrowdStrike 2024**：单一供应商的一次更新错误造成全球中断 |
+| L6 | BC 计划要演练「供应商失效」情景；CI 条例对营运者的要求覆盖其关键计算机系统 |
+
+<Callout type="exam" title="第三方风险管理答题框架（全生命周期）">
+
+1. **选择前（Due diligence）**：评估供应商的安全能力、按重要性分级（关键供应商要求更高）；
+2. **合同**：写入安全要求、**SLA**、审计权、事件通报时限、数据保留与删除；
+3. **接入**：按 **Least Privilege / Zero Trust** 给权限，不给常驻的全域访问（医管局事后就是暂停所有承包商的访问）；
+4. **持续监控**：威胁情报覆盖关键第三方、定期审计、和同业共享情报；
+5. **应急**：演练供应商失效的场景，准备替代方案（避免单点故障与过度集中）；
+6. **退出**：收回权限、确认数据删除。
+
+</Callout>
+
+### 8.2 🔴 Zero Trust
+
+L1 DBS「trust nothing」心态、Ensign 建议用 ZTA 应对勒索 → L3 p.10 三原则、p.48 四个 Right、p.60 Fail-Safe Defaults → L6 Passkey、Colonial 的遗留 VPN 账户（**没有持续验证、没有停用不用的账户**正是违反 Zero Trust）。
+
+### 8.3 🔴 MFA 与凭证（三个案例都栽在这里）
+
+| 案例 | 入口 | 缺了什么 |
+|---|---|---|
+| Cyberport 2023（L1） | 暴力破解拿到管理员账号 → 远程桌面 | **没开 MFA**、没检测到暴力破解 |
+| Colonial 2021（L6） | 遗留 VPN 账户，密码在暗网泄露库里 | **没开 MFA**、没停用不用的账户 |
+| JLR 2025（A1） | Vishing 冒充 IT helpdesk，骗到 VPN 凭证 | 社会工程 + 凭证保护 |
+| Arup 2024（L1） | Deepfake 视频会议 | 不是系统入侵，缺的是**带外核实流程** |
+
+L3 的数字：**63% 的入侵来自账号密码被盗**；91% 的人知道重复使用密码有风险，但 66% 照样重复使用。
+
+### 8.4 🔴 CIA 贯穿始终
+
+L1 定义 → L2 每种攻击破坏哪一项 → L3 访问控制保护 C、VPN 的 CIA（A = Authentication）→ L4 加密保护 C、哈希和签名保护 I → L5 风险管理要在业务运转的同时保护 CIA → L6 RTO / MTD 讲的就是 A。
+
+### 8.5 🔴 P + D + R（预防、检测、响应 / 恢复）
+
+L1 政府角色 Prevention + Detection + Recovery、CISO 四个团队分别对应 → L3 S = P + D + R，把每个工具归类 → L6 IR 四阶段（Preparation 是 P，Detection & Analysis 是 D，Containment … Recovery 是 R）→ 项目：AI 怎么帮 P / D / R。
+
+### 8.6 🟡 AI 的两面
+
+L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、LLM 泄露与投毒 → L3 AI Triage、AI SOC → L5 Gen AI vs Agentic、Shadow AI、AI 防御工具 → L6 HKMA 2026 通函：AI 能自主发现零日漏洞，攻击被「商品化」→ 项目与老师点评。
+
+---
+
+## 9. 计算题专区
+
+老师说要带计算器，期末的计算题只会来自这三组公式：
+
+| 公式组 | 公式 | 判断标准 | 出处 |
+|---|---|---|---|
+| **金钱（L6）** | SLE = AV × EF；ALE = SLE × ARO；CBA = ALE前 − ALE后 − ACS | CBA > 0 值得买 | L6 p.13 |
+| **时间（L6）** | 停机 = RTO + WRT；最坏数据丢失 = 备份间隔 | 停机 ≤ MTD；备份间隔 ≤ RPO | L6 p.12 |
+| **定量风险（L5）** | Loss Frequency = 攻击可能性 × 成功率；Loss Magnitude = 资产价值 × 可能损失；Risk = 两者相乘 ± 不确定性 | 区间上限 ≤ Risk Appetite 才 Accept | L5 p.36 |
+
+<Callout type="memo" title="ARO 换算">
+
+「每 N 年一次」→ ARO = 1/N（每 4 年一次 = 0.25，50 年一遇 = 0.02）；「一年 N 次」→ ARO = N。L5 的 Loss Frequency 和 L6 的 ARO 是同一个意思，ALE 和 Calculated Risk 也是同一个意思，**题目用哪套符号就用哪套公式**。
+
+</Callout>
+
+下面的组件会随机出这三类题，自己填答案、检查，再看步骤：
+
+<CalcDrill />
+
+<Callout type="warn" title="计算题常见失分点">
+
+- 只比 RTO 和 MTD，**忘了加 WRT**。
+- 把 RPO 当成恢复速度。RPO 决定的是**备份频率**。
+- ALE 算出来后不写结论。题目问「值不值得」，要写 CBA 的数值**和**判断。
+- 有不确定性区间时用点估计判断，要用**区间上限**。
+- ALE 会低估**低频高损**的风险（洪水 50 年一遇）。如果题目问「只看 ALE 够不够」，要提到 MTD 和监管要求。
+
+</Callout>
+
+---
+
+## 10. 长题答题模板
+
+### 10.1 案例分析题（A1 JLR 题型）
+
+拿到一段事件描述，每一小问对应一节课的框架：
+
+| 小问的问法 | 用哪节课 | 答案骨架 |
+|---|---|---|
+| Threat vector / tactics？ | L2 | 入口是什么（钓鱼 / vishing、凭证被盗、未打补丁的漏洞、供应商）→ 进来后做了什么（提权、横向移动、加密、窃取数据 = 双重勒索） |
+| Classify the adversary？ | L1 | 先用 **4 个维度**（内外部、技术水平、资源、动机），再落到 **6 类之一**（勒索团伙通常是 Criminal Syndicate，动机是钱；如果是 RaaS，再说 Affiliate / Operator 分工） |
+| 违反了 CIA 哪一项？ | L1、L2 | 数据被偷 → C；数据被改 → I；系统停摆 → A。勒索通常 **C + A** 都有 |
+| What went wrong / 哪些控制失效？ | L1 Cyberport、L3 | 分**技术控制**（没 MFA、没检测、没分段、没打补丁）和**管理控制**（没审计、政策不具体、数据留太久、没演练、没有 CISO） |
+| Why did recovery take so long？ | L6 | 范围太大已经是 **disaster**（不只是 incident）→ 要先取证、找根因、**确认清除干净**才敢恢复（回路：Containment → Detection）；OT / 生产系统和 IT 系统相互依赖，要分阶段重启；备份可能也被加密或不可信（RPO / RTO 不达标）；**WRT**：系统起来后还要补数据、验证；供应链伙伴也要重新接入 |
+| Business impact？ | L5、L6 | **财务**：停产损失、赎金、恢复成本、罚款、诉讼、股价；**非财务**：声誉、客户信任、监管调查、员工士气；**第三方**：供应商（JLR 的供应链要靠政府担保贷款）、经销商、客户 |
+| 检测与通报时间线？ | L6 | 用 NIST 四阶段对照：什么时候发现（D & A）、什么时候通报监管和公众（**通报属于 D & A**，香港 CI 条例要求严重事件 12 小时）、什么时候遏制、什么时候恢复 |
+| Recommendations？ | L3、L5 | 按 **P / D / R** 或按 **Zero Trust 三原则**列建议；再用 L5 的**风险处理**说明剩余风险怎么办（例如买网络保险 = Transference）；最后补一条管理层面的（演练、董事会监督） |
+
+<Callout type="tip" title="让答案显得有结构的小技巧">
+
+每个小问开头先点名框架，例如「Using the four classification dimensions…」「Mapped to the NIST IR lifecycle…」「In terms of the CIA triad…」。阅卷时一眼能看出你用了课上的框架，比堆细节更容易拿分。
+
+</Callout>
+
+### 10.2 向董事会提案题（AI / 安全投资）
+
+1. **问题是什么**：用数字说明风险（事故趋势、行业平均损失、监管要求）。
+2. **方案是什么**：按 P / D / R 说明它补的是哪一段，放在 Defense in Depth 的哪一层，怎么符合 Zero Trust。
+3. **收益怎么量化**：用 ALE / CBA；AI 类的方案讲**缩短检测和响应时间、减少损失**，**不要以裁员为主要收益**。
+4. **风险和控制**：方案自己的风险（AI 幻觉、Prompt Injection、供应商依赖），对应的控制（人在回路、治理政策、SLA）。
+5. **剩余风险怎么处理**：Accept / Transfer，并说明是否在风险胃口之内。
+
+---
+
+## 11. 课件原题汇总（L1–L5，共 14 题）
+
+老师放在每节课件末尾的题，等于明示了选择题的出题风格。L6 课件没有末尾原题。
+
+<MCQ q="[L1] Paul works for a cybersecurity company. His firm was hired to conduct a test against a health-care system, and Paul is working to gain access to the system belonging to a hospital in that system. What term best describes his work?" a="White Hat" b="Gray Hat" c="Green Hat" d="Black Hat" answer="A">
+关键词 **hired** = 有授权 → White Hat。Green Hat 是干扰项。
+</MCQ>
+
+<MCQ q="[L1] There is a security incident that compromised one of the bank's web server. CISO believes the attackers defaced one or more pages on the website. What cybersecurity objective did the attacker violate?" a="Confidentiality" b="Nonrepudiation" c="Integrity" d="Availability" answer="C">
+Defacement = 内容被改 = Integrity。网站还能访问，所以不是 Availability；Nonrepudiation 不属于 CIA。
+</MCQ>
+
+<QA q="[L1] Edward Snowden was a government contractor who disclosed sensitive government documents to journalists to uncover what he believed were unethical activities. Which 2 terms best describe him? A. Insider B. State actor C. Hacktivist D. APT E. Criminal Syndicate">
+**A + C**。他有合法访问权 → Insider；动机是理念、手法是泄露 → Hacktivist。
+</QA>
+
+<MCQ q="[L2] Which one of the following malware can spread without user interactions?" a="Ransomware" b="Back door" c="Trojan Horse" d="Worm" answer="D">
+Worm 不需要宿主文件，也不需要用户操作。
+</MCQ>
+
+<MCQ q="[L2] Which of the following is NOT a key component under Ransomware-as-a-Service (RaaS) ecosystem?" a="RaaS Operators / Developers" b="The Affiliates / Attackers" c="The Crypto Miner" d="Initial Access Brokers" answer="C">
+RaaS 三个角色是 Operator、Affiliate、Initial Access Broker。
+</MCQ>
+
+<MCQ q="[L2] What type of control is ineffective against Program Flaw (e.g. SQL injection)?" a="Hire better IT team" b="Better plan and more users testing" c="Principle of least user privilege" d="Increase IT budget" answer="D">
+砸钱本身不修复代码缺陷；其余三项都直接作用于代码质量或权限。
+</MCQ>
+
+<MCQ q="[L3] _____ inspection firewalls keep track of each network connection between internal and external systems using a state table." a="Static" b="Dynamic" c="Stateful" d="Stateless" answer="C">
+Dynamic 是干扰项（课件原文有 dynamic state table）。
+</MCQ>
+
+<MCQ q="[L3] Under MFA, a system requires users to enter a passcode and then verifies that their face matches a photo stored in the system. What 2 factors is it using?" a="Something you know and something you have" b="Something you have and something you know" c="Something you have and something you are" d="Something you know and something you are" answer="D">
+passcode = know，face = are。A 和 B 是同一个答案换顺序，必定都不对。
+</MCQ>
+
+<MCQ q="[L3] An incident originates from a single system on the Internet targeting multiple systems on this network. What control could stop the incident ASAP?" a="DDoS mitigation" b="Host firewall rule" c="Vulnerability assessment" d="Network firewall rule" answer="D">
+单一来源（不是 DDoS），多个目标（逐台配主机规则太慢），在网络边界加一条规则最快。
+</MCQ>
+
+<MCQ q="[L3] NIDS alerted to a DDoS attack, and investigation revealed that this type of attack did take place. What type of report?" a="False positive" b="True negative" c="True positive" d="False negative" answer="C">
+报了（Positive）+ 确实发生（True）。
+</MCQ>
+
+<MCQ q="[L4] Which term describes the information used in conjunction with an algorithm to create the ciphertext from the plaintext?" a="Cipher" b="Code" c="Clear text" d="Key" answer="D">
+加密 = 算法 + 密钥。
+</MCQ>
+
+<MCQ q="[L4] True or False: Hashing functions require the use of keys?" a="True" b="False" answer="B">
+哈希不需要密钥，所以单独用它无法证明是谁发的。
+</MCQ>
+
+<MCQ q="[L4] What term describes a cryptographic method that incorporates mathematical operations involving both a public key and a private key to encipher or decipher a message?" a="Private-key encryption" b="Symmetric encryption" c="Advanced Encryption Standard (AES)" d="Asymmetric encryption" answer="D">
+A、B、C 都是对称加密的说法或算法。
+</MCQ>
+
+<MCQ q="[L5] Applying controls and safeguards that eliminate or reduce the remaining uncontrolled risks is known as _____." a="Acceptance" b="Termination" c="Transference" d="Mitigation" answer="D">
+加控制去降低剩余风险 = Mitigation。
+</MCQ>
+
+---
+
+## 12. 模拟卷（我按 A1 格式出的，非老师原题）
+
+<Callout type="note" title="怎么用">
+
+按考试的样子做：选择题 10 分钟、简答 40 分钟、长题 50 分钟，**先合上笔记写完再点开答案**。简答题严格按字数限制写。答案是我给的参考框架，不是标准答案。
+
+</Callout>
+
+### Section A · Multiple Choice（10 × 2 = 20）
+
+<MCQ q="A1. An employee accidentally emails a spreadsheet of customer data to the wrong external recipient. Which threat actor category best fits?" a="Hacktivist" b="Insider threat" c="Script kiddie" d="Criminal syndicate" answer="B">
+Insider threat 的动机包括 **negligence（疏忽）**，不一定是恶意的。
+</MCQ>
+
+<MCQ q="A2. Which of the following is NOT one of the three Zero Trust principles covered in the course?" a="Never trust, always verify" b="Least privilege access" c="Assume breach / continuous verification" d="Trust devices once they are on the corporate LAN" answer="D">
+ZTA 的定义就是**不因网络位置或资产归属**默认信任。D 正是 ZTA 要否定的传统假设。
+</MCQ>
+
+<MCQ q="A3. The last rule of a firewall rule set is Any / Any / Any / Any / Deny. Which security control strategy does this best illustrate?" a="Defense in depth" b="Fail-safe defaults" c="Simplicity and auditability" d="Separation of duties" answer="B">
+默认拒绝，除非明确允许（p.60）。
+</MCQ>
+
+<MCQ q="A4. A bastion host is placed in its own subnet between an external and an internal filtering router. This architecture is called:" a="Screened host" b="Screened subnet with DMZ" c="Stateless packet filtering" d="Host-based firewall" answer="B">
+两个路由器夹着 DMZ = Screened subnet。Screened host 的堡垒主机仍挂在内网上。
+</MCQ>
+
+<MCQ q="A5. Which IDPS detection method learns a baseline of normal behaviour and raises an alert when activity crosses a clipping level?" a="Signature-based" b="Anomaly-based" c="Stateful protocol analysis" d="Stateful packet inspection" answer="B">
+Clipping level 是 Anomaly-based 的关键词。D 是防火墙技术，不是 IDPS 检测方法。
+</MCQ>
+
+<MCQ q="A6. Alice wants Bob to be able to verify that a message really came from her and was not altered. She should encrypt the message digest with:" a="Bob's public key" b="Bob's private key" c="Alice's private key" d="Alice's public key" answer="C">
+签名用**发送方的私钥**，Bob 用 Alice 的公钥验证。A 是给 Bob 加密保密用的。
+</MCQ>
+
+<MCQ q="A7. Which of the following provides integrity checking on its own but cannot prove who sent the message?" a="Hashing" b="Digital signature" c="Digital certificate" d="Asymmetric encryption with the sender's private key" answer="A">
+哈希没有密钥，中间人可以改内容再重算哈希。
+</MCQ>
+
+<MCQ q="A8. A company buys cyber insurance to cover losses from ransomware. Which risk treatment strategy is this?" a="Mitigation" b="Acceptance" c="Transference" d="Avoidance" answer="C">
+把财务后果转给保险公司 = Transference。
+</MCQ>
+
+<MCQ q="A9. A system has MTD = 6 hours, RTO = 4 hours and WRT = 3 hours. Which statement is correct?" a="It meets the MTD because RTO is less than MTD" b="It fails the MTD because RTO + WRT = 7 hours" c="It meets the MTD because WRT is less than RTO" d="It cannot be judged without the RPO" answer="B">
+**MTD ≥ RTO + WRT** 才达标。RPO 管的是数据丢失，和停机时长无关。
+</MCQ>
+
+<MCQ q="A10. In the NIST incident handling checklist, acquiring, preserving and documenting evidence is:" a="Part of Preparation" b="The last step of Detection and Analysis" c="The first step of Containment, Eradication and Recovery" d="Part of Post-Incident Activity" answer="C">
+先保全证据，再遏制和清除，否则证据会在重装时丢失。
+</MCQ>
+
+### Section B · Short Questions（4 × 10 = 40）
+
+<QA q="B1. State the three principles of Zero Trust Architecture (3 marks). For each principle, give one control covered in the course that puts it into practice (6 marks). Why does Zero Trust reject trust based on network location? (1 mark) — limit 12 words per bullet.">
+**原则与控制**：
+- Never trust, always verify → MFA plus dynamic risk scoring on every access request.
+- Least privilege access → Role-based access control and PAM; limits lateral movement.
+- Assume breach → IDPS, SIEM correlation and SOC monitoring to detect intruders inside.
+
+**为什么不信网络位置**：Insiders, stolen credentials and VPN users are already inside the perimeter.
+
+（其他可接受的控制：NGFW Identity Awareness、微分段、Fail-safe default deny、DAM、EDR。）
+</QA>
+
+<QA q="B2. Alice sends Bob a message together with its hash. (a) Why does this give only weak integrity protection? (3 marks) (b) How does a digital signature fix this, and what extra property does it add? (4 marks) (c) What problem still remains, and how does a digital certificate solve it? (3 marks) — limit 25 words per part.">
+**(a)** Hashing needs no key; a man-in-the-middle can alter the message, recompute the hash, and Bob's comparison still matches.
+
+**(b)** Alice encrypts the digest with her private key; only she can produce it, so tampering is detected and authenticity / non-repudiation is added.
+
+**(c)** Bob cannot tell whether the public key truly belongs to Alice; a trusted CA signs a certificate binding Alice's identity to her public key.
+</QA>
+
+<QA q="B3. Name and define the four risk treatment strategies (8 marks). Which one is usually the preferred first choice, and why? (2 marks) — limit 12 words per box.">
+| 策略 | 定义（12 词内） |
+|---|---|
+| Mitigation | Add controls to reduce likelihood or impact of successful attack. |
+| Transference | Shift risk to others via insurance, outsourcing or SLA contracts. |
+| Acceptance | After assessment, consciously take no further action; cost exceeds benefit. |
+| Avoidance (Termination) | Deliberately remove the asset or stop the risky activity. |
+
+**首选**：Mitigation — the organisation directly reduces the risk itself, keeping control and accountability.
+
+（Acceptance 要强调「**评估之后**的决定」，不是放任不管；Transference 转不走声誉和监管责任。）
+</QA>
+
+<QA q="B4. A payment server is worth US$800,000. A ransomware attack would destroy 30% of its value and is expected once every 2 years. (a) Calculate SLE and ALE (4 marks). (b) An EDR solution costing US$60,000 per year would reduce the ARO to once every 10 years. Calculate the CBA and state whether it is justified (4 marks). (c) Give one limitation of relying on ALE alone (2 marks).">
+**(a)** SLE = AV × EF = 800,000 × 30% = **US$240,000**；ARO = 1/2 = 0.5；ALE = 240,000 × 0.5 = **US$120,000 / 年**。
+
+**(b)** ALE（后）= 240,000 × 0.1 = US$24,000；CBA = 120,000 − 24,000 − 60,000 = **US$36,000 > 0** → 值得部署。
+
+**(c)** ALE 会低估**低频高损**的事件：一次损失可能远超年度平均，而且停机时间可能超过 MTD，或违反监管要求（例如 CI 条例），这些都不在 ALE 里。
+</QA>
+
+### Section C · Long Questions（2 × 20 = 40）
+
+<Callout type="note" title="C1 案例（虚构，按真实事件常见模式编写）">
+
+**2026 年 3 月，香港一家物流公司 HarbourLink 遭勒索攻击。**
+
+- 3 月 2 日：攻击者冒充 IT helpdesk 致电一名员工（vishing），骗到其 VPN 账号密码。这个 VPN 由公司外包的 IT 服务商管理，**没有启用 MFA**。
+- 3 月 2–9 日：攻击者用一个权限过大的服务账号在内网横向移动，窃取约 300 GB 客户和货运数据。公司的 IDS 产生了几条异常登录告警，但当时每天有上千条告警，没人跟进。
+- 3 月 10 日：仓储管理系统、订单系统和备份服务器同时被加密，勒索信要求 HK$12M。公司关停所有系统，货运停摆。
+- 3 月 13 日：公司向警方和私隐专员报案；3 月 20 日，部分数据出现在泄露网站上。
+- 全面恢复用了 4 周，因为备份也被加密，只能从 2 周前的离线磁带恢复。多家零售客户转用其他物流商。
+
+</Callout>
+
+<QA q="C1. (a) Describe the threat vector and classify the adversary, explaining your rationale (6 marks). (b) Which elements of the CIA triad were affected, and which technical and management controls failed? (6 marks) (c) Using the NIST incident response lifecycle, evaluate HarbourLink's detection and response (4 marks). (d) Why did recovery take four weeks, in terms of BIA metrics? (4 marks)">
+**(a) 攻击路径**：Vishing（社会工程）→ 窃取 VPN 凭证 → 第三方管理的 VPN 没有 MFA → 用权限过大的服务账号横向移动 → 窃取数据 → 加密（**双重勒索**）。
+**对手分类**（4 个维度）：External；技术水平中到高（懂横向移动、会先打备份）；资源充足、可能有分工；动机是**钱** → **Criminal Syndicate**，很可能是 RaaS 的 Affiliate（勒索 + 泄露网站是典型 RaaS 模式）。不是 Hacktivist（没有政治诉求），也不是 Nation-state（目标是钱，不是情报）。
+
+**(b) CIA**：**C**（300 GB 数据被窃并公开）、**A**（系统停摆 4 周）；I 也受影响（数据被加密、恢复的数据是两周前的）。
+**技术控制失效**：没 MFA、服务账号**违反最小权限**、没有网络分段、IDS 告警没人处理（**误报太多导致麻木 → 实际变成漏报**）、备份没隔离。
+**管理控制失效**：**第三方风险管理**缺失（外包 VPN 没有安全要求和审计）、员工没受过 vishing 培训、告警分诊流程（没有 playbook）、没有演练过备份被加密的情景。
+
+**(c) NIST 对照**：**Preparation** 不足（没有 playbook、没演练）；**Detection & Analysis** 失败：有告警却 8 天没发现，驻留时间太长；**通报**在加密后 3 天才做（按香港 CI 条例，如果属于关键基础设施，严重事件要 12 小时内报告）；**Containment** 只能关停全部系统（因为发现太晚）；**Post-incident** 需要检讨告警分诊和第三方管理。
+
+**(d) BIA**：**RPO 失败**——备份也被加密，只能回到 2 周前的离线磁带，丢了 2 周数据；**RTO 拉长**——要先取证、确认清除干净，再重建多个相互依赖的系统；**WRT 很长**——要补录 2 周的货运记录、和客户对账、验证数据；合计**远超 MTD**，所以客户流失。这次事件已经是 **disaster** 级别，应该同时启动 DR 和 BC（例如用人工流程维持关键货运）。
+</QA>
+
+<QA q="C2. HarbourLink's board is considering an AI-powered SOC (AI triage + SOAR). (a) Explain how AI could help across prevention, detection and response, using examples from this case (8 marks). (b) The vendor claims the system will let the company cut its 5-person security team by 30%. Explain why the board should not rely on this, and propose a better way to quantify the benefit (6 marks). (c) Identify three risks of adopting GenAI in the SOC and a control for each (6 marks).">
+**(a) P / D / R**：
+- **Prevention**：AI 钓鱼 / vishing 识别与员工模拟训练；按威胁情报给漏洞排优先级；NGFW 机器学习调优规则；
+- **Detection**：**UEBA** 学习服务账号的正常行为，横向移动会偏离基线；**AI Triage** 把每天上千条告警排序，那几条异常登录会被排到前面（解决本案「有告警没人看」）；关联分析把多天的零散事件串成一条攻击链；
+- **Response**：**SOAR playbook** 在检测到异常后自动停用账号、隔离主机、阻断外传流量，把 8 天的驻留时间压到几小时；自动生成事件摘要，加快通报。
+
+**(b) 不要以省人头为收益**：5 个人的团队，30% = 1.5 人，实际上省不出来（有人病假、产假、离职，SOC 还要 24×7 排班）；先讲裁员会让员工抵触，项目推不下去。
+**更好的量化方法**：**缩短 MTTD / MTTR → 减少损失**。例如用 ALE：检测从 8 天缩短到几小时，攻击者来不及窃取和加密，EF 大幅下降；把 ALE（前）− ALE（后）− 年度成本算成 CBA。也可以加上避免的停摆损失、罚款和客户流失。人力的收益写成「分析师从分诊中释放出来，去做威胁狩猎」。
+
+**(c) 风险与控制**：
+- **幻觉 / 误判**：AI 把真攻击判成低优先级 → 关键动作保留**人在回路**审批、定期抽检；
+- **Prompt Injection / 模型被操纵**：攻击者在日志或邮件里埋指令 → **外部文本当数据不当指令**、输入过滤、限制 AI 的执行权限（最小权限）；
+- **数据泄露与 Shadow AI**：把告警和客户数据送到外部模型 → 数据分级脱敏、AI 治理政策、合同写入数据处理和 SLA（这又回到**第三方风险**）。
+其他可接受：模型漂移（定期重新评估）、不可解释（保留审计日志供监管查阅）、供应商锁定。
+</QA>
+
+---
+
+## 13. 考前一晚清单
+
+<Callout type="memo" title="能默写下面这些，选择题和简答就稳了">
+
+- [ ] CIA 定义 + 「看了 / 改了 / 打不开」
+- [ ] 6 类 threat actor 的动机和手法 + 4 个分类维度
+- [ ] Black / Gray / White Hat 看授权
+- [ ] Virus / Worm / Trojan / Ransomware；RaaS 三角色
+- [ ] SQLi / Buffer Overflow / XSS 的 primary target
+- [ ] DDoS 三类，SYN flood 属于 Protocol
+- [ ] HKMA 第三方风险四条建议
+- [ ] MFA 三类因素，必须跨类别
+- [ ] 访问控制树（Mandatory、RBAC 在 Nondiscretionary 下）
+- [ ] **ZTA 三原则 + 四个 Right + p.60 四条策略**
+- [ ] Defense in Depth：multiple, independent, overlapping
+- [ ] 三种防火墙 + 规则表逐条匹配 + Default Deny
+- [ ] Screened Host vs Screened Subnet
+- [ ] TP / FP / FN / Noise，FN 最严重
+- [ ] Signature / Anomaly / SPA
+- [ ] SIEM / XDR / SOAR / SOC
+- [ ] Honeypot：Divert / Collect / Delay
+- [ ] 对称三个挑战；非对称谁的钥匙干什么
+- [ ] **Hash → 签名 → 证书，每一步解决什么、留下什么**
+- [ ] **TLS：非对称握手 + 对称传输**
+- [ ] Risk = T ∩ V ∩ C；风险管理六步
+- [ ] **四种风险处理 + 什么情况用哪个**
+- [ ] L5 四步定量公式
+- [ ] CP 四组件；CP 团队负责人
+- [ ] **MTD ≥ RTO + WRT；RPO 决定备份频率**
+- [ ] **SLE、ALE、CBA**
+- [ ] **NIST IR 四阶段 + 通报和保全证据的位置**
+- [ ] Incident vs Disaster
+- [ ] CI 条例：1 单位、1 年评估、2 年审计、12 小时报告
+- [ ] 带计算器
+
+</Callout>

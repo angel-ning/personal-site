@@ -23,7 +23,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const found = getNote(term, course, type, slug);
   if (!found) return {};
   const l = isLang(lang) ? lang : "en";
-  return { title: `${pick(found.note.title, l)} · ${found.course.code}` };
+  return {
+    title: `${pick(found.note.title, l)} · ${found.course.code}`,
+    ...(found.note.unlisted && { robots: { index: false, follow: false } }),
+  };
 }
 
 function PrevNext({ prev, next, lang }: { prev: Note | null; next: Note | null; lang: Lang }) {

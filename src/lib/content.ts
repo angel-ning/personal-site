@@ -37,6 +37,9 @@ export type Note = {
   tags: string[];
   courseCode: string;
   href: string; // site path without the /<lang> prefix
+  // `unlisted: true` in frontmatter: the page is still built and reachable by URL,
+  // but left out of every listing (home, course pages, prev / next) and marked noindex.
+  unlisted: boolean;
 };
 
 export type Section = { type: string; label: L10n; notes: Note[] };
@@ -48,7 +51,8 @@ export type Course = {
   title: L10n;
   instructor?: string;
   description?: L10n;
-  sections: Section[];
+  sections: Section[]; // listed notes only
+  allSections: Section[]; // including unlisted notes, for page generation and lookup
   noteCount: number;
   href: string;
 };
@@ -118,6 +122,7 @@ function readNote(term: string, course: string, courseCode: string, type: string
     tags: Array.isArray(meta.tags) ? (meta.tags as string[]) : [],
     courseCode,
     href: `/notes/${term}/${course}/${type}/${slug}/`,
+    unlisted: meta.unlisted === true,
   };
 }
 
@@ -137,7 +142,7 @@ export const getTerms = cache((): Term[] => {
         .map((course): Course => {
           const cMeta = readJson(path.join(CONTENT_DIR, term, course, "course.json"));
           const code = (cMeta.code as string) ?? course.toUpperCase();
-          const sections = dirs(path.join(CONTENT_DIR, term, course))
+          const allSections = dirs(path.join(CONTENT_DIR, term, course))
             .sort((a, b) => sectionRank(a) - sectionRank(b) || a.localeCompare(b))
             .map((type) => ({
               type,
@@ -148,6 +153,9 @@ export const getTerms = cache((): Term[] => {
                 .sort(byWeek),
             }))
             .filter((s) => s.notes.length > 0);
+          const sections = allSections
+            .map((s) => ({ ...s, notes: s.notes.filter((n) => !n.unlisted) }))
+            .filter((s) => s.notes.length > 0);
           return {
             term,
             slug: course,
@@ -156,6 +164,7 @@ export const getTerms = cache((): Term[] => {
             instructor: cMeta.instructor as string | undefined,
             description: cMeta.description ? l10n(cMeta.description, "") : undefined,
             sections,
+            allSections,
             noteCount: sections.reduce((n, s) => n + s.notes.length, 0),
             href: `/notes/${term}/${course}/`,
           };
@@ -178,23 +187,29 @@ export const getTerm = (slug: string) => getTerms().find((t) => t.slug === slug)
 export const getCourse = (term: string, course: string) =>
   getTerm(term)?.courses.find((c) => c.slug === course);
 
+// Every note that gets a page, unlisted ones included.
 export const getAllNotes = (): Note[] =>
-  getTerms().flatMap((t) => t.courses.flatMap((c) => c.sections.flatMap((s) => s.notes)));
+  getTerms().flatMap((t) => t.courses.flatMap((c) => c.allSections.flatMap((s) => s.notes)));
 
 export const getRecentNotes = (n: number) =>
-  [...getAllNotes()].sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "")).slice(0, n);
+  getAllNotes()
+    .filter((note) => !note.unlisted)
+    .sort((a, b) => (b.date ?? "").localeCompare(a.date ?? "")).slice(0, n);
 
 export function getNote(term: string, course: string, type: string, slug: string) {
   const c = getCourse(term, course);
-  const section = c?.sections.find((s) => s.type === type);
-  const idx = section?.notes.findIndex((n) => n.slug === slug) ?? -1;
-  if (!c || !section || idx < 0) return null;
+  const section = c?.allSections.find((s) => s.type === type);
+  const note = section?.notes.find((n) => n.slug === slug);
+  if (!c || !section || !note) return null;
+  // prev / next only among notes with the same visibility, so a listed note never links to an unlisted one
+  const siblings = section.notes.filter((n) => n.unlisted === note.unlisted);
+  const idx = siblings.indexOf(note);
   return {
-    note: section.notes[idx],
+    note,
     course: c,
     section,
-    prev: section.notes[idx - 1] ?? null,
-    next: section.notes[idx + 1] ?? null,
+    prev: siblings[idx - 1] ?? null,
+    next: siblings[idx + 1] ?? null,
   };
 }
 
