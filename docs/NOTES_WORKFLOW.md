@@ -96,6 +96,7 @@ tags: [IPv4, NAT, DHCP]
 | `<SqlExercise id="b03" />` · `<SqlTables set="pine\|lab6" />` · `<SqlScript set="…" />` · `<SqlProgress />` | ISOM 5260 SQL 练习册（`labs/sql-practice`）：题目 + 答案 SQL + Oracle 预期结果 / ORA 报错，在 SQL Developer 里对照。题目和预期结果在 `data/sql-practice.json`，由老师的 `oracle demo.sql` 和 `lab6_init.sql` 生成；不在浏览器里执行 SQL（SQLite / PostgreSQL 的规则和 Oracle 不同） |
 | `<Result>` Markdown 表格 / 文字 `</Result>` | 折叠的「看结果」，紧跟在一段示例 SQL 后面：先自己在 SQL Developer 里跑，再点开对照（ISOM 5260 SQL 学习版） |
 | `<CommandSortQuiz />` | 「这条语句属于 DDL / DML / DCL / TCL 哪一类」点选练习（题目在 `sql-commands.mjs`） |
+| `<WriteQA id="…" kind="SA\|LA" marks="10" limit="…" q="…">` + `<Pt m="2">得分点</Pt>` | 考试形式的简答 / 长题：作答框（内容存在本机 localStorage，按 `id` 区分，id 要全站唯一）+ 实时词数，点开后显示得分点清单（勾选自动算自评分）和参考答案（English + 中文解析）。打印 / 导出 PDF 时作答框隐藏、答案展开（ISOM 5280 练习题页） |
 | `<CalcDrill />` | 期末计算题随机练习（ISOM 5280）：SLE / ALE、CBA、MTD / RPO 达标判断、Lesson 5 定量风险四步，自己填答案检查 + 看步骤（逻辑在 `calc-drill-logic.mjs`，复用 `bia-logic` / `risk-logic`） |
 | `<SeverityLadder />` | 事件分级 Level 1–4：按五个维度点选特征，取最严重一维定级，显示谁来领导、必须做什么 |
 | `<PriorityScoreLab />` | 投资优先级打分（ISOM 5070 第 7 周 p.7 / p.20 两个公式）：给 p.21 的举措打分排序，再叠加「基础控制先投」和「前提不满足就先试点 / go slow」两道关（逻辑在 `invest-logic.mjs`） |

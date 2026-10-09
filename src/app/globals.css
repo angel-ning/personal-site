@@ -286,6 +286,8 @@ body {
   .prose pre { white-space: pre-wrap; }
   .qa summary::marker { content: ""; }
   .lab-controls { display: none !important; }
+  .wqa-input, .wqa-bar { display: none !important; }
+  .wqa-answer[hidden] { display: block !important; }
   * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
 }
 
@@ -529,3 +531,27 @@ body {
 .sqr-body table { margin: 0 !important; font-size: 12.5px; white-space: nowrap; }
 .sqr-body > * + * { margin-top: .45em; }
 .sqr-body p { font-size: 13px; color: var(--fg-2); }
+
+/* <WriteQA> exam-style written answers */
+.wqa { border: 1px solid var(--line-strong); border-radius: 12px; padding: .9em 1.1em; background: var(--surface); font-size: .95em; }
+.wqa + .wqa, .mcq + .wqa, .wqa + .mcq { margin-top: .9em; }
+.wqa-head { display: flex; flex-wrap: wrap; align-items: baseline; gap: .3em .6em; font-size: 12.5px; color: var(--fg-3); }
+.wqa-kind { font-family: var(--font-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
+.wqa-la { color: var(--c-warn); }
+.wqa-score { margin-left: auto; font-weight: 600; color: var(--accent); }
+.wqa-q { margin-top: .5em; font-weight: 500; line-height: 1.6; }
+.wqa-input { display: block; width: 100%; margin-top: .7em; padding: .6em .75em; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); font: inherit; font-size: 14px; line-height: 1.6; resize: vertical; }
+.wqa-input:focus { outline: 2px solid var(--accent-wash); border-color: var(--accent); }
+.wqa-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .5em .8em; margin-top: .6em; font-size: 12.5px; }
+.wqa-answer { margin-top: .9em; padding-top: .8em; border-top: 1px dashed var(--line); color: var(--fg-2); line-height: 1.65; }
+.wqa-answer > * + * { margin-top: .55em; }
+.wqa-answer ul, .wqa-answer ol { padding-left: 1.3em; list-style: revert; }
+.wqa-answer table { width: 100%; border-collapse: collapse; font-size: .95em; }
+.wqa-answer th, .wqa-answer td { border-bottom: 1px solid var(--line); padding: .3em .5em; text-align: left; }
+.wqa-pt { display: flex; align-items: flex-start; gap: .55em; padding: .35em .5em; border-radius: 6px; cursor: pointer; }
+.wqa-pt + .wqa-pt { margin-top: .15em; }
+.wqa-pt input { margin-top: .35em; accent-color: var(--accent); }
+.wqa-pt-text { flex: 1; }
+.wqa-pt-text > p { margin: 0; }
+.wqa-pt-m { flex: none; font-family: var(--font-mono); font-size: 12px; color: var(--fg-3); }
+.wqa-pt-on { background: var(--accent-wash); }

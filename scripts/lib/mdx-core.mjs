@@ -362,6 +362,19 @@ const components = {
       table(["动作", "阶段", "理由"], data.items.map((it) => [it.text, strong(name(it.phase)), it.why])),
     ];
   },
+  WriteQA(node, a) {
+    const kind = a.kind === "LA" ? "Long Question" : "Short Question";
+    const meta = [kind, a.marks && `${a.marks} marks`, a.limit].filter(Boolean).join(" · ");
+    return [
+      para(strong(`[${meta}] ${a.q}`)),
+      note("（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）"),
+      { type: "blockquote", children: node.children },
+    ];
+  },
+  Pt(node, a) {
+    const inline = node.children.length === 1 && node.children[0].type === "paragraph" ? node.children[0].children : node.children;
+    return [para(text(`☐ [${a.m ?? 1} 分] `), ...inline)];
+  },
   CalcDrill() {
     const rows = DRILL_KINDS.map((k) => {
       const q = drillQuestion(k.id, 1);

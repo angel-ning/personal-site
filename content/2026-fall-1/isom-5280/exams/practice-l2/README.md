@@ -1,0 +1,251 @@
+---
+title:
+  en: "Practice L2 · Security Threats & Attacks"
+  zh: "练习题 L2 · 安全威胁与常见攻击"
+summary:
+  en: "Exam-style practice for Lesson 2: multiple choice, short questions and a long case question with answer boxes, scoring points for self-marking, and bilingual model answers."
+  zh: "第 2 课考试形式练习：选择题、简答题、长题案例，带作答框、得分点自评和双语参考答案。"
+week: 2
+date: 2026-10-09
+unlisted: true
+tags: [Practice, Malware, RaaS, Phishing, DDoS, SupplyChain]
+---
+# 练习题 L2 · 安全威胁与常见攻击
+
+**复习页**：[L2 期末复习](../final-l2/)　**总览**：[期末总复习](../final-review/)
+
+> **怎么用**：选择题直接点选；简答和长题先在框里**用英文写**，再点「查看参考答案」，按得分点勾选自评。写的内容保存在这个浏览器里。  
+> 分值参照 Assignment 1：选择题每题 2 分，简答每题 10 分，长题 20 分。
+
+## Section A · Multiple Choice
+
+**1. Which type of malware disguises itself as legitimate, harmless software to trick users into installing it, and does not replicate itself?**
+
+- A. Virus
+- B. Worm
+- C. Trojan horse
+- D. Ransomware
+
+> **答案：C**
+>
+> *EN:* A Trojan horse relies on the user to install it and does not self-replicate; it often creates a backdoor.
+>
+> 木马靠伪装骗用户安装，自己不会复制，常用来开后门。
+
+**2. In the RaaS model, who sells the initial access into a victim's network?**
+
+- A. RaaS operator
+- B. Affiliate
+- C. Initial access broker
+- D. Crypto miner
+
+> **答案：C**
+>
+> *EN:* The initial access broker is the “door opener” who sells entry points; affiliates buy them and carry out the attack.
+>
+> Initial Access Broker 是「开门人」，卖入口给 Affiliate 去执行攻击。
+
+**3. An attacker changes the source IP address of packets so they appear to come from a trusted internal server. This is:**
+
+- A. Packet sniffing
+- B. IP spoofing
+- C. SQL injection
+- D. Buffer overflow
+
+> **答案：B**
+>
+> *EN:* Disguising as a trusted source to bypass security controls is **IP spoofing**.
+>
+> 伪装成可信来源（改源 IP）来绕过安全控制 = IP Spoofing。
+
+**4. Which vulnerability's primary target is the web visitor's browser?**
+
+- A. SQL injection
+- B. Buffer overflow
+- C. Cross-site scripting (XSS)
+- D. Rainbow table
+
+> **答案：C**
+>
+> *EN:* XSS injects scripts into a trusted website that run on the **client side**, stealing cookies or session tokens.
+>
+> XSS 的脚本在访问者浏览器里执行。SQLi 打数据库，Buffer overflow 打内存。
+
+**5. An HTTP flood that sends requests mimicking legitimate users to a specific web service is which type of DDoS?**
+
+- A. Volumetric attack
+- B. Protocol attack
+- C. Application layer (L7) attack
+- D. Smurf attack
+
+> **答案：C**
+>
+> *EN:* Application-layer attacks target specific services with traffic that mimics legitimate requests, so they are hard to filter without deep inspection.
+>
+> 模仿正常请求、打特定 Web 服务 = 应用层（L7）攻击。
+
+**6. A rainbow table attack requires the attacker to first:**
+
+- A. Know the user's birthday
+- B. Steal the system's hashed password file
+- C. Send a phishing email
+- D. Install a worm
+
+> **答案：B**
+>
+> *EN:* Rainbow tables reverse-look-up hashes, so the attacker must already have the password hash file. Salting defeats it.
+>
+> 彩虹表是拿预先算好的哈希表反查，前提是先偷到密码哈希文件。对策是加盐。
+
+**7. Attackers try username / password pairs leaked from another website against your login page. This is called:**
+
+- A. Brute force
+- B. Dictionary attack
+- C. Credential stuffing
+- D. Man-in-the-middle
+
+> **答案：C**
+>
+> *EN:* Credential stuffing exploits password reuse across sites; MFA and unique passwords are the main defences.
+>
+> 撞库：利用用户在不同网站重复用同一套密码。对策是 MFA 和唯一密码。
+
+**8. Which of the following is NOT one of HKMA's recommendations for managing cyber risk from third-party service providers?**
+
+- A. Identify, assess and mitigate cyber risk throughout the third-party management lifecycle
+- B. Expand threat intelligence monitoring to cover key third parties
+- C. Scenario-based response strategies and regular drills
+- D. Avoid all outsourcing of IT services
+
+> **答案：D**
+>
+> *EN:* HKMA asks banks to manage third-party risk, not to stop outsourcing — the four points are lifecycle management, assessing supply-chain risk for critical operations, threat intelligence and sharing, and scenario drills.
+>
+> HKMA 的四条建议是「管好」第三方风险，不是禁止外包。
+
+## Section B · Short Questions
+
+**\[Short Question · 10 marks · 每格 12 词内 / max 12 words per box] B1. Compare a virus, a worm and a Trojan horse in terms of (i) whether it needs a host file, (ii) whether it self-replicates, and (iii) how it spreads. Then name ONE countermeasure for each.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] Virus：需要宿主可执行文件，会复制，靠被感染文件传播  
+> ☐ \[2 分] Worm：不需要宿主，自我复制，自动通过网络传播（最快，能堵塞网络）  
+> ☐ \[2 分] Trojan：伪装成正常软件，不自我复制，靠用户主动安装  
+> ☐ \[4 分] 三个对策，每个对应一种（如：杀毒 + 不开陌生文件 / 及时打补丁 + 网络分段 / 只从可信来源下载 + 浏览器运行前询问）
+>
+> **English**
+>
+> |                  | Virus                               | Worm                                             | Trojan horse                           |
+> | ---------------- | ----------------------------------- | ------------------------------------------------ | -------------------------------------- |
+> | Host file?       | Yes — attaches to executable files  | No — runs on its own                             | Disguised as a legitimate program      |
+> | Self-replicates? | Yes                                 | Yes, and spreads fastest                         | No                                     |
+> | Spreads by       | Infected files being shared or run  | Exploiting network vulnerabilities automatically | Users being tricked into installing it |
+> | Countermeasure   | Antivirus; don't open unknown files | Patch OS promptly; segment the network           | Download only from trusted sources     |
+>
+> **中文解析**
+>
+> 课件 p.14 的 Short Quiz 就是这几个问题：哪个不自我复制（Trojan）、哪个能堵塞网络（Worm）、哪个必须寄生在文件上（Virus）、哪个传播最快（Worm）。对策从 p.11 的 7 条里挑。
+
+**\[Short Question · 10 marks · 每点 25 词内 / max 25 words per point] B2. Explain why social engineering is described as “not technical, but a social one”. Using the Arup deepfake case, suggest one technical and two management controls.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] 定义：用欺骗操纵人交出机密信息；攻击的是人，不是系统  
+> ☐ \[2 分] 原因：缺乏培训、经验不足、失误、缺乏意识；「people are the weakest link」  
+> ☐ \[2 分] 技术控制（如 deepfake 检测、phishing-resistant MFA、邮件过滤）  
+> ☐ \[2 分] 管理控制 1：大额转账的带外核实 / 双人审批  
+> ☐ \[2 分] 管理控制 2：deepfake 场景的培训和演练
+>
+> **English**
+>
+> Social engineering is **the use of deception to manipulate individuals into releasing confidential information**. It exploits human trust, inexperience, mistakes and lack of awareness rather than a software flaw — “people are the weakest link”. In the Arup case no system was breached; an employee was deceived by a deepfake video call and transferred HK$200M.
+>
+> - **Technical**: deepfake detection tools and phishing-resistant MFA for payment systems.
+> - **Management**: out-of-band call-back verification and dual approval for large transfers.
+> - **Management**: regular awareness training and simulations using deepfake scenarios.
+>
+> **中文解析**
+>
+> 这题考「为什么技术挡不住」+「技术和管理两条线」。Arup 案系统完全没被入侵，所以管理控制（流程和培训）才是关键，至少要写两条。
+
+**\[Short Question · 10 marks · 每点 25 词内 / max 25 words per point] B3. Describe the three types of DDoS attack and give one example of each. Why are application-layer attacks the hardest to defend against?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] Volumetric：塞满带宽，例 UDP / ICMP flood、DNS amplification  
+> ☐ \[2 分] Protocol：耗尽连接状态表，例 SYN flood、Smurf  
+> ☐ \[2 分] Application（L7）：打特定服务，例 HTTP flood、Slowloris  
+> ☐ \[2 分] L7 难防：模仿正常请求，不做深度检测就分辨不出  
+> ☐ \[2 分] 补充：需要 WAF / 限流 / 云端清洗 + 应急流程，纯技术有极限
+>
+> **English**
+>
+> - **Volumetric** (layers 3/4, bandwidth): floods the network pipe with traffic — e.g. UDP flood, ICMP flood, DNS amplification.
+> - **Protocol** (layers 3/4, state tables): exploits TCP/IP weaknesses to exhaust connection state tables — e.g. SYN flood, Smurf.
+> - **Application layer** (layer 7): targets specific web services with requests that mimic legitimate users — e.g. HTTP flood, Slowloris.
+>
+> Application-layer attacks are hardest because each request **looks legitimate**; they cannot be separated from real users without deep inspection, so defences need WAF rules, rate limiting, cloud scrubbing and a rehearsed response process.
+>
+> **中文解析**
+>
+> 三类按「打哪里」区分：带宽、状态表、应用。考试最爱问 SYN flood 属于哪一类（Protocol）。
+
+## Section C · Long Question
+
+> **📌 案例：BrightLearn（虚构）**
+>
+> BrightLearn 是一家香港网上教育公司，使用第三方开发商 CodeWorks 提供的学习平台软件。
+>
+> - **2026 年 1 月**：攻击者入侵 CodeWorks 的开发环境。
+> - **2 月**：攻击者在平台的下一版更新里植入后门。
+> - **3 月 5 日**：CodeWorks 发布更新，BrightLearn 和另外 300 多家学校安装了这个更新。
+> - **3 月–4 月**：攻击者通过后门读取 BrightLearn 的学生资料库，并向学生发送仿冒学校的钓鱼邮件，骗取家长的支付信息。
+> - **4 月 28 日**：一位家长报警后，BrightLearn 才发现异常；CodeWorks 5 月 2 日才确认更新被植入后门。
+
+**\[Long Question · 20 marks] C1. (a) Identify the attack types from Lesson 2 involved and the CIA element each affected (6 marks). (b) Explain why this supply chain attack was particularly hard for BrightLearn to prevent and detect (6 marks). (c) Using the HKMA guidance on third-party risk, recommend how BrightLearn should manage its software suppliers (8 marks).**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] (a) Supply chain attack（借供应商更新植入后门）  
+> ☐ \[2 分] (a) Malware / backdoor（Trojan 式）→ 学生资料被读取，破坏 C  
+> ☐ \[2 分] (a) Phishing / social engineering → 骗取家长支付信息，破坏 C  
+> ☐ \[3 分] (b) 至少三点：受信任渠道 + 合法更新；一对多；潜伏长；看不到供应商开发过程；靠外部报案才发现  
+> ☐ \[3 分] (b) 和 SolarWinds 对照  
+> ☐ \[8 分] (c) HKMA 四条，每条 2 分：全生命周期识别评估缓解；评估支持关键业务的供应链风险；威胁情报覆盖关键第三方并共享；场景化应急与演练
+>
+> **English**
+>
+> **(a) Attack types**
+>
+> - **Supply chain attack** — the attacker compromised a trusted supplier (CodeWorks) and reached BrightLearn through a software update.
+> - **Malware (backdoor / Trojan)** planted in the update → unauthorised reading of student records → **Confidentiality**.
+> - **Phishing / social engineering** — spoofed school emails tricked parents into giving payment details → **Confidentiality** (and financial loss).
+>
+> **(b) Why hard to prevent and detect**
+>
+> - The malicious code arrived through a **legitimate, trusted update channel**, so firewalls and antivirus let it in.
+> - It is **one-to-many**: one supplier compromise reached 300+ schools.
+> - BrightLearn had **no visibility** into CodeWorks' development environment.
+> - **Long dwell time** — from March to late April — and detection came only from a **parent's police report**, not BrightLearn's own monitoring. This mirrors SolarWinds (Orion update with Sunburst).
+>
+> **(c) Recommendations (HKMA guidance)**
+>
+> 1. **Lifecycle management** — assess CodeWorks' security before and during the contract; require secure development practices, update testing and audit rights.
+> 2. **Assess supply chain risk for critical services** — the learning platform holds student data, so treat CodeWorks as a critical supplier with stricter controls.
+> 3. **Extend threat intelligence and monitoring** to the supplier — watch for alerts about CodeWorks, monitor the platform's outbound traffic, and share intelligence with other schools.
+> 4. **Scenario-based response and drills** — rehearse a “compromised vendor update” scenario, with a plan to roll back updates and notify parents; contracts should require the supplier to report incidents within a set time.
+>
+> **中文解析**
+>
+> - **(a)** 一个案例里往往有好几种攻击，逐个找出来，每个配 CIA。
+> - **(b)** 答「为什么难防」就用 SolarWinds 那几点：受信任的渠道、一对多、看不到供应商内部、潜伏期长。
+> - **(c)** 直接按 HKMA 四条展开，每条都要落到本案的具体做法上。可以加一条合同里的事件通报时限。

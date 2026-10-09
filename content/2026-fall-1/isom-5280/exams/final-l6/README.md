@@ -12,7 +12,7 @@ tags: [FinalReview, BIA, MTD, ALE, IncidentResponse, DisasterRecovery, ColonialP
 ---
 # 期末复习 L6 · 事件响应与应急规划
 
-**课件**：Lesson 6（41 页）　**详细笔记**：[第 6 课复习笔记](../../lectures/lesson-06/)　**案例**：[Colonial Pipeline 解析](../../readings/colonial-pipeline-2021/)　**总览**：[期末总复习](../final-review/)
+**课件**：Lesson 6（41 页）　**详细笔记**：[第 6 课复习笔记](../../lectures/lesson-06/)　**案例**：[Colonial Pipeline 解析](../../readings/colonial-pipeline-2021/)　**练习题**：[L6 练习题](../practice-l6/)　**总览**：[期末总复习](../final-review/)
 
 > **怎么读这一页**：每个知识点按 **课件原文 → 需要理解 → 可能的问法** 写。
 >

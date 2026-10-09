@@ -12,7 +12,7 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 ---
 # 期末复习 L5 · 风险管理与 AI 风险
 
-**课件**：Lesson 5（48 页）　**详细笔记**：[第 5 课复习笔记](../../lectures/lesson-05/)　**阅读**：[CrowdStrike 2024](../../readings/crowdstrike-2024/)　**总览**：[期末总复习](../final-review/)
+**课件**：Lesson 5（48 页）　**详细笔记**：[第 5 课复习笔记](../../lectures/lesson-05/)　**阅读**：[CrowdStrike 2024](../../readings/crowdstrike-2024/)　**练习题**：[L5 练习题](../practice-l5/)　**总览**：[期末总复习](../final-review/)
 
 > **怎么读这一页**：每个知识点按 **课件原文 → 需要理解 → 可能的问法** 写。
 >

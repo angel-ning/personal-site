@@ -12,7 +12,7 @@ tags: [FinalReview, Malware, RaaS, Phishing, DDoS, SupplyChain, PasswordAttack]
 ---
 # 期末复习 L2 · 安全威胁与常见攻击
 
-**课件**：Lesson 2（65 页）　**详细笔记**：[第 2 课复习笔记](../../lectures/lesson-02/)　**总览**：[期末总复习](../final-review/)
+**课件**：Lesson 2（65 页）　**详细笔记**：[第 2 课复习笔记](../../lectures/lesson-02/)　**练习题**：[L2 练习题](../practice-l2/)　**总览**：[期末总复习](../final-review/)
 
 > **怎么读这一页**：每个知识点按 **课件原文 → 需要理解 → 可能的问法** 写。
 >
