@@ -519,58 +519,92 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 老师放在每节课件末尾的题，等于明示了选择题的出题风格。L6 课件没有末尾原题。
 
 <MCQ q="[L1] Paul works for a cybersecurity company. His firm was hired to conduct a test against a health-care system, and Paul is working to gain access to the system belonging to a hospital in that system. What term best describes his work?" a="White Hat" b="Gray Hat" c="Green Hat" d="Black Hat" answer="A">
+*EN:* His firm was **hired**, so the test is authorised → **White Hat**.
+
 关键词 **hired** = 有授权 → White Hat。Green Hat 是干扰项。
 </MCQ>
 
 <MCQ q="[L1] There is a security incident that compromised one of the bank's web server. CISO believes the attackers defaced one or more pages on the website. What cybersecurity objective did the attacker violate?" a="Confidentiality" b="Nonrepudiation" c="Integrity" d="Availability" answer="C">
+*EN:* Defacement **alters** content → **Integrity**.
+
 Defacement = 内容被改 = Integrity。网站还能访问，所以不是 Availability；Nonrepudiation 不属于 CIA。
 </MCQ>
 
 <QA q="[L1] Edward Snowden was a government contractor who disclosed sensitive government documents to journalists to uncover what he believed were unethical activities. Which 2 terms best describe him? A. Insider B. State actor C. Hacktivist D. APT E. Criminal Syndicate">
+
+**English**
+
+**A. Insider + C. Hacktivist** — he had legitimate access as a contractor (insider) and leaked documents for ideological reasons (hacktivist).
+
+**中文解析**
+
 **A + C**。他有合法访问权 → Insider；动机是理念、手法是泄露 → Hacktivist。
+
 </QA>
 
 <MCQ q="[L2] Which one of the following malware can spread without user interactions?" a="Ransomware" b="Back door" c="Trojan Horse" d="Worm" answer="D">
+*EN:* A **worm** needs no host file and no user action.
+
 Worm 不需要宿主文件，也不需要用户操作。
 </MCQ>
 
 <MCQ q="[L2] Which of the following is NOT a key component under Ransomware-as-a-Service (RaaS) ecosystem?" a="RaaS Operators / Developers" b="The Affiliates / Attackers" c="The Crypto Miner" d="Initial Access Brokers" answer="C">
+*EN:* RaaS roles are operators, affiliates and initial access brokers — not crypto miners.
+
 RaaS 三个角色是 Operator、Affiliate、Initial Access Broker。
 </MCQ>
 
 <MCQ q="[L2] What type of control is ineffective against Program Flaw (e.g. SQL injection)?" a="Hire better IT team" b="Better plan and more users testing" c="Principle of least user privilege" d="Increase IT budget" answer="D">
+*EN:* A bigger budget alone does not fix flawed code; the other options act on code quality or privileges.
+
 砸钱本身不修复代码缺陷；其余三项都直接作用于代码质量或权限。
 </MCQ>
 
 <MCQ q="[L3] _____ inspection firewalls keep track of each network connection between internal and external systems using a state table." a="Static" b="Dynamic" c="Stateful" d="Stateless" answer="C">
+*EN:* **Stateful** inspection — “dynamic” only describes the state table.
+
 Dynamic 是干扰项（课件原文有 dynamic state table）。
 </MCQ>
 
 <MCQ q="[L3] Under MFA, a system requires users to enter a passcode and then verifies that their face matches a photo stored in the system. What 2 factors is it using?" a="Something you know and something you have" b="Something you have and something you know" c="Something you have and something you are" d="Something you know and something you are" answer="D">
+*EN:* Passcode = something you **know**; face = something you **are**.
+
 passcode = know，face = are。A 和 B 是同一个答案换顺序，必定都不对。
 </MCQ>
 
 <MCQ q="[L3] An incident originates from a single system on the Internet targeting multiple systems on this network. What control could stop the incident ASAP?" a="DDoS mitigation" b="Host firewall rule" c="Vulnerability assessment" d="Network firewall rule" answer="D">
+*EN:* Single source, many targets → one **network firewall rule** protects everything fastest.
+
 单一来源（不是 DDoS），多个目标（逐台配主机规则太慢），在网络边界加一条规则最快。
 </MCQ>
 
 <MCQ q="[L3] NIDS alerted to a DDoS attack, and investigation revealed that this type of attack did take place. What type of report?" a="False positive" b="True negative" c="True positive" d="False negative" answer="C">
+*EN:* Alert raised and attack real → **true positive**.
+
 报了（Positive）+ 确实发生（True）。
 </MCQ>
 
 <MCQ q="[L4] Which term describes the information used in conjunction with an algorithm to create the ciphertext from the plaintext?" a="Cipher" b="Code" c="Clear text" d="Key" answer="D">
+*EN:* Encryption = algorithm + **key**.
+
 加密 = 算法 + 密钥。
 </MCQ>
 
 <MCQ q="[L4] True or False: Hashing functions require the use of keys?" a="True" b="False" answer="B">
+*EN:* **False** — hashing uses no key.
+
 哈希不需要密钥，所以单独用它无法证明是谁发的。
 </MCQ>
 
 <MCQ q="[L4] What term describes a cryptographic method that incorporates mathematical operations involving both a public key and a private key to encipher or decipher a message?" a="Private-key encryption" b="Symmetric encryption" c="Advanced Encryption Standard (AES)" d="Asymmetric encryption" answer="D">
+*EN:* Public + private key = **asymmetric** encryption.
+
 A、B、C 都是对称加密的说法或算法。
 </MCQ>
 
 <MCQ q="[L5] Applying controls and safeguards that eliminate or reduce the remaining uncontrolled risks is known as _____." a="Acceptance" b="Termination" c="Transference" d="Mitigation" answer="D">
+*EN:* Adding safeguards to reduce remaining risk = **mitigation**.
+
 加控制去降低剩余风险 = Mitigation。
 </MCQ>
 
@@ -587,85 +621,137 @@ A、B、C 都是对称加密的说法或算法。
 ### Section A · Multiple Choice（10 × 2 = 20）
 
 <MCQ q="A1. An employee accidentally emails a spreadsheet of customer data to the wrong external recipient. Which threat actor category best fits?" a="Hacktivist" b="Insider threat" c="Script kiddie" d="Criminal syndicate" answer="B">
+*EN:* Insider threat includes **negligence** — it need not be malicious.
+
 Insider threat 的动机包括 **negligence（疏忽）**，不一定是恶意的。
 </MCQ>
 
 <MCQ q="A2. Which of the following is NOT one of the three Zero Trust principles covered in the course?" a="Never trust, always verify" b="Least privilege access" c="Assume breach / continuous verification" d="Trust devices once they are on the corporate LAN" answer="D">
+*EN:* Zero Trust grants no implicit trust based on network location — option D is exactly what it rejects.
+
 ZTA 的定义就是**不因网络位置或资产归属**默认信任。D 正是 ZTA 要否定的传统假设。
 </MCQ>
 
 <MCQ q="A3. The last rule of a firewall rule set is Any / Any / Any / Any / Deny. Which security control strategy does this best illustrate?" a="Defense in depth" b="Fail-safe defaults" c="Simplicity and auditability" d="Separation of duties" answer="B">
+*EN:* **Fail-safe defaults**: access is denied unless explicitly permitted.
+
 默认拒绝，除非明确允许（p.60）。
 </MCQ>
 
 <MCQ q="A4. A bastion host is placed in its own subnet between an external and an internal filtering router. This architecture is called:" a="Screened host" b="Screened subnet with DMZ" c="Stateless packet filtering" d="Host-based firewall" answer="B">
+*EN:* Two routers with the bastion host in its own subnet = **screened subnet (DMZ)**.
+
 两个路由器夹着 DMZ = Screened subnet。Screened host 的堡垒主机仍挂在内网上。
 </MCQ>
 
 <MCQ q="A5. Which IDPS detection method learns a baseline of normal behaviour and raises an alert when activity crosses a clipping level?" a="Signature-based" b="Anomaly-based" c="Stateful protocol analysis" d="Stateful packet inspection" answer="B">
+*EN:* Baseline + clipping level = **anomaly-based** detection; D is a firewall technique.
+
 Clipping level 是 Anomaly-based 的关键词。D 是防火墙技术，不是 IDPS 检测方法。
 </MCQ>
 
 <MCQ q="A6. Alice wants Bob to be able to verify that a message really came from her and was not altered. She should encrypt the message digest with:" a="Bob's public key" b="Bob's private key" c="Alice's private key" d="Alice's public key" answer="C">
+*EN:* Sign with the **sender's private key**; Bob verifies with Alice's public key.
+
 签名用**发送方的私钥**，Bob 用 Alice 的公钥验证。A 是给 Bob 加密保密用的。
 </MCQ>
 
 <MCQ q="A7. Which of the following provides integrity checking on its own but cannot prove who sent the message?" a="Hashing" b="Digital signature" c="Digital certificate" d="Asymmetric encryption with the sender's private key" answer="A">
+*EN:* **Hashing** uses no key, so anyone can recompute it — no proof of sender.
+
 哈希没有密钥，中间人可以改内容再重算哈希。
 </MCQ>
 
 <MCQ q="A8. A company buys cyber insurance to cover losses from ransomware. Which risk treatment strategy is this?" a="Mitigation" b="Acceptance" c="Transference" d="Avoidance" answer="C">
+*EN:* Shifting the financial loss to an insurer = **transference**.
+
 把财务后果转给保险公司 = Transference。
 </MCQ>
 
 <MCQ q="A9. A system has MTD = 6 hours, RTO = 4 hours and WRT = 3 hours. Which statement is correct?" a="It meets the MTD because RTO is less than MTD" b="It fails the MTD because RTO + WRT = 7 hours" c="It meets the MTD because WRT is less than RTO" d="It cannot be judged without the RPO" answer="B">
+*EN:* Downtime = RTO + WRT = 7 h > 6 h MTD → fails. RPO concerns data loss, not downtime.
+
 **MTD ≥ RTO + WRT** 才达标。RPO 管的是数据丢失，和停机时长无关。
 </MCQ>
 
 <MCQ q="A10. In the NIST incident handling checklist, acquiring, preserving and documenting evidence is:" a="Part of Preparation" b="The last step of Detection and Analysis" c="The first step of Containment, Eradication and Recovery" d="Part of Post-Incident Activity" answer="C">
+*EN:* Evidence is preserved **first** in containment, eradication & recovery, before systems are changed.
+
 先保全证据，再遏制和清除，否则证据会在重装时丢失。
 </MCQ>
 
 ### Section B · Short Questions（4 × 10 = 40）
 
 <QA q="B1. State the three principles of Zero Trust Architecture (3 marks). For each principle, give one control covered in the course that puts it into practice (6 marks). Why does Zero Trust reject trust based on network location? (1 mark) — limit 12 words per bullet.">
-**原则与控制**：
+
+**English**
+
+**Principles and controls**
 - Never trust, always verify → MFA plus dynamic risk scoring on every access request.
-- Least privilege access → Role-based access control and PAM; limits lateral movement.
+- Least privilege access → role-based access control and PAM; limits lateral movement.
 - Assume breach → IDPS, SIEM correlation and SOC monitoring to detect intruders inside.
 
-**为什么不信网络位置**：Insiders, stolen credentials and VPN users are already inside the perimeter.
+**Why not trust network location**: insiders, stolen credentials and VPN users are already inside the perimeter.
 
-（其他可接受的控制：NGFW Identity Awareness、微分段、Fail-safe default deny、DAM、EDR。）
+**中文解析**
+
+- 三条原则：永不信任、始终验证；最小权限；假定已被攻陷 / 持续验证。每条各配一个课上讲过的控制。
+- 其他可接受的控制：NGFW 的 Identity Awareness、微分段、默认拒绝（fail-safe defaults）、DAM、EDR。
+- 不按网络位置信任，是因为内鬼、被盗凭证、VPN 远程用户都已经在边界之内。
+
 </QA>
 
 <QA q="B2. Alice sends Bob a message together with its hash. (a) Why does this give only weak integrity protection? (3 marks) (b) How does a digital signature fix this, and what extra property does it add? (4 marks) (c) What problem still remains, and how does a digital certificate solve it? (3 marks) — limit 25 words per part.">
+
+**English**
+
 **(a)** Hashing needs no key; a man-in-the-middle can alter the message, recompute the hash, and Bob's comparison still matches.
 
-**(b)** Alice encrypts the digest with her private key; only she can produce it, so tampering is detected and authenticity / non-repudiation is added.
+**(b)** Alice encrypts the digest with her private key; only she can produce it, so tampering is detected and authenticity / nonrepudiation is added.
 
 **(c)** Bob cannot tell whether the public key truly belongs to Alice; a trusted CA signs a certificate binding Alice's identity to her public key.
+
+**中文解析**
+
+(a) 哈希没有密钥，中间人改了内容可以重算哈希，Bob 比对照样一致，所以只有脆弱的完整性。(b) 签名 = 用 Alice 的私钥加密摘要，别人伪造不出来，因此能发现篡改，并多了真实性和不可抵赖。(c) 还剩的问题是 Bob 无法确定公钥真属于 Alice，由受信任的 CA 签发证书来绑定身份和公钥。
+
 </QA>
 
 <QA q="B3. Name and define the four risk treatment strategies (8 marks). Which one is usually the preferred first choice, and why? (2 marks) — limit 12 words per box.">
-| 策略 | 定义（12 词内） |
+
+**English**
+
+| Strategy | Definition (max 12 words) |
 |---|---|
 | Mitigation | Add controls to reduce likelihood or impact of successful attack. |
 | Transference | Shift risk to others via insurance, outsourcing or SLA contracts. |
 | Acceptance | After assessment, consciously take no further action; cost exceeds benefit. |
 | Avoidance (Termination) | Deliberately remove the asset or stop the risky activity. |
 
-**首选**：Mitigation — the organisation directly reduces the risk itself, keeping control and accountability.
+**Preferred first choice**: Mitigation — the organisation directly reduces the risk itself, keeping control and accountability.
 
-（Acceptance 要强调「**评估之后**的决定」，不是放任不管；Transference 转不走声誉和监管责任。）
+**中文解析**
+
+- 四种策略：缓解（加控制）、转移（保险、外包、SLA）、接受（评估后主动不处理）、规避 / 终止（有意识地移除资产）。
+- 首选缓解，因为组织自己把风险降下来，控制权和责任都还在自己手里。
+- Acceptance 要强调是**评估之后**的决定，不是放任不管；Transference 转不走声誉和监管责任。
+
 </QA>
 
 <QA q="B4. A payment server is worth US$800,000. A ransomware attack would destroy 30% of its value and is expected once every 2 years. (a) Calculate SLE and ALE (4 marks). (b) An EDR solution costing US$60,000 per year would reduce the ARO to once every 10 years. Calculate the CBA and state whether it is justified (4 marks). (c) Give one limitation of relying on ALE alone (2 marks).">
-**(a)** SLE = AV × EF = 800,000 × 30% = **US$240,000**；ARO = 1/2 = 0.5；ALE = 240,000 × 0.5 = **US$120,000 / 年**。
 
-**(b)** ALE（后）= 240,000 × 0.1 = US$24,000；CBA = 120,000 − 24,000 − 60,000 = **US$36,000 > 0** → 值得部署。
+**English**
 
-**(c)** ALE 会低估**低频高损**的事件：一次损失可能远超年度平均，而且停机时间可能超过 MTD，或违反监管要求（例如 CI 条例），这些都不在 ALE 里。
+**(a)** SLE = AV × EF = 800,000 × 30% = **US$240,000**; ARO = 1/2 = 0.5; ALE = 240,000 × 0.5 = **US$120,000 per year**.
+
+**(b)** ALE after = 240,000 × 0.1 = US$24,000; CBA = 120,000 − 24,000 − 60,000 = **US$36,000 > 0** → deployment is justified.
+
+**(c)** ALE understates **low-frequency, high-impact** events: a single loss can far exceed the annual average, downtime may exceed the MTD, and regulatory requirements (e.g. the CI Ordinance) are not reflected in ALE.
+
+**中文解析**
+
+(a) SLE = 资产价值 × 暴露因子 = 24 万；每 2 年一次 → ARO = 0.5；ALE = 12 万 / 年。(b) 控制后 ALE = 24 万 × 0.1 = 2.4 万；CBA = 12 万 − 2.4 万 − 6 万 = 3.6 万，大于 0，值得买。(c) ALE 只看年度平均，会低估低频高损的事件：一次就可能损失巨大、停机超过 MTD，也反映不了监管要求。
+
 </QA>
 
 ### Section C · Long Questions（2 × 20 = 40）
@@ -683,6 +769,22 @@ Clipping level 是 Anomaly-based 的关键词。D 是防火墙技术，不是 ID
 </Callout>
 
 <QA q="C1. (a) Describe the threat vector and classify the adversary, explaining your rationale (6 marks). (b) Which elements of the CIA triad were affected, and which technical and management controls failed? (6 marks) (c) Using the NIST incident response lifecycle, evaluate HarbourLink's detection and response (4 marks). (d) Why did recovery take four weeks, in terms of BIA metrics? (4 marks)">
+
+**English**
+
+**(a) Threat vector**: vishing (social engineering) → stolen VPN credentials → the third-party-managed VPN had **no MFA** → lateral movement using an **over-privileged service account** → data exfiltration → encryption (**double extortion**).
+**Adversary** (four dimensions): external; medium-to-high sophistication (lateral movement, targeting backups first); well resourced, likely with a division of labour; motivated by money → a **criminal syndicate**, probably a **RaaS affiliate** (ransom plus leak site is the typical RaaS model). Not a hacktivist (no political cause) and not a nation-state actor (money, not intelligence).
+
+**(b) CIA**: **Confidentiality** (300 GB stolen and published) and **Availability** (systems down for four weeks); integrity is also affected (encrypted data, two weeks lost).
+**Technical controls that failed**: no MFA; a service account violating least privilege; no network segmentation; IDS alerts ignored (**alert fatigue turned false positives into a false negative**); backups not isolated.
+**Management controls that failed**: no **third-party risk management** (no security requirements or audit for the outsourced VPN); no vishing training; no alert-triage process or playbooks; the backup-encryption scenario was never rehearsed.
+
+**(c) NIST evaluation**: *Preparation* was weak (no playbooks, no drills). *Detection & analysis* failed — alerts existed but the intrusion went unnoticed for eight days, a long dwell time; notification came three days after encryption (a critical-infrastructure operator in Hong Kong must report serious incidents within 12 hours). *Containment* was forced to a total shutdown because detection came so late. *Post-incident* should review alert triage and third-party management.
+
+**(d) BIA**: **RPO failed** — backups were encrypted too, so restoring from two-week-old offline tapes lost two weeks of data. **RTO** grew because forensics and confirming eradication had to come before rebuilding several interdependent systems. **WRT** was long — re-entering two weeks of shipment records, reconciling with customers and validating data. Total downtime far exceeded the **MTD**, so customers left. This was a **disaster**, so DR and BC (e.g. manual processes for critical shipments) should have been activated together.
+
+**中文解析**
+
 **(a) 攻击路径**：Vishing（社会工程）→ 窃取 VPN 凭证 → 第三方管理的 VPN 没有 MFA → 用权限过大的服务账号横向移动 → 窃取数据 → 加密（**双重勒索**）。
 **对手分类**（4 个维度）：External；技术水平中到高（懂横向移动、会先打备份）；资源充足、可能有分工；动机是**钱** → **Criminal Syndicate**，很可能是 RaaS 的 Affiliate（勒索 + 泄露网站是典型 RaaS 模式）。不是 Hacktivist（没有政治诉求），也不是 Nation-state（目标是钱，不是情报）。
 
@@ -693,9 +795,28 @@ Clipping level 是 Anomaly-based 的关键词。D 是防火墙技术，不是 ID
 **(c) NIST 对照**：**Preparation** 不足（没有 playbook、没演练）；**Detection & Analysis** 失败：有告警却 8 天没发现，驻留时间太长；**通报**在加密后 3 天才做（按香港 CI 条例，如果属于关键基础设施，严重事件要 12 小时内报告）；**Containment** 只能关停全部系统（因为发现太晚）；**Post-incident** 需要检讨告警分诊和第三方管理。
 
 **(d) BIA**：**RPO 失败**——备份也被加密，只能回到 2 周前的离线磁带，丢了 2 周数据；**RTO 拉长**——要先取证、确认清除干净，再重建多个相互依赖的系统；**WRT 很长**——要补录 2 周的货运记录、和客户对账、验证数据；合计**远超 MTD**，所以客户流失。这次事件已经是 **disaster** 级别，应该同时启动 DR 和 BC（例如用人工流程维持关键货运）。
+
 </QA>
 
 <QA q="C2. HarbourLink's board is considering an AI-powered SOC (AI triage + SOAR). (a) Explain how AI could help across prevention, detection and response, using examples from this case (8 marks). (b) The vendor claims the system will let the company cut its 5-person security team by 30%. Explain why the board should not rely on this, and propose a better way to quantify the benefit (6 marks). (c) Identify three risks of adopting GenAI in the SOC and a control for each (6 marks).">
+
+**English**
+
+**(a) Prevention / detection / response**
+- **Prevention**: AI-based phishing / vishing detection and simulated training; threat-intelligence-driven vulnerability prioritisation; ML-tuned NGFW rules.
+- **Detection**: **UEBA** learns the service account's normal behaviour, so lateral movement stands out; **AI triage** ranks thousands of daily alerts and would have surfaced the abnormal-login alerts that were ignored; correlation links scattered events into one attack chain.
+- **Response**: **SOAR playbooks** automatically disable the account, isolate hosts and block exfiltration, cutting eight days of dwell time to hours; automated incident summaries speed up notification.
+
+**(b) Do not rely on headcount cuts**: 30% of a five-person team is 1.5 people, which cannot be realised in practice — sick leave, maternity leave, attrition and 24×7 shift cover remain — and leading with job cuts creates staff resistance that stalls the project.
+**Better measure**: **shorter MTTD / MTTR → lower losses**. Using ALE: detecting in hours rather than eight days stops exfiltration and encryption, sharply reducing the exposure factor; compare ALE before and after minus the annual cost (CBA). Add avoided downtime, fines and customer churn. Frame the people benefit as analysts freed from triage for threat hunting.
+
+**(c) Risks and controls**
+- **Hallucination / misjudgement** — AI ranks a real attack as low priority → keep a **human in the loop** for critical actions and sample-check outputs.
+- **Prompt injection / manipulation** — instructions hidden in logs or emails → treat **external text as data, not orders**, filter inputs and limit what the AI can execute (least privilege).
+- **Data leakage / shadow AI** — alerts and customer data sent to an external model → redact and classify data, adopt an AI governance policy, and put data-processing terms and an SLA in the vendor contract (third-party risk again).
+
+**中文解析**
+
 **(a) P / D / R**：
 - **Prevention**：AI 钓鱼 / vishing 识别与员工模拟训练；按威胁情报给漏洞排优先级；NGFW 机器学习调优规则；
 - **Detection**：**UEBA** 学习服务账号的正常行为，横向移动会偏离基线；**AI Triage** 把每天上千条告警排序，那几条异常登录会被排到前面（解决本案「有告警没人看」）；关联分析把多天的零散事件串成一条攻击链；
@@ -709,6 +830,7 @@ Clipping level 是 Anomaly-based 的关键词。D 是防火墙技术，不是 ID
 - **Prompt Injection / 模型被操纵**：攻击者在日志或邮件里埋指令 → **外部文本当数据不当指令**、输入过滤、限制 AI 的执行权限（最小权限）；
 - **数据泄露与 Shadow AI**：把告警和客户数据送到外部模型 → 数据分级脱敏、AI 治理政策、合同写入数据处理和 SLA（这又回到**第三方风险**）。
 其他可接受：模型漂移（定期重新评估）、不可解释（保留审计日志供监管查阅）、供应商锁定。
+
 </QA>
 
 ---

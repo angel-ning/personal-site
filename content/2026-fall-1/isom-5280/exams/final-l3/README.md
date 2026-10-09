@@ -7,6 +7,7 @@ summary:
   zh: "第 3 课期末版：认证与授权、访问控制、Zero Trust、防火墙与架构、VPN、IDPS、EDR、SIEM、XDR、SOAR、SOC、蜜罐，以及把这些工具串起来的安全控制策略——每个点给课件原文、需要理解的逻辑和可能的问法。"
 week: 3
 date: 2026-10-08
+unlisted: true
 tags: [FinalReview, ZeroTrust, Firewall, DMZ, IDPS, SIEM, SOC, DefenseInDepth]
 ---
 # 期末复习 L3 · 防护工具与 Zero Trust
@@ -122,6 +123,8 @@ tags: [FinalReview, ZeroTrust, Firewall, DMZ, IDPS, SIEM, SOC, DefenseInDepth]
 
 > **答案：D**
 >
+> *EN:* A passcode is something you **know**; a face is something you **are**. Options A and B are the same pair in a different order, so neither can be the answer.
+>
 > passcode = know，face = are。A、B 是同一个答案换顺序，必定都不对。
 
 ### 1.3 🔴 Authorization 授权（p.8）📝🔍
@@ -140,6 +143,12 @@ tags: [FinalReview, ZeroTrust, Firewall, DMZ, IDPS, SIEM, SOC, DefenseInDepth]
 
 **What is access control concerned with?**
 
+> **English**
+>
+> Access control is concerned with the **permissions or privileges a subject (user or system) has on an object (resource)** — **if, when and from where** the subject may access it, and **especially how** it may use it (read, modify, delete, forward). The goal is to limit access to subjects that require it, protecting **confidentiality** of personal data, commercial secrets and intellectual property.
+>
+> **中文解析**
+>
 > 主体（subject：用户或系统）对客体（object：资源）的权限：能不能访问（if）、什么时候（when）、从哪里（from where），尤其是能怎么使用（how，读、改、删、转发）。目标是只让需要的主体访问，保护机密性（个人数据、商业秘密、知识产权）。
 
 ### 1.4 🔴 Access Control Approaches（访问控制方法树，p.9）📝🔍
@@ -171,8 +180,15 @@ Access Control (subjects and objects)
 - **层级不能拍平**：MAC 和 RBAC 都在 Nondiscretionary 下面，不和 DAC 并列。
 - RBAC 粗而静态、好管理；TBAC 细而动态，更符合最小权限。
 
-**（A1 原题）An access control model in which the system determines the access policy is known as? / An access control system that gives the user some control over who has access is known as?**
+**（A1 原题 / A1 question）An access control model in which the system determines the access policy is known as? / An access control system that gives the user some control over who has access is known as?**
 
+> **English**
+>
+> 1. **Mandatory access control (MAC)**.
+> 2. **Discretionary access control (DAC)**.
+>
+> **中文解析**
+>
 > 第一个是 **Mandatory access control**；第二个是 **Discretionary access control**。
 
 ### 1.5 🔴 Zero Trust Architecture：定义与三原则（p.10）📝✍️
@@ -201,6 +217,15 @@ Three Principles：
 
 **Explain the three principles of Zero Trust and why Zero Trust rejects trust based on network location.**
 
+> **English**
+>
+> 1. **Never trust, always verify** — authenticate and authorise every access request, even from inside the network.
+> 2. **Least privilege access** — grant only the access needed for the task, limiting damage if an account is compromised.
+> 3. **Assume breach / continuous verification** — assume attackers are already inside and keep monitoring and verifying.  
+>    Location is rejected as a basis for trust because insiders, stolen credentials, remote VPN users and compromised internal devices are all already inside the perimeter — being on the internal network does not make a user or device trustworthy.
+>
+> **中文解析**
+>
 > ① Never trust, always verify：每次访问都重新认证和授权，不因为刚验证过或在内网就放行；② Least privilege：只给完成任务所需的最小权限，限制被攻陷后的影响；③ Assume breach：假设攻击者已在内部，持续监控和验证。拒绝按位置信任，是因为内鬼、被盗的凭证、VPN 远程用户、被攻陷的内网设备都已经在边界之内，「在内网」不代表可信。
 
 ---
@@ -235,6 +260,8 @@ Three Principles：
 - D. Network firewall rule
 
 > **答案：D**
+>
+> *EN:* One source (so not DDoS) and many targets (host rules would be too slow): one rule at the network perimeter protects every internal system at once.
 >
 > 单一来源（不是 DDoS），多个目标（逐台配主机规则太慢），在网络边界加一条规则一次保护全部。
 
@@ -281,8 +308,14 @@ Three Principles：
 | DMZ 代理服务器访问内网      | 10.10.10.4 → 10.10.10.8:80      | #3   | **Allow** |
 | 外部试图直连内网（绕过 DMZ）   | 203.0.113.5 → 10.10.10.8:80     | #10  | **Deny**  |
 
-**规则表最后一条写成 Any Any Any Any Allow 会怎样？体现了违反哪条原则？**
+**What happens if the last firewall rule is Any / Any / Any / Any / Allow? Which principle does it violate?（最后一条写成 Allow 会怎样？）**
 
+> **English**
+>
+> Any traffic not explicitly denied earlier is let through — the firewall becomes default-allow and relies on a blacklist that can never list every bad case. It violates **fail-safe defaults** (*access is denied by default unless explicitly permitted*) and Zero Trust.
+>
+> **中文解析**
+>
 > 凡是前面没有明确拒绝的流量都会被放行，等于默认放行、只靠黑名单，而黑名单不可能列全所有坏流量。违反 **Fail-Safe Defaults**（Access is denied by default unless explicitly permitted），也违反 Zero Trust。
 
 ### 2.4 🔴 Stateful Inspection（p.19–20）📝🔍
@@ -316,6 +349,8 @@ Three Principles：
 - D. Stateless
 
 > **答案：C**
+>
+> *EN:* The technique is **stateful** inspection; “dynamic” only describes the state table.
 >
 > Dynamic 是干扰项（课件说的是 dynamic state table，但技术名叫 Stateful）。
 
@@ -401,6 +436,14 @@ Three Principles：
 
 **Compare screened host and screened subnet architectures. Which would you recommend for a bank and why?**
 
+> **English**
+>
+> A **screened host** uses one packet-filtering router in front of a bastion host that is still connected to the internal network — if the bastion host is compromised, the attacker is inside.  
+> A **screened subnet** places public-facing servers in a **DMZ** between an external and an internal filtering router, so the internet never reaches the internal network directly.  
+> For a bank I recommend the **screened subnet**: it holds highly sensitive, regulated data, and the loss from one breach far exceeds the extra cost — it reflects defence in depth.
+>
+> **中文解析**
+>
 > 差异：screened host 只有一个过滤路由器和一台连在内网上的堡垒主机，堡垒主机被攻破就直通内网；screened subnet 用两个路由器把公开服务器隔在 DMZ，外部永远不能直接访问内网。银行处理大量敏感数据、受监管、一次泄露的损失远超两种方案的成本差，应选 screened subnet（defense in depth）。
 
 ### 3.3 🟡 Case Study：选哪个架构（p.30）✍️
@@ -461,8 +504,20 @@ Three Principles：
 | 优点   | 一个点看整个网段；能发现扫描、DDoS、横向移动       | 看得细；能看到加密流量解密后的结果、文件篡改、提权 |
 | 局限   | **看不到加密流量的内容**（A1 原题）；流量大时可能漏包 | 每台都要装、管理成本高；只看到这一台        |
 
-**（A2 原题）Compare NIDPS and HIDPS in terms of what each monitors, a key strength and a key limitation of each.（12 marks）**
+**（A2 原题 / A2 question）Compare NIDPS and HIDPS in terms of what each monitors, a key strength and a key limitation of each.（12 marks）**
 
+> **English**
+>
+> |                | NIDPS                                                                                                    | HIDPS                                                                                                                 |
+> | -------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+> | Monitors       | Network traffic across a whole segment, looking for unusual patterns                                     | Files, logs, system calls and user activity on a single host                                                          |
+> | Key strength   | One sensor covers the whole segment; detects network-level attacks (scans, DDoS, lateral movement)       | Fine-grained; detects file tampering, privilege escalation and malicious processes, and sees traffic after decryption |
+> | Key limitation | Cannot inspect encrypted traffic; may miss packets under heavy load; blind to what happens inside a host | Must be installed and maintained on every host (costly); sees only that host, not the wider network                   |
+>
+> They are complementary and should be used together (defence in depth).
+>
+> **中文解析**
+>
 > **NIDPS**：监控整个网段的网络流量，找异常模式；优点是一个部署点覆盖整个网段，能发现网络层攻击（扫描、DDoS、横向移动）；局限是看不到加密流量的内容，高流量时可能漏检，也看不到主机内部发生了什么。  
 > **HIDPS**：监控单台主机上的文件、日志、系统调用和用户行为；优点是粒度细，能发现文件被篡改、提权、可疑进程，加密流量到主机已解密也能检查；局限是要在每台主机上部署和维护，成本高，而且只看到这一台、看不到网络全局。结论：两者互补，按 defense in depth 一起用。
 
@@ -480,8 +535,15 @@ Three Principles：
 - 「保护暴露于已知漏洞的资产」= **补偿性控制**：补丁暂时打不上，就用监控盯住这个洞。
 - 「向管理层证明安全投入」：安全做得好就「什么都没发生」，IDPS 日志能把看不见的风险变成数字。
 
-**（A2 原题）Identify and explain TWO reasons why an organization should deploy an IDPS beyond intrusion detection. Give examples.（8 marks）**
+**（A2 原题 / A2 question）Identify and explain TWO reasons why an organization should deploy an IDPS beyond intrusion detection. Give examples.（8 marks）**
 
+> **English**
+>
+> 1. **Data collection and forensics** — logs let the organisation reconstruct the attack path after an incident, find and close the entry point, and **justify security spending to management** (e.g. “1,200 attempts against the finance system blocked this quarter”).
+> 2. **Quality assurance and compliance** — the IDPS verifies that security policy is actually implemented (e.g. policy bans plain-text FTP, but 12 hosts still use it), flags suspicious data transfers that may indicate theft, and provides the monitoring and log evidence regulators require.
+>
+> **中文解析**
+>
 > ① **Data collection & forensics**：日志可以在事后还原攻击路径、找到入口并堵住，也能用数据向管理层证明安全投入的价值（例如「本季度阻断 1,200 次针对财务系统的尝试」）。② **Quality assurance & compliance**：检查安全政策是否真的被执行（例如政策禁用明文 FTP，IDPS 发现仍有 12 台在用），侦测异常外传（员工离职前大量下载客户资料），并提供监管要求的监控和日志证据。
 
 ### 5.4 🔴 IDPS 术语：FP / FN / Noise / Tuning（p.36）📝🔍✍️
@@ -514,14 +576,31 @@ Key message：**False negatives are the serious IDPS failure — an undetected a
 
 > **答案：C**
 >
+> *EN:* An alert was raised (positive) and the attack really happened (true) → **true positive**.
+>
 > 报了（Positive）+ 确实发生（True）。
 
-**（A2 原题）Explain IDPS tuning and why it is a continuous operational requirement rather than a one-time task. What are the consequences of inadequate tuning?（10 marks）**
+**（A2 原题 / A2 question）Explain IDPS tuning and why it is a continuous operational requirement rather than a one-time task. What are the consequences of inadequate tuning?（10 marks）**
 
+> **English**
+>
+> **Tuning** is adjusting an IDPS (signature sets, anomaly clipping levels, protocol inspection depth, alert rules) to **maximise true positives while minimising both false positives and false negatives**.  
+> It must be **continuous** because the network and business change (new systems and traffic patterns make baselines stale), attack techniques change (new signatures are needed), and the organisation's risk priorities change.  
+> Consequences of poor tuning: too many false positives **desensitise analysts** so real alerts are missed; settings that are too loose cause **false negatives** — attacks go unnoticed (the most serious failure); analyst time is wasted; and an active IPS may **block legitimate business traffic**.
+>
+> **中文解析**
+>
 > Tuning 是调整 IDPS（特征库、clipping level、协议解析深度、告警规则），在压低误报和漏报之间取平衡。必须持续，因为：网络和业务在变（新系统、新流量模式让基线失效）；攻击手法在变（新特征要更新）；组织的风险重点在变。调得不好的后果：误报太多 → 分析师麻木、真告警被淹没；调得太松 → 漏报，攻击发生了没人知道（最严重）；还会浪费人力，Active IPS 误报时甚至会切断正常业务。
 
-**（A1 原题）Elaborate false positive and false negative in 3 sentences. Which is less desirable? Justify in less than 30 words.**
+**（A1 原题 / A1 question）Elaborate false positive and false negative in 3 sentences. Which is less desirable? Justify in less than 30 words.**
 
+> **English**
+>
+> A **false positive** is an alert raised when no actual attack is taking place. A **false negative** is the IDPS's failure to react to an actual attack. Both are balanced through tuning.  
+> **False negatives are less desirable**: *an undetected attack proceeds unchecked and causes real damage, while a false alarm only wastes analyst time.*
+>
+> **中文解析**
+>
 > False positive：IDPS 在没有攻击时发出告警。False negative：IDPS 对真实发生的攻击没有反应。两者都要靠 tuning 平衡。较不可取的是 **false negative**：An undetected attack proceeds unchecked and causes real damage, while a false alarm only wastes analyst time.
 
 ### 5.5 🔴 三种检测方法（p.37）📝🔍
@@ -587,6 +666,12 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 **Why can't individual security devices detect many attacks, and how does SIEM help?**
 
+> **English**
+>
+> Each device sees only one part of the attack chain, and each step looks normal on its own — a login with the correct password, a script download IT often performs, traffic on a legitimate port. A **SIEM** collects logs from across the organisation, **normalises** them, and **correlates** events across sources and time to reveal the full attack chain and raise an alert. It also retains logs for **compliance and forensics**.
+>
+> **中文解析**
+>
 > 每台设备只看到攻击链的一小段，而每一步单独看都像正常操作（密码正确的登录、IT 常做的脚本下载、合法端口的流量）。SIEM 汇总全公司日志、统一格式，再跨来源、跨时间做关联分析，把零散事件串成完整的攻击链并告警，同时保存日志满足合规和取证。
 
 ### 6.3 🔴 SOC、XDR、SOAR 与 AI SOC（p.50–55）📝🔍✍️
@@ -689,6 +774,17 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 **Explain how Zero Trust provides the guiding principle for combining access control, firewalls, IDPS, SIEM and SOAR in an organisation.（15 marks）**
 
+> **English**
+>
+> 1. Traditional security trusts everything inside the perimeter; **Zero Trust grants no implicit trust based on location or device ownership**, so each tool covers part of what happens once the perimeter can no longer be trusted.
+> 2. **Never trust, always verify** → authentication (MFA) and authorisation (RBAC); NGFW identity awareness enforces policy by user, not IP.
+> 3. **Least privilege** → minimal permissions, PAM, a DMZ and firewall rules that open only necessary access, limiting lateral movement.
+> 4. **Assume breach** → prevention will fail, so IDPS / EDR detect, SIEM correlates logs into attack chains, SOAR contains threats with playbooks, and the SOC runs the whole process.
+> 5. These tools are layered as **multiple, independent, overlapping** controls (defence in depth), with **default-deny** rules and **simple, auditable** configurations (p.60).  
+>    Conclusion: buying tools is not security — Zero Trust decides where each tool sits and what it does.
+>
+> **中文解析**
+>
 > ① 传统模型信任边界内的一切，Zero Trust 不因位置或设备归属默认信任，所以每个工具都在补「边界不可信」之后的一环；② **Never trust, always verify** → 认证（MFA）+ 授权（RBAC），NGFW 按身份放行；③ **Least privilege** → 最小权限、PAM、DMZ 和防火墙规则只开必要访问，被攻陷后限制横向移动；④ **Assume breach** → 承认预防会失败，所以需要 IDPS / EDR 检测、SIEM 把日志关联成攻击链、SOAR 按 playbook 自动遏制、SOC 运营整个过程；⑤ 这些工具按 defense in depth 多层、独立、重叠地部署，规则默认拒绝、配置保持简单可审计（p.60）。结论：单独买工具不等于安全，Zero Trust 决定了每个工具放在哪里、做什么。
 
 ---
@@ -710,6 +806,13 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 **What are the purposes of a honeypot, and what potential issues should management consider before deploying one?**
 
+> **English**
+>
+> **Purposes**: **Divert** attackers away from critical systems; **Collect** information about their activity and techniques; **Delay** them long enough for administrators to document the event and respond.  
+> **Issues**: legal and ethical risks (entrapment, privacy, admissibility of evidence); a compromised honeypot can become a **stepping stone** to attack internal systems or third parties, creating downstream liability; skilled attackers may detect it or feed false information; it only sees attackers who touch it, so it **complements but cannot replace** IDPS and firewalls; its cost and ROI are hard to justify.
+>
+> **中文解析**
+>
 > 目的：Divert（引开攻击者，保护关键系统）、Collect（收集攻击手法情报）、Delay（拖住攻击者，争取时间记录和响应）。问题：法律和伦理风险（诱捕、隐私）；被攻破后可能成为攻击内网或第三方的跳板，带来下游责任；可能被识破或被反向利用；只能补充而不能替代 IDPS 和防火墙；成本和 ROI 难以证明。
 
 ---
@@ -725,6 +828,8 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 > **答案：C**
 >
+> *EN:* **Stateful** inspection — “dynamic” is a distractor.
+>
 > Dynamic 是干扰项。
 
 **A disadvantage of signature-based intrusion detection is that?（A1 原题）**
@@ -735,6 +840,8 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 - D. It can detect only mechanized attacks, not hacker attacks
 
 > **答案：A**
+>
+> *EN:* Signature-based detection only recognises attacks already in its signature database, so it cannot detect new or unknown attacks.
 >
 > Signature 只认识特征库里的已知攻击。
 
@@ -747,6 +854,8 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 > **答案：D**
 >
+> *EN:* A NIDS inspects network packets, so it cannot see the content of encrypted traffic.
+>
 > NIDS 看网络包，加密流量的内容看不到。
 
 ---
@@ -755,4 +864,17 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 **A mid-sized company has only a perimeter firewall. Recommend a layered set of controls from Lesson 3 and justify the order of investment under a limited budget.（15 marks）**
 
+> **English**
+>
+> Start with a **risk assessment** of critical assets and threats, then invest in order of cost-effectiveness:
+>
+> 1. **MFA, least privilege and default-deny firewall rules** — cheap and stop the most common attacks (63% of intrusions come from compromised credentials).
+> 2. **DMZ architecture** — separates public-facing services from the internal network.
+> 3. **Basic detection** — IDPS / EDR with centralised logging (SIEM or a managed service); without detection, losses are unbounded.
+> 4. **Response** — write playbooks and run drills first (75% of organisations lack playbooks, and writing them costs little), then consider SOAR.
+> 5. Keep configurations **simple and auditable** — free but effective.  
+>    Design the whole set around **Zero Trust and defence in depth**; a smaller firm can use SOC-as-a-Service.
+>
+> **中文解析**
+>
 > 先做风险评估（关键资产、威胁）。按性价比排序：① **MFA + 最小权限 + 默认拒绝的防火墙规则**——成本低、直接挡住最常见的凭证攻击（63% 入侵来自账号密码）；② **DMZ 架构**——把对外服务和内网隔开；③ **基本检测**：IDPS / EDR 和集中日志（SIEM 或托管服务），因为无法检测意味着损失没有上限；④ **响应**：先写 playbook 和做演练（75% 组织缺的是剧本，几乎不花钱），再考虑 SOAR；⑤ 保持配置简单可审计（免费但有效）。整体按 Zero Trust 和 defense in depth 设计，小公司可以考虑 SOC-as-a-Service。

@@ -7,6 +7,7 @@ summary:
   zh: "第 2 课期末版：威胁术语、恶意软件与 RaaS、通信截获、钓鱼与社会工程、软件缺陷、DoS/DDoS、供应链攻击、密码攻击、LLM 威胁——每个点给课件原文、需要理解的逻辑和可能的问法。"
 week: 2
 date: 2026-10-08
+unlisted: true
 tags: [FinalReview, Malware, RaaS, Phishing, DDoS, SupplyChain, PasswordAttack]
 ---
 # 期末复习 L2 · 安全威胁与常见攻击
@@ -69,6 +70,15 @@ tags: [FinalReview, Malware, RaaS, Phishing, DDoS, SupplyChain, PasswordAttack]
 
 **A company runs an unpatched web server. A criminal group publishes a script that takes over such servers and uses it to steal customer data. Identify the vulnerability, threat, exploit and attack.**
 
+> **English**
+>
+> - **Vulnerability**: the unpatched web server — a weakness in the asset.
+> - **Threat**: the criminal group and its intent to steal data.
+> - **Exploit**: the published script used to take over the server.
+> - **Attack**: actually running the script to break in and steal customer data, causing a loss of **Confidentiality**.
+>
+> **中文解析**
+>
 > Vulnerability：未打补丁的 web server；Threat：犯罪集团（以及他们盗取数据的意图）；Exploit：公开的攻击脚本；Attack：实际用脚本入侵并窃取客户数据（造成 Confidentiality 损失）。
 
 ---
@@ -109,6 +119,8 @@ Trojan 特征：Program with hidden side-effects；superficially attractive（�
 
 > **答案：D**
 >
+> *EN:* A worm needs no host file and no user action to spread.
+>
 > 课件原题。Worm 不需要宿主文件，也不需要用户操作。
 
 ### 2.2 🟡 防御恶意软件的 7 条对策（p.11）📝
@@ -146,10 +158,18 @@ Trojan 特征：Program with hidden side-effects；superficially attractive（�
 
 > **答案：C**
 >
+> *EN:* The RaaS roles are operators, affiliates and initial access brokers — a crypto miner is not one of them.
+>
 > 课件原题。Crypto Miner 不在 RaaS 分工里。
 
 **Why has ransomware become more frequent in recent years? Refer to the RaaS model.**
 
+> **English**
+>
+> Ransomware-as-a-Service turns ransomware into a **gig economy**: **operators / developers** supply ready-made ransomware and leak sites, **initial access brokers** sell ready-made entry points, and **affiliates** carry out the attacks and share the ransom. This **lowers the barrier to entry** — even inexperienced criminals can launch attacks — while specialisation raises the success rate, so the number of attacks has grown.
+>
+> **中文解析**
+>
 > RaaS 把勒索攻击变成分工的「零工经济」：开发者提供现成的勒索软件和泄露网站，Access Broker 出售现成的入口，Affiliate 不需要高技术就能执行攻击并分成。门槛降低、专业化分工、利润共享，使更多犯罪者参与，攻击数量和成功率都上升。
 
 ---
@@ -176,6 +196,13 @@ Trojan 特征：Program with hidden side-effects；superficially attractive（�
 
 **Explain the difference between packet sniffing and a man-in-the-middle attack, and give one control for each.**
 
+> **English**
+>
+> **Packet sniffing** is passive electronic eavesdropping on packets in transit (e.g. capturing HTTP login credentials on public Wi-Fi); it breaks **confidentiality**. Control: **encrypt traffic** (HTTPS / VPN).  
+> A **man-in-the-middle** attacker sits between two parties and relays traffic while impersonating each side, so they can **read and alter** messages; it breaks **confidentiality and integrity**. Control: **verify identities with digital certificates** (TLS / PKI) and detect tampering with signatures / hashes.
+>
+> **中文解析**
+>
 > Sniffing 是被动窃听传输中的数据包（如在公共 WiFi 抓 HTTP 明文密码），只破坏机密性，对策是加密传输（HTTPS / VPN）。MITM 是攻击者插在通信双方之间、冒充双方转发，能读也能改，破坏机密性和完整性，对策是用数字证书验证对方身份（TLS / PKI），并用签名或哈希检测篡改。
 
 ---
@@ -200,6 +227,16 @@ Trojan 特征：Program with hidden side-effects；superficially attractive（�
 
 **Suggest a layered approach to defend against AI-driven spear-phishing. Justify each layer.**
 
+> **English**
+>
+> 1. **Regular phishing awareness training and simulations** (including deepfake and QR-code phishing) — reduces the chance staff are fooled.
+> 2. **MFA**, ideally phishing-resistant (e.g. passkeys) — stolen credentials alone are not enough.
+> 3. **Network segmentation and monitoring** — limits lateral movement and detects intruders early.
+> 4. **Least privilege** — a compromised account can reach only limited data.
+> 5. **Out-of-band verification for high-risk actions** such as payments — counters deepfake impersonation of executives.
+>
+> **中文解析**
+>
 > ① 定期钓鱼演练和意识培训（包括 deepfake、QR code 钓鱼），降低被骗概率；② MFA（最好是 phishing-resistant，如 passkey），凭证被骗走也登不进；③ 网络分段与监控，限制攻击者进来后的横向移动并尽早发现；④ 最小权限，被骗账号能接触的数据有限；⑤ 高风险操作（转账）的带外核实流程，应对 deepfake 冒充高管。
 
 ---
@@ -245,10 +282,20 @@ XSS 防御：Avoid posting HTML、**Validate Input**、**Sanitizing Data**、Coo
 
 > **答案：D**
 >
+> *EN:* Program flaws are fixed by technical and process controls (input validation, testing, least privilege); a bigger budget alone does not fix code.
+>
 > 课件原题。
 
-**SQL injection 和 XSS 都是注入攻击，区别是什么？**
+**SQL injection and XSS are both injection attacks. What is the difference?（区别是什么？）**
 
+> **English**
+>
+> **SQL injection** inserts malicious input into a **server-side database query**; the target is the **database**, and the impact is unauthorised reading or modification of data.  
+> **XSS** injects a malicious script into a **trusted website** that runs in the **visitor's browser (client side)**; the impact is theft of cookies, session tokens or stored passwords.  
+> Both are mitigated by **input validation and data sanitising**.
+>
+> **中文解析**
+>
 > SQL injection 把恶意输入拼进**服务器端的数据库查询**，目标是数据库，后果是读取或篡改未授权数据；XSS 把恶意脚本注入**可信网站**，在**访问者浏览器（客户端）**执行，后果是偷 cookie、session token。共同对策是输入校验和数据清洗。
 
 ---
@@ -293,12 +340,25 @@ XSS 防御：Avoid posting HTML、**Validate Input**、**Sanitizing Data**、Coo
 | 6 | 又一台员工电脑尝试连接                  | 5/5 | ✅ 已建立, ⏳ 半开, ⏳ 半开, ⏳ 半开, ⏳ 半开 |
 | 7 | 等待 6 个 tick（半开连接超时被回收）       | 1/5 | ✅ 已建立                         |
 
-**（A1 原题）What is the difference between a DoS and a DDoS attack? Explain why DDoS is more dangerous in less than 25 words.**
+**（A1 原题 / A1 question）What is the difference between a DoS and a DDoS attack? Explain why DDoS is more dangerous in less than 25 words.**
 
+> **English**
+>
+> A **DoS** attack comes from a single system or IP address; a **DDoS** attack is launched simultaneously from many distributed compromised devices (a botnet).  
+> Why more dangerous (under 25 words): *Traffic comes from thousands of distributed zombies at once, so it cannot be blocked by source and delivers far greater volume.*
+>
+> **中文解析**
+>
 > DoS 由单一系统或 IP 发起；DDoS 由大量分布式的被控设备（botnet）同时发起。更危险的原因（25 词内）：Traffic comes from thousands of distributed zombies at once, so it cannot be blocked by source and delivers far greater volume.
 
-**SYN flood 属于哪一类 DDoS？为什么？**
+**Which type of DDoS attack is a SYN flood, and why?（SYN flood 属于哪一类？为什么？）**
 
+> **English**
+>
+> A **protocol attack**. It does not saturate bandwidth (volumetric) or mimic application requests (layer 7); it abuses the TCP three-way handshake, leaving many **half-open connections** that exhaust the server's **connection state table**.
+>
+> **中文解析**
+>
 > **Protocol attack**。它不靠流量塞满带宽（Volumetric），也不模仿应用请求（L7），而是利用 TCP 三次握手，留下大量半开连接，耗尽服务器的连接状态表。
 
 ---
@@ -331,10 +391,31 @@ XSS 防御：Avoid posting HTML、**Validate Input**、**Sanitizing Data**、Coo
 
 **Using SolarWinds as an example, explain why supply chain attacks are particularly dangerous.**
 
+> **English**
+>
+> 1. **One-to-many**: compromising a single supplier gave access to thousands of downstream customers through a **trusted software update** (Orion).
+> 2. The malicious code arrived through a **legitimate, signed channel**, so customers' firewalls and antivirus let it in.
+> 3. **Long dwell time** — the operation spanned about six months, making detection hard.
+> 4. Customers have **no visibility** into the supplier's internal development process.
+>
+> **中文解析**
+>
 > ① 攻击者只需攻破一个供应商，就能借**受信任的软件更新**进入数千家下游客户（一对多）；② 恶意代码带着合法签名和合法渠道进来，客户的防火墙和杀毒会放行；③ 潜伏时间长（SolarWinds 跨度约 6 个月），难以发现；④ 客户对供应商内部开发流程没有可见性。
 
 **As CISO of a bank, how would you manage third-party cyber risk? Use the HKMA guidance.（10 marks）**
 
+> **English**
+>
+> Manage risk across the **whole third-party lifecycle**:
+>
+> 1. **Due diligence** before onboarding; tier suppliers by criticality, with stricter requirements for those supporting critical operations.
+> 2. **Contract**: security requirements, SLA, audit rights and incident-notification deadlines.
+> 3. **Access**: least privilege / Zero Trust — no standing, network-wide access.
+> 4. **Monitoring**: extend cyber threat intelligence to key third parties and share intelligence with peer banks.
+> 5. **Resilience**: scenario-based response plans for supplier failure, tested by regular drills; avoid single points of failure and over-concentration.
+>
+> **中文解析**
+>
 > 按全生命周期：① 引入前做安全尽职调查，按重要性分级，关键供应商要求更高；② 合同写入安全要求、SLA、审计权、事件通报时限；③ 接入时按最小权限 / Zero Trust 给访问，不给常驻全域权限；④ 把威胁情报监控扩展到关键第三方，并与同业共享情报；⑤ 制定供应商失效的场景化应急方案并定期演练，避免单点故障和过度集中。
 
 ---
@@ -357,8 +438,22 @@ p.52 Different level：Poor（123456）→ Fair（密码 + SMS）→ Better（Au
 - **Credential stuffing（撞库）**：拿别的网站泄露的账号密码批量去试，利用的是**重复使用密码**，不是破解密码。所以对策是 MFA 和唯一密码，不是加强复杂度。
 - Rainbow table 的前提是**先偷到哈希文件**；对策是**加盐（salt）**。
 
-**（A1 原题）List 2 types of password attacks (other than guessing) and suggest 2 measures against each.（每点 12 词内）**
+**（A1 原题 / A1 question）List 2 types of password attacks (other than guessing) and suggest 2 measures against each.（每点 12 词内 / max 12 words each）**
 
+> **English**
+>
+> **Brute force**
+>
+> - Use long passphrases to enlarge the search space.
+> - Rate-limit and lock accounts after repeated failed logins.
+>
+> **Rainbow table**
+>
+> - Salt each password with a unique random value before hashing.
+> - Use MFA so a cracked password alone is insufficient.
+>
+> **中文解析**
+>
 > **Brute force**：Use long passphrases to enlarge the search space；Rate-limit and lock accounts after repeated failed logins.  
 > **Rainbow table**：Salt each password with a unique random value before hashing；Use MFA so a cracked password alone is insufficient.  
 > （也可以答 Dictionary：block common / breached passwords；Credential stuffing：unique passwords + MFA + 异常登录监控。）
@@ -406,4 +501,14 @@ p.52 Different level：Poor（123456）→ Fair（密码 + SMS）→ Better（Au
 
 **A logistics company's employee receives a call from someone claiming to be IT helpdesk, and gives out VPN credentials. The attacker later encrypts systems and leaks data. Identify every attack type from Lesson 2 involved, and the CIA element each affected.（10 marks）**
 
+> **English**
+>
+> 1. **Social engineering (vishing)** — the fake helpdesk call steals credentials → **C**.
+> 2. **Credential abuse / password compromise** — the stolen VPN password works because there is no MFA → **C**.
+> 3. **Malware** — tools installed for privilege escalation and lateral movement → **C / I**.
+> 4. **Ransomware with double extortion** — systems encrypted and data leaked → **A + C**. If the attacker is a RaaS affiliate, the credentials may have been bought from an initial access broker.
+> 5. **Supply chain / third-party risk** — if the VPN is run by an outsourced provider.
+>
+> **中文解析**
+>
 > ① **Social engineering / vishing**（电话钓鱼）——骗取凭证，破坏 C；② **凭证滥用**（相当于密码被盗，没有 MFA 就能登录）——C；③ 若入侵后横向移动、装恶意软件 → **Malware**；④ **Ransomware**（加密 + 泄露 = 双重勒索）——A + C；如果攻击者是 RaaS Affiliate，入口凭证可能来自 Initial Access Broker；⑤ 如果 VPN 由外包商管理 → **供应链 / 第三方风险**。

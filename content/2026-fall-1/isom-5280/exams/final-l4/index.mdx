@@ -88,6 +88,8 @@ tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS
 - Substitution 换的是字母本身，Transposition 换的是字母位置。
 
 <MCQ q="（课件原题）Which term describes the information used in conjunction with an algorithm to create the ciphertext from the plaintext?" a="Cipher" b="Code" c="Clear text" d="Key" answer="D">
+*EN:* Encryption = algorithm + **key**; the key is the information used with the algorithm to turn plaintext into ciphertext.
+
 加密 = 算法 + 密钥。
 </MCQ>
 
@@ -116,8 +118,18 @@ p.15「Systemic Key Cryptography」：
 - 双方共用一把钥匙，所以**无法证明消息是哪一方发的**（没有不可抵赖）。
 - 「Private-key encryption」是**对称**加密的别名，不要和非对称里的「私钥」搞混。
 
-<QA q="（A2 原题）List 3 challenges with symmetric cryptography.（9 marks）">
+<QA q="（A2 原题 / A2 question）List 3 challenges with symmetric cryptography.（9 marks）">
+
+**English**
+
+1. **Key distribution** — the same secret key must be delivered to the other party through a secure channel before communication; if it is intercepted, all messages can be read.
+2. **Not scalable** — n parties need n(n−1)/2 keys, which is hard to manage for large groups, and keys must be regenerated often.
+3. **No nonrepudiation** — both parties hold the same key, so neither can prove who sent a message; it cannot support accountable transactions.
+
+**中文解析**
+
 ① **密钥分发**：通信前必须通过安全渠道把同一把密钥交给对方，密钥在传递中被截获就全部失效；② **不可扩展**：n 方两两通信需要 n(n−1)/2 把密钥，大群体难以管理，且密钥要经常更换；③ **没有不可抵赖**：双方持有同一把密钥，无法证明某条消息是谁发的，不能用于需要追责的交易。
+
 </QA>
 
 ---
@@ -146,11 +158,22 @@ PKI 专题 p.14 的 Benefits：**easier key management and distribution**；**th
 课件 p.14 的问题「Sender use which key? How about receiver?」就是这张表。
 
 <MCQ q="（课件原题）What term describes a cryptographic method that incorporates mathematical operations involving both a public key and a private key to encipher or decipher a message?" a="Private-key encryption" b="Symmetric encryption" c="Advanced Encryption Standard (AES)" d="Asymmetric encryption" answer="D">
+*EN:* Using both a public and a private key is the definition of **asymmetric** encryption; A, B and C all describe symmetric encryption.
+
 A、B、C 都是对称加密的说法或算法。
 </MCQ>
 
-<QA q="（A2 原题）Explain, with a brief example, the difference between symmetric and asymmetric encryption.（6 marks）">
+<QA q="（A2 原题 / A2 question）Explain, with a brief example, the difference between symmetric and asymmetric encryption.（6 marks）">
+
+**English**
+
+**Symmetric encryption** uses the **same secret key** to encrypt and decrypt. It is fast and suits bulk data, but both parties must share the key first. *Example*: a company encrypts its database with AES, and every authorised system holds the same key.
+**Asymmetric encryption** uses a **mathematically related public / private key pair**: what one key encrypts, only the other can decrypt. The public key is shared freely and the private key is kept secret, which solves key distribution and enables digital signatures, but it is slow. *Example*: a customer encrypts data with the bank's public key from its certificate, and only the bank's private key can decrypt it.
+
+**中文解析**
+
 对称：加密和解密用**同一把**密钥，快，适合大量数据，但双方要先共享密钥。例：公司用 AES 加密数据库，所有授权系统持有同一把密钥。非对称：用一对**数学相关的公钥和私钥**，一把加密只有另一把能解，公钥公开、私钥自己保存，解决了密钥分发并支持签名，但慢。例：客户用银行网站证书里的公钥加密，只有银行的私钥能解开。
+
 </QA>
 
 ---
@@ -171,6 +194,8 @@ A、B、C 都是对称加密的说法或算法。
 - 哈希只提供**完整性**，不提供机密性，也不能证明是谁发的。
 
 <MCQ q="（课件原题）True or False: Hashing functions require the use of keys?" a="True" b="False" answer="B">
+*EN:* **False** — hash functions use no key, which is why a hash alone cannot prove who sent a message.
+
 不需要密钥。
 </MCQ>
 
@@ -221,11 +246,30 @@ A、B、C 都是对称加密的说法或算法。
 - 课堂实操（Amazon 证书）要会回答：哪个 CA 签发、根 CA 是谁、有效期、主体公钥、证书签名用的哈希函数。
 
 <QA q="Explain why a digital certificate solves a problem that a digital signature alone cannot.">
+
+**English**
+
+A digital signature only proves that **whoever holds the private key** signed the message; it cannot prove that the matching public key really belongs to the claimed person. An attacker can sign with their own key pair and pass off the public key as Alice's, and verification still succeeds mathematically. A **digital certificate**, signed by a trusted **certificate authority (CA)**, binds the public key to the owner's identity with a validity period. Bob first checks that the certificate chains to a root CA he trusts; an impostor cannot obtain such a certificate, so the impersonation is rejected.
+
+**中文解析**
+
 数字签名只能证明「持有这把私钥的人签了这条消息」，但无法证明对应的公钥真的属于声称的人：攻击者可以用自己的密钥对签名，再谎称那是 Alice 的公钥，验证在数学上照样通过。证书由受信任的第三方 CA 签名，把公钥和身份绑定在一起，并有有效期；Bob 先验证证书链指向自己信任的根 CA，冒充者拿不到这样的证书，就会被拒绝。
+
 </QA>
 
 <QA q="For each step — hash only, + digital signature, + digital certificate — state which security properties are achieved.">
+
+**English**
+
+- **Hash only**: weak integrity — a man-in-the-middle can alter the message and recompute the hash.
+- **+ Digital signature**: integrity plus **authenticity of the sender** (and nonrepudiation); still no confidentiality.
+- **+ Digital certificate**: also confirms the public key belongs to the claimed identity, preventing impersonation.
+Confidentiality additionally requires encryption — in practice a hybrid system.
+
+**中文解析**
+
 只有 Hash：脆弱的完整性（中间人可重算）；+ 数字签名：完整性 + 发送方真实性（以及不可抵赖），仍无机密性；+ 数字证书：在签名基础上确认公钥属于声称的身份，防止冒充。要机密性还需要加密（实际用 hybrid）。
+
 </QA>
 
 ---
@@ -246,8 +290,20 @@ A、B、C 都是对称加密的说法或算法。
 - **Revocation（吊销）** 容易漏：私钥泄露或员工离职时，要能宣布证书作废。
 - 各工具做到什么：对称 → 机密性（快）；非对称 → 机密性 + 密钥分发；哈希 → 完整性；签名 → 完整性 + 真实性 + 不可抵赖；证书 / CA → 身份信任。
 
-<QA q="（课堂讨论）How does public key infrastructure add value to an organisation seeking to use cryptography to protect information assets?（10 marks）">
+<QA q="（课堂讨论 / class discussion）How does public key infrastructure add value to an organisation seeking to use cryptography to protect information assets?（10 marks）">
+
+**English**
+
+1. **Trust establishment and identity verification** — CAs issue certificates binding public keys to identities, so customers know they reach the real bank website and partners can verify who signed a document.
+2. **Confidentiality and integrity protection** — certified public keys are used to negotiate session keys securely (TLS), and signatures detect tampering.
+3. **Nonrepudiation** — parties cannot later deny e-contracts or online purchases.
+4. **Scalability** — no pairwise key exchange is needed; public keys can be published openly.
+5. **Manageability** — enrolment, verification and **revocation** manage the certificate lifecycle, e.g. revoking a certificate when a private key leaks or an employee leaves.
+
+**中文解析**
+
 ① **建立信任、验证身份**：CA 签发证书，把公钥和身份绑定，客户能确认自己连的是真的银行网站，合作方能确认签名者身份；② **保护机密性和完整性**：证书里的公钥用于安全协商会话密钥（TLS），签名用于检测篡改；③ **不可抵赖**：电子合同、网购交易事后不能否认；④ **可规模化**：不需要两两交换密钥，公钥可以公开发布；⑤ **可管理**：通过注册、验证、吊销管理证书生命周期，私钥泄露或员工离职时能吊销证书。
+
 </QA>
 
 ---
@@ -281,10 +337,25 @@ Bluetooth：约 30 英尺范围内可被利用；不接受陌生配对、不在�
 
 为什么不只用一种：只用对称 → 没法在不安全的网络上安全地交换密钥，也验证不了对方身份；只用非对称 → 太慢（慢 1,000–10,000 倍），不适合大量数据。
 
-<QA q="（A2 原题）Explain hybrid encryption (3). Why does TLS use both asymmetric and symmetric encryption rather than one type (4)? Include the specific roles each plays in a TLS session (8).">
+<QA q="（A2 原题 / A2 question）Explain hybrid encryption (3). Why does TLS use both asymmetric and symmetric encryption rather than one type (4)? Include the specific roles each plays in a TLS session (8).">
+
+**English**
+
+**Hybrid encryption**: asymmetric cryptography verifies identities and securely exchanges a temporary symmetric **session key**; all subsequent data is encrypted with that symmetric key.
+**Why both**: symmetric encryption is fast but cannot distribute keys securely over a public network or verify identity; asymmetric encryption solves key distribution and authentication but is 1,000–10,000 times slower, unsuitable for bulk data. Combining them gets the strengths of each.
+**Roles in a TLS session**:
+1. In the handshake the server presents a **CA-signed certificate**; the client verifies it with the CA's public key, authenticating the server.
+2. An **asymmetric** algorithm (RSA or ECDH) negotiates the **session key**, which eavesdroppers cannot obtain.
+3. All web data is then encrypted with a **symmetric** algorithm (AES) using the session key — fast enough for bulk traffic.
+4. Each record carries an **integrity check** (hash-based MAC) to detect tampering.
+5. The session key is discarded when the session ends and renegotiated next time.
+
+**中文解析**
+
 **Hybrid**：用非对称加密验证身份并安全交换一把临时的对称会话密钥，之后所有数据用这把对称密钥加密。
 **为什么两种都用**：对称快但无法在公共网络上安全分发密钥，也不能验证身份；非对称能解决分发和身份验证，但比对称慢 1,000–10,000 倍，不适合大量数据。组合起来兼得两者的优点。
 **TLS 中的角色**：① 握手时服务器发送 CA 签发的证书，客户端用 CA 公钥验证证书，确认服务器身份；② 用非对称算法（RSA 或 ECDH）协商出会话密钥，窃听者拿不到；③ 之后的网页数据都用对称算法（AES）和会话密钥加密，速度快；④ 每条记录附带完整性校验，检测篡改；⑤ 会话结束后会话密钥作废，下次重新协商。
+
 </QA>
 
 ---
@@ -358,5 +429,20 @@ Bluetooth：约 30 英尺范围内可被利用；不接受陌生配对、不在�
 ## 12. 本课综合题（长题练习）
 
 <QA q="A customer logs into an online bank. Walk through how symmetric encryption, asymmetric encryption, hashing, digital signatures and certificates each contribute to making the session secure.（15 marks）">
+
+**English**
+
+1. The bank's server presents a **digital certificate** issued by a CA, containing the bank's public key and the CA's signature.
+2. The browser verifies the CA's **digital signature** with a trusted root CA key and checks the validity period and domain — confirming it is the real bank.
+3. The two sides use **asymmetric** cryptography (RSA / ECDH) to agree a session key that eavesdroppers cannot obtain.
+4. Login details and transactions are then encrypted with **symmetric** AES and the session key — fast enough for the whole session.
+5. **Hash**-based integrity checks on every record reveal any tampering.
+6. The bank stores passwords only as **salted hashes**.
+7. Signed transaction confirmations provide **nonrepudiation**.
+Each tool covers one property, and PKI combines them into trust that scales.
+
+**中文解析**
+
 ① 浏览器连接时，银行服务器发出由 CA 签发的**数字证书**，证书里有银行的公钥和 CA 的签名；② 浏览器用信任的根 CA 公钥验证证书签名（**数字签名**），并检查有效期和域名，确认对方确实是银行；③ 双方用**非对称**算法（RSA / ECDH）协商出一把会话密钥，窃听者无法得到；④ 之后的登录信息和交易数据都用**对称** AES 和会话密钥加密，速度快；⑤ 每条数据附带基于**哈希**的完整性校验，篡改会被发现；⑥ 银行存密码时只存加盐哈希；⑦ 交易确认可用签名提供不可抵赖。结论：每种工具各管一项，PKI 把它们组合成可规模化的信任。
+
 </QA>

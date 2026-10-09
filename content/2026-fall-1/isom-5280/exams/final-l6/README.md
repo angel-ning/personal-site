@@ -7,6 +7,7 @@ summary:
   zh: "第 6 课期末版：应急规划、BIA 时间与金钱指标（含计算）、计划测试、NIST 事件响应四阶段与清单、灾难恢复、数字取证、Colonial Pipeline 案例、香港关键基础设施条例——每个点给课件原文、需要理解的逻辑和可能的问法。"
 week: 6
 date: 2026-10-08
+unlisted: true
 tags: [FinalReview, BIA, MTD, ALE, IncidentResponse, DisasterRecovery, ColonialPipeline, CriticalInfrastructure]
 ---
 # 期末复习 L6 · 事件响应与应急规划
@@ -109,6 +110,12 @@ Contingency Planning（为意外做准备）
 
 **What are the four components of contingency planning, and why does BIA come first?**
 
+> **English**
+>
+> The four components are the **business impact analysis (BIA)**, the **incident response (IR) plan**, the **disaster recovery (DR) plan** and the **business continuity (BC) plan**. The BIA comes first because it identifies which business functions and systems are most critical, how long they can be down and what a loss would cost; the IR, DR and BC plans all use these results to decide what to recover first and what recovery targets to set.
+>
+> **中文解析**
+>
 > BIA、IR plan、DR plan、BC plan。BIA 先确定哪些业务和系统最关键、最多能停多久、损失值多少，IR / DR / BC 都要用这些结果决定先恢复什么、恢复目标定多少，所以 BIA 是其他三份计划的输入。
 
 ### 1.3 🟡 网络攻击应急计划 + HKMA 要求（p.6–7）📝
@@ -149,6 +156,16 @@ Key designers：**CIO**、systems administrators、**CISO**、key IT and busines
 
 **Who leads the CPMT, IR team, and crisis management team? Why is the CPMT not led by the CISO?**
 
+> **English**
+>
+> - **CPMT** → the **COO**
+> - **IR team** → the **CISO**
+> - **Crisis management team** → **legal counsel**
+> - (DR team → manager of business operations; BC team → manager of information systems and services)  
+>   The CPMT is led by the COO because contingency planning sets recovery priorities by business importance and allocates resources across the whole organisation — an operational business decision. The CISO leads the technical incident response within it.
+>
+> **中文解析**
+>
 > CPMT → COO；IR team → CISO；crisis management team → legal counsel（DR → 业务运营经理，BC → 信息系统与服务经理）。应急规划要按业务重要性排定恢复优先级、调配全公司资源，是运营和业务决策，所以由 COO 领导；CISO 负责其中技术性的事件响应。
 
 ---
@@ -194,10 +211,22 @@ Key designers：**CIO**、systems administrators、**CISO**、key IT and busines
 
 **A system has RTO = 3 hours, WRT = 2 hours and MTD = 4 hours. Does the recovery plan meet the MTD?**
 
+> **English**
+>
+> **No.** The business only resumes after RTO + WRT = 3 + 2 = **5 hours**, which exceeds the 4-hour MTD. Comparing RTO alone (3 ≤ 4) is misleading. The plan needs a shorter RTO or WRT (e.g. hot standby, automated validation) or a higher-tier recovery option.
+>
+> **中文解析**
+>
 > 不达标。业务真正恢复要 RTO + WRT = 5 小时，超过 MTD 4 小时。只看 RTO（3 ≤ 4）会误判。要缩短 RTO / WRT（热备、自动化验证）或换更高等级的方案。
 
 **The RPO is 1 hour but backups run once a day at midnight. What is the problem?**
 
+> **English**
+>
+> In the worst case the incident happens just before the next backup, so nearly **24 hours of data** would be lost — far beyond the 1-hour RPO. Backups must run at least hourly, or the system should use log shipping / real-time replication.
+>
+> **中文解析**
+>
 > 最坏情况下事故发生在下一次备份前，会丢接近 24 小时的数据，远超 1 小时的 RPO。要至少每小时备份，或用日志传送 / 实时复制。
 
 ### 2.2 🔴 金钱指标：ARO / EF / SLE / ALE（p.13）📝🧮
@@ -229,6 +258,13 @@ Key designers：**CIO**、systems administrators、**CISO**、key IT and busines
 
 **A server is worth US$200,000. A ransomware attack would destroy 25% of its value and is expected once every 4 years. (a) Calculate SLE and ALE. (b) An EDR costing US$8,000 per year reduces the ARO to 0.05. Is it justified?**
 
+> **English**
+>
+> (a) SLE = AV × EF = 200,000 × 25% = **US$50,000**; ARO = 1/4 = 0.25; ALE = SLE × ARO = 50,000 × 0.25 = **US$12,500 per year**.  
+> (b) ALE after = 50,000 × 0.05 = US$2,500; CBA = 12,500 − 2,500 − 8,000 = **US$2,000 > 0** → the EDR is justified.
+>
+> **中文解析**
+>
 > (a) SLE = 200,000 × 25% = **US$50,000**；ARO = 0.25；ALE = 50,000 × 0.25 = **US$12,500 / 年**。  
 > (b) ALE（后）= 50,000 × 0.05 = US$2,500；CBA = 12,500 − 2,500 − 8,000 = **US$2,000 > 0** → 值得。
 
@@ -300,6 +336,14 @@ Key designers：**CIO**、systems administrators、**CISO**、key IT and busines
 
 **Why is incident response described as a loop process? Identify the two loops.**
 
+> **English**
+>
+> 1. **Containment → Detection & Analysis**: if more affected hosts are found during containment or eradication, the team returns to detection and analysis to identify them all, then contains and eradicates again.
+> 2. **Post-incident activity → Preparation**: lessons learned are used to update plans, policies and procedures for next time.  
+>    So incident response is a continuous improvement cycle, not a one-off straight line.
+>
+> **中文解析**
+>
 > ① 遏制和清除时如果发现新的受影响主机，要回到 Detection & Analysis 找出全部受影响范围，再遏制和清除；② 事后的 lessons learned 用于更新计划、政策和流程，回到 Preparation。所以 IR 是持续改进的循环，不是一次性的直线。
 
 ### 4.2 🔴 NIST Incident Handling Checklist（p.22–24）📝🔍
@@ -406,6 +450,12 @@ HKMA 事件报告表：要分别填**机构知悉事件的时间**和**向 HKMA 
 
 **When does an incident become a disaster? Use a ransomware example.**
 
+> **English**
+>
+> An incident becomes a disaster when the organisation **cannot contain or control its impact**, or the damage is **so severe that it cannot recover quickly**. *Example*: ransomware that encrypts one employee's laptop can be isolated and reimaged — an incident handled by the IR plan. Ransomware that encrypts core systems and backups across the company and halts the business is a disaster: the DR plan re-establishes operations at the primary site, and the BC plan may keep critical functions running at an alternate site (Colonial's six-day shutdown was disaster-level).
+>
+> **中文解析**
+>
 > 当组织无法遏制或控制事件影响，或者破坏严重到无法快速恢复时，incident 就升级为 disaster。例：勒索软件只加密一台员工电脑，隔离、重装就能处理，是 incident；如果加密了全公司的核心系统和备份、业务停摆，就是 disaster，要启动 DR 在原址重建，必要时用 BC 在备用地点维持关键业务（Colonial 停运 6 天就是 disaster 级别）。
 
 ### 5.2 🟡 Digital Forensics（p.35）📝
@@ -446,6 +496,17 @@ HKMA 事件报告表：要分别填**机构知悉事件的时间**和**向 HKMA 
 
 **Q1. Did Colonial handle the crisis appropriately? Evaluate using the NIST IR phases.**
 
+> **English**
+>
+> **Conclusion**: the response was largely appropriate and decisive; the root problems lay in preparation.
+>
+> - **Preparation** — *good*: IT / OT segregation, staff stop-work authority. *Weak*: a legacy VPN account not disabled, no MFA, no CISO, no ransom provision in the plan.
+> - **Detection & analysis** — *good*: immediate escalation and early notification of government agencies. *Weak*: the attacker dwelt about 8 days and exfiltrated 100 GB undetected; the scope was still unclear on the day.
+> - **Containment, eradication & recovery** — *good*: proactive pipeline shutdown to protect OT, Mandiant engaged within about an hour, restoration from backups, phased restart with manual operations. *Weak*: poor visibility of IT / OT dependencies forced a full shutdown.
+> - **Post-incident** — *good*: MFA on all VPNs, first CISO hired, professional crisis communications. *Weak*: the ransom payment was initially kept quiet and law enforcement was told late.
+>
+> **中文解析**
+>
 > **结论**：响应阶段基本恰当且果断，问题根源在准备阶段。  
 > **Preparation**：好——IT / OT 隔离、员工有 stop-work authority；差——遗留账户没停用、VPN 没 MFA、没有 CISO、计划里没有赎金条款。  
 > **Detection & Analysis**：好——发现后立即上报、及早通报政府；差——攻击者潜伏 8 天、外传 100 GB 没被检测到，事发时仍不清楚入侵范围。  
@@ -454,10 +515,30 @@ HKMA 事件报告表：要分别填**机构知悉事件的时间**和**向 HKMA 
 
 **Q2. What are the roles of executives during a ransomware attack?（对照课件 p.16 分工）**
 
+> **English**
+>
+> - **CEO** — final decisions (e.g. whether to pay), accountable to the board and government, sets the tone.
+> - **COO** (CPMT lead) — operational decisions: shutdown, restart, minimum operations.
+> - **CISO** (IR team lead) — technical response; coordinates the external IR firm.
+> - **Legal counsel** (crisis management lead) — compliance, sanctions screening, regulatory notification, litigation risk.
+> - **Communications lead** — consistent messages to staff, customers, media and government.
+> - **Board** — oversight and post-incident accountability.  
+>   Without a CISO or a mature division of roles, Colonial's CEO had to step in personally.
+>
+> **中文解析**
+>
 > **CEO**：最终决策（如付不付赎金）、对董事会和政府负责、定调；**COO**（CPMT 负责人）：运营决策——关停、重启、维持最低运作；**CISO**（IR 负责人）：技术响应，协调外部 IR 公司；**法律顾问**（危机管理负责人）：合规、制裁名单审查、监管通报、诉讼风险；**沟通负责人**：对员工、客户、媒体统一口径；**董事会**：监督和事后问责。Colonial 因为没有 CISO 和成熟分工，CEO 只能亲自下场。
 
 **Q3. Do you agree with the decision to pay the ransom? Argue both sides.**
 
+> **English**
+>
+> **For paying**: critical infrastructure — every day of shutdown hit fuel supply across 13 states, a social cost far above US$4.4M; it was unclear whether backups were usable, so the decryptor was insurance against a tail risk beyond the MTD; the company confirmed DarkSide was not on a sanctions list; the FBI later recovered most of the bitcoin.  
+> **Against paying**: it funds crime and marks the company as a payer; the decryptor was too slow and recovery relied on backups; with double extortion, paying does not guarantee stolen data is deleted; the decision was made under pressure on the day and law enforcement was informed late.  
+> **Balanced view**: treating payment as a fallback under deep uncertainty is understandable, but it **should not have been decided ad hoc on the day** — a ransom policy belongs in the IR plan, with law enforcement notified and backups verified quickly.
+>
+> **中文解析**
+>
 > **支持**：关键基础设施，每停一天影响 13 个州，社会成本远大于 US$4.4M；当时不知道备份是否可用，解密工具是对超过 MTD 的尾部风险的保险；付款前确认 DarkSide 不在制裁名单；FBI 追回大部分。  
 > **反对**：助长犯罪、让自己成为会付钱的目标；解密工具太慢，最后靠备份；双重勒索下付了钱也不能保证数据被删；当天在压力下临时决定，执法机关迟知。  
 > **平衡答法**：在信息不足的情况下把付款当保底选项可以理解，但问题是**它不应该在事发当天临时决定**——赎金政策应事先写进 IR 计划，并同步通知执法机关、尽快验证备份。
@@ -490,6 +571,13 @@ HKMA 事件报告表：要分别填**机构知悉事件的时间**和**向 HKMA 
 
 **What are the main obligations under Hong Kong's Critical Infrastructure Ordinance, and how does it change Hong Kong's approach to cybersecurity?**
 
+> **English**
+>
+> **Obligations**: (1) set up a **Security Management Unit** to oversee the security of critical computer systems; (2) conduct **annual security risk assessments** and **biennial independent audits**; (3) **report serious incidents within 12 hours** (other incidents within 24 hours per the slides; 48 hours in the enacted ordinance).  
+> **Change in approach**: Hong Kong shifts from prosecution-based computer-misuse offences after the fact to a **preventive, sector-based** regime — the first to make assessments, audits and incident reporting mandatory for critical infrastructure.
+>
+> **中文解析**
+>
 > 义务：① 设立 Security Management Unit 监督关键计算机系统的安全；② 每年做安全风险评估，每两年做独立审计；③ 严重事件 12 小时内向专员报告（其他事件课件写 24 小时）。改变：香港从以事后检控电脑罪行为主，转向事前预防、按行业划分的强制性监管，第一次对关键基础设施强制要求评估、审计和事件报告。
 
 ---
@@ -498,6 +586,16 @@ HKMA 事件报告表：要分别填**机构知悉事件的时间**和**向 HKMA 
 
 **A retailer's online ordering system is hit by ransomware on a Saturday morning. Backups are taken nightly. Using Lesson 6, describe how the company should respond in the first 48 hours, and evaluate whether its BIA targets (MTD 12 h, RPO 4 h) can be met.（20 marks）**
 
+> **English**
+>
+> **Detection & analysis**: confirm the incident and its scope (which systems are encrypted, whether data was exfiltrated); prioritise by functional and information impact; activate the CSIRT under the CISO and notify key personnel via the alert roster; **report promptly** to internal management and external bodies (police, PCPD); start documenting who / what / when / where / why / how.  
+> **Containment, eradication & recovery**: **preserve evidence first** (disk images, logs); isolate infected segments, disable compromised accounts, change firewall rules; find and fix the entry point and remove the malware — if new infected hosts appear, loop back to detection; restore from backup, confirm normal operation and add monitoring.  
+> **DR / BC**: if the whole ordering platform is encrypted it is a disaster — rebuild at the primary site while a BC arrangement (manual order taking or an alternate platform) keeps critical sales going; the crisis team (legal counsel) handles communications.  
+> **BIA evaluation**: nightly backups mean up to \~24 hours of data loss → the **4-hour RPO is not met**; if system recovery takes 8 hours and re-entering and validating orders 6 hours, downtime is 14 hours → the **12-hour MTD is exceeded**.  
+> **Post-incident**: follow-up report and lessons-learned meeting; update the IR plan (including a ransom decision policy) and the backup strategy.
+>
+> **中文解析**
+>
 > **Detection & Analysis**：确认是否为事件、判断范围（哪些系统被加密、数据是否外泄）、按功能影响和信息影响定优先级；启动 CSIRT（CISO 领导），按 alert roster 通知关键人员，**及时向内部和外部（警方、PCPD）通报**；开始记录 who / what / when / where / why / how。  
 > **Containment, Eradication & Recovery**：**先保全证据**（磁盘镜像、日志）→ 隔离受感染网段、停用被入侵账户、改防火墙规则 → 找出并修补入口漏洞、清除恶意软件；发现新受影响主机就回到检测分析 → 从备份恢复，确认运作正常并加强监控。  
 > **DR / BC**：如果全部订单系统被加密，已是 disaster，在原址重建；同时用 BC 方案（例如人工接单、备用平台）维持关键业务。危机管理团队（法律顾问）统一对外沟通。  

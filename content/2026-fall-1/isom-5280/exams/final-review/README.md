@@ -7,6 +7,7 @@ summary:
   zh: "按老师最后一课划的范围，逐课列出每个知识点要默写、要区分、要计算还是要写分析；外加跨课主线、计算题随机练习、长题答题模板、全部课件原题，以及一套按 Assignment 1 格式出的模拟卷。"
 week: 0
 date: 2026-10-08
+unlisted: true
 tags: [FinalReview, ExamScope, ZeroTrust, PKI, RiskTreatment, BIA, IncidentResponse]
 ---
 # ISOM 5280 期末总复习 · L1–L6 全部知识点
@@ -572,6 +573,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：A**
 >
+> *EN:* His firm was **hired**, so the test is authorised → **White Hat**.
+>
 > 关键词 **hired** = 有授权 → White Hat。Green Hat 是干扰项。
 
 **\[L1] There is a security incident that compromised one of the bank's web server. CISO believes the attackers defaced one or more pages on the website. What cybersecurity objective did the attacker violate?**
@@ -583,10 +586,18 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：C**
 >
+> *EN:* Defacement **alters** content → **Integrity**.
+>
 > Defacement = 内容被改 = Integrity。网站还能访问，所以不是 Availability；Nonrepudiation 不属于 CIA。
 
 **\[L1] Edward Snowden was a government contractor who disclosed sensitive government documents to journalists to uncover what he believed were unethical activities. Which 2 terms best describe him? A. Insider B. State actor C. Hacktivist D. APT E. Criminal Syndicate**
 
+> **English**
+>
+> **A. Insider + C. Hacktivist** — he had legitimate access as a contractor (insider) and leaked documents for ideological reasons (hacktivist).
+>
+> **中文解析**
+>
 > **A + C**。他有合法访问权 → Insider；动机是理念、手法是泄露 → Hacktivist。
 
 **\[L2] Which one of the following malware can spread without user interactions?**
@@ -597,6 +608,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - D. Worm
 
 > **答案：D**
+>
+> *EN:* A **worm** needs no host file and no user action.
 >
 > Worm 不需要宿主文件，也不需要用户操作。
 
@@ -609,6 +622,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：C**
 >
+> *EN:* RaaS roles are operators, affiliates and initial access brokers — not crypto miners.
+>
 > RaaS 三个角色是 Operator、Affiliate、Initial Access Broker。
 
 **\[L2] What type of control is ineffective against Program Flaw (e.g. SQL injection)?**
@@ -619,6 +634,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - D. Increase IT budget
 
 > **答案：D**
+>
+> *EN:* A bigger budget alone does not fix flawed code; the other options act on code quality or privileges.
 >
 > 砸钱本身不修复代码缺陷；其余三项都直接作用于代码质量或权限。
 
@@ -631,6 +648,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：C**
 >
+> *EN:* **Stateful** inspection — “dynamic” only describes the state table.
+>
 > Dynamic 是干扰项（课件原文有 dynamic state table）。
 
 **\[L3] Under MFA, a system requires users to enter a passcode and then verifies that their face matches a photo stored in the system. What 2 factors is it using?**
@@ -641,6 +660,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - D. Something you know and something you are
 
 > **答案：D**
+>
+> *EN:* Passcode = something you **know**; face = something you **are**.
 >
 > passcode = know，face = are。A 和 B 是同一个答案换顺序，必定都不对。
 
@@ -653,6 +674,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：D**
 >
+> *EN:* Single source, many targets → one **network firewall rule** protects everything fastest.
+>
 > 单一来源（不是 DDoS），多个目标（逐台配主机规则太慢），在网络边界加一条规则最快。
 
 **\[L3] NIDS alerted to a DDoS attack, and investigation revealed that this type of attack did take place. What type of report?**
@@ -663,6 +686,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - D. False negative
 
 > **答案：C**
+>
+> *EN:* Alert raised and attack real → **true positive**.
 >
 > 报了（Positive）+ 确实发生（True）。
 
@@ -675,6 +700,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：D**
 >
+> *EN:* Encryption = algorithm + **key**.
+>
 > 加密 = 算法 + 密钥。
 
 **\[L4] True or False: Hashing functions require the use of keys?**
@@ -683,6 +710,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - B. False
 
 > **答案：B**
+>
+> *EN:* **False** — hashing uses no key.
 >
 > 哈希不需要密钥，所以单独用它无法证明是谁发的。
 
@@ -695,6 +724,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：D**
 >
+> *EN:* Public + private key = **asymmetric** encryption.
+>
 > A、B、C 都是对称加密的说法或算法。
 
 **\[L5] Applying controls and safeguards that eliminate or reduce the remaining uncontrolled risks is known as \_\_\_\_\_.**
@@ -705,6 +736,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - D. Mitigation
 
 > **答案：D**
+>
+> *EN:* Adding safeguards to reduce remaining risk = **mitigation**.
 >
 > 加控制去降低剩余风险 = Mitigation。
 
@@ -727,6 +760,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：B**
 >
+> *EN:* Insider threat includes **negligence** — it need not be malicious.
+>
 > Insider threat 的动机包括 **negligence（疏忽）**，不一定是恶意的。
 
 **A2. Which of the following is NOT one of the three Zero Trust principles covered in the course?**
@@ -737,6 +772,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - D. Trust devices once they are on the corporate LAN
 
 > **答案：D**
+>
+> *EN:* Zero Trust grants no implicit trust based on network location — option D is exactly what it rejects.
 >
 > ZTA 的定义就是**不因网络位置或资产归属**默认信任。D 正是 ZTA 要否定的传统假设。
 
@@ -749,6 +786,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：B**
 >
+> *EN:* **Fail-safe defaults**: access is denied unless explicitly permitted.
+>
 > 默认拒绝，除非明确允许（p.60）。
 
 **A4. A bastion host is placed in its own subnet between an external and an internal filtering router. This architecture is called:**
@@ -759,6 +798,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - D. Host-based firewall
 
 > **答案：B**
+>
+> *EN:* Two routers with the bastion host in its own subnet = **screened subnet (DMZ)**.
 >
 > 两个路由器夹着 DMZ = Screened subnet。Screened host 的堡垒主机仍挂在内网上。
 
@@ -771,6 +812,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：B**
 >
+> *EN:* Baseline + clipping level = **anomaly-based** detection; D is a firewall technique.
+>
 > Clipping level 是 Anomaly-based 的关键词。D 是防火墙技术，不是 IDPS 检测方法。
 
 **A6. Alice wants Bob to be able to verify that a message really came from her and was not altered. She should encrypt the message digest with:**
@@ -781,6 +824,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - D. Alice's public key
 
 > **答案：C**
+>
+> *EN:* Sign with the **sender's private key**; Bob verifies with Alice's public key.
 >
 > 签名用**发送方的私钥**，Bob 用 Alice 的公钥验证。A 是给 Bob 加密保密用的。
 
@@ -793,6 +838,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：A**
 >
+> *EN:* **Hashing** uses no key, so anyone can recompute it — no proof of sender.
+>
 > 哈希没有密钥，中间人可以改内容再重算哈希。
 
 **A8. A company buys cyber insurance to cover losses from ransomware. Which risk treatment strategy is this?**
@@ -803,6 +850,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 - D. Avoidance
 
 > **答案：C**
+>
+> *EN:* Shifting the financial loss to an insurer = **transference**.
 >
 > 把财务后果转给保险公司 = Transference。
 
@@ -815,6 +864,8 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：B**
 >
+> *EN:* Downtime = RTO + WRT = 7 h > 6 h MTD → fails. RPO concerns data loss, not downtime.
+>
 > **MTD ≥ RTO + WRT** 才达标。RPO 管的是数据丢失，和停机时长无关。
 
 **A10. In the NIST incident handling checklist, acquiring, preserving and documenting evidence is:**
@@ -826,50 +877,76 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 > **答案：C**
 >
+> *EN:* Evidence is preserved **first** in containment, eradication & recovery, before systems are changed.
+>
 > 先保全证据，再遏制和清除，否则证据会在重装时丢失。
 
 ### Section B · Short Questions（4 × 10 = 40）
 
 **B1. State the three principles of Zero Trust Architecture (3 marks). For each principle, give one control covered in the course that puts it into practice (6 marks). Why does Zero Trust reject trust based on network location? (1 mark) — limit 12 words per bullet.**
 
-> **原则与控制**：
+> **English**
+>
+> **Principles and controls**
 >
 > - Never trust, always verify → MFA plus dynamic risk scoring on every access request.
-> - Least privilege access → Role-based access control and PAM; limits lateral movement.
+> - Least privilege access → role-based access control and PAM; limits lateral movement.
 > - Assume breach → IDPS, SIEM correlation and SOC monitoring to detect intruders inside.
 >
-> **为什么不信网络位置**：Insiders, stolen credentials and VPN users are already inside the perimeter.
+> **Why not trust network location**: insiders, stolen credentials and VPN users are already inside the perimeter.
 >
-> （其他可接受的控制：NGFW Identity Awareness、微分段、Fail-safe default deny、DAM、EDR。）
+> **中文解析**
+>
+> - 三条原则：永不信任、始终验证；最小权限；假定已被攻陷 / 持续验证。每条各配一个课上讲过的控制。
+> - 其他可接受的控制：NGFW 的 Identity Awareness、微分段、默认拒绝（fail-safe defaults）、DAM、EDR。
+> - 不按网络位置信任，是因为内鬼、被盗凭证、VPN 远程用户都已经在边界之内。
 
 **B2. Alice sends Bob a message together with its hash. (a) Why does this give only weak integrity protection? (3 marks) (b) How does a digital signature fix this, and what extra property does it add? (4 marks) (c) What problem still remains, and how does a digital certificate solve it? (3 marks) — limit 25 words per part.**
 
+> **English**
+>
 > **(a)** Hashing needs no key; a man-in-the-middle can alter the message, recompute the hash, and Bob's comparison still matches.
 >
-> **(b)** Alice encrypts the digest with her private key; only she can produce it, so tampering is detected and authenticity / non-repudiation is added.
+> **(b)** Alice encrypts the digest with her private key; only she can produce it, so tampering is detected and authenticity / nonrepudiation is added.
 >
 > **(c)** Bob cannot tell whether the public key truly belongs to Alice; a trusted CA signs a certificate binding Alice's identity to her public key.
+>
+> **中文解析**
+>
+> (a) 哈希没有密钥，中间人改了内容可以重算哈希，Bob 比对照样一致，所以只有脆弱的完整性。(b) 签名 = 用 Alice 的私钥加密摘要，别人伪造不出来，因此能发现篡改，并多了真实性和不可抵赖。(c) 还剩的问题是 Bob 无法确定公钥真属于 Alice，由受信任的 CA 签发证书来绑定身份和公钥。
 
 **B3. Name and define the four risk treatment strategies (8 marks). Which one is usually the preferred first choice, and why? (2 marks) — limit 12 words per box.**
 
-> | 策略                      | 定义（12 词内）                                                                   |
+> **English**
+>
+> | Strategy                | Definition (max 12 words)                                                   |
 > | ----------------------- | --------------------------------------------------------------------------- |
 > | Mitigation              | Add controls to reduce likelihood or impact of successful attack.           |
 > | Transference            | Shift risk to others via insurance, outsourcing or SLA contracts.           |
 > | Acceptance              | After assessment, consciously take no further action; cost exceeds benefit. |
 > | Avoidance (Termination) | Deliberately remove the asset or stop the risky activity.                   |
 >
-> **首选**：Mitigation — the organisation directly reduces the risk itself, keeping control and accountability.
+> **Preferred first choice**: Mitigation — the organisation directly reduces the risk itself, keeping control and accountability.
 >
-> （Acceptance 要强调「**评估之后**的决定」，不是放任不管；Transference 转不走声誉和监管责任。）
+> **中文解析**
+>
+> - 四种策略：缓解（加控制）、转移（保险、外包、SLA）、接受（评估后主动不处理）、规避 / 终止（有意识地移除资产）。
+> - 首选缓解，因为组织自己把风险降下来，控制权和责任都还在自己手里。
+> - Acceptance 要强调是**评估之后**的决定，不是放任不管；Transference 转不走声誉和监管责任。
 
 **B4. A payment server is worth US$800,000. A ransomware attack would destroy 30% of its value and is expected once every 2 years. (a) Calculate SLE and ALE (4 marks). (b) An EDR solution costing US$60,000 per year would reduce the ARO to once every 10 years. Calculate the CBA and state whether it is justified (4 marks). (c) Give one limitation of relying on ALE alone (2 marks).**
 
-> **(a)** SLE = AV × EF = 800,000 × 30% = **US$240,000**；ARO = 1/2 = 0.5；ALE = 240,000 × 0.5 = **US$120,000 / 年**。
+> **English**
 >
-> **(b)** ALE（后）= 240,000 × 0.1 = US$24,000；CBA = 120,000 − 24,000 − 60,000 = **US$36,000 > 0** → 值得部署。
+> **(a)** SLE = AV × EF = 800,000 × 30% = **US$240,000**; ARO = 1/2 = 0.5; ALE = 240,000 × 0.5 = **US$120,000 per year**.
 >
-> **(c)** ALE 会低估**低频高损**的事件：一次损失可能远超年度平均，而且停机时间可能超过 MTD，或违反监管要求（例如 CI 条例），这些都不在 ALE 里。
+> **(b)** ALE after = 240,000 × 0.1 = US$24,000; CBA = 120,000 − 24,000 − 60,000 = **US$36,000 > 0** → deployment is justified.
+>
+> **(c)** ALE understates **low-frequency, high-impact** events: a single loss can far exceed the annual average, downtime may exceed the MTD, and regulatory requirements (e.g. the CI Ordinance) are not reflected in ALE.
+>
+> **中文解析**
+>
+> (a) SLE = 资产价值 × 暴露因子 = 24 万；每 2 年一次 → ARO = 0.5；ALE = 12 万 / 年。(b) 控制后 ALE = 24 万 × 0.1 = 2.4 万；CBA = 12 万 − 2.4 万 − 6 万 = 3.6 万，大于 0，值得买。(c) ALE 只看年度平均，会低估低频高损的事件：一次就可能损失巨大、停机超过 MTD，也反映不了监管要求。
 
 ### Section C · Long Questions（2 × 20 = 40）
 
@@ -885,6 +962,21 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 **C1. (a) Describe the threat vector and classify the adversary, explaining your rationale (6 marks). (b) Which elements of the CIA triad were affected, and which technical and management controls failed? (6 marks) (c) Using the NIST incident response lifecycle, evaluate HarbourLink's detection and response (4 marks). (d) Why did recovery take four weeks, in terms of BIA metrics? (4 marks)**
 
+> **English**
+>
+> **(a) Threat vector**: vishing (social engineering) → stolen VPN credentials → the third-party-managed VPN had **no MFA** → lateral movement using an **over-privileged service account** → data exfiltration → encryption (**double extortion**).  
+> **Adversary** (four dimensions): external; medium-to-high sophistication (lateral movement, targeting backups first); well resourced, likely with a division of labour; motivated by money → a **criminal syndicate**, probably a **RaaS affiliate** (ransom plus leak site is the typical RaaS model). Not a hacktivist (no political cause) and not a nation-state actor (money, not intelligence).
+>
+> **(b) CIA**: **Confidentiality** (300 GB stolen and published) and **Availability** (systems down for four weeks); integrity is also affected (encrypted data, two weeks lost).  
+> **Technical controls that failed**: no MFA; a service account violating least privilege; no network segmentation; IDS alerts ignored (**alert fatigue turned false positives into a false negative**); backups not isolated.  
+> **Management controls that failed**: no **third-party risk management** (no security requirements or audit for the outsourced VPN); no vishing training; no alert-triage process or playbooks; the backup-encryption scenario was never rehearsed.
+>
+> **(c) NIST evaluation**: *Preparation* was weak (no playbooks, no drills). *Detection & analysis* failed — alerts existed but the intrusion went unnoticed for eight days, a long dwell time; notification came three days after encryption (a critical-infrastructure operator in Hong Kong must report serious incidents within 12 hours). *Containment* was forced to a total shutdown because detection came so late. *Post-incident* should review alert triage and third-party management.
+>
+> **(d) BIA**: **RPO failed** — backups were encrypted too, so restoring from two-week-old offline tapes lost two weeks of data. **RTO** grew because forensics and confirming eradication had to come before rebuilding several interdependent systems. **WRT** was long — re-entering two weeks of shipment records, reconciling with customers and validating data. Total downtime far exceeded the **MTD**, so customers left. This was a **disaster**, so DR and BC (e.g. manual processes for critical shipments) should have been activated together.
+>
+> **中文解析**
+>
 > **(a) 攻击路径**：Vishing（社会工程）→ 窃取 VPN 凭证 → 第三方管理的 VPN 没有 MFA → 用权限过大的服务账号横向移动 → 窃取数据 → 加密（**双重勒索**）。  
 > **对手分类**（4 个维度）：External；技术水平中到高（懂横向移动、会先打备份）；资源充足、可能有分工；动机是**钱** → **Criminal Syndicate**，很可能是 RaaS 的 Affiliate（勒索 + 泄露网站是典型 RaaS 模式）。不是 Hacktivist（没有政治诉求），也不是 Nation-state（目标是钱，不是情报）。
 >
@@ -898,6 +990,25 @@ L1 Arup deepfake、OpenAI 被黑、Ensign 趋势 5 → L2 AI 驱动的钓鱼、L
 
 **C2. HarbourLink's board is considering an AI-powered SOC (AI triage + SOAR). (a) Explain how AI could help across prevention, detection and response, using examples from this case (8 marks). (b) The vendor claims the system will let the company cut its 5-person security team by 30%. Explain why the board should not rely on this, and propose a better way to quantify the benefit (6 marks). (c) Identify three risks of adopting GenAI in the SOC and a control for each (6 marks).**
 
+> **English**
+>
+> **(a) Prevention / detection / response**
+>
+> - **Prevention**: AI-based phishing / vishing detection and simulated training; threat-intelligence-driven vulnerability prioritisation; ML-tuned NGFW rules.
+> - **Detection**: **UEBA** learns the service account's normal behaviour, so lateral movement stands out; **AI triage** ranks thousands of daily alerts and would have surfaced the abnormal-login alerts that were ignored; correlation links scattered events into one attack chain.
+> - **Response**: **SOAR playbooks** automatically disable the account, isolate hosts and block exfiltration, cutting eight days of dwell time to hours; automated incident summaries speed up notification.
+>
+> **(b) Do not rely on headcount cuts**: 30% of a five-person team is 1.5 people, which cannot be realised in practice — sick leave, maternity leave, attrition and 24×7 shift cover remain — and leading with job cuts creates staff resistance that stalls the project.  
+> **Better measure**: **shorter MTTD / MTTR → lower losses**. Using ALE: detecting in hours rather than eight days stops exfiltration and encryption, sharply reducing the exposure factor; compare ALE before and after minus the annual cost (CBA). Add avoided downtime, fines and customer churn. Frame the people benefit as analysts freed from triage for threat hunting.
+>
+> **(c) Risks and controls**
+>
+> - **Hallucination / misjudgement** — AI ranks a real attack as low priority → keep a **human in the loop** for critical actions and sample-check outputs.
+> - **Prompt injection / manipulation** — instructions hidden in logs or emails → treat **external text as data, not orders**, filter inputs and limit what the AI can execute (least privilege).
+> - **Data leakage / shadow AI** — alerts and customer data sent to an external model → redact and classify data, adopt an AI governance policy, and put data-processing terms and an SLA in the vendor contract (third-party risk again).
+>
+> **中文解析**
+>
 > **(a) P / D / R**：
 >
 > - **Prevention**：AI 钓鱼 / vishing 识别与员工模拟训练；按威胁情报给漏洞排优先级；NGFW 机器学习调优规则；
