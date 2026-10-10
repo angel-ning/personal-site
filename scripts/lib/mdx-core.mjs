@@ -38,6 +38,9 @@ import { subnetPlan, planOptions, SUBNET_PRESETS, PLAN_PRESETS } from "../../src
 import { computeVendorTier, FACTORS as VENDOR_FACTORS, VENDOR_TIER_PRESETS } from "../../src/components/mdx/vendor-tier-logic.mjs";
 import { runSql, runJoin, show as sqlShow, SQL_PRESETS, JOIN_TYPES, DCL_STATEMENTS, DCL_SCRIPT, DCL_USERS, DCL_ROLE, DCL_PRIVS, dclStep, dclCell, emptyDcl } from "../../src/components/mdx/sql-logic.mjs";
 import { COMMAND_ITEMS } from "../../src/components/mdx/sql-commands.mjs";
+import { analyzeIpv6, IPV6_PRESETS, eui64, EUI_PRESETS, ipv6SubnetPlan, SUBNET6_PRESETS, fmtBig } from "../../src/components/mdx/ipv6-logic.mjs";
+import { RA_OPTIONS, RA_FIELDS } from "../../src/components/mdx/ra-logic.mjs";
+import { simulate as simulateBaseline, SCENARIOS as BASELINE_SCENARIOS, BASELINE_PRESETS } from "../../src/components/mdx/baseline-logic.mjs";
 import { findExercise, cellText as sqlxCell, parseInline, levelDots, expectSummary } from "../../src/components/mdx/sql-practice-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -53,6 +56,7 @@ const firewallRules = readJson("src/components/mdx/data/firewall-rules.json");
 const irPhaseData = readJson("src/components/mdx/data/ir-phase-items.json");
 const irPicerlData = readJson("src/components/mdx/data/ir-picerl-items.json");
 const sqlPractice = readJson("src/components/mdx/data/sql-practice.json");
+const aiTrendQuiz = readJson("src/components/mdx/data/ai-trend-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -693,6 +697,66 @@ const components = {
   },
   Result(node, a) {
     return [para(strong(`${a.label ?? "结果"}：`)), ...node.children];
+  },
+  Ipv6Lab() {
+    const rows = IPV6_PRESETS.map((a) => {
+      const r = analyzeIpv6(a);
+      if (r.error) return [{ type: "inlineCode", value: a }, "—", "—", r.error];
+      return [{ type: "inlineCode", value: a }, { type: "inlineCode", value: r.compressed }, `${r.info.en}（${r.info.range}）`, r.parts ? `GRP ${r.parts.routing} · Subnet ID ${r.parts.subnet} · IID ${r.parts.iid}` : r.info.note];
+    });
+    return [note("（网页版此处可以输入任意 IPv6 地址：显示完整 / 去前导 0 / 压缩写法、地址类型、GUA 三部分和 solicited-node 地址；下表是几个例子）"), table(["输入", "压缩写法", "类型", "说明"], rows)];
+  },
+  Eui64Lab() {
+    const rows = EUI_PRESETS.map((x) => {
+      const r = eui64(x.mac, x.prefix);
+      return [x.label, r.mac, `${r.oui.join(":")}:FF:FE:${r.device.join(":")}`, `${r.oui[0]} → ${r.flippedHex}`, strong(r.iid), r.linkLocal, r.global];
+    });
+    return [note("（网页版此处可以输入任意 MAC 地址和 /64 prefix，逐步生成 EUI-64 Interface ID）"), table(["例子", "MAC", "插入 FFFE", "翻转 U/L 位", "Interface ID", "Link-local", "SLAAC 全球单播"], rows)];
+  },
+  RaOptionLab() {
+    return [
+      note("（网页版此处可以切换 RA 的三个选项，看消息顺序和每项信息的来源）"),
+      table(["信息", ...RA_OPTIONS.map((o) => `Option ${o.id} · ${o.name}`)], [
+        ...RA_FIELDS.map((f) => [f.label, ...RA_OPTIONS.map((o) => o.source[f.key])]),
+        ["消息顺序", ...RA_OPTIONS.map((o) => o.steps.map((x) => x.msg).join(" → "))],
+        ["状态", ...RA_OPTIONS.map((o) => o.stateful)],
+      ]),
+    ];
+  },
+  Ipv6SubnetLab() {
+    const blocks = SUBNET6_PRESETS.flatMap((x) => {
+      const p = ipv6SubnetPlan(x.block, x.prefix);
+      const rows = [0, 1, 2, 3].map((i) => p.subnet(i)).map((r) => [r.id, r.network]);
+      rows.push(["…", "…"], [p.last.id, p.last.network]);
+      const hit = p.locate(x.probe);
+      return [
+        para(strong(`${x.label}：借 ${p.bits} 位 → 2^${p.bits} = ${fmtBig(p.count)} 个子网，每个子网 Interface ID 剩 ${p.iidBits} 位`)),
+        table(["#", "子网"], rows),
+        para(text(`${x.probe} → `), strong(hit.network)),
+      ];
+    });
+    return [note("（网页版此处可以自己选地址块和新前缀长度，并查任意地址属于哪个子网）"), ...blocks];
+  },
+  BaselineLab() {
+    const all = BASELINE_SCENARIOS.map((x) => x.id);
+    const name = (id) => BASELINE_SCENARIOS.find((x) => x.id === id).label;
+    const ev = (t) => t.events.map((e) => `${e.caught ? "✅" : "❌"} ${name(e.id)}`).join("；");
+    const rows = BASELINE_PRESETS.flatMap((x) => {
+      const { summary } = simulateBaseline(all, x.threshold);
+      return [
+        [x.label, "规则阈值", String(summary.static.alerts), String(summary.static.fp), ev(summary.static)],
+        [x.label, "AI 基线", String(summary.ai.alerts), String(summary.ai.fp), ev(summary.ai)],
+      ];
+    });
+    return [
+      note("（网页版此处是一周流量的折线图：可以拖动规则阈值、打开 / 关闭三个场景，看规则和 AI 基线各报了什么警；下表是三个场景全开时的结果）"),
+      table(["设置", "方法", "报警数", "误报", "攻击抓到没有"], rows),
+    ];
+  },
+  TrendSortQuiz(node, a) {
+    const set = aiTrendQuiz[a.set] ?? aiTrendQuiz.ml;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
   },
   CommandSortQuiz() {
     return [

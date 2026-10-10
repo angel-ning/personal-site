@@ -555,3 +555,23 @@ body {
 .wqa-pt-text > p { margin: 0; }
 .wqa-pt-m { flex: none; font-family: var(--font-mono); font-size: 12px; color: var(--fg-3); }
 .wqa-pt-on { background: var(--accent-wash); }
+
+/* ISOM 5180 week 5–6: IPv6 labs + baseline chart */
+.v6-hextets { display: grid; grid-template-columns: repeat(8, 1fr); gap: .35em; margin-top: .9em; }
+.v6-hx { border: 1px solid var(--line); border-radius: 7px; padding: .35em .2em; display: flex; flex-direction: column; align-items: center; font-size: .92em; }
+.v6-hx small { color: var(--fg-3); font-size: .72em; }
+.v6-zero { outline: 2px dashed var(--c-exam); outline-offset: -2px; }
+.v6-grp { background: color-mix(in oklab, var(--c-warn) 10%, transparent); }
+.v6-sub { background: color-mix(in oklab, var(--c-exam) 10%, transparent); }
+.v6-iid { background: color-mix(in oklab, var(--accent) 10%, transparent); }
+.v6-tag { display: inline-block; border-radius: 6px; padding: .05em .45em; margin: .1em 0; font-size: .92em; }
+.ra-steps { list-style: none; padding: 0; margin-top: .8em; display: grid; gap: .45em; }
+.ra-steps li { border-left: 3px solid var(--accent); padding: .25em .7em; display: flex; flex-direction: column; gap: .1em; background: var(--subtle); border-radius: 0 6px 6px 0; }
+.bl-chart { width: 100%; height: auto; margin-top: .9em; }
+.bl-legend { display: flex; flex-wrap: wrap; gap: .3em 1em; font-size: 12px; color: var(--fg-3); margin-top: .3em; }
+.bl-k { display: inline-block; width: 14px; height: 8px; margin-right: .35em; vertical-align: middle; }
+.bl-k-line { border-top: 2px solid var(--fg-2); height: 0; }
+.bl-k-band { background: color-mix(in oklab, var(--c-tip) 25%, transparent); }
+.bl-k-rule { background: var(--c-warn); width: 6px; }
+.bl-k-ai { border: 2px solid var(--c-exam); border-radius: 50%; width: 9px; height: 9px; }
+@media (max-width: 560px) { .v6-hextets { grid-template-columns: repeat(4, 1fr); } }

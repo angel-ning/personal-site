@@ -1,0 +1,73 @@
+{
+  "ml": {
+    "title": "这属于哪种学习方式？（Slide 17）",
+    "options": [
+      { "id": "sup", "label": "Supervised" },
+      { "id": "unsup", "label": "Unsupervised" },
+      { "id": "semi", "label": "Semi-supervised / Hybrid" }
+    ],
+    "items": [
+      { "q": "用过去三年已经标好「欺诈 / 正常」的交易记录训练模型，识别已知的欺诈模式", "a": "sup", "why": "数据全部有标签（historical anomalies are pre-identified），针对已知模式" },
+      { "q": "没有任何标签，把流量自动分成几堆「常见行为」，离所有堆都很远的点就是异常", "a": "unsup", "why": "unlabeled data + 分组 (clustering) + 隔离离群点，适合发现 zero-day" },
+      { "q": "只有少量已确认的攻击样本，加上海量没标注的日常流量，一起训练来预测 APT", "a": "semi", "why": "少量 labeled + 大量 unlabeled = semi-supervised；课件的用例正是 APT" },
+      { "q": "K-Means、DB-Scan、Autoencoders", "a": "unsup", "why": "Slide 17 列出的 unsupervised 常用算法" },
+      { "q": "Decision Trees、SVM、K-Nearest Neighbors (KNN)", "a": "sup", "why": "Slide 17 列出的 supervised 常用算法" },
+      { "q": "GANs（生成对抗网络）、One-Class SVM", "a": "semi", "why": "Slide 17 列出的 semi-supervised / hybrid 常用算法" },
+      { "q": "要发现一种从来没见过的新型入侵（zero-day）", "a": "unsup", "why": "没见过就没有标签，只能靠「和平时不一样」——ideal for novel, evolving, zero-day intrusions" }
+    ]
+  },
+  "arch": {
+    "title": "这属于 SDN 的哪个平面，还是 NFV 的哪个部分？（Slide 32–33）",
+    "options": [
+      { "id": "app", "label": "SDN Application plane" },
+      { "id": "ctl", "label": "SDN Control plane" },
+      { "id": "data", "label": "SDN Data plane" },
+      { "id": "vnf", "label": "NFV · VNF" },
+      { "id": "nfvi", "label": "NFV · NFVI" },
+      { "id": "mano", "label": "NFV · MANO" }
+    ],
+    "items": [
+      { "q": "ONOS / Floodlight 控制器：掌握全网视图，决定包往哪里走", "a": "ctl", "why": "centralized brain，SDN Controller 就在 control plane" },
+      { "q": "一台便宜的交换机，自己不会算路由，只按控制器下发的规则转发", "a": "data", "why": "data / forwarding plane = muscle，没有 intrinsic routing intelligence" },
+      { "q": "安全监控、负载均衡、network slicing 这些网络应用", "a": "app", "why": "application plane 放 network applications and services" },
+      { "q": "不买硬件防火墙，改成在虚拟机 / 容器里跑一个防火墙软件", "a": "vnf", "why": "Virtualized Network Function = 网络功能的软件实现" },
+      { "q": "跑这些虚拟防火墙的服务器、存储、交换机，加上 KVM / ESXi hypervisor", "a": "nfvi", "why": "NFV Infrastructure = 物理 + 虚拟化层，承载 VNF" },
+      { "q": "流量高峰时自动多开两个虚拟防火墙，闲时自动关掉", "a": "mano", "why": "Management and Orchestration 负责 provisioning、scale up / down、decommission" }
+    ]
+  },
+  "ztna": {
+    "title": "这条做法体现的是 ZTNA 的哪一条？（Slide 22–23）",
+    "options": [
+      { "id": "verify", "label": "Verify explicitly" },
+      { "id": "lpa", "label": "Least privilege" },
+      { "id": "breach", "label": "Assume breach" },
+      { "id": "micro", "label": "Microsegmentation" },
+      { "id": "dark", "label": "Application darkening" },
+      { "id": "cont", "label": "Continuous authentication" }
+    ],
+    "items": [
+      { "q": "员工在公司内网也不能直接访问系统，每次都要验证身份、设备健康状况", "a": "verify", "why": "不能因为 IP 地址 / 在公司里就信任，每个 transaction 都要验证" },
+      { "q": "财务人员只能看到报销系统这一个应用，看不到整个财务子网，权限用完即收回 (JIT)", "a": "lpa", "why": "Just-In-Time + Just-Enough-Access，只给完成任务所需的那个应用" },
+      { "q": "默认攻击者已经在内网，所以内部流量也全部端到端加密、严格隔离，缩小爆炸半径", "a": "breach", "why": "Assume breach：minimize the blast radius" },
+      { "q": "把数据库服务器单独划成一个小区域，其他区域被攻破也跳不进来", "a": "micro", "why": "micro-perimeters around critical workloads，阻止 east-west lateral movement" },
+      { "q": "内部应用不监听任何公网 IP，外面扫描不到，只能通过 trust broker / 反向代理访问", "a": "dark", "why": "Application darkening & hidden infrastructure：缩小外部 attack surface" },
+      { "q": "登录后半小时，账号突然从另一个国家发请求，系统要求再做一次 MFA", "a": "cont", "why": "Access is never a one-time event：短期 token + 动态风险评估 → step-up MFA" }
+    ]
+  },
+  "iot": {
+    "title": "这个风险在 IoT 攻击面的哪一层？（Slide 28）",
+    "options": [
+      { "id": "perc", "label": "Perception / Device" },
+      { "id": "net", "label": "Transport / Network" },
+      { "id": "app", "label": "Processing & Application" }
+    ],
+    "items": [
+      { "q": "攻击者拆开摄像头，通过没封住的 JTAG / UART 调试口读出固件", "a": "perc", "why": "物理硬件、固件、debug 端口都在 Perception / Device 层" },
+      { "q": "智能门锁用明文 MQTT 传开锁指令，被同一 Wi-Fi 下的人中间人截获", "a": "net", "why": "通信协议（Wi-Fi、Zigbee、MQTT、CoAP）和 MitM 属于 Transport / Network 层" },
+      { "q": "手机 App 的 API 没检查对象权限，改一下设备 ID 就能看到别人家的摄像头", "a": "app", "why": "broken object-level authentication，云端 / API / App 属于 Processing & Application 层" },
+      { "q": "成千上万台默认密码的摄像头被感染，组成 botnet 发起 DDoS", "a": "net", "why": "课件把 DDoS botnet recruitment 列在 Transport / Network 层（对策是 credential hygiene）" },
+      { "q": "传感器把加密密钥明文存在本地存储里", "a": "perc", "why": "unprotected cryptographic keys / local storage = Device 层" },
+      { "q": "设备数据上传到的云存储桶被设成公开可读", "a": "app", "why": "insecure cloud storage = Processing & Application 层" }
+    ]
+  }
+}
