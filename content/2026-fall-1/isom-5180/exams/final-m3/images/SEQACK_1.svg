@@ -1,0 +1,52 @@
+<svg viewBox="0 0 560 494" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="TCP SEQ / ACK 时序图">
+<defs><marker id="sq-head" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="sq-headp"/></marker></defs>
+<style>
+.sq-who{font:600 13px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#1b1b1f}
+.sq-life{stroke:#cfccc4;stroke-width:2}
+.sq-arrow{stroke-width:1.5}
+.sq-hs{stroke:#1f4e8c}
+.sq-data{stroke:#56565e}
+.sq-ack{stroke:#067647}
+.sq-headp{fill:#8b8b93}
+.sq-lab{font:600 11px ui-monospace,Menlo,monospace}
+.sq-hs-t{fill:#1f4e8c}
+.sq-data-t{fill:#56565e}
+.sq-ack-t{fill:#067647}
+.sq-x{font:700 13px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#b42318}
+.sq-win{stroke:#5b4bc4;stroke-width:1.4;fill:none}
+.sq-wt{font:600 10.5px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#5b4bc4}
+.sq-to{font:600 10.5px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#b42318}
+</style>
+<text x="90" y="24" text-anchor="middle" class="sq-who">A</text><text x="470" y="24" text-anchor="middle" class="sq-who">B</text>
+<line x1="90" y1="34" x2="90" y2="482" class="sq-life"/><line x1="470" y1="34" x2="470" y2="482" class="sq-life"/>
+<path d="M76,152 h-6 V206 h6" class="sq-win"/>
+<text x="64" y="183" text-anchor="end" class="sq-wt">2 段</text>
+<path d="M76,254 h-6 V308 h6" class="sq-win"/>
+<text x="64" y="285" text-anchor="end" class="sq-wt">2 段</text>
+<path d="M76,356 h-6 V410 h6" class="sq-win"/>
+<text x="64" y="387" text-anchor="end" class="sq-wt">2 段</text>
+<line x1="90" y1="56" x2="470" y2="70.0" class="sq-arrow sq-hs" marker-end="url(#sq-head)"/>
+<text x="280" y="52" text-anchor="middle" class="sq-lab sq-hs-t">SYN  SEQ=100</text>
+<line x1="470" y1="90" x2="90" y2="104.0" class="sq-arrow sq-hs" marker-end="url(#sq-head)"/>
+<text x="280" y="86" text-anchor="middle" class="sq-lab sq-hs-t">SYN, ACK  SEQ=300  ACK=101</text>
+<line x1="90" y1="124" x2="470" y2="138.0" class="sq-arrow sq-hs" marker-end="url(#sq-head)"/>
+<text x="280" y="120" text-anchor="middle" class="sq-lab sq-hs-t">ACK  SEQ=101  ACK=301</text>
+<line x1="90" y1="158" x2="470" y2="172.0" class="sq-arrow sq-data" marker-end="url(#sq-head)"/>
+<text x="280" y="154" text-anchor="middle" class="sq-lab sq-data-t">Data  SEQ=101  ACK=301</text>
+<line x1="90" y1="192" x2="470" y2="206.0" class="sq-arrow sq-data" marker-end="url(#sq-head)"/>
+<text x="280" y="188" text-anchor="middle" class="sq-lab sq-data-t">Data  SEQ=102  ACK=301</text>
+<line x1="470" y1="226" x2="90" y2="240.0" class="sq-arrow sq-ack" marker-end="url(#sq-head)"/>
+<text x="280" y="222" text-anchor="middle" class="sq-lab sq-ack-t">ACK  SEQ=301  ACK=103</text>
+<line x1="90" y1="260" x2="470" y2="274.0" class="sq-arrow sq-data" marker-end="url(#sq-head)"/>
+<text x="280" y="256" text-anchor="middle" class="sq-lab sq-data-t">Data  SEQ=103  ACK=301</text>
+<line x1="90" y1="294" x2="470" y2="308.0" class="sq-arrow sq-data" marker-end="url(#sq-head)"/>
+<text x="280" y="290" text-anchor="middle" class="sq-lab sq-data-t">Data  SEQ=104  ACK=301</text>
+<line x1="470" y1="328" x2="90" y2="342.0" class="sq-arrow sq-ack" marker-end="url(#sq-head)"/>
+<text x="280" y="324" text-anchor="middle" class="sq-lab sq-ack-t">ACK  SEQ=301  ACK=105</text>
+<line x1="90" y1="362" x2="470" y2="376.0" class="sq-arrow sq-data" marker-end="url(#sq-head)"/>
+<text x="280" y="358" text-anchor="middle" class="sq-lab sq-data-t">Data  SEQ=105  ACK=301</text>
+<line x1="90" y1="396" x2="470" y2="410.0" class="sq-arrow sq-data" marker-end="url(#sq-head)"/>
+<text x="280" y="392" text-anchor="middle" class="sq-lab sq-data-t">Data  SEQ=106  ACK=301</text>
+<line x1="470" y1="430" x2="90" y2="444.0" class="sq-arrow sq-ack" marker-end="url(#sq-head)"/>
+<text x="280" y="426" text-anchor="middle" class="sq-lab sq-ack-t">ACK  SEQ=301  ACK=107</text>
+</svg>

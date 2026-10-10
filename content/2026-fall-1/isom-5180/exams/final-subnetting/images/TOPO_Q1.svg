@@ -1,0 +1,58 @@
+<svg viewBox="0 0 720 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="SubnetQuestions 1：A 连 B、C、D">
+<style>
+.tp-wire{stroke:#8b8b93;stroke-width:1.6;fill:none}
+.tp-bus{stroke-width:2.4}
+.tp-hl{stroke:#067647;stroke-width:3}
+.tp-router{fill:#e8eef7;stroke:#1f4e8c;stroke-width:1.6}
+.tp-rt{font:600 13px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#1f4e8c}
+.tp-host{fill:#ffffff;stroke:#cfccc4;stroke-width:1.2}
+.tp-t{font:500 11.5px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#1b1b1f}
+.tp-if{font:600 11px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#56565e}
+.tp-ip{font:600 11px ui-monospace,Menlo,monospace;fill:#5b4bc4}
+.tp-net{font:600 11px ui-monospace,Menlo,monospace;fill:#b54708}
+</style>
+<line x1="360" y1="125" x2="360" y2="60" class="tp-wire"/>
+<line x1="270" y1="60" x2="460" y2="60" class="tp-wire tp-bus"/>
+<line x1="420" y1="60" x2="420" y2="25" class="tp-wire"/>
+<line x1="140" y1="280" x2="140" y2="340" class="tp-wire tp-hl"/>
+<line x1="35" y1="340" x2="245" y2="340" class="tp-wire tp-hl tp-bus"/>
+<line x1="195" y1="340" x2="195" y2="375" class="tp-wire tp-hl"/>
+<line x1="360" y1="280" x2="360" y2="340" class="tp-wire"/>
+<line x1="262" y1="340" x2="462" y2="340" class="tp-wire tp-bus"/>
+<line x1="415" y1="340" x2="415" y2="375" class="tp-wire"/>
+<line x1="580" y1="280" x2="580" y2="340" class="tp-wire tp-hl"/>
+<line x1="482" y1="340" x2="690" y2="340" class="tp-wire tp-hl tp-bus"/>
+<line x1="635" y1="340" x2="635" y2="375" class="tp-wire tp-hl"/>
+<line x1="360" y1="125" x2="140" y2="280" class="tp-wire tp-hl"/>
+<line x1="360" y1="125" x2="360" y2="280" class="tp-wire"/>
+<line x1="360" y1="125" x2="580" y2="280" class="tp-wire tp-hl"/>
+<rect x="394.1" y="14" width="51.8" height="22" rx="5" class="tp-host"/><text x="420" y="29" text-anchor="middle" class="tp-t">Host A</text>
+<rect x="169.1" y="364" width="51.8" height="22" rx="5" class="tp-host"/><text x="195" y="379" text-anchor="middle" class="tp-t">Host B</text>
+<rect x="389.1" y="364" width="51.8" height="22" rx="5" class="tp-host"/><text x="415" y="379" text-anchor="middle" class="tp-t">Host C</text>
+<rect x="609.1" y="364" width="51.8" height="22" rx="5" class="tp-host"/><text x="635" y="379" text-anchor="middle" class="tp-t">Host D</text>
+<circle cx="360" cy="125" r="17" class="tp-router"/><text x="360" y="129.5" text-anchor="middle" class="tp-rt">A</text>
+<circle cx="140" cy="280" r="17" class="tp-router"/><text x="140" y="284.5" text-anchor="middle" class="tp-rt">B</text>
+<circle cx="360" cy="280" r="17" class="tp-router"/><text x="360" y="284.5" text-anchor="middle" class="tp-rt">C</text>
+<circle cx="580" cy="280" r="17" class="tp-router"/><text x="580" y="284.5" text-anchor="middle" class="tp-rt">D</text>
+<text x="450.9" y="29" class="tp-ip">.2</text>
+<text x="370.0" y="99.8" text-anchor="start" class=""><tspan class="tp-if">E0</tspan><tspan class="tp-ip"> .1</tspan></text>
+<text x="270" y="53" class="tp-net">200.1.1.0/27</text>
+<text x="225.9" y="379" class="tp-ip">.34</text>
+<text x="150.0" y="311.0" text-anchor="start" class=""><tspan class="tp-if">E0</tspan><tspan class="tp-ip"> .33</tspan></text>
+<text x="35" y="333" class="tp-net">200.1.1.32/27</text>
+<text x="445.9" y="379" class="tp-ip">.66</text>
+<text x="370.0" y="311.0" text-anchor="start" class=""><tspan class="tp-if">E0</tspan><tspan class="tp-ip"> .65</tspan></text>
+<text x="262" y="333" class="tp-net">200.1.1.64/27</text>
+<text x="665.9" y="379" class="tp-ip">.98</text>
+<text x="590.0" y="311.0" text-anchor="start" class=""><tspan class="tp-if">E0</tspan><tspan class="tp-ip"> .97</tspan></text>
+<text x="482" y="333" class="tp-net">200.1.1.96/27</text>
+<text x="328.1" y="135.3" text-anchor="end" class=""><tspan class="tp-if">E1</tspan><tspan class="tp-ip"> .129</tspan></text>
+<text x="160.4" y="253.4" text-anchor="end" class=""><tspan class="tp-if">E1</tspan><tspan class="tp-ip"> .130</tspan></text>
+<text x="245.4" y="196.0" text-anchor="end" class="tp-net">200.1.1.128/27</text>
+<text x="370.0" y="193.0" text-anchor="start" class=""><tspan class="tp-if">E2</tspan><tspan class="tp-ip"> .161</tspan></text>
+<text x="370.0" y="252.0" text-anchor="start" class=""><tspan class="tp-if">E1</tspan><tspan class="tp-ip"> .162</tspan></text>
+<text x="352.0" y="225.1" text-anchor="end" class="tp-net">200.1.1.160/27</text>
+<text x="391.9" y="135.3" text-anchor="start" class=""><tspan class="tp-if">E3</tspan><tspan class="tp-ip"> .193</tspan></text>
+<text x="559.6" y="253.4" text-anchor="start" class=""><tspan class="tp-if">E1</tspan><tspan class="tp-ip"> .194</tspan></text>
+<text x="474.6" y="196.0" text-anchor="start" class="tp-net">200.1.1.192/27</text>
+</svg>

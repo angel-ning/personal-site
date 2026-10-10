@@ -576,6 +576,43 @@ body {
 .bl-k-ai { border: 2px solid var(--c-exam); border-radius: 50%; width: 9px; height: 9px; }
 @media (max-width: 560px) { .v6-hextets { grid-template-columns: repeat(4, 1fr); } }
 
+/* ISOM 5180 final: multi-select MCQ, AddressingLab / AddressingQuiz, SeqAckLab */
+.mcq-hint { margin-top: .3em; font-size: 12.5px; color: var(--fg-3); }
+.mcq-on { border-color: var(--accent); background: var(--accent-wash); }
+.mcq-missed { border-color: var(--c-tip); border-style: dashed; }
+.mcq-missed b { color: var(--c-tip); }
+.mcq-bar { display: flex; flex-wrap: wrap; align-items: center; gap: .4em 1em; margin-top: .5em; }
+.mcq-bar .mcq-retry { margin-top: 0; }
+.addr-q { margin-top: .8em; line-height: 1.6; color: var(--fg-2); }
+.addr-q code, .addr-note code { font-family: var(--font-mono); background: var(--subtle); padding: 0 .3em; border-radius: 4px; }
+.addr-svg { margin-top: .8em; border: 1px solid var(--line); border-radius: 10px; padding: .3em; background: var(--surface); overflow-x: auto; }
+.addr-svg svg { display: block; width: 100%; min-width: 520px; height: auto; }
+.sq-wrap svg { max-width: 620px; min-width: 460px; margin: 0 auto; }
+.addr-toggle { display: inline-flex; align-items: center; gap: .4em; margin-top: .5em; font-size: 12.5px; color: var(--fg-2); }
+.addr-toggle input { accent-color: var(--accent); }
+.addr-why { font-size: .9em; color: var(--fg-2); }
+.addr-note { margin-top: .5em; font-size: 12.5px; color: var(--fg-3); line-height: 1.6; }
+.addr-rts { display: grid; gap: .2em; }
+.addr-steps { display: flex; flex-wrap: wrap; gap: .5em 1.2em; margin-top: .9em; font-size: 13px; }
+.addr-steps label { display: inline-flex; align-items: center; gap: .45em; }
+.addr-in { padding: .2em .4em; min-width: 0; width: 100%; font-size: 13px; color: var(--fg); }
+.addr-form td { padding: .25em .3em; }
+.addr-form td:nth-child(1) { min-width: 9.5em; }
+.addr-form td:nth-child(2) { min-width: 5.5em; }
+.addr-form td:nth-child(3), .addr-form td:nth-child(4), .addr-form td:nth-child(5) { min-width: 10.5em; }
+.addr-num { width: 4em; }
+.addr-ok { border-color: var(--c-tip); background: color-mix(in oklab, var(--c-tip) 9%, transparent); }
+.addr-warn { border-color: var(--c-warn); background: color-mix(in oklab, var(--c-warn) 10%, transparent); }
+.addr-bad { border-color: var(--c-exam); background: color-mix(in oklab, var(--c-exam) 9%, transparent); }
+.addr-del { color: var(--fg-3); padding: 0 .4em; }
+.addr-del:hover { color: var(--c-exam); }
+.addr-msgrow td { border-bottom: 1px solid var(--line); padding-top: 0; }
+.addr-msg { display: block; font-size: 12px; line-height: 1.55; border: 0; background: none; padding: 0; }
+.addr-msg.addr-bad { color: var(--c-exam); }
+.addr-msg.addr-warn { color: var(--c-warn); }
+.addr-missing { margin: .2em 0 0; padding-left: 1.2em; list-style: disc; font-size: .95em; color: var(--fg-2); }
+@media print { .addr-steps, .addr-form, .addr-toggle { display: none !important; } }
+
 /* ISOM 5260 week 6: WAL + crash recovery labs */
 .rc-intro { margin-top: .6em; font-size: 13px; color: var(--fg-2); line-height: 1.6; }
 .rc-grid { display: grid; gap: .8em; margin-top: .7em; }

@@ -1,0 +1,39 @@
+<svg viewBox="0 0 720 310" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="预测卷 B1：三台路由器、4 个 LAN">
+<style>
+.tp-wire{stroke:#8b8b93;stroke-width:1.6;fill:none}
+.tp-bus{stroke-width:2.4}
+.tp-hl{stroke:#067647;stroke-width:3}
+.tp-router{fill:#e8eef7;stroke:#1f4e8c;stroke-width:1.6}
+.tp-rt{font:600 13px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#1f4e8c}
+.tp-host{fill:#ffffff;stroke:#cfccc4;stroke-width:1.2}
+.tp-t{font:500 11.5px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#1b1b1f}
+.tp-if{font:600 11px system-ui,-apple-system,'PingFang SC','Hiragino Sans GB',sans-serif;fill:#56565e}
+.tp-ip{font:600 11px ui-monospace,Menlo,monospace;fill:#5b4bc4}
+.tp-net{font:600 11px ui-monospace,Menlo,monospace;fill:#b54708}
+</style>
+<line x1="150" y1="150" x2="150" y2="240" class="tp-wire"/>
+<line x1="40" y1="240" x2="240" y2="240" class="tp-wire tp-bus"/>
+<line x1="195" y1="240" x2="195" y2="275" class="tp-wire"/>
+<line x1="360" y1="150" x2="360" y2="240" class="tp-wire"/>
+<line x1="262" y1="240" x2="455" y2="240" class="tp-wire tp-bus"/>
+<line x1="412" y1="240" x2="412" y2="275" class="tp-wire"/>
+<line x1="570" y1="150" x2="570" y2="240" class="tp-wire"/>
+<line x1="472" y1="240" x2="690" y2="240" class="tp-wire tp-bus"/>
+<line x1="640" y1="240" x2="640" y2="275" class="tp-wire"/>
+<line x1="570" y1="150" x2="570" y2="60" class="tp-wire"/>
+<line x1="440" y1="60" x2="690" y2="60" class="tp-wire tp-bus"/>
+<line x1="640" y1="60" x2="640" y2="25" class="tp-wire"/>
+<path d="M150,150 L248.0,159.0 L262.0,141.0 L360,150" class="tp-wire"/>
+<line x1="360" y1="150" x2="570" y2="150" class="tp-wire"/>
+<rect x="172" y="264" width="46" height="22" rx="5" class="tp-host"/><text x="195" y="279" text-anchor="middle" class="tp-t">PC1</text>
+<rect x="389" y="264" width="46" height="22" rx="5" class="tp-host"/><text x="412" y="279" text-anchor="middle" class="tp-t">PC2</text>
+<rect x="617" y="264" width="46" height="22" rx="5" class="tp-host"/><text x="640" y="279" text-anchor="middle" class="tp-t">PC3</text>
+<rect x="617" y="14" width="46" height="22" rx="5" class="tp-host"/><text x="640" y="29" text-anchor="middle" class="tp-t">PC4</text>
+<circle cx="150" cy="150" r="17" class="tp-router"/><text x="150" y="154.5" text-anchor="middle" class="tp-rt">R1</text>
+<circle cx="360" cy="150" r="17" class="tp-router"/><text x="360" y="154.5" text-anchor="middle" class="tp-rt">R2</text>
+<circle cx="570" cy="150" r="17" class="tp-router"/><text x="570" y="154.5" text-anchor="middle" class="tp-rt">R3</text>
+<text x="40" y="256" class="tp-net">LAN1</text>
+<text x="262" y="256" class="tp-net">LAN2</text>
+<text x="472" y="256" class="tp-net">LAN3</text>
+<text x="440" y="53" class="tp-net">LAN4</text>
+</svg>

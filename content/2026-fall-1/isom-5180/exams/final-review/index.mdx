@@ -1,0 +1,281 @@
+---
+title:
+  en: "Final Review · ISOM 5180 Modules 1–4"
+  zh: "期末总复习 · ISOM 5180 Module 1–4"
+summary:
+  en: "The final exam scope from the instructor's guideline (Modules 1–4), how much each module weighs and why, every drawing-question type to practise (topology addressing with the unstated router-interface rule, SEQ / ACK with a window size, routing tables, IP / MAC per hop, MAC tables), a full topic checklist per module, cross-module threads, a cram sheet, and links to the per-module review pages, the 19 Final Review MCQs, the subnetting practice and a mock paper."
+  zh: "按老师的 Final-guide（Module 1–4）整理期末范围：每个模块占多少、为什么；所有要练的画图题型（拓扑编址 + 题目不写的路由器接口规则、给 window size 画 SEQ / ACK、路由表、每跳 IP / MAC、MAC 表）；每个模块的全量知识点清单、跨模块主线、考前一页纸，以及各模块复习页、Final Review 19 题、子网做题和预测卷的入口。"
+week: 0
+date: 2026-10-10
+tags: [FinalReview, ExamScope, Subnetting, Addressing, TCP, Routing, ARP]
+---
+
+# ISOM 5180 期末总复习 · Module 1–4
+
+**主题：把四个模块按「期末怎么考」重新排一遍——哪些是画图 / 填表、哪些是选择辨析、哪些要会算；每个模块占多大分量。**
+
+这一页是**总览**。详细内容和练习在下面这些页面：
+
+| 页面 | 内容 |
+|---|---|
+| [Final Review 选择题](../final-review-mc/) | 老师 Final Review 的 **19 道 MC**：答案、每个选项的解析、对应模块（3 道多选可以直接点选） |
+| [子网与编址做题](../final-subnetting/) | **SubnetQuestions 7 题 + Assignment 2** 的完整解答；**拓扑编址实验**（一步步演示 + 空白表自己填、自动检查） |
+| [期末复习 M1](../final-m1/) | 网络组成与类型、OSI、封装、Hub / Switch / Router、LAN 通信 · 练习 |
+| [期末复习 M2](../final-m2/) | IP 地址与分类、network / broadcast、NAT、DHCP、DNS、ARP、默认网关、路由 · 练习 |
+| [期末复习 M3](../final-m3/) | 传输层、三次握手、SEQ / ACK、**给 window size 画时序图**、端口、TCP vs UDP · 练习 |
+| [期末复习 M4](../final-m4/) | 子网划分、掩码、min / max 借位、Class A / B、ANDing · 练习 |
+| [期末预测卷](../final-mock/) | 20 道 MC（5 道多选）+ 9 道画图 / 计算题，**答案默认隐藏** |
+
+> 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可
+> 掌握要求：🖊️ **画图 / 填表**（给拓扑写出过程或填表）· 🔍 **辨析**（选择题判断）· 📝 **默写**（列出名字、定义）· 🧮 **计算**
+>
+> **优先级依据**：① 老师的 **Final-guide**（只列了 Module 1–4）；② 老师说的考法：**大部分是画图题 + 选择题，选择题可能有多选**；③ 老师特别强调的两类题（见 §1）；④ **Final Review** 19 道题的分布；⑤ **SubnetQuestions** 和三次作业；⑥ 各模块课件篇幅和板书页数。
+
+## 本页大纲
+
+{/* OUTLINE */}
+
+- **[0. 考试范围与形式](#0-考试范围与形式)**
+  - [0.1 范围：Final-guide 只列了 Module 1–4](#01-范围final-guide-只列了-module-14)
+  - [0.2 形式：画图为主 + 选择题（含多选）](#02-形式画图为主--选择题含多选)
+- **[1. 🔴 老师特别强调的两类题](#1--老师特别强调的两类题)**
+- **[2. 模块权重：不是平均分配的](#2-模块权重不是平均分配的)**
+- **[3. 🔴 画图题清单（每一类都要能画出来）](#3--画图题清单每一类都要能画出来)**
+- **[4. 核心地图：四个模块是同一个包的四层](#4-核心地图四个模块是同一个包的四层)**
+- **[5. Module 1 · 全量清单](#5-module-1--全量清单)**
+- **[6. Module 2 · 全量清单](#6-module-2--全量清单)**
+- **[7. Module 3 与 Module 4 · 全量清单](#7-module-3-与-module-4--全量清单)**
+- **[8. 🟢 M5（IPv6）与 M6（AI 趋势）：不在 guideline，留一张速查表](#8--m5ipv6与-m6ai-趋势不在-guideline留一张速查表)**
+- **[9. 跨模块主线（选择题和画图题都爱考）](#9-跨模块主线选择题和画图题都爱考)**
+  - [9.1 五张表，别搞混](#91-五张表别搞混)
+  - [9.2 三种设备](#92-三种设备)
+  - [9.3 什么时候广播](#93-什么时候广播)
+- **[10. 🔴 考前一页纸](#10--考前一页纸)**
+- **[11. 建议的复习顺序](#11-建议的复习顺序)**
+---
+
+## 0. 考试范围与形式
+
+### 0.1 范围：Final-guide 只列了 Module 1–4
+
+| 模块 | Final-guide 列的知识点（原文） | 复习页 |
+|---|---|---|
+| **M1** | Components of a network · Common types of networks · OSI model: function of each layer · Encapsulation and de-encapsulation · Hubs · Switches · Routers · Communication between devices in a LAN network | [M1](../final-m1/) |
+| **M2**（两页） | Network layer addressing · Address class · IP address range · Reserved: network address · Reserved: broadcast addresses · Public and private address · NAT and private IP networks · NAT · DNS request and reply · ARP · Default gateway · Comparing the benefits of routing and switching · Comparing routers and switches · Routing protocol · Connected routes only, on R1 and R2 · Using metrics to pick the best routes · Route types | [M2](../final-m2/) |
+| **M3** | The transport layer functions · Three-way handshake · Windowing · Window size · Acknowledgment · TCP and UDP port numbers · Identifying application processes using port numbers · TCP sequence and acknowledgement · Comparing TCP and UDP | [M3](../final-m3/) |
+| **M4** | Subnetworks · Introduction to subnetting · Subnet mask · Creating eight subnets · Subnetting based on host requirements · Subnetting to meet network requirements · Subnetting Class A and B networks · Determining subnet mask size · Calculating the subnetwork with ANDing | [M4](../final-m4/) |
+
+<Callout type="warn" title="M5（IPv6）和 M6（AI 趋势）不在 guideline 里">
+
+Final-guide 一共 6 页，只写了 Module 1–4。**IPv6 和 AI 趋势这两章没有列出来**，按这份 guideline 它们大概率不考。本页 §8 留了一张两章的「如果考到」速查表（🟢），不建议花大量时间。不确定的话，考前在 Canvas 或课上跟老师确认一句。
+
+</Callout>
+
+### 0.2 形式：画图为主 + 选择题（含多选）
+
+- **画图 / 填表**：给一张拓扑或一个场景，写出地址、表格或时序。老师的板书几乎每一页都是这种题，作业 2 也是。
+- **选择题**：Final Review 的 19 题就是样子；有 **Choose two / Choose three**，要全选对。
+- 没有计算器的说明，但所有计算都能手算：2 的幂、256 − 掩码值、二进制 AND。
+
+---
+
+## 1. 🔴 老师特别强调的两类题
+
+<Callout type="exam" title="① 给一个 IP 网络 + 一张多路由器拓扑 → 填编址表">
+
+题目给网络地址和拓扑（多台设备、多台路由器），要你把地址填进表里：**Device · Interface · IP Address · Subnet Mask · Default Gateway**。
+
+**老师说：怎么给路由器以太网接口分配地址，题目里不会写——但这是要注意的点。** 按 Assignment 2 的规则做：
+
+1. 数网络：**每个 LAN 一个 + 每条路由器之间的线一个**；
+2. **min**：2^s ≥ 子网数；**max**：2^h − 2 ≥ 每个子网的地址数（**路由器接口也算一个**）；
+3. **路由器 LAN 接口 = 第一个可用地址 = 该 LAN 主机的默认网关**；主机从第二个开始；链路两端用第一、第二个；路由器的网关写 N/A。
+
+练习：[子网与编址做题](../final-subnetting/)（7 道原题、Assignment 2、两个实验）· [预测卷 B1](../final-mock/)。
+
+</Callout>
+
+<Callout type="exam" title="② 给 initial sequence number 和 window size → 画 SEQ / ACK">
+
+先三次握手（SYN x → SYN-ACK y, x+1 → ACK x+1, y+1），再按窗口一批批发段，接收方每一窗回**一个期望型 ACK**（下一个要的号）；可能有一段丢失 → 重复 ACK → 超时重传。按段编号（Slide 23）还是按字节编号（ACK = SEQ + 长度）看题目。
+
+练习：[M3 §4 时序图实验](../final-m3/#4--画图题给-isn-和-window-size画-seq--ack-️) · [预测卷 B4](../final-mock/)。
+
+</Callout>
+
+---
+
+## 2. 模块权重：不是平均分配的
+
+| 模块 | 课件页数 | Guideline 条目 | 板书页数 | Final Review MC | 作业 / 做题 | 建议复习时间 |
+|---|---|---|---|---|---|---|
+| **M2** IP 地址、ARP、网关、路由 | 66 | **17（两页）** | 10 | **11 / 19** | A1（ipconfig、ping、tracert）、A2 Q4、A3（ARP、DHCP、网关 MAC） | **约 35%** ★★★★★ |
+| **M4** 子网 | 27 | 9 | 10（几乎全是题） | 0（单独出题） | **SubnetQuestions 7 题**、A2 Q1–Q2 | **约 25%** ★★★★★（大题） |
+| **M1** 设备、OSI、封装 | 68 | 8 | 10 | 6 / 19 | A1（MAC vs IP、OUI） | **约 25%** ★★★★ |
+| **M3** 传输层 | 27 | 9 | 5 | 2 / 19 | A3（握手 flags、端口、SYN scan） | **约 15%** ★★★（但有 SEQ / ACK 画图） |
+| M5 IPv6 · M6 AI 趋势 | 45 · 34 | 不在 guideline | — | 0 | — | 🟢 只看 §8 |
+
+**怎么读这张表**：M2 的 guideline 条目是其他模块的两倍，选择题占了一大半；M4 没有选择题，但老师专门发了 7 道子网题、作业 2 也是子网 + 编址表——**大题主要从 M2 + M4 出**（编址表本身就同时考 M2 的网关和 M4 的子网）。M1 是基础送分题和 MAC 表画图；M3 篇幅小，但「SEQ / ACK + window size」是被点名的画图题。百分比是我按这些证据估的复习时间分配，不是官方分值。
+
+---
+
+## 3. 🔴 画图题清单（每一类都要能画出来）
+
+| # | 题型 | 模块 | 板书 / 原题出处 | 去哪练 |
+|---|---|---|---|---|
+| 1 | **给网络 + 拓扑 → 数网络、min / max 借位、掩码、子网表、编址表** | M4 + M2 | SubnetQuestions Q1–Q2、A2、M4 板书 p.3 | [做题页](../final-subnetting/) · [预测卷 B1](../final-mock/) |
+| 2 | **给 ISN + window size → SEQ / ACK 时序图**（含丢包重传） | M3 | Slide 10–14、23，M3 板书 p.3–4 | [M3 §4](../final-m3/#4--画图题给-isn-和-window-size画-seq--ack-️) · [预测卷 B4](../final-mock/) |
+| 3 | 按需求（子网数、主机数）求 **min / max 借位** | M4 | SubnetQuestions Q3、Slide 23 | [做题页 §3](../final-subnetting/#3--subnetquestions-31781300最少--最多借几位) |
+| 4 | 借 n 位**列子网表**（Class C / B，间隔跨 octet） | M4 | SubnetQuestions Q5–Q7、板书 p.2、p.4–p.6 | [做题页 §5–7](../final-subnetting/#5--subnetquestions-519215220-借-4-位写出所有子网) |
+| 5 | **AND** 求某地址属于哪个子网 + broadcast | M4 | SubnetQuestions Q4、Slide 25–27 | [M4 §6](../final-m4/#6--calculating-the-subnetwork-with-anding-) |
+| 6 | **路由表**：Initial R.T.（只有 C）→ 完整 R.T.（R、next hop、hop） | M1 + M2 | M1 板书 p.6、M2 板书 p.1、Slide 55、64 | [M2 §10](../final-m2/#10--routing-protocolconnected-routesmetricsroute-types-️) · [预测卷 B2](../final-mock/) |
+| 7 | **一个包跨多台路由器：每一段的 IP(S, D)、MAC(S, D)、ARP 谁** | M2 | M2 板书 p.9、Final Review 17、18 | [M2 §8](../final-m2/#8--default-gateway-️) · [预测卷 B3](../final-mock/) |
+| 8 | **交换机 MAC 表逐帧**：学习、flood / forward / filter、aging | M1 | M1 板书 p.4 | [M1 §6](../final-m1/#6--switchesmac-address-table-️) · [预测卷 B5](../final-mock/) |
+| 9 | **ARP** request / reply 的地址 + 两边的 ARP 表 | M2 | M2 板书 p.8 | [M2 §7](../final-m2/#7--arp知道-ip找-mac-️) |
+| 10 | **NAT / PAT** 表 + 内外 IP(S, D) | M2 | M2 板书 p.5 | [M2 §4](../final-m2/#4--public-vs-privatenat-与-pat-️) · [预测卷 B7](../final-mock/) |
+| 11 | **DHCP DORA** 的 IP(S, D)、MAC(S, D)（两台 server） | M2 | M2 板书 p.6 | [M2 §5](../final-m2/#5--获取地址static-vs-dhcp-️) |
+| 12 | 同时访问两个服务器的 **Port(S, D)** | M3 | M3 板书 p.5 | [M3 §5](../final-m3/#5--port-numbersidentifying-application-processes-️) |
+| 13 | 封装：每层加什么、PDU 名字、FCS | M1 | M1 板书 p.9 | [M1 §4](../final-m1/#4--encapsulation-and-de-encapsulation-️) |
+| 14 | RIP vs EIGRP 选哪条路；拓扑变化后 RIP 怎么改 | M2 | Slide 58–62、M2 板书 p.10 | [M2 §10](../final-m2/#10--routing-protocolconnected-routesmetricsroute-types-️) |
+
+---
+
+## 4. 核心地图：四个模块是同一个包的四层
+
+```
+一份数据从 PC1 发往另一个网络里的服务器：
+
+M3 传输层   切段 + 端口号（谁的哪个程序）；TCP 先三次握手，SEQ / ACK + 窗口保证完整有序
+     ↓
+M2 网络层   源 / 目的 IP（端到端不变）；DHCP 给我 IP / 掩码 / 网关 / DNS，DNS 给对方 IP
+            比较 Network 部分：同一网络 → ARP 对方；别的网络 → ARP 默认网关
+            路由器：查路由表（C / static / RIP…）选出口 → 查 ARP 表找下一跳 MAC；private 地址出网靠 NAT
+     ↓
+M4 子网     掩码决定「Network 部分」有多长：AND 出子网地址；每个 LAN、每条路由器之间的线一个子网
+     ↓
+M1 链路 / 物理   帧头 = 源 / 目的 MAC（每一跳都换）+ FCS；Switch 查 MAC 表转发，Hub 全发，Router 挡广播
+```
+
+**一句话抓住整门课的前四章**：发一个包要 **6 个地址**——IP (S, D) 管终点、MAC (S, D) 管下一站、Port (S, D) 管哪个程序；所有画图题都是在问「在这一段上，这 6 个地址各是什么、是哪张表告诉你的」。
+
+---
+
+## 5. Module 1 · 全量清单
+
+| 知识点 | 优先级 | 掌握 | 必须能说出来的 | 复习 |
+|---|---|---|---|---|
+| End / intermediary devices · media | 🟡 | 🔍 | 终端 = 起点 / 终点；中间设备连接终端（regenerate、维护路径、通知错误）；铜线电脉冲 / 光纤光脉冲 / 无线电磁波 | [M1 §1](../final-m1/#1--components-of-a-network-) |
+| LAN vs WAN · Internet · Intranet / Extranet | 🟡 | 🔍 | LAN 连设备、单一组织、高速；WAN 连 LAN、服务商、较慢；Extranet = 有控制地给外部组织 | [M1 §2](../final-m1/#2--common-types-of-networks-) |
+| CIA | 🟡 | 📝 | 看不到 · 改不了 · 用得上；FCS 守 Integrity | [第 1 周 §4](../../lectures/week-01/#4--network-security网络安全基础) |
+| OSI 7 层功能 + TCP/IP 4 层 | 🔴 | 📝🔍 | 每层关键词：L4 端到端可靠、L3 IP + 选路、L2 MAC + 检错；分层的 6 个好处 | [M1 §3](../final-m1/#3--osi-model每一层做什么-) |
+| 封装 / 解封装 · PDU · FCS | 🔴 | 🖊️📝 | Segment → Packet → Frame → Bits；L2 加头加尾；FCS 不对就丢 | [M1 §4](../final-m1/#4--encapsulation-and-de-encapsulation-️) |
+| Hub | 🔴 | 🔍 | L1，全发，一个冲突域 | [M1 §5](../final-m1/#5--hubs-️) |
+| Switch · MAC 表 | 🔴 | 🖊️🔍 | Source 学、Destination 决策；flood / forward / filter；aging；四招防冲突；不隔离广播 | [M1 §6](../final-m1/#6--switchesmac-address-table-️) |
+| Router · 路由表 · Ethernet vs Serial | 🔴 | 🖊️🔍 | L3，Network → Interface；只有 forward / discard；不转发广播；IP 不变 MAC 换 | [M1 §7](../final-m1/#7--routers-️) |
+| MAC 结构 · unicast / broadcast / multicast | 🔴 | 📝🖊️ | 48 位、OUI；FF-FF-FF-FF-FF-FF、255.255.255.255 | [M1 §8](../final-m1/#8--communication-between-devices-in-a-lan-️) |
+
+## 6. Module 2 · 全量清单
+
+| 知识点 | 优先级 | 掌握 | 必须能说出来的 | 复习 |
+|---|---|---|---|---|
+| IPv4 结构 · 地址属于接口 | 🔴 | 📝 | 32 位、N + H；路由器每个接口一个网络 | [M2 §1](../final-m2/#1--network-layer-addressing-) |
+| Class A–E · 范围 | 🔴 | 🧮🔍 | 0 / 10 / 110 开头；1–126、128–191、192–223；127 loopback | [M2 §2](../final-m2/#2--address-class-与-ip-address-range-) |
+| Network / broadcast address | 🔴 | 🧮🖊️ | host 全 0 / 全 1；2^h − 2；主机 .1 – .254 | [M2 §3](../final-m2/#3--reservednetwork-address-与-broadcast-address-️) |
+| Public / private · NAT · PAT | 🔴 | 🖊️🔍 | 10 / 172.16–31 / 192.168；Internet 丢弃 private；NAT 表；PAT 翻端口 | [M2 §4](../final-m2/#4--public-vs-privatenat-与-pat-️) |
+| Static vs DHCP · DORA | 🟡 | 🖊️🔍 | D、R 广播，O、A 单播；给 IP、掩码、网关、DNS；UDP 67 / 68 | [M2 §5](../final-m2/#5--获取地址static-vs-dhcp-️) |
+| DNS request / reply · 层级 | 🔴 | 🔍 | 名字 → IP；本地 → Root → TLD → 权威，缓存 | [M2 §6](../final-m2/#6--dns-request-and-reply-️) |
+| ARP · ARP 表 | 🔴 | 🖊️🔍 | IP → MAC；request 广播、reply 单播；只查本网络 | [M2 §7](../final-m2/#7--arp知道-ip找-mac-️) |
+| Default gateway · 发送逻辑 | 🔴 | 🖊️🔍 | 必须在同一网络；跨网络目的 MAC = 网关；IP 不变 MAC 每跳换 | [M2 §8](../final-m2/#8--default-gateway-️) |
+| Routing vs switching · router vs switch | 🟡 | 🔍 | 对比表：速度、层、地址、广播域、安全（ACL） | [M2 §9](../final-m2/#9--routing-vs-switchingrouters-vs-switches-) |
+| Routed vs routing protocol | 🔴 | 🔍 | IP 是 routed；RIP、EIGRP、OSPF 是 routing | [M2 §10](../final-m2/#10--routing-protocolconnected-routesmetricsroute-types-️) |
+| Connected routes only · 路由表画法 | 🔴 | 🖊️ | Initial R.T. 只有 C；链路网络两边都写 C；远程写本路由器出口 + next hop | [M2 §10](../final-m2/#10--routing-protocolconnected-routesmetricsroute-types-️) |
+| Metrics · route types | 🔴 | 🔍 | RIP = hop count；EIGRP = bandwidth + delay；static vs dynamic | [M2 §10](../final-m2/#10--routing-protocolconnected-routesmetricsroute-types-️) |
+
+## 7. Module 3 与 Module 4 · 全量清单
+
+| 知识点 | 优先级 | 掌握 | 必须能说出来的 | 复习 |
+|---|---|---|---|---|
+| 传输层 5 个功能 | 🔴 | 📝 | 切、连、送、稳（SEQ / ACK）、控（window） | [M3 §1](../final-m3/#1--the-transport-layer-functions-) |
+| 三次握手 | 🔴 | 🖊️ | SYN x → SYN-ACK y, x+1 → ACK y+1；ISN 随机；端口在握手里定 | [M3 §2](../final-m3/#2--three-way-handshake-️) |
+| SEQ · 期望型 ACK · window size | 🔴 | 🖊️🧮 | ACK = 下一个要的号；按字节 ACK = SEQ + 长度；窗口 = 不等 ACK 能发多少 | [M3 §3–4](../final-m3/#3--sequence-numberacknowledgmentwindow-size-) |
+| 重传 · 滑动窗口 | 🔴 | 🖊️ | 计时器到期重传；窗口往前滑、会变大变小 | [M3 §4](../final-m3/#4--画图题给-isn-和-window-size画-seq--ack-️) |
+| 端口范围 · well-known · multiplexing | 🔴 | 📝🖊️ | 0–1023 / 1024–49151 / 49152–65535；20/21/23/25/53/69/80/110/161 | [M3 §5](../final-m3/#5--port-numbersidentifying-application-processes-️) |
+| TCP vs UDP | 🔴 | 🔍 | 只有端口号两边都有；错不得用 TCP，等不得用 UDP | [M3 §6](../final-m3/#6--comparing-tcp-and-udp-) |
+| 为什么子网 | 🔴 | 📝 | 广播限制在子网、性能、子网间要路由器（ACL）、网关 | [M4 §1](../final-m4/#1--subnetworks为什么要划分子网-) |
+| 借位 · 掩码 · /n | 🔴 | 🧮 | N + S + H = 32；128 … 255；先看 Class 再看掩码 | [M4 §2](../final-m4/#2--借位与-subnet-mask-) |
+| 8 个子网 · 子网表 | 🔴 | 🖊️🧮 | 间隔 = 256 − 掩码值；子网数 2^s，主机 2^h − 2 | [M4 §3](../final-m4/#3--creating-eight-subnets借-3-位️) |
+| 按需求：min / max 借位 | 🔴 | 🧮 | 2^s ≥ 子网数；2^h − 2 ≥ 最大子网地址数 | [M4 §4](../final-m4/#4--subnetting-based-on-host--network-requirementsmin-和-max-) |
+| Class A / B 子网 · 掩码大小 | 🔴 | 🧮 | 间隔在第 3 段还是第 4 段；跨 octet 的主机范围 | [M4 §5](../final-m4/#5--subnetting-class-a-and-bdetermining-mask-size-) |
+| ANDing | 🔴 | 🧮 | 地址 AND 掩码 = 子网地址 | [M4 §6](../final-m4/#6--calculating-the-subnetwork-with-anding-) |
+
+---
+
+## 8. 🟢 M5（IPv6）与 M6（AI 趋势）：不在 guideline，留一张速查表
+
+<Callout type="note" title="只在「万一考到」时用">
+
+两章的完整笔记：[第 5 周 · IPv6](../../lectures/week-05/)、[第 6 周 · AI 趋势](../../lectures/week-06/)。
+
+</Callout>
+
+| 模块 | 最可能被问的点 |
+|---|---|
+| **M5 IPv6** | 128 位，8 个 hextet；压缩：去掉前导 0、连续全 0 的 hextet 用一次 `::`；类型看开头：**2 / 3** 全球单播（2000::/3）· **FE80::/10** link-local · **FC / FD** unique local（像 private）· **FF** 组播 · `::1` loopback · `::` unspecified；**没有 broadcast**（FF02::1 所有节点、FF02::2 所有路由器）；GUA = /48 global routing prefix + 16 位 Subnet ID + 64 位 Interface ID；SLAAC / DHCPv6；EUI-64 = MAC 中间插 FFFE、翻转第 7 位 |
+| **M6 AI 趋势** | AI 异常检测 = 行为**基线** vs 传统**特征规则**；UEBA（用户行为）/ NTA（流量）；supervised（有标签，已知攻击）/ unsupervised（无标签，zero-day）/ semi-supervised；**ZTNA 三支柱**：Verify explicitly · Least privilege（JIT / JEA）· Assume breach；IoT 拓扑 star / mesh / tree；**SDN 三平面**：application · control（集中的 controller）· data；**NFV**：VNF · NFVI · MANO |
+
+---
+
+## 9. 跨模块主线（选择题和画图题都爱考）
+
+### 9.1 五张表，别搞混
+
+| 表 | 在哪 | 记录 | 怎么来 | 查不到 |
+|---|---|---|---|---|
+| **MAC / CAM 表** | Switch | MAC → Port（+ time stamp） | 看帧的**源 MAC** 自动学 | **Flood** |
+| **ARP 表** | 主机、路由器 | IP → MAC | ARP request / reply | 发 ARP 广播 |
+| **路由表** | Router | Network → Interface（+ next hop、metric） | 直连 C / static / 路由协议 | **Discard** |
+| **NAT 表** | NAT 路由器 | Private IP(:port) ↔ Public IP(:port) | 出站时建立 | 外部主动进来的包丢弃 |
+| **DNS 表** | DNS server | Name → IP | 管理员 / 缓存 | 往上一级问 |
+
+### 9.2 三种设备
+
+| | Hub | Switch | Router |
+|---|---|---|---|
+| 层 · 地址 | L1 · 无 | L2 · MAC | L3 · IP |
+| 动作 | 全发 | Flood / Forward / Filter | Forward / Discard |
+| 冲突域 · 广播域 | 1 · 1 | 每口 1 · 1 | 每口 1 · 每口 1 |
+
+### 9.3 什么时候广播
+
+ARP request · DHCPDISCOVER / DHCPREQUEST · 交换机对广播帧和未知单播的 flood。**路由器不转发广播** → ARP 只能问本网络 → 跨网络就要默认网关 → 网关必须在本网络 → 编址表里路由器 LAN 接口和主机网关必须对上。这一条链把 M1、M2、M4 串在一起。
+
+---
+
+## 10. 🔴 考前一页纸
+
+| 记什么 | 内容 |
+|---|---|
+| 位权 | 128 64 32 16 8 4 2 1 |
+| 掩码值 | 128 · 192 · 224 · 240 · 248 · 252 · 254 · 255（借 1–8 位）；间隔 = 256 − 掩码值 |
+| 2^n / 2^n − 2 | 2、4、8、16、32、64、128、256、512、1024 / 0、2、6、14、30、62、126、254、510、1022 |
+| Class | A 1–126 /8 · B 128–191 /16 · C 192–223 /24 · D 224–239 · E 240–255 · 127 loopback |
+| Private | 10.0.0.0/8 · 172.16.0.0 – 172.31.255.255 · 192.168.0.0/16 |
+| 最多借 | A 22 · B 14 · C 6（留 2 位 host） |
+| 广播 | IP 255.255.255.255 · MAC FF-FF-FF-FF-FF-FF |
+| 端口 | 20/21 FTP · 23 Telnet · 25 SMTP · 53 DNS · 67/68 DHCP · 69 TFTP · 80 HTTP · 110 POP3 · 161 SNMP |
+| 端口范围 | 0–1023 well-known · 1024–49151 registered · 49152–65535 dynamic |
+| PDU | Data → Segment → Packet → Frame → Bits |
+| 握手 | SYN x → SYN-ACK y, ACK x+1 → ACK x+1, y+1 |
+| DORA | Discover 广播 · Offer 单播 · Request 广播 · Ack 单播 |
+| 编址规则 | 路由器 LAN 接口 = 第一个可用 = 主机网关；链路两端 .1 / .2；路由器网关 N/A |
+
+---
+
+## 11. 建议的复习顺序
+
+1. **先做 [Final Review 19 题](../final-review-mc/)**（30 分钟）：错的题对应的模块就是要先补的。
+2. **子网与编址**（最花时间，也最值分）：把 [做题页](../final-subnetting/) 的 7 道原题和 Assignment 2 不看答案重做一遍，再在「实验二」里把四张图的编址表**自己填一遍**直到全对。
+3. **M2 的画图题**：每跳 IP / MAC、ARP、NAT、DHCP、路由表，各画一遍（[M2 §12](../final-m2/#12-练习--画图题)）。
+4. **M3 的 SEQ / ACK**：用 [M3 时序图](../final-m3/) 换几组 ISN 和 window size，勾「隐藏数字」先自己画。
+5. **M1**：MAC 表逐帧 + 设备对比表 + OSI 每层关键词。
+6. 最后做一遍 [预测卷](../final-mock/)，计时。

@@ -42,6 +42,8 @@ import { analyzeIpv6, IPV6_PRESETS, eui64, EUI_PRESETS, ipv6SubnetPlan, SUBNET6_
 import { RA_OPTIONS, RA_FIELDS } from "../../src/components/mdx/ra-logic.mjs";
 import { simulate as simulateBaseline, SCENARIOS as BASELINE_SCENARIOS, BASELINE_PRESETS } from "../../src/components/mdx/baseline-logic.mjs";
 import { findExercise, cellText as sqlxCell, parseInline, levelDots, expectSummary } from "../../src/components/mdx/sql-practice-logic.mjs";
+import { topologyById, requirements as addrRequirements, addressPlan, routingTables, walkPacket, topologySvg, toStaticSvg } from "../../src/components/mdx/addressing-logic.mjs";
+import { SEQACK_PRESETS, seqAckLadder, ladderSvg, arrowLabel } from "../../src/components/mdx/seqack-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -161,7 +163,7 @@ const components = {
     ];
   },
   MCQ(node, a) {
-    const opts = ["a", "b", "c", "d", "e"].filter((k) => a[k]).map((k) => ({
+    const opts = ["a", "b", "c", "d", "e", "f"].filter((k) => a[k]).map((k) => ({
       type: "listItem",
       spread: false,
       children: [para(text(`${k.toUpperCase()}. ${a[k]}`))],
@@ -169,7 +171,7 @@ const components = {
     return [
       para(strong(a.q)),
       { type: "list", ordered: false, spread: false, children: opts },
-      { type: "blockquote", children: [para(strong(`答案：${a.answer}`)), ...node.children] },
+      { type: "blockquote", children: [para(strong(`答案：${String(a.answer).toUpperCase().replace(/[^A-F]/g, "").split("").join("、")}`)), ...node.children] },
     ];
   },
   LayerQuiz() {
@@ -759,6 +761,56 @@ const components = {
     const set = aiTrendQuiz[a.set] ?? aiTrendQuiz.ml;
     const label = (id) => set.options.find((o) => o.id === id).label;
     return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  AddressingLab(_node, a, ctx) {
+    const t = topologyById(a.start ?? "a2");
+    const req = addrRequirements(t);
+    const ap = addressPlan(t, req.pick);
+    const w = walkPacket(t, ap, ...t.walk);
+    const img = `images/TOPO_${t.id.toUpperCase()}.svg`;
+    ctx.generated.push({ path: img, data: toStaticSvg(topologySvg(t, ap, { highlight: w.path })) });
+    return [
+      note(`（网页版此处可以换拓扑、换借位数、切换子网表 / 编址表 / 路由表 / 走一个包；下面是「${t.label}」借 ${req.pick} 位的结果）`),
+      para({ type: "image", url: img, alt: t.label }),
+      para(strong(`${req.lans} 个 LAN + ${req.links} 条路由器之间的线 = ${req.subnetsDrawn} 个网络；最少借 ${req.minBorrow} 位，最多借 ${req.maxBorrow} 位；这里借 ${req.pick} 位 → 掩码 ${ap.mask}（/${ap.prefix}）`)),
+      table(["Subnet #", "Network", "Usable host range", "Broadcast", "Assigned usage"], ap.subnets.map((s) => [String(s.i), s.network, `${s.first} – ${s.last}`, s.broadcast, s.usage])),
+      table(["Device", "Interface", "IP Address", "Subnet Mask", "Default Gateway"], ap.rows.map((r) => [r.device, r.iface, r.role === "router-lan" ? strong(r.ip) : r.ip, r.mask, r.gateway])),
+      ...routingTables(t, ap).flatMap((rt) => [
+        para(strong(`${rt.name} 路由表`)),
+        table(["来源", "Network", "Interface", "Next hop", "Hop"], rt.rows.map((x) => [x.src, `${x.network}/${x.prefix}`, x.iface, x.nextHop, String(x.hops)])),
+      ]),
+      para(strong(`${t.walk[0]} → ${t.walk[1]}：IP (S, D) = (${w.sIp}, ${w.dIp}) 一路不变`)),
+      table(["段", "MAC (S, D)", "发之前 ARP 谁"], w.segs.map((g) => [`${g.from} → ${g.to}`, g.l2 ? `(${g.l2.join(", ")})` : "串行线：PPP / HDLC，没有 MAC", g.arp])),
+    ];
+  },
+  AddressingQuiz(_node, a, ctx) {
+    const t = topologyById(a.start ?? "q1");
+    const req = addrRequirements(t);
+    const ap = addressPlan(t, req.pick);
+    const img = `images/TOPO_${t.id.toUpperCase()}_BLANK.svg`;
+    ctx.generated.push({ path: img, data: toStaticSvg(topologySvg(t, null, { showAddr: false, showIfaces: false })) });
+    return [
+      note("（网页版此处是空白编址表：自己加行填 Device / Interface / IP / Mask / Gateway，点「检查」逐格判断并列出漏掉的接口）"),
+      para(strong(`${t.source}：`), text(`${t.question} 网络：${t.base}。把所有需要 IP 地址的地方写进表里。`)),
+      para({ type: "image", url: img, alt: t.label }),
+      { type: "html", value: "<details><summary>参考答案</summary>" },
+      para(text(`${req.subnetsDrawn} 个网络 → 最少借 ${req.minBorrow} 位、最多借 ${req.maxBorrow} 位；借 ${req.pick} 位，掩码 ${ap.mask}`)),
+      table(["Device", "Interface", "IP Address", "Subnet Mask", "Default Gateway"], ap.rows.map((r) => [r.device, r.iface, r.ip, r.mask, r.gateway])),
+      { type: "html", value: "</details>" },
+    ];
+  },
+  SeqAckLab(_node, a, ctx) {
+    // preset={1} arrives as an MDX expression value, preset="1" as a string
+    const i = Number((typeof a.preset === "object" ? a.preset?.value : a.preset) ?? 0);
+    const p = SEQACK_PRESETS[i] ?? SEQACK_PRESETS[0];
+    const l = seqAckLadder(p);
+    const img = `images/SEQACK_${i}.svg`;
+    ctx.generated.push({ path: img, data: toStaticSvg(ladderSvg(l, { a: p.a, b: p.b })) });
+    return [
+      note(`（网页版此处可以自己填两边的 ISN、window size、段数、编号方式和丢失的段；下面是「${p.label}」）`),
+      para({ type: "image", url: img, alt: p.label }),
+      table(["#", "方向", "段", "为什么"], l.events.map((e, k) => [String(k + 1), `${e.from} → ${e.to}`, arrowLabel(e), e.note])),
+    ];
   },
   CommandSortQuiz() {
     return [

@@ -75,7 +75,7 @@ tags: [IPv4, NAT, DHCP]
 | `<FcsDemo />` | FCS 差错检测 |
 | `<CollisionMap />` | Hub 冲突 vs 交换机防冲突示意图 |
 | `<IpAnalyzer />` | IPv4 地址分析（class、network / broadcast、主机范围） |
-| `<MCQ q="…" a="…" b="…" c="…" d="…" answer="B">解析</MCQ>` | 可点选的选择题（MC 考试的课一律用它做自测题） |
+| `<MCQ q="…" a="…" b="…" c="…" d="…" answer="B">解析</MCQ>` | 可点选的选择题（MC 考试的课一律用它做自测题）。选项最多到 `f`；`answer="CE"` 这样写多个字母就变成 Choose two / three：勾够数量再「提交」 |
 | `<LayerQuiz />` | DBMS 分层「这属于哪一层」练习（数据在 `data/dbms-layers.json`） |
 | `<RelAlgebraLab />` | σ / Π / ⋈ 在课件的 Artist / Album 表上组合 |
 | `<BufferPoolLab />` | Buffer pool：hit / miss、dirty、LRU 替换、写回 |
@@ -110,6 +110,9 @@ tags: [IPv4, NAT, DHCP]
 | `<TxnSortQuiz set="acid\|redo-undo\|recovery" />` | ISOM 5260 第 6 周点选练习：ACID 哪一条 / REDO、UNDO 还是不用处理 / 四种 recovery（题目在 `data/txn-quiz.json`；和 TrendSortQuiz 共用 `sort-quiz.tsx` 的 `SortQuizView`，新的分类练习直接加 JSON + 一个三行的包装组件） |
 | `<WalLab />` | WAL 正常运行：自己决定 flush 日志 / flush 数据页 / 回复用户 / 崩溃，违反 WAL 两条规则会被拦下，崩溃后自动跑恢复；含 p.16、p.17 演示（`recovery-logic.mjs`） |
 | `<RecoveryLab presets="redo\|undo,recrash,abort\|ckpt" />` | 崩溃恢复逐步演示：分析 → REDO（比 pageLSN）→ UNDO（CLR、NextLSN、TXN-END），可改「崩溃时磁盘页面写到哪」，每步可先自己判断（`recovery-logic.mjs`） |
+| `<AddressingLab start="a2\|q1\|q2\|chain\|mock" />` | ISOM 5180 期末：给一个网络 + 拓扑图 → 数网络（LAN + 路由器之间的线）、min / max 借位、子网表、编址表（路由器 LAN 接口 = 第一个可用地址 = 主机网关）、每台路由器的路由表、选两台主机看每一跳的 IP / MAC 和 ARP 谁。拓扑和画图坐标在 `addressing-logic.mjs` 的 `TOPOLOGIES`，加新图就加一项 |
+| `<AddressingQuiz start="…" />` | 同一批拓扑的考试模式：空白表自己加行（Device · Interface · IP · Mask · Gateway），不提示哪些接口要地址；`checkFreeRows` 自己判断每个地址属于哪个网络，再列出错格和漏掉的接口。内容存在本机 localStorage（`addrquiz:<id>`） |
+| `<SeqAckLab preset={0} hide />` | 给两边 ISN + window size 画 SEQ / ACK 时序图：三次握手 → 一窗一窗发段 → 期望型 ACK，可选按段 / 按字节编号、丢一段（超时重传）；`hide` 先隐藏数字。轮次逻辑复用 `tcp-logic.mjs` 的 `simulateWindow`（`seqack-logic.mjs`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 
