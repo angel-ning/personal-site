@@ -7,7 +7,6 @@ summary:
   zh: "第 6 课期末版：应急规划、BIA 时间与金钱指标（含计算）、计划测试、NIST 事件响应四阶段与清单、灾难恢复、数字取证、Colonial Pipeline 案例、香港关键基础设施条例——每个点给课件原文、需要理解的逻辑和可能的问法。"
 week: 6
 date: 2026-10-08
-unlisted: true
 tags: [FinalReview, BIA, MTD, ALE, IncidentResponse, DisasterRecovery, ColonialPipeline, CriticalInfrastructure]
 ---
 # 期末复习 L6 · 事件响应与应急规划

@@ -7,7 +7,6 @@ summary:
   zh: "第 4 课期末版：对称与非对称加密、哈希、数字签名、数字证书与 CA、PKI 的价值、TLS 里的混合加密、区块链、密码学风险与量子计算——每个点给课件原文、需要理解的逻辑和可能的问法。"
 week: 4
 date: 2026-10-08
-unlisted: true
 tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS, Blockchain]
 ---
 # 期末复习 L4 · 密码学与 PKI

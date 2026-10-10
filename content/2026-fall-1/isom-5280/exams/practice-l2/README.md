@@ -7,7 +7,6 @@ summary:
   zh: "第 2 课考试形式练习：选择题、简答题、长题案例，带作答框、得分点自评和双语参考答案。"
 week: 2
 date: 2026-10-09
-unlisted: true
 tags: [Practice, Malware, RaaS, Phishing, DDoS, SupplyChain]
 ---
 # 练习题 L2 · 安全威胁与常见攻击

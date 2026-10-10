@@ -7,7 +7,6 @@ summary:
   zh: "按老师最后一课划的范围，逐课列出每个知识点要默写、要区分、要计算还是要写分析；外加跨课主线、计算题随机练习、长题答题模板、全部课件原题，以及一套按 Assignment 1 格式出的模拟卷。"
 week: 0
 date: 2026-10-08
-unlisted: true
 tags: [FinalReview, ExamScope, ZeroTrust, PKI, RiskTreatment, BIA, IncidentResponse]
 ---
 # ISOM 5280 期末总复习 · L1–L6 全部知识点

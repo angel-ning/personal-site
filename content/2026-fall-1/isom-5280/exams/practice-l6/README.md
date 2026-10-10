@@ -7,7 +7,6 @@ summary:
   zh: "第 6 课考试形式练习：选择题、简答题、长题案例，带作答框、得分点自评和双语参考答案。"
 week: 6
 date: 2026-10-09
-unlisted: true
 tags: [Practice, BIA, ALE, IncidentResponse, DisasterRecovery, CriticalInfrastructure]
 ---
 # 练习题 L6 · 事件响应与应急规划
