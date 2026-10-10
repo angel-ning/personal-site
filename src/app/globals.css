@@ -575,3 +575,37 @@ body {
 .bl-k-rule { background: var(--c-warn); width: 6px; }
 .bl-k-ai { border: 2px solid var(--c-exam); border-radius: 50%; width: 9px; height: 9px; }
 @media (max-width: 560px) { .v6-hextets { grid-template-columns: repeat(4, 1fr); } }
+
+/* ISOM 5260 week 6: WAL + crash recovery labs */
+.rc-intro { margin-top: .6em; font-size: 13px; color: var(--fg-2); line-height: 1.6; }
+.rc-grid { display: grid; gap: .8em; margin-top: .7em; }
+@media (min-width: 640px) { .rc-grid { grid-template-columns: 3fr 2fr; } }
+.lab .rc-log { list-style: none; padding: .45em .6em; margin-top: .3em; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-family: var(--font-mono); font-size: 12px; line-height: 1.75; overflow-x: auto; white-space: nowrap; }
+.rc-rec { padding: 0 .3em; border-radius: 4px; }
+.rc-new { color: var(--c-board); }
+.rc-cur { background: var(--mark); }
+.rc-crash { border-bottom: 1.5px dashed var(--c-exam); padding-bottom: .15em; margin-bottom: .15em; }
+.rc-crash::after { content: "  ← CRASH!"; color: var(--c-exam); font-weight: 600; }
+.rc-page { display: flex; flex-wrap: wrap; gap: .35em; margin-top: .3em; }
+.rc-cell { min-width: 3.2em; border: 1px solid var(--line); border-radius: 7px; padding: .25em .5em; display: flex; flex-direction: column; align-items: center; font-family: var(--font-mono); transition: all .2s; }
+.rc-cell small { color: var(--fg-3); font-size: .72em; font-family: var(--font-sans); }
+.rc-lsn { background: var(--subtle); }
+.rc-changed { border-color: var(--c-warn); background: color-mix(in oklab, var(--c-warn) 14%, transparent); }
+.rc-dirty .rc-cell { border-color: color-mix(in oklab, var(--c-warn) 50%, var(--line)); }
+.rc-tag { display: inline-block; font-family: var(--font-mono); font-size: .78em; border-radius: 4px; padding: 0 .4em; margin-right: .5em; background: var(--subtle); color: var(--fg-2); }
+.rc-analysis { background: color-mix(in oklab, var(--c-extra) 14%, transparent); color: var(--c-extra); }
+.rc-redo { background: color-mix(in oklab, var(--c-tip) 14%, transparent); color: var(--c-tip); }
+.rc-undo { background: color-mix(in oklab, var(--c-board) 14%, transparent); color: var(--c-board); }
+.rc-abort { background: color-mix(in oklab, var(--c-warn) 14%, transparent); color: var(--c-warn); }
+.rc-done { background: var(--accent-wash); color: var(--accent); }
+.rc-ask { margin-top: .8em; border: 1px solid var(--line); border-radius: 8px; padding: .55em .8em; font-size: .95em; }
+.rc-steps { margin-top: .7em; padding-left: 1.3em; list-style: decimal; font-size: .9em; display: grid; gap: .3em; }
+.rc-steps small { display: block; color: var(--fg-2); font-size: .92em; margin-top: .15em; }
+.rc-last { font-weight: 500; }
+.wal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .4em .8em; margin-top: .8em; }
+.wal-zone { grid-column: 1 / -1; font-family: var(--font-mono); font-size: 11px; letter-spacing: .08em; color: var(--fg-3); border-top: 1px solid var(--line); padding-top: .35em; }
+.wal-zone:first-child { border-top: 0; padding-top: 0; }
+.wal-off > div:nth-of-type(-n+2) { opacity: .35; text-decoration: line-through; }
+.wal-trail { margin-top: .8em; font-size: .92em; }
+.wal-trail summary { cursor: pointer; color: var(--fg-3); }
+@media (max-width: 560px) { .wal-grid { grid-template-columns: 1fr; } }

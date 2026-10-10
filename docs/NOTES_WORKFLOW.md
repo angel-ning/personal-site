@@ -107,6 +107,9 @@ tags: [IPv4, NAT, DHCP]
 | `<Ipv6SubnetLab />` | IPv6 子网划分：/48 → /52…/80 列子网、nibble boundary、查地址属于哪个子网 |
 | `<BaselineLab />` | 一周流量折线图：静态阈值 vs AI 基线（季节性、凌晨异常、业务变化后自动重建基线、trickle 外传），统计误报 / 抓到没有（`baseline-logic.mjs`） |
 | `<TrendSortQuiz set="ml\|arch\|ztna\|iot" />` | ISOM 5180 第 6 周点选练习：ML 三种学习方式 / SDN 平面 + NFV 组件 / ZTNA 原则 / IoT 攻击面三层（题目在 `data/ai-trend-quiz.json`） |
+| `<TxnSortQuiz set="acid\|redo-undo\|recovery" />` | ISOM 5260 第 6 周点选练习：ACID 哪一条 / REDO、UNDO 还是不用处理 / 四种 recovery（题目在 `data/txn-quiz.json`；和 TrendSortQuiz 共用 `sort-quiz.tsx` 的 `SortQuizView`，新的分类练习直接加 JSON + 一个三行的包装组件） |
+| `<WalLab />` | WAL 正常运行：自己决定 flush 日志 / flush 数据页 / 回复用户 / 崩溃，违反 WAL 两条规则会被拦下，崩溃后自动跑恢复；含 p.16、p.17 演示（`recovery-logic.mjs`） |
+| `<RecoveryLab presets="redo\|undo,recrash,abort\|ckpt" />` | 崩溃恢复逐步演示：分析 → REDO（比 pageLSN）→ UNDO（CLR、NextLSN、TXN-END），可改「崩溃时磁盘页面写到哪」，每步可先自己判断（`recovery-logic.mjs`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 

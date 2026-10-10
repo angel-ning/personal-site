@@ -47,6 +47,9 @@ import { RaOptionLab } from "./ra-option-lab";
 import { Ipv6SubnetLab } from "./ipv6-subnet-lab";
 import { BaselineLab } from "./baseline-lab";
 import { TrendSortQuiz } from "./trend-sort-quiz";
+import { TxnSortQuiz } from "./txn-sort-quiz";
+import { WalLab } from "./wal-lab";
+import { RecoveryLab } from "./recovery-lab";
 import { collisionRows, collisionSvg } from "./collision-map.mjs";
 
 // Components available inside .mdx notes. scripts/mdx-to-md.mjs knows how to turn
@@ -205,5 +208,5 @@ export function Mk({ t, children }: { t: "e" | "a" | "v" | "c"; children: ReactN
 }
 
 export function noteComponents(assetBase: string) {
-  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab, PmrQuiz, CardinalityLab, NormalizationLab, ThreatActorQuiz, FirewallRuleLab, VendorTierCalculator, TcpHandshakeLab, WindowLab, PortLab, SubnetLab, SubnetPlanner, SqlPipelineLab, JoinLab, GrantLab, NormalizeWalkthrough, FdFinderLab, BiaTimeLab, AleCalculator, IrPhaseQuiz, CalcDrill, WriteQA, Pt, SeverityLadder, PriorityScoreLab, BudgetMixLab, SqlExercise, SqlTables, SqlScript, SqlProgress, CommandSortQuiz, Result, Ipv6Lab, Eui64Lab, RaOptionLab, Ipv6SubnetLab, BaselineLab, TrendSortQuiz };
+  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab, PmrQuiz, CardinalityLab, NormalizationLab, ThreatActorQuiz, FirewallRuleLab, VendorTierCalculator, TcpHandshakeLab, WindowLab, PortLab, SubnetLab, SubnetPlanner, SqlPipelineLab, JoinLab, GrantLab, NormalizeWalkthrough, FdFinderLab, BiaTimeLab, AleCalculator, IrPhaseQuiz, CalcDrill, WriteQA, Pt, SeverityLadder, PriorityScoreLab, BudgetMixLab, SqlExercise, SqlTables, SqlScript, SqlProgress, CommandSortQuiz, Result, Ipv6Lab, Eui64Lab, RaOptionLab, Ipv6SubnetLab, BaselineLab, TrendSortQuiz, TxnSortQuiz, WalLab, RecoveryLab };
 }

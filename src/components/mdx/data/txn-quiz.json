@@ -1,0 +1,63 @@
+{
+  "acid": {
+    "title": "这对应 ACID 的哪一条？（Slide 13–14）",
+    "options": [
+      { "id": "A", "label": "Atomicity" },
+      { "id": "C", "label": "Consistency" },
+      { "id": "I", "label": "Isolation" },
+      { "id": "D", "label": "Durability" }
+    ],
+    "items": [
+      { "q": "转账做到一半（A 已经扣钱、B 还没加钱）系统崩溃，重启后 A 的扣款必须被撤销", "a": "A", "why": "部分执行的事务不能留下痕迹：all or nothing（p.14：fails after step 4 and before step 7）" },
+      { "q": "用户已经收到「转账成功」，随后服务器断电；重启后这笔转账仍然在", "a": "D", "why": "已提交事务的效果必须扛过故障（p.14：rest easy that the $100 were transferred）" },
+      { "q": "p.6 的下单：扣库存、扣余额、插订单三条语句，要么全部生效，要么全部不生效", "a": "A", "why": "Either all of them take effect, or none of them do —— 这就是 atomicity 的定义" },
+      { "q": "Successful rollback acknowledgement：哪怕有几条语句已经执行成功，事务的改动也一条都不留", "a": "A", "why": "回滚是整个事务回滚，不是只撤失败的那条（p.5、p.7）" },
+      { "q": "Successful commit acknowledgment：事务的改动已提交，并且能扛过之后的崩溃", "a": "D", "why": "p.7：committed and durable (and will survive a subsequent crash)" },
+      { "q": "两个人同时操作同一个账户，每个事务执行时都像数据库里只有它自己一样", "a": "I", "why": "一个事务的执行与其他事务隔离开（p.13）。这节课只给了定义，靠并发控制实现" },
+      { "q": "一个事务执行到一半时，其他事务看不到它的中间结果（比如 A 已扣、B 未加的那一刻）", "a": "I", "why": "看不到别人未完成的中间状态 = 隔离" },
+      { "q": "每个事务本身逻辑正确、数据库起点一致，那么执行完之后数据库仍然一致（例如 A + B 的总额不变、CHECK (balance >= 0) 不被违反）", "a": "C", "why": "p.13 的 consistency 定义：consistent in → consistent out" },
+      { "q": "崩溃恢复需要 REDO，是为了满足哪一条？", "a": "D", "why": "已提交但页面还在内存就崩溃了，要靠 REDO 把改动补回来（p.16：Required by durability）" },
+      { "q": "崩溃恢复需要 UNDO，是为了满足哪一条？", "a": "A", "why": "未提交的页面可能已经被写回磁盘，要靠 UNDO 撤掉（p.17：Required by atomicity）" }
+    ]
+  },
+  "redo-undo": {
+    "title": "恢复时这个情况要 REDO、UNDO，还是不用处理？（Slide 16–31）",
+    "options": [
+      { "id": "redo", "label": "REDO" },
+      { "id": "undo", "label": "UNDO" },
+      { "id": "none", "label": "不用处理" }
+    ],
+    "items": [
+      { "q": "T1 已经 COMMIT 并告诉了用户，但它改过的 dirty page 还只在 buffer pool 里，系统崩溃", "a": "redo", "why": "p.16：已提交的改动没上盘，崩溃后要用日志里的 after value 补回来（durability）" },
+      { "q": "T2 还没 COMMIT，buffer manager 为了腾地方把它改过的页面 flush 到磁盘，随后崩溃", "a": "undo", "why": "p.17：未提交的改动已经在盘上了，要用 before value 撤掉（atomicity）" },
+      { "q": "T1 在最后一个 <CHECKPOINT> 之前就 COMMIT 了", "a": "none", "why": "p.31：checkpoint 已经把它的修改 flush 到磁盘，恢复时直接忽略" },
+      { "q": "T2 在 checkpoint 之前开始，在 checkpoint 之后 COMMIT，然后系统崩溃", "a": "redo", "why": "p.31：committed after checkpoint → need to redo T2" },
+      { "q": "T3 在 checkpoint 之前开始，直到崩溃都没有 COMMIT", "a": "undo", "why": "p.31：did not commit before the crash → need to undo T3（崩溃中的事务一律当作 aborted，p.12）" },
+      { "q": "正常运行中（没有崩溃），程序发出 ROLLBACK", "a": "undo", "why": "p.28：先写 <ABORT>，然后用同样的 UNDO 步骤倒着撤销，写 CLR，最后 <TXN-END>" },
+      { "q": "REDO 阶段扫到 019: <T1, B, 5, 9>，磁盘页面的 pageLSN = 018", "a": "redo", "why": "p.24：pageLSN < 记录的 LSN → 这条修改还没上盘，应用 after value（B = 9），pageLSN 改成 019" },
+      { "q": "REDO 阶段扫到 018: <T1, A, 1, 8>，磁盘页面的 pageLSN = 018", "a": "none", "why": "p.24：pageLSN ≥ 记录的 LSN → 已经反映在盘上，什么都不做" },
+      { "q": "REDO 阶段扫到一条 CLR，磁盘页面的 pageLSN 比它小", "a": "redo", "why": "p.27：CLR 在之后的恢复中照样会被 redo（CLRs are redo-only）" },
+      { "q": "UNDO 阶段倒着走，遇到这个事务之前写的一条 CLR", "a": "none", "why": "p.27：CLR 永远不会被 undo；顺着它的 NextLSN 跳到下一条要撤销的记录" }
+    ]
+  },
+  "recovery": {
+    "title": "这属于哪种 recovery？（Slide 33）",
+    "options": [
+      { "id": "txn", "label": "Transaction recovery" },
+      { "id": "crash", "label": "Crash recovery" },
+      { "id": "media", "label": "Media recovery" },
+      { "id": "disaster", "label": "Disaster recovery" }
+    ],
+    "items": [
+      { "q": "两个事务互相等待对方的锁（deadlock），DBMS 选中 T5 中止掉", "a": "txn", "why": "单个事务被 abort（课件原文就举了 deadlock）：撤销它的改动，DBMS 继续运行" },
+      { "q": "下单时余额不够，UPDATE 违反了 CHECK (balance >= 0)，程序执行 ROLLBACK", "a": "txn", "why": "error / explicit rollback request → 只撤销这一个事务" },
+      { "q": "用户在 App 上点「取消订单」，事务被显式回滚，数据库照常服务", "a": "txn", "why": "explicit rollback request；the DBMS continues operating" },
+      { "q": "数据库服务器突然断电，内存里的东西全没了，但磁盘上的数据文件和日志都完好", "a": "crash", "why": "volatile state is lost, but the data files and recovery log remain available → 用日志 REDO / UNDO" },
+      { "q": "操作系统 kernel panic，DBMS 进程被强制结束后重启", "a": "crash", "why": "DBMS / server crashes，盘上东西都在 → crash recovery" },
+      { "q": "存数据文件的那块硬盘坏了，数据文件读不出来；日志放在另一块盘上", "a": "media", "why": "database files are lost or damaged → 先从备份还原文件，再重放日志到需要的恢复点" },
+      { "q": "先从昨晚的备份还原数据文件，再应用之后的日志，恢复到今天上午 10 点", "a": "media", "why": "restore from a backup, then apply available recovery logs to reach the desired recovery point" },
+      { "q": "洪水让整个主数据中心停摆，切换到另一个城市的副本继续服务", "a": "disaster", "why": "primary site unavailable → 用 remote replica 或备份加替代的基础设施恢复服务" },
+      { "q": "云厂商整个 region 不可用，在另一个 region 用备份重建数据库", "a": "disaster", "why": "整个环境不可用，靠异地备份 + replacement infrastructure" }
+    ]
+  }
+}

@@ -42,6 +42,7 @@ import { analyzeIpv6, IPV6_PRESETS, eui64, EUI_PRESETS, ipv6SubnetPlan, SUBNET6_
 import { RA_OPTIONS, RA_FIELDS } from "../../src/components/mdx/ra-logic.mjs";
 import { simulate as simulateBaseline, SCENARIOS as BASELINE_SCENARIOS, BASELINE_PRESETS } from "../../src/components/mdx/baseline-logic.mjs";
 import { findExercise, cellText as sqlxCell, parseInline, levelDots, expectSummary } from "../../src/components/mdx/sql-practice-logic.mjs";
+import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
@@ -57,6 +58,7 @@ const irPhaseData = readJson("src/components/mdx/data/ir-phase-items.json");
 const irPicerlData = readJson("src/components/mdx/data/ir-picerl-items.json");
 const sqlPractice = readJson("src/components/mdx/data/sql-practice.json");
 const aiTrendQuiz = readJson("src/components/mdx/data/ai-trend-quiz.json");
+const txnQuiz = readJson("src/components/mdx/data/txn-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -764,6 +766,41 @@ const components = {
       table(["语句", "类别", "理由"], COMMAND_ITEMS.map((it) => [{ type: "inlineCode", value: it.sql }, strong(it.a), it.why])),
     ];
   },
+  TxnSortQuiz(_node, a) {
+    const set = txnQuiz[a.set] ?? txnQuiz.acid;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  WalLab() {
+    return [
+      note("（网页版此处可以自己一步步执行 T1，决定什么时候 flush 日志、flush 数据页、回复用户、崩溃；违反 WAL 的操作会被拦下。下面是三个演示的结果）"),
+      ...WAL_DEMOS.flatMap((d) => {
+        const { state, trail } = runWal(d.actions);
+        const rows = trail.map((t, i) => [String(i + 1), WAL_ACTION_LABEL[t.action], t.msg?.text ?? ""]);
+        const after = state.crashed
+          ? [para(strong("重启后恢复："), text(`${state.crashed.verdict}。`)), para(text(state.crashed.result.steps.map((s) => `【${PHASE_LABEL[s.phase]}】${s.title}`).join(" → ")))]
+          : [];
+        return [para(strong(d.label)), table(["#", "操作", "结果"], rows), ...after];
+      }),
+    ];
+  },
+  RecoveryLab(_node, a) {
+    const ids = a.presets ? String(a.presets).split(",").map((s) => s.trim()) : RECOVERY_PRESETS.map((p) => p.id);
+    return [
+      note("（网页版此处可以逐步走恢复过程、每一步先自己判断，还可以改「崩溃时磁盘页面写到哪里」；下面是课件设定下的完整步骤）"),
+      ...RECOVERY_PRESETS.filter((p) => ids.includes(p.id)).flatMap((p) => {
+        const start = presetStart(p);
+        const run = recover({ init: p.init, log: p.log, page: start, crash: p.crash, abortTxn: p.abortTxn });
+        const rows = run.steps.map((s, i) => [String(i + 1), PHASE_LABEL[s.phase], s.title, pageText(s.page)]);
+        return [
+          para(strong(`${p.label}（${p.source}）`), text(`：${p.intro}`)),
+          para(text(`日志：${p.log.map(recLine).join("；")}${p.crash ? " → CRASH" : ""}`)),
+          para(text(`${p.crash ? "崩溃时磁盘页面" : "内存里的页面"}：${pageText(start)}`)),
+          table(["#", "阶段", "发生了什么", "之后的页面"], rows),
+        ];
+      }),
+    ];
+  },
 };
 
 function convert(ctx) {
@@ -819,7 +856,8 @@ export async function mdxToMarkdown(body) {
     .process(body);
 
   // remark-mdx is still registered, so stringify escapes "<" and "{" for MDX — undo that for plain Markdown.
-  const md = String(file).replace(/\\([<{])/g, "$1");
+  // A text "<" right before a letter (e.g. "<T1 COMMIT>") would read as an HTML tag and vanish on GitHub, so keep it as &lt;.
+  const md = String(file).replace(/\\<(?=[A-Za-z/!?])/g, "&lt;").replace(/\\([<{])/g, "$1");
   return { md, images: [...new Set(images)], generated: ctx.generated };
 }
 
