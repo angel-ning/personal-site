@@ -101,6 +101,12 @@ tags: [IPv4, NAT, DHCP]
 | `<SeverityLadder />` | 事件分级 Level 1–4：按五个维度点选特征，取最严重一维定级，显示谁来领导、必须做什么 |
 | `<PriorityScoreLab />` | 投资优先级打分（ISOM 5070 第 7 周 p.7 / p.20 两个公式）：给 p.21 的举措打分排序，再叠加「基础控制先投」和「前提不满足就先试点 / go slow」两道关（逻辑在 `invest-logic.mjs`） |
 | `<BudgetMixLab />` | 安全预算配比 vs p.19 百分比区间：p.29 案例 US$1.2M、区间中点、工具堆砌反例三个预设，拖动占比、切换「恢复能力不可靠」，展开 p.30–35 的举措明细 |
+| `<Ipv6Lab />` | IPv6 地址：完整 / 去前导 0 / `::` 压缩（含非法写法提示）、地址类型、GUA 三部分、solicited-node（逻辑在 `ipv6-logic.mjs`） |
+| `<Eui64Lab />` | EUI-64 三步：MAC 拆开 → 插 FFFE → 翻转 U/L 位 → link-local / SLAAC 地址 |
+| `<RaOptionLab />` | RA 三个选项（SLAAC only / SLAAC + stateless DHCPv6 / stateful DHCPv6）：消息顺序 + 每项信息从哪来（`ra-logic.mjs`） |
+| `<Ipv6SubnetLab />` | IPv6 子网划分：/48 → /52…/80 列子网、nibble boundary、查地址属于哪个子网 |
+| `<BaselineLab />` | 一周流量折线图：静态阈值 vs AI 基线（季节性、凌晨异常、业务变化后自动重建基线、trickle 外传），统计误报 / 抓到没有（`baseline-logic.mjs`） |
+| `<TrendSortQuiz set="ml\|arch\|ztna\|iot" />` | ISOM 5180 第 6 周点选练习：ML 三种学习方式 / SDN 平面 + NFV 组件 / ZTNA 原则 / IoT 攻击面三层（题目在 `data/ai-trend-quiz.json`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 
