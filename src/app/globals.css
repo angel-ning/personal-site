@@ -646,3 +646,25 @@ body {
 .wal-trail { margin-top: .8em; font-size: .92em; }
 .wal-trail summary { cursor: pointer; color: var(--fg-3); }
 @media (max-width: 560px) { .wal-grid { grid-template-columns: 1fr; } }
+
+/* ISOM 5180 final: BinaryLab / MaskSizeLab */
+.bin-row { display: grid; grid-template-columns: repeat(8, 1fr); gap: .3em; margin-top: .8em; max-width: 30em; }
+.bin-bit { border: 1px solid var(--line); border-radius: 7px; padding: .3em .2em; display: flex; flex-direction: column; align-items: center; font-family: var(--font-mono); }
+.bin-bit small { color: var(--fg-3); font-size: .72em; }
+.bin-bit b { font-size: 1.15em; color: var(--fg-3); }
+.bin-on { border-color: var(--accent); background: var(--accent-wash); }
+.bin-on b { color: var(--accent); }
+.bin-and td, .bin-and th { white-space: nowrap; }
+.bin-focus { background: color-mix(in oklab, var(--c-warn) 10%, transparent); }
+.mask-ok td { background: color-mix(in oklab, var(--c-tip) 9%, transparent); }
+.mask-no td { color: var(--fg-3); }
+.mask-table td, .mask-table th { white-space: nowrap; }
+.mask-bits { display: flex; flex-wrap: wrap; gap: .45em; margin-top: .9em; }
+.mask-oct { display: flex; flex-wrap: wrap; align-items: center; gap: 1px; }
+.mask-oct small { flex-basis: 100%; text-align: center; font-family: var(--font-mono); font-size: .78em; color: var(--fg-3); }
+.mask-b { width: 1.15em; text-align: center; font-family: var(--font-mono); font-size: .88em; font-weight: 600; padding: .15em 0; border-radius: 3px; }
+.mask-N { background: color-mix(in oklab, var(--accent) 16%, transparent); color: var(--accent); }
+.mask-S { background: color-mix(in oklab, var(--c-exam) 16%, transparent); color: var(--c-exam); }
+.mask-H { background: color-mix(in oklab, var(--c-tip) 14%, transparent); color: var(--c-tip); }
+.mask-legend { display: flex; flex-wrap: wrap; gap: .3em 1.2em; margin-top: .5em; font-size: 12.5px; color: var(--fg-2); }
+.mask-legend i { display: inline-block; width: .9em; height: .9em; border-radius: 3px; vertical-align: -.1em; margin-right: .3em; }

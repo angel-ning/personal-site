@@ -15,15 +15,19 @@ tags: [FinalReview, ExamScope, Subnetting, Addressing, TCP, Routing, ARP]
 
 这一页是**总览**。详细内容和练习在下面这些页面：
 
-| 页面                                      | 内容                                                                           |
-| --------------------------------------- | ---------------------------------------------------------------------------- |
-| [Final Review 选择题](../final-review-mc/) | 老师 Final Review 的 **19 道 MC**：答案、每个选项的解析、对应模块（3 道多选可以直接点选）                   |
-| [子网与编址做题](../final-subnetting/)         | **SubnetQuestions 7 题 + Assignment 2** 的完整解答；**拓扑编址实验**（一步步演示 + 空白表自己填、自动检查） |
-| [期末复习 M1](../final-m1/)                 | 网络组成与类型、OSI、封装、Hub / Switch / Router、LAN 通信 · 练习                             |
-| [期末复习 M2](../final-m2/)                 | IP 地址与分类、network / broadcast、NAT、DHCP、DNS、ARP、默认网关、路由 · 练习                   |
-| [期末复习 M3](../final-m3/)                 | 传输层、三次握手、SEQ / ACK、**给 window size 画时序图**、端口、TCP vs UDP · 练习                 |
-| [期末复习 M4](../final-m4/)                 | 子网划分、掩码、min / max 借位、Class A / B、ANDing · 练习                                 |
-| [期末预测卷](../final-mock/)                 | 20 道 MC（5 道多选）+ 9 道画图 / 计算题，**答案默认隐藏**                                       |
+| 页面                                      | 内容                                                                                        |
+| --------------------------------------- | ----------------------------------------------------------------------------------------- |
+| [Final Review 选择题](../final-review-mc/) | 老师 Final Review 的 **19 道 MC**：答案、每个选项的解析、对应模块（3 道多选可以直接点选）                                |
+| [子网与编址做题](../final-subnetting/)         | **SubnetQuestions 7 题 + Assignment 2** 的完整解答；**拓扑编址实验**（一步步演示 + 空白表自己填、自动检查）              |
+| [期末复习 M1](../final-m1/)                 | 网络组成与类型、OSI、封装、Hub / Switch / Router、LAN 通信 · 练习                                          |
+| [期末复习 M2](../final-m2/)                 | IP 地址与分类、network / broadcast、NAT、DHCP、DNS、ARP、默认网关、路由 · 练习                                |
+| [期末复习 M3](../final-m3/)                 | 传输层、三次握手、SEQ / ACK、**给 window size 画时序图**、端口、TCP vs UDP · 练习                              |
+| [期末复习 M4](../final-m4/)                 | 子网划分、掩码、min / max 借位、Class A / B、ANDing · 练习                                              |
+| [期末预测卷](../final-mock/)                 | 20 道 MC（5 道多选）+ 9 道画图 / 计算题，**答案默认隐藏**                                                    |
+| [简答题练习](../final-sa/)                   | 22 道 describe / explain 题（MAC 表 / ARP 表 / 路由表怎么建、三次握手、窗口……），作答框 + 得分点 + **英文参考答案 + 中文解析** |
+| [期末开卷速查表](../final-cheatsheet/)         | **开卷考试打印用**：中英定义、关键数字、16 类典型题的解题步骤、地址速查、作业命令、易错清单                                         |
+| [二进制速算参考](../final-binary/)             | 十进制 ↔ 二进制转换器、AND 计算器、位权、2 的幂、掩码值、**0–255 完整对照表**                                          |
+| [子网掩码速查](../final-mask-size/)           | Determining Subnet Mask Size：按需求找掩码、地址拆 Network / Subnet / Host、两张查表、中英术语                 |
 
 > 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可  
 > 掌握要求：🖊️ **画图 / 填表**（给拓扑写出过程或填表）· 🔍 **辨析**（选择题判断）· 📝 **默写**（列出名字、定义）· 🧮 **计算**
@@ -269,3 +273,4 @@ ARP request · DHCPDISCOVER / DHCPREQUEST · 交换机对广播帧和未知单�
 4. **M3 的 SEQ / ACK**：用 [M3 时序图](../final-m3/) 换几组 ISN 和 window size，勾「隐藏数字」先自己画。
 5. **M1**：MAC 表逐帧 + 设备对比表 + OSI 每层关键词。
 6. 最后做一遍 [预测卷](../final-mock/)，计时。
+7. 考前一天：把 [开卷速查表](../final-cheatsheet/)、[二进制速算](../final-binary/)、[子网掩码速查](../final-mask-size/) 导出成 PDF 打印；有时间再把 [简答题](../final-sa/) 的 🔴 题用英文写一遍。

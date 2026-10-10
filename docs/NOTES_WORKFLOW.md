@@ -113,6 +113,8 @@ tags: [IPv4, NAT, DHCP]
 | `<AddressingLab start="a2\|q1\|q2\|chain\|mock" />` | ISOM 5180 期末：给一个网络 + 拓扑图 → 数网络（LAN + 路由器之间的线）、min / max 借位、子网表、编址表（路由器 LAN 接口 = 第一个可用地址 = 主机网关）、每台路由器的路由表、选两台主机看每一跳的 IP / MAC 和 ARP 谁。拓扑和画图坐标在 `addressing-logic.mjs` 的 `TOPOLOGIES`，加新图就加一项 |
 | `<AddressingQuiz start="…" />` | 同一批拓扑的考试模式：空白表自己加行（Device · Interface · IP · Mask · Gateway），不提示哪些接口要地址；`checkFreeRows` 自己判断每个地址属于哪个网络，再列出错格和漏掉的接口。内容存在本机 localStorage（`addrquiz:<id>`） |
 | `<SeqAckLab preset={0} hide />` | 给两边 ISN + window size 画 SEQ / ACK 时序图：三次握手 → 一窗一窗发段 → 期望型 ACK，可选按段 / 按字节编号、丢一段（超时重传）；`hide` 先隐藏数字。轮次逻辑复用 `tcp-logic.mjs` 的 `simulateWindow`（`seqack-logic.mjs`） |
+| `<BinaryLab />` | 开卷用二进制助手：一个 octet 十进制 ↔ 二进制 ↔ 十六进制（位权高亮、是不是合法掩码值、当第一段时是哪个 Class），以及地址 AND 掩码逐段计算子网和广播（`binary-logic.mjs`） |
+| `<MaskSizeLab mode="need\|split" />` | Determining Subnet Mask Size：① 需求（子网数、地址数）→ min / max 借位与可行掩码；② 地址 + 掩码 → Network \| Subnet \| Host 彩色 32 位（Slide 25）、子网号、子网 / 广播 / 范围；下面的前缀表按当前输入高亮（`mask-logic.mjs`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 

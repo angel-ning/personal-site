@@ -1,0 +1,472 @@
+---
+title:
+  en: "Final Practice · Short-Answer Questions (Describe / Explain)"
+  zh: "期末练习 · 简答题（Describe / Explain）"
+summary:
+  en: "Twenty-two short-answer questions of the describe / explain kind — how a switch, a host's ARP table and a router's routing table are built dynamically, the three-way handshake, windowing, DHCP, NAT, the default gateway, TCP vs UDP, subnetting and ANDing — each with an answer box, scoring points, an English model answer and a Chinese explanation."
+  zh: "22 道「describe / explain」类简答题：交换机 MAC 表、主机 ARP 表、路由器路由表怎么动态建立，三次握手、窗口、DHCP、NAT、默认网关、TCP vs UDP、子网与 ANDing。每题有作答框、得分点、英文参考答案和中文解析。"
+date: 2026-10-10
+tags: [FinalReview, ShortAnswer, MACTable, ARP, RoutingTable, Handshake, Windowing]
+---
+# 期末练习 · 简答题（Describe / Explain）
+
+**总览**：[期末总复习](../final-review/)　**开卷速查表**：[期末开卷速查表](../final-cheatsheet/)　**预测卷**：[期末预测卷](../final-mock/)
+
+> **怎么用**：先在框里**用英文**写（内容存在这个浏览器里，刷新不会丢），写完点「查看参考答案」，按得分点勾选自评。参考答案分 **English**（可以直接抄到开卷资料里）和 **中文解析**（为什么这样答）。  
+> 分值和字数是我按 ISOM 课程常见的简答格式估的，只用来控制答题长度。
+
+> **📌 期末会不会考这种 SA？我的判断**
+>
+> - **可能性：中等偏低，但值得准备一份。** 老师说期末「大部分是画图 + 选择题」，Final Review 也全是选择题，没有直接说有简答。
+> - **但老师的作业里一直有「explain」题**：Assignment 1 问 IP 和 MAC 的区别、ping 和 tracert 为什么结果不同；Assignment 2 问「地址都配对了为什么还 ping 不通」；Assignment 3 问「为什么三个网站的目的 MAC 都一样」「ARP reply 为什么是单播」。所以就算没有独立的 SA 部分，**画图题后面很可能跟一问「explain why」**。
+> - **开卷考试**：提前把英文答案写好、打印出来，考场上直接对照，几乎零成本。写的过程也会把画图题背后的逻辑理顺（例如写清楚「交换机怎么建表」，MAC 表那道画图题就不会错）。
+> - **建议投入**：1–2 小时。🔴 题（第 1、7、8、9、15、16 题）一定写一遍，其余扫一遍参考答案就行。
+
+## 本页大纲
+
+- **[M1 · 设备与封装](#m1--设备与封装)**
+- **[M2 · ARP、路由表、网关、DHCP、NAT](#m2--arp路由表网关dhcpnat)**
+- **[M3 · TCP、窗口、端口](#m3--tcp窗口端口)**
+- **[M4 · 子网](#m4--子网)**
+
+---
+
+## M1 · 设备与封装
+
+**\[Short Question · 8 marks · 80–120 words] SA1 🔴. Explain how a switch builds its MAC address table dynamically, and how it decides whether to forward, flood or filter a frame.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] 表是空的开始，不需要配置；看每个进来的帧的 **source MAC + 进来的端口** 学习（已有则刷新时间戳）  
+> ☐ \[2 分] 用 **destination MAC** 查表做决策  
+> ☐ \[2 分] Flood：广播或目的 MAC 不在表里 → 除入口外所有端口；Forward：在表里且端口不同 → 只发那一个端口  
+> ☐ \[1 分] Filter：目的端口 = 入口端口 → 不转发  
+> ☐ \[1 分] Aging：一段时间（约 5 分钟 / 300 秒）没刷新的条目被删除
+>
+> **English**
+>
+> A switch starts with an empty MAC address (CAM) table and learns it automatically. For every frame it receives, it reads the **source MAC address** and records it with the **port the frame arrived on** and a time stamp; if the entry already exists, the time stamp is refreshed. To decide what to do, it looks up the **destination MAC address**: if the destination is a **broadcast** or is **not in the table**, the switch **floods** the frame out all ports except the incoming one; if it is in the table on a **different port**, the switch **forwards** the frame out that one port only; if it is on the **same port** the frame came in on, the switch **filters** (drops) it. Entries that are not refreshed within the aging time (about 5 minutes) are removed.
+>
+> **中文解析**
+>
+> 一句话：**用 Source 学，用 Destination 决策**。学习只能用源地址，因为交换机亲眼看到「这个 MAC 从这个口进来」；目的地址只能用来查表。Filter 那一条常被漏掉：对方和发送方在同一个端口那一侧（例如接着一个 Hub），已经收到了，再转发就是浪费。
+
+**\[Short Question · 4 marks · 50 words] SA2. Why does each entry in a switch's MAC address table have a time stamp? What could go wrong without it?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] 时间戳 + aging：一段时间没看到这个 MAC 当源地址就删掉  
+> ☐ \[1 分] 原因一：主机会移动 / 关机 / 换端口，旧条目会把帧送到错误的端口  
+> ☐ \[1 分] 原因二：CAM 表容量有限，不删会满；只保留当前有效的信息
+>
+> **English**
+>
+> The time stamp records when a MAC address was last seen as a source. Entries not refreshed within the **aging time** are deleted. Without it, a host that moved to another port or was switched off would keep its old entry, so frames would be sent to the **wrong port**, and the limited CAM table would fill with stale entries.
+>
+> **中文解析**
+>
+> 老化之后找不到记录，下一帧会被 flood，对方一回复交换机就重新学到正确的端口——所以删掉旧记录没有坏处。对比：路由表的一条记录代表一个网络，没有这种「每看到一帧就刷新」的时间戳。
+
+**\[Short Question · 6 marks · 表格或 80 words] SA3. Compare a hub, a switch and a router in terms of OSI layer, the address each uses to forward data, and collision and broadcast domains.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] Hub = L1，不看地址；Switch = L2，MAC；Router = L3，IP  
+> ☐ \[2 分] 冲突域：Hub 所有端口 1 个；Switch / Router 每个端口 1 个  
+> ☐ \[2 分] 广播域：Hub、Switch 都是 1 个（广播会被转发 / 泛洪）；Router 每个接口 1 个（不转发广播）
+>
+> **English**
+>
+> |                   | Hub                                           | Switch                          | Router                                          |
+> | ----------------- | --------------------------------------------- | ------------------------------- | ----------------------------------------------- |
+> | OSI layer         | Layer 1 (Physical)                            | Layer 2 (Data Link)             | Layer 3 (Network)                               |
+> | Forwards using    | No address — repeats bits out all other ports | MAC address (MAC address table) | IP address (routing table)                      |
+> | Collision domains | One for all ports                             | One per port                    | One per interface                               |
+> | Broadcast domains | One                                           | One (broadcasts are flooded)    | One per interface (does not forward broadcasts) |
+>
+> **中文解析**
+>
+> 口诀：**Hub 什么都不分；Switch 分冲突域，不分广播域；Router 两个都分。** 如果题目问「广播太多用什么设备」，答 router（Final Review 第 6 题）。
+
+**\[Short Question · 6 marks · 80–120 words] SA4. Describe encapsulation and de-encapsulation as data moves from a sending host to a receiving host. Name the PDU at Layers 4, 3, 2 and 1.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] 封装：每层把上层 PDU 放进自己的数据区，加本层的 header（L2 还加 trailer / FCS）  
+> ☐ \[2 分] PDU：L4 segment（端口、序号）· L3 packet（源 / 目的 IP）· L2 frame（源 / 目的 MAC + FCS）· L1 bits  
+> ☐ \[2 分] 解封装：接收方从下往上，每层读并剥掉自己那层的头，交给上一层（peer-to-peer）
+>
+> **English**
+>
+> At the sender, data passes down the layers and each layer **encapsulates** the PDU from the layer above by placing it in its data field and adding its own header. The Transport layer adds port numbers and sequence numbers to form a **segment**; the Network layer adds the source and destination IP addresses to form a **packet**; the Data Link layer adds the source and destination MAC addresses as a header and the **FCS as a trailer** to form a **frame**; the Physical layer sends it as **bits**. At the receiver, **de-encapsulation** happens in reverse: each layer reads the header added by its peer layer, strips it, and passes the rest up until the data reaches the application.
+>
+> **中文解析**
+>
+> 关键词是 **peer-to-peer**：发送方第 N 层加的头，只有接收方第 N 层读。所以每层只处理自己的头，把上层内容当成不透明的数据——这就是分层能模块化的原因。
+
+**\[Short Question · 4 marks · 4 points] SA5. How does a switch reduce or prevent collisions? Give four mechanisms.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] Microsegmentation / dedicated paths：每台主机独占一个端口，每个端口一个冲突域  
+> ☐ \[1 分] Full duplex：同时收发  
+> ☐ \[1 分] Buffering：多台同时发给同一目的时先存再逐个转发  
+> ☐ \[1 分] 查 MAC 表只发往目的端口（不像 Hub 全发）
+>
+> **English**
+>
+> 1. **Microsegmentation**: each host has its own port (its own collision domain) and the switch provides a **dedicated path** between each pair of ports.
+> 2. **Full duplex**: a host can send and receive at the same time.
+> 3. **Buffering**: frames sent to the same destination at the same time are held in memory and forwarded one at a time.
+> 4. **MAC address table**: frames go only out the destination port instead of every port.
+>
+> **中文解析**
+>
+> 如果某个端口外面接的是 Hub，那一段里面仍然会冲突——交换机只是把冲突限制在那一个端口里。
+
+**\[Short Question · 3 marks · 40 words] SA6. What is the purpose of the FCS in an Ethernet frame, and what does the receiver do if the FCS does not match?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] FCS 在帧尾（trailer），用于 L2 差错检测（integrity）  
+> ☐ \[1 分] 接收方重算，对不上就丢弃帧  
+> ☐ \[1 分] L2 不请求重传；重传靠上层（TCP）
+>
+> **English**
+>
+> The **Frame Check Sequence** in the frame trailer lets the receiver detect errors. The receiver recalculates it; if the values differ, the frame was corrupted and is **discarded**. The Data Link layer does not request retransmission — upper layers such as TCP recover lost data.
+>
+> **中文解析**
+>
+> Final Review 第 3 题就是这个点：选项里「请求重传」「交给上层纠错」都是陷阱。
+
+## M2 · ARP、路由表、网关、DHCP、NAT
+
+**\[Short Question · 6 marks · 80–100 words] SA7 🔴. Explain how a host's ARP table is built. Why is the ARP request sent as a broadcast but the ARP reply as a unicast?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] ARP 表记录同一 LAN 上设备的 IP → MAC，动态建立、会超时  
+> ☐ \[2 分] 需要发帧时先查 ARP 表；没有 → 广播 ARP request（目的 MAC FF-FF-FF-FF-FF-FF）「谁是这个 IP」  
+> ☐ \[1 分] 只有目标主机回复 ARP reply，双方都把对方记进 ARP 表  
+> ☐ \[2 分] request 广播：还不知道对方 MAC；reply 单播：request 里已经带了询问者的 IP 和 MAC
+>
+> **English**
+>
+> The ARP table maps **IP addresses to MAC addresses** of devices on the **same LAN** and is built dynamically. Before sending a frame, a host checks its ARP table. If the MAC address is missing, it sends an **ARP request** as a **broadcast** (destination MAC FF-FF-FF-FF-FF-FF) asking "who has this IP?", because it does not yet know the target's MAC. Every device receives it, but only the host with that IP replies. The **ARP reply is unicast** because the request already contained the sender's IP and MAC address, so the target knows exactly where to reply. Both hosts add the other to their ARP tables; entries time out after a period set by the operating system.
+>
+> **中文解析**
+>
+> 两个时间点：被问的那台在**收到 request 时**就记下了询问者；询问者在**收到 reply 后**才记下对方。ARP 广播过不了路由器，所以 ARP 表里永远只有同一网络的设备——这引出了 SA9 的默认网关。
+
+**\[Short Question · 8 marks · 100–150 words] SA8 🔴. Explain how a router's routing table is built, covering directly connected, static and dynamic routes. How does a router learn about a remote network from a neighbour running RIP?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] Directly connected（C）：接口配好地址、启用后自动加入 = initial routing table  
+> ☐ \[2 分] Static：管理员手工输入；拓扑变化要手工改  
+> ☐ \[2 分] Dynamic：路由协议（RIP、EIGRP、OSPF）和邻居交换路由信息，自动学习、自动适应变化  
+> ☐ \[2 分] RIP：邻居发 update「网络 X，metric n」→ 记为 R、出口 = 收到 update 的接口、next hop = 邻居、metric n+1（hop count）；多条路选 metric 最小
+>
+> **English**
+>
+> When a router's interfaces are configured and up, it automatically adds each **directly connected network** (source C, no next hop) — this is the initial routing table. Remote networks are added in two ways. **Static routes** are entered manually by the administrator and must be changed by hand if the topology changes. **Dynamic routes** are learned by a **routing protocol** such as RIP, EIGRP or OSPF: routers exchange routing updates with their neighbours and update their tables automatically when links fail. With **RIP**, a neighbour periodically (every 30 seconds) advertises the networks it knows with a hop-count metric. The router records each advertised network as a RIP route whose **outgoing interface** is the one the update arrived on, whose **next hop** is the advertising neighbour, and whose **metric is the advertised hop count + 1**. If it learns several routes to the same network, it keeps the one with the **lowest metric**.
+>
+> **中文解析**
+>
+> 和交换机对比（SA1）：交换机是**被动**看源 MAC 学；路由器的动态路由是**主动交换**路由信息，**不会**看数据包的源 IP 来学路由。画路由表时，远程网络的 Interface 写**本路由器**朝那边的出口。
+
+**\[Short Question · 6 marks · 80–100 words] SA9 🔴. What is a default gateway? Explain why a host cannot send a frame directly to a host on another network, and what it does instead.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] 定义：主机所在网段上路由器接口的 IP，必须和主机在同一网络  
+> ☐ \[2 分] 主机比较 Network 部分：同一网络 → ARP 对方；不同网络 → 交给网关  
+> ☐ \[2 分] 原因：ARP request 是广播，路由器不转发广播，拿不到别的网络主机的 MAC  
+> ☐ \[1 分] 做法：目的 IP = 最终主机，目的 MAC = 网关 MAC；路由器再转发、换帧头
+>
+> **English**
+>
+> The default gateway is the **IP address of the router interface on the host's own network segment**; it must be in the same network as the host. Before sending, a host compares the network portion of the destination address with its own. If the destination is on another network, the host cannot learn its MAC address, because an **ARP request is a broadcast and routers do not forward broadcasts**. Instead the host ARPs for its **default gateway** and sends the frame with the **destination IP of the final host** but the **destination MAC of the gateway**. The router then looks up the destination network in its routing table and forwards the packet, building a new frame for the next link.
+>
+> **中文解析**
+>
+> Final Review 第 18、19 题、Assignment 3 第 3 题都是这个逻辑。容易说反：「找不到对方 MAC 的是**主机**，不是路由器」——路由器在另一边完全可以 ARP 到目的主机。
+
+**\[Short Question · 6 marks · 80 words] SA10. Describe how a host obtains an IP address using DHCP. Which messages are broadcast, and why?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] DORA 四步：Discover → Offer → Request → Acknowledge  
+> ☐ \[2 分] Discover、Request 广播；Offer、Ack 单播  
+> ☐ \[1 分] Discover 广播：主机还没有 IP，也不知道 server 在哪（源 0.0.0.0、目的 255.255.255.255）  
+> ☐ \[1 分] Request 广播：告诉所有 server 选了谁，其他 server 收回 offer；拿到 IP、掩码、网关、DNS（租期 lease）
+>
+> **English**
+>
+> The client **broadcasts a DHCPDISCOVER** (source 0.0.0.0, destination 255.255.255.255) because it has no IP address and does not know where a server is. Each DHCP server replies with a unicast **DHCPOFFER** of an address from its pool. The client **broadcasts a DHCPREQUEST** for the offer it accepts, so that every server learns which offer was chosen and the others can withdraw theirs. The chosen server confirms with a unicast **DHCPACK**. The client then has a leased IP address together with the subnet mask, default gateway and DNS server address.
+>
+> **中文解析**
+>
+> DHCP 用 UDP（server 67、client 68）：客户端没有 IP，没法先建 TCP 连接。两台 DHCP server 的地址池不能重叠。
+
+**\[Short Question · 5 marks · 60–80 words] SA11. Explain NAT and PAT. Why do hosts with private IP addresses need them to reach the Internet?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] Private 地址（10 / 172.16–31 / 192.168）在 Internet 上不唯一，Internet 路由器丢弃  
+> ☐ \[2 分] NAT：出口路由器把源 private 地址换成 public 地址，记在 NAT 表；回包把目的地址换回  
+> ☐ \[1 分] PAT：连端口号一起翻译，一个 public IP 服务很多台内部主机  
+> ☐ \[1 分] 好处：省 public 地址；隐藏内部地址
+>
+> **English**
+>
+> Private addresses are not unique and **Internet routers discard them**, so they cannot be used on the Internet. **NAT** on the border router replaces a host's private source address with a registered public address and records the mapping in a **NAT table**; replies to the public address are translated back to the private address. **PAT** also translates **port numbers**, so many internal hosts can share **one public IP address** at the same time. This saves public addresses and hides the internal addressing.
+>
+> **中文解析**
+>
+> 画 PAT 表时两台内部主机可能用同一个源端口（例如都是 3001），所以 PAT 必须把端口也换成不同的（5001、5002），回包才能分得开。
+
+**\[Short Question · 5 marks · 60–80 words] SA12. Compare an IP address with a MAC address. (Assignment 1, Q6)**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] IP = 逻辑地址，Layer 3；MAC = 物理地址，Layer 2  
+> ☐ \[1 分] IP 由管理员或 DHCP 分配，换网络会变；MAC 出厂烧在 NIC 上，不变  
+> ☐ \[1 分] IPv4 32 位点分十进制；MAC 48 位 12 个十六进制数（前 24 位 OUI）  
+> ☐ \[2 分] IP 用于跨网络选路（端到端不变）；MAC 用于本地网段送帧（每一跳都换）
+>
+> **English**
+>
+> An **IP address** is a **logical, Layer 3** address of 32 bits in dotted decimal, assigned manually or by DHCP; it changes when a device moves to another network, and routers use it to find a path **across networks** — it stays the same end to end. A **MAC address** is a **physical, Layer 2** address of 48 bits (12 hexadecimal digits, the first 24 bits being the vendor's OUI), **burned into the NIC** at manufacture; switches use it to deliver frames **within the local network**, and it is replaced at every router hop.
+>
+> **中文解析**
+>
+> 老师的比喻：MAC 是你的名字（能在房间里叫到你，但不能告诉别人你在哪），IP 是分级的通信地址（HK → UST → ISOM）。
+
+**\[Short Question · 5 marks · 60–80 words] SA13. Distinguish routed protocols from routing protocols. Explain why RIP and EIGRP might choose different paths to the same network.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] Routed protocol（IP）承载用户数据；routing protocol（RIP、EIGRP、OSPF）在路由器间交换信息、维护路由表  
+> ☐ \[1 分] RIP metric 只看 hop count  
+> ☐ \[1 分] EIGRP 默认看 bandwidth + delay  
+> ☐ \[1 分] 例：1 hop 的 64 Kbps 慢线 vs 2 hops 的 1.5 Mbps → RIP 选前者，EIGRP 选后者
+>
+> **English**
+>
+> A **routed protocol**, such as IP, carries user data and contains the addressing routers use to forward it. A **routing protocol**, such as RIP, EIGRP or OSPF, lets routers exchange routing information and build their routing tables — routing protocols determine the path that routed protocols follow. **RIP** chooses the route with the fewest **hops**, whereas **EIGRP** by default uses **bandwidth and delay**. So if one path is 1 hop over a 64 Kbps link and another is 2 hops over 1.5 Mbps links, RIP picks the slow 1-hop path and EIGRP picks the faster 2-hop path.
+>
+> **中文解析**
+>
+> Rout-ED = 被路由的（货物），Rout-ING = 去路由别人的（导航）。
+
+**\[Short Question · 5 marks · 60–80 words] SA14. When a router forwards a packet from one Ethernet network to another, which addresses change and which stay the same? Which two tables does the router consult?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] IP (S, D) 不变；MAC (S, D) 都换（源 = 出口接口，目的 = 下一跳）  
+> ☐ \[1 分] 拆旧帧头、按目的 IP 选路、用出口接口重新封装  
+> ☐ \[2 分] 先查路由表（目的网络 → 出口 + next hop），再查 ARP 表（next hop 或直连主机的 IP → MAC）
+>
+> **English**
+>
+> The router removes the incoming frame header, reads the **destination IP address** and keeps the **source and destination IP addresses unchanged**. It looks up the destination network in its **routing table** to find the outgoing interface and next hop, then looks up the next hop's (or, for a directly connected network, the destination host's) MAC address in its **ARP table**. It builds a new frame whose **source MAC is its outgoing interface** and whose **destination MAC is the next hop**, so both Layer 2 addresses change at every hop.
+>
+> **中文解析**
+>
+> Final Review 第 7、17 题。一句话：**IP 管终点，MAC 管下一站**。（有 NAT 的出口路由器会改源 IP，那是另一回事。）
+
+## M3 · TCP、窗口、端口
+
+**\[Short Question · 6 marks · 80–100 words] SA15 🔴. Describe the TCP three-way handshake, including the sequence and acknowledgment numbers in each step. Why is it needed?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] TCP 面向连接：传数据前先建立连接  
+> ☐ \[1 分] ① SYN，SEQ = x（客户端随机 ISN）  
+> ☐ \[2 分] ② SYN-ACK，SEQ = y（服务器 ISN），ACK = x + 1  
+> ☐ \[1 分] ③ ACK，SEQ = x + 1，ACK = y + 1 → 连接建立  
+> ☐ \[1 分] 作用：同步双方的 ISN、确认双方都能收发、商定端口
+>
+> **English**
+>
+> TCP is **connection-oriented**, so the two hosts set up a session before sending data. (1) The client sends a **SYN** segment with its randomly chosen initial sequence number, **SEQ = x**. (2) The server replies with **SYN-ACK**: its own initial sequence number **SEQ = y** and **ACK = x + 1**, meaning it expects byte x + 1 next. (3) The client sends an **ACK** with **SEQ = x + 1, ACK = y + 1**, and the connection is established. The handshake **synchronises both initial sequence numbers**, confirms that both sides can send and receive, and sets the port numbers for the conversation.
+>
+> **中文解析**
+>
+> ACK = 对方 SEQ + 1，因为 SYN 本身占一个序号。ISN 随机是为了防止别人猜到序号伪造数据（session hijacking）。题目给了数字（例如 ISN 10 / 20）就把 x、y 代进去：SYN 10 → SYN-ACK 20 / 11 → ACK 11 / 21。
+
+**\[Short Question · 8 marks · 100–150 words] SA16 🔴. Explain how TCP uses sequence numbers, expectational acknowledgments and windowing to provide reliable delivery and flow control.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] Sequence number：给数据编号，接收方据此排序、发现缺失  
+> ☐ \[2 分] Expectational ACK：ACK = 下一个想收的号；没收到确认 → 计时器到期重传  
+> ☐ \[2 分] Window size：不等 ACK 最多能发多少；一窗发完等一个 ACK，窗口往前滑  
+> ☐ \[2 分] 窗口大小可变：接收方每个 ACK 带 window advertisement，保护缓冲区；网络差就缩小（sliding window / flow control）
+>
+> **English**
+>
+> TCP numbers the data with **sequence numbers**, so the receiver can put segments back in order and detect missing ones. The receiver sends **expectational acknowledgments**: the ACK number is the **next sequence number it expects**, which confirms everything before it. The sender keeps unacknowledged segments in a retransmission queue with a timer and **retransmits** a segment if its timer expires before it is acknowledged. **Windowing** provides flow control: the **window size** is the maximum amount of unacknowledged data the sender may have outstanding, so it can send a whole window before waiting for an ACK — larger windows are more efficient. Each ACK carries a window advertisement, so the window can grow or shrink with the receiver's buffer and network conditions; as ACKs arrive the window **slides** forward.
+>
+> **中文解析**
+>
+> 画图题的文字版（见 [M3 §4](../final-m3/#4--画图题给-isn-和-window-size画-seq--ack-️) 时序图）。例：窗口 3、按段编号、SEQ 101–103 → 接收方回 ACK 104；如果 102 丢了，接收方只能回 ACK 102（重复），发送方超时重传 102。
+
+**\[Short Question · 6 marks · 表格或 80 words] SA17. Compare TCP and UDP, and give two applications that use each.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[2 分] TCP：面向连接、可靠（SEQ / ACK、重传）、有序、流量控制（窗口）  
+> ☐ \[2 分] UDP：无连接、不确认不重传、按到达顺序、开销小、快  
+> ☐ \[1 分] 两者都用端口号识别应用  
+> ☐ \[1 分] 例：TCP — HTTP、FTP、SMTP、Telnet；UDP — DNS、DHCP、TFTP、SNMP、VoIP
+>
+> **English**
+>
+> |              | TCP                                               | UDP                                 |
+> | ------------ | ------------------------------------------------- | ----------------------------------- |
+> | Connection   | Connection-oriented (three-way handshake)         | Connectionless                      |
+> | Reliability  | Sequence numbers, acknowledgments, retransmission | No acknowledgment or retransmission |
+> | Order        | Delivered in the order sent                       | Delivered as it arrives             |
+> | Flow control | Windowing                                         | None                                |
+> | Overhead     | Higher                                            | Low, fast                           |
+> | Port numbers | Yes                                               | Yes                                 |
+> | Examples     | HTTP, FTP, SMTP, Telnet                           | DNS, DHCP, TFTP, SNMP, VoIP         |
+>
+> **中文解析**
+>
+> 「错不得」选 TCP，「等不得」选 UDP。DNS 两个都用（查询 UDP 53）。
+
+**\[Short Question · 5 marks · 60–80 words] SA18. What is the purpose of port numbers? Explain how a PC with several browser windows keeps the conversations apart.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] 端口号把数据交给正确的应用进程，跟踪同时进行的不同对话  
+> ☐ \[1 分] 服务器用 well-known 端口（web 80），客户端事先知道  
+> ☐ \[2 分] 每个窗口用不同的动态源端口（49152–65535）；回包的目的端口区分窗口  
+> ☐ \[1 分] 这叫 multiplexing；连接由源 / 目的 IP + 源 / 目的端口 + 协议唯一确定
+>
+> **English**
+>
+> IP delivers data to the right computer; **port numbers deliver it to the right application** and keep track of different conversations at the same time. Servers listen on **well-known ports** (for example HTTP 80) that clients know in advance. Each browser window opens its own connection from a different **dynamic source port** (49152–65535), such as 49152 and 49153. Replies come back with that port as the destination port, so TCP passes each reply to the correct window. Running several conversations this way is called **multiplexing**.
+>
+> **中文解析**
+>
+> 两个窗口连同一台服务器也不会混：源 IP、目的 IP、目的端口都相同，只有客户端的源端口不同。
+
+## M4 · 子网
+
+**\[Short Question · 3 marks · 3 points] SA19. Give three reasons for dividing a network into subnets.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] 把广播限制在每个子网内  
+> ☐ \[1 分] 减少整体流量、提高性能  
+> ☐ \[1 分] 子网之间要经过路由器，可以用 ACL 控制访问 / 更易管理和隔离
+>
+> **English**
+>
+> 1. It **contains broadcast traffic** within each subnet.
+> 2. It **reduces overall network traffic** and improves performance.
+> 3. Traffic between subnets must pass through a **router**, where access can be controlled (for example with ACLs), making the network easier to manage and more secure. To the Internet, the organisation still appears as one network.
+>
+> **中文解析**
+>
+> 板书例子：考试服务器和学生 PC 放在不同子网，学生访问必须经过路由器，路由器就能用 ACL 拦住。
+
+**\[Short Question · 5 marks · 60–100 words] SA20. Explain how to determine the minimum and maximum number of bits to borrow for given subnet and host requirements, using 172.16.0.0 with 100 subnets of 200 hosts as an example.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] 定 Class 和 host 位：172 → Class B，16 位  
+> ☐ \[1 分] 最少借：2^s ≥ 100 → s = 7  
+> ☐ \[2 分] 最多借：2^h − 2 ≥ 200 → h ≥ 8 → s ≤ 16 − 8 = 8  
+> ☐ \[1 分] 结论：借 7 或 8 位 → 255.255.254.0 或 255.255.255.0；主机最多选 min，子网最多选 max
+>
+> **English**
+>
+> First find the class: 172.16.0.0 is **Class B**, so there are **16 host bits** to borrow from. The **number of subnets** sets the **minimum**: 2^s ≥ 100 gives **s = 7** (2^7 = 128). The **number of hosts** sets the **maximum**: each subnet needs 2^h − 2 ≥ 200, so **h ≥ 8** (254 hosts), leaving at most 16 − 8 = **8** bits to borrow. Borrowing **7 or 8 bits** works, giving masks **255.255.254.0 (/23)** or **255.255.255.0 (/24)**. To maximise hosts per subnet choose the minimum; to maximise the number of subnets choose the maximum.
+>
+> **中文解析**
+>
+> 子网数不减 2（2^s），主机数要减 2（2^h − 2）。拓扑题里「地址数」要把路由器接口也算进去。速查：[子网掩码速查](../final-mask-size/)。
+
+**\[Short Question · 4 marks · 60 words + 例子] SA21. Explain how a router uses ANDing to find the subnet of a destination address. Use 192.168.10.65 with mask 255.255.255.224 as an example.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] 目的 IP 和子网掩码逐位 AND（1 AND 1 = 1，其余 0）  
+> ☐ \[1 分] 结果 = 子网地址（host 位清零）  
+> ☐ \[1 分] 例：65 = 010 00001，AND 111 00000 = 010 00000 = 64 → 192.168.10.64  
+> ☐ \[1 分] 用子网地址查路由表，从对应接口转发
+>
+> **English**
+>
+> The router performs a bitwise **AND** between the destination IP address and the subnet mask (1 AND 1 = 1; any other combination = 0). Mask bits of 1 keep the network and subnet bits; mask bits of 0 clear the host bits, so the result is the **subnet address**. For 192.168.10.65 / 255.255.255.224, only the last octet matters: 65 = 010 00001 and 224 = 111 00000, giving 010 00000 = 64. The packet belongs to **192.168.10.64**, which the router looks up in its routing table to choose the outgoing interface.
+>
+> **中文解析**
+>
+> 心算：间隔 = 256 − 224 = 32，65 落在 64–95 → 子网 64。速查：[二进制速算](../final-binary/)。
+
+**\[Short Question · 4 marks · 60 words] SA22 🟢. Why do ping and tracert give different results for the same destination? (Assignment 1, Q9)**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[1 分] 两者都用 ICMP  
+> ☐ \[1 分] ping 用足够大的 TTL，直接到达目的地，只收到 echo reply  
+> ☐ \[1 分] tracert 从 TTL = 1 开始逐次 + 1  
+> ☐ \[1 分] 每台路由器把 TTL 减到 0 时回 ICMP Time Exceeded → 逐跳显示路径
+>
+> **English**
+>
+> Both use **ICMP**. **Ping** sends echo requests with a large enough TTL to reach the destination, so it only receives **echo replies** from the final host. **Tracert** starts with **TTL = 1** and increases it by one each round; each router that decrements the TTL to 0 discards the packet and returns an **ICMP Time Exceeded** message, so tracert discovers the routers hop by hop until the destination replies.
+>
+> **中文解析**
+>
+> 这是作业内容，课件只简单提到 ICMP（TCP/IP 协议族图里的 IP support）。开卷带上这一题就够了。

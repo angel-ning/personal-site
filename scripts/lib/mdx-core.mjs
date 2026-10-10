@@ -44,6 +44,8 @@ import { simulate as simulateBaseline, SCENARIOS as BASELINE_SCENARIOS, BASELINE
 import { findExercise, cellText as sqlxCell, parseInline, levelDots, expectSummary } from "../../src/components/mdx/sql-practice-logic.mjs";
 import { topologyById, requirements as addrRequirements, addressPlan, routingTables, walkPacket, topologySvg, toStaticSvg } from "../../src/components/mdx/addressing-logic.mjs";
 import { SEQACK_PRESETS, seqAckLadder, ladderSvg, arrowLabel } from "../../src/components/mdx/seqack-logic.mjs";
+import { toBits, toHex, readOctet, decompose, andTable, BINARY_PRESETS, AND_PRESETS } from "../../src/components/mdx/binary-logic.mjs";
+import { prefixRows, fitRequirements, fieldSplit, NEED_PRESETS, SPLIT_PRESETS } from "../../src/components/mdx/mask-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -810,6 +812,39 @@ const components = {
       note(`（网页版此处可以自己填两边的 ISN、window size、段数、编号方式和丢失的段；下面是「${p.label}」）`),
       para({ type: "image", url: img, alt: p.label }),
       table(["#", "方向", "段", "为什么"], l.events.map((e, k) => [String(k + 1), `${e.from} → ${e.to}`, arrowLabel(e), e.note])),
+    ];
+  },
+  BinaryLab() {
+    const conv = BINARY_PRESETS.map(readOctet).filter((n, i, all) => all.indexOf(n) === i).map((n) => [String(n), `${toBits(n).slice(0, 4)} ${toBits(n).slice(4)}`, toHex(n), decompose(n).join(" + ") || "0"]);
+    const ands = AND_PRESETS.map((p) => {
+      const t = andTable(p.ip, p.mask);
+      return [`${p.ip} /${t.prefix}`, `${toBits(t.ip[t.focus])} AND ${toBits(t.mask[t.focus])} = ${toBits(t.net[t.focus])}（第 ${t.focus + 1} 段）`, strong(t.net.join(".")), t.bc.join(".")];
+    });
+    return [
+      note("（网页版此处可以输入任意一个 octet 看二进制 / 十六进制 / 位权，并计算任意地址 AND 掩码；下面是几个例子）"),
+      table(["十进制", "二进制", "Hex", "位权相加"], conv),
+      table(["地址 / 掩码", "关键那一段的 AND", "子网地址", "广播地址"], ands),
+    ];
+  },
+  MaskSizeLab() {
+    const fits = NEED_PRESETS.map((p) => {
+      const f = fitRequirements(p.cls, p.subnets, p.hosts);
+      return [p.label, String(f.minBorrow), String(f.maxBorrow), strong(f.feasible ? (f.minPrefix === f.maxPrefix ? `/${f.minPrefix}` : `/${f.minPrefix} – /${f.maxPrefix}`) : "做不到（min > max）")];
+    });
+    const splits = SPLIT_PRESETS.map((p) => {
+      const r = fieldSplit(p.ip, p.mask);
+      const f = r.bits;
+      const shown = `${f.slice(0, r.base)} | ${f.slice(r.base, r.prefix)} | ${f.slice(r.prefix)}`;
+      return [`${p.ip} /${r.prefix}（${p.note}）`, { type: "inlineCode", value: shown }, `${r.subnetBits} = #${r.subnetNumber}`, strong(r.network), r.broadcast];
+    });
+    const rows = (cls) => prefixRows(cls).map((r) => [`/${r.prefix}`, r.mask, String(r.borrow), r.subnets.toLocaleString("en-US"), r.hosts.toLocaleString("en-US"), `${r.block}（第 ${r.octet} 段）`]);
+    const head = ["Prefix 前缀", "Subnet mask 掩码", "Borrowed 借位", "Subnets 子网数", "Hosts 每子网主机", "Block 间隔"];
+    return [
+      note("（网页版此处可以输入需求找可行掩码，或输入地址 + 掩码看 Network | Subnet | Host 三段；下面是预设题目的结果和 Class C / B 的全部掩码）"),
+      table(["需求", "最少借", "最多借", "可行掩码"], fits),
+      table(["地址 / 掩码", "Network | Subnet | Host", "子网号", "子网地址", "广播"], splits),
+      para(strong("Class C")), table(head, rows("C")),
+      para(strong("Class B")), table(head, rows("B")),
     ];
   },
   CommandSortQuiz() {

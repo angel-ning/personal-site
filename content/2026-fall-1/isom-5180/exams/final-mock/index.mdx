@@ -1,7 +1,7 @@
 ---
 title:
-  en: "Final Mock Paper · ISOM 5180"
-  zh: "期末预测卷 · ISOM 5180"
+  en: "Final Mock Paper"
+  zh: "期末预测卷"
 summary:
   en: "A predicted final paper built from the exam guideline, the Final Review deck, SubnetQuestions and the assignments: 20 multiple-choice questions (five choose-two / choose-three) and nine drawing and calculation questions — topology addressing, routing tables, IP / MAC per hop, a SEQ / ACK ladder with a window size, a switch MAC table, subnet requirements, PAT and ARP. Every answer starts hidden."
   zh: "按期末 guideline、Final Review、SubnetQuestions 和三次作业出的一套预测卷：20 道选择题（5 道多选）+ 9 道画图 / 计算题——拓扑编址、路由表、每跳 IP / MAC、给 window size 画 SEQ / ACK、交换机 MAC 表、按需求借位、PAT、ARP。所有答案一开始都是隐藏的。"
