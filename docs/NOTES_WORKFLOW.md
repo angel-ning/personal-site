@@ -118,6 +118,12 @@ tags: [IPv4, NAT, DHCP]
 | `<StatefulLab />` | 同一批包分别交给 stateless 包过滤（固定规则）和 stateful 防火墙（规则 + state table）：任意顺序发包，看伪造「回包」和连接关闭后的迟到包两者判断的差别（`stateful-logic.mjs`，ISOM 5280 L3） |
 | `<VpnModeLab />` | VPN transport / tunnel 模式 + proxy 对照：包的结构（哪层加密）、站在咖啡店 Wi-Fi / 内网 / 目的服务器看能读到什么、目的地看到的发送者是谁（`vpn-logic.mjs`） |
 | `<L3SortQuiz set="fw\|where\|outcome\|method\|relay\|tool\|zt\|why" />` | ISOM 5280 L3 点选练习：防火墙类型 / network 还是 host / TP·FP·FN·TN·Noise / 检测方法 / proxy·tunnel·transport / EDR·SIEM·XDR·SOAR·SOC·蜜罐 / Zero Trust 原则 / 这个问题要靠哪个工具解决（题目在 `data/l3-quiz.json`，共用 `SortQuizView`） |
+| `<L4SortQuiz set="why\|key\|goal\|biz" />` | ISOM 5280 L4 点选练习：问题 → 密码工具 / 用谁的哪把钥匙 / CIA + Nonrepudiation 哪个目标 / 业务场景靠哪种技术（`data/l4-quiz.json`） |
+| `<CipherLab />` | Vigenère（逐字母右移）与 Caesar block 换位（竖填横读）：可自己输入明文和密钥，默认是课件 p.6、p.7 的例子（`cipher-logic.mjs`） |
+| `<KeyCountLab />` | n 个人两两通信：对称 n(n−1)/2 vs 非对称 2n 把钥匙（`cipher-logic.mjs`） |
+| `<HashLab />` | SHA-256 雪崩效应：两条消息的哈希逐字符高亮差异、统计不同的位数（纯 JS SHA-256，`hash-logic.mjs`） |
+| `<ChainLab />` | 三个 block 的哈希链：改任何一块的交易，看从哪块开始失效；可「重新计算整条链」（`hash-logic.mjs`） |
+| `<TlsLab />` | HTTPS 握手六步：每步用了哪种密码工具、解决什么、窃听者看到什么（`tls-logic.mjs`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 

@@ -48,6 +48,9 @@ import { toBits, toHex, readOctet, decompose, andTable, BINARY_PRESETS, AND_PRES
 import { prefixRows, fitRequirements, fieldSplit, NEED_PRESETS, SPLIT_PRESETS } from "../../src/components/mdx/mask-logic.mjs";
 import { DEMO as STATEFUL_DEMO, STATELESS_RULES, runStateful } from "../../src/components/mdx/stateful-logic.mjs";
 import { MODES as VPN_MODES, MODE_IDS as VPN_MODE_IDS } from "../../src/components/mdx/vpn-logic.mjs";
+import { vigenere, transposition, CIPHER_PRESETS, keyCount, KEY_COUNT_PRESETS } from "../../src/components/mdx/cipher-logic.mjs";
+import { avalanche, HASH_PRESETS, chainCheck, sealChain, CHAIN_DATA } from "../../src/components/mdx/hash-logic.mjs";
+import { TLS_STEPS } from "../../src/components/mdx/tls-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -66,6 +69,7 @@ const sqlPractice = readJson("src/components/mdx/data/sql-practice.json");
 const aiTrendQuiz = readJson("src/components/mdx/data/ai-trend-quiz.json");
 const txnQuiz = readJson("src/components/mdx/data/txn-quiz.json");
 const l3Quiz = readJson("src/components/mdx/data/l3-quiz.json");
+const l4Quiz = readJson("src/components/mdx/data/l4-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -854,6 +858,51 @@ const components = {
     return [
       note("（网页版此处是「这条语句属于哪一类」的点选练习；下表是全部题目和答案）"),
       table(["语句", "类别", "理由"], COMMAND_ITEMS.map((it) => [{ type: "inlineCode", value: it.sql }, strong(it.a), it.why])),
+    ];
+  },
+  L4SortQuiz(_node, a) {
+    const set = l4Quiz[a.set] ?? l4Quiz.why;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  CipherLab() {
+    const v = vigenere(CIPHER_PRESETS.vigenere.plain, CIPHER_PRESETS.vigenere.key);
+    const t = transposition(CIPHER_PRESETS.transposition.plain, CIPHER_PRESETS.transposition.size);
+    return [
+      note("（网页版此处可以自己输入明文和密钥，看 Vigenère 逐字母右移、Caesar block 方阵怎么填；下面是课件例子）"),
+      para(strong("Vigenère（p.6）："), text(`明文 ${v.plain}，密钥 ${CIPHER_PRESETS.vigenere.key} 重复成 ${v.keyStream}，逐字母右移 → 密文 ${v.cipher}`)),
+      table(["明文", "密钥", "右移", "密文"], v.steps.map((s) => [s.p, s.k, String(s.shift), s.c])),
+      para(strong("Caesar block（p.7）："), text(`空格写成 _，竖着填进 ${t.n}×${t.n} 方阵，横着读出 → 密文 ${t.cipher}`)),
+      table(Array.from({ length: t.n }, (_, i) => `列 ${i + 1}`), t.grid.map((r) => r)),
+    ];
+  },
+  KeyCountLab() {
+    return [
+      note("（网页版此处可以输入人数 n，比较对称和非对称各需要几把钥匙）"),
+      table(["人数 n", "对称 n(n−1)/2", "非对称 2n"], KEY_COUNT_PRESETS.map((n) => { const k = keyCount(n); return [String(n), k.symmetric.toLocaleString("en-US"), k.asymmetric.toLocaleString("en-US")]; })),
+    ];
+  },
+  HashLab() {
+    return [
+      note("（网页版此处可以输入任意两条消息，比较 SHA-256 哈希有多少位不同；下表是预设例子）"),
+      table(["对比", "消息 A 的哈希", "消息 B 的哈希", "不同的位"], HASH_PRESETS.map((p) => { const r = avalanche(p.a, p.b); return [`${p.note}：「${p.a}」vs「${p.b}」`, { type: "inlineCode", value: r.ha.slice(0, 16) + "…" }, { type: "inlineCode", value: r.hb.slice(0, 16) + "…" }, r.same ? "0（完全相同）" : `${r.bits} / 256`]; })),
+    ];
+  },
+  ChainLab() {
+    const stored = sealChain(CHAIN_DATA);
+    const tampered = [...CHAIN_DATA];
+    tampered[0] = "Alice → Bob 99 BTC";
+    const show = (bs) => table(["Block", "交易", "Prev Hash", "Hash", "状态"], bs.map((b) => [String(b.i + 1), b.data, b.prev.slice(0, 10) + "…", b.hash.slice(0, 10) + "…", b.changed ? "✗ 内容被改，哈希变了" : b.brokenLink ? "✗ Prev Hash 对不上" : "✓ 有效"]));
+    return [
+      note("（网页版此处可以直接改任何一块的交易，看哈希链从哪里断开）"),
+      para(strong("原始的链")), show(chainCheck(CHAIN_DATA, stored)),
+      para(strong("把第 1 块改成「Alice → Bob 99 BTC」之后")), show(chainCheck(tampered, stored)),
+    ];
+  },
+  TlsLab() {
+    return [
+      note("（网页版此处可以一步步点击 HTTPS 握手）"),
+      table(["步骤", "用了什么", "发生了什么", "解决了什么", "窃听者看到"], TLS_STEPS.map((s) => [s.title, strong(s.tool), s.what, s.solves, s.sees])),
     ];
   },
   L3SortQuiz(_node, a) {

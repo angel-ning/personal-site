@@ -3,10 +3,10 @@ title:
   en: "Final Review L4 · Cryptography & PKI"
   zh: "期末复习 L4 · 密码学与 PKI"
 summary:
-  en: "Lesson 4 for the final: slide definitions, what to understand and likely questions for symmetric and asymmetric encryption, hashing, digital signatures, certificates and CAs, the value of PKI, hybrid cryptography in TLS, blockchain, crypto risks and quantum computing."
-  zh: "第 4 课期末版：对称与非对称加密、哈希、数字签名、数字证书与 CA、PKI 的价值、TLS 里的混合加密、区块链、密码学风险与量子计算——每个点给课件原文、需要理解的逻辑和可能的问法。"
+  en: "Lesson 4 for the final, built as one chain where each tool fixes the previous one's gap: classical ciphers, symmetric and asymmetric encryption, hashing, digital signatures, certificates and CAs, the value of PKI, hybrid cryptography in TLS, blockchain, crypto risks and quantum computing — with worked examples and hands-on labs."
+  zh: "第 4 课期末版：按「每个工具都在补上一个的漏洞」串成一条线——古典密码、对称与非对称、哈希、数字签名、证书与 CA、PKI 的价值、TLS 混合加密、区块链、风险与量子计算；每个点有课件原文、类比、算例和互动练习。"
 week: 4
-date: 2026-10-08
+date: 2026-10-11
 tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS, Blockchain]
 ---
 
@@ -14,10 +14,12 @@ tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS
 
 **课件**：Lesson 4（45 页）+ PKI 专题（Prof. Weiyin Hong，16 页）　**详细笔记**：[第 4 课复习笔记](../../lectures/lesson-04/)　**练习题**：[L4 练习题](../practice-l4/)　**总览**：[期末总复习](../final-review/)
 
-> **怎么读这一页**：每个知识点按 **课件原文 → 需要理解 → 可能的问法** 写。
+> **怎么读这一页**：先读 §0 把所有工具串成一条线，再逐节看。每个知识点按 **课件原文 → 需要理解（类比 + 算例）→ 可能的问法** 写。
 >
 > 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可
 > 掌握要求：📝 **默写**（能写出名字、定义、清单）· 🔍 **区分**（给场景能判断是哪一个，选择题）· 🧮 **计算** · ✍️ **分析**（能写成有结构的一段论述，长题）
+>
+> **10 月 11 日修订**：按 L3 的讲法重写——每个工具「解决了上一步什么问题、又留下什么新问题」；补了类比、课件算例、每一步攻击者能做什么、证书链、TLS 逐步拆解、WEP–WPA3 对比；新增 6 个互动练习（古典密码、钥匙数量、SHA-256 雪崩、哈希链、TLS 握手、四组点选题）。
 
 <Callout type="exam" title="这一课在期末怎么考（老师点名）">
 
@@ -32,16 +34,16 @@ tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS
 
 {/* OUTLINE */}
 
-- **[0. 一条主线：问题不断升级](#0-一条主线问题不断升级)**
+- **[0. ★ 串起来：每个工具都在补上一个的漏洞 ✍️](#0--串起来每个工具都在补上一个的漏洞-️)**
 - **[1. 🟡 加密基础（p.3–8）📝🔍](#1--加密基础p38)**
 - **[2. 🔴 对称加密 Symmetric Encryption（p.9–11、p.15）📝✍️](#2--对称加密-symmetric-encryptionp911p15️)**
 - **[3. 🔴 非对称加密 Asymmetric Encryption（p.12–14、p.16，PKI p.14）📝🔍](#3--非对称加密-asymmetric-encryptionp1214p16pki-p14)**
-- **[4. 🔴 哈希 Hashing（p.19–22）📝🔍](#4--哈希-hashingp1922)**
-- **[5. 🔴 Hash → 数字签名 → 数字证书（PKI 专题 p.15–19）📝✍️](#5--hash--数字签名--数字证书pki-专题-p1519️)**
+- **[4. 🔴 哈希 Hashing（p.19–23）📝🔍](#4--哈希-hashingp1923)**
+- **[5. 🔴 Hash → 数字签名 → 数字证书（PKI 专题 p.15–22）📝✍️](#5--hash--数字签名--数字证书pki-专题-p1522️)**
   - [5.1 Step ①：只用 Hash](#51-step-只用-hash)
   - [5.2 Step ②：加上数字签名](#52-step-加上数字签名)
   - [5.3 Step ③：加上数字证书](#53-step-加上数字证书)
-- **[6. 🔴 PKI 的价值与密码学四个目标（p.27–28）📝✍️](#6--pki-的价值与密码学四个目标p2728️)**
+- **[6. 🔴 PKI 的价值与密码学四个目标（p.27–29）📝✍️](#6--pki-的价值与密码学四个目标p2729️)**
 - **[7. 🔴 Hybrid Cryptography 与 TLS（p.16–17，PKI p.23–30）📝✍️](#7--hybrid-cryptography-与-tlsp1617pki-p2330️)**
 - **[8. 🔴 业务里怎么用（老师强调）✍️](#8--业务里怎么用老师强调️)**
 - **[9. 🟡 Blockchain（p.30–34）📝🔍](#9--blockchainp3034)**
@@ -53,38 +55,83 @@ tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS
 
 ---
 
-## 0. 一条主线：问题不断升级
+## 0. ★ 串起来：每个工具都在补上一个的漏洞 ✍️
+
+整节课只在回答一个问题：**Alice 怎么把一样东西安全地交给一个可能从没见过的 Bob？** 每出现一个新工具，都是因为上一个工具有解决不了的问题：
 
 ```
-① 只让对方看懂               → 加密（对称 / 非对称）
-   ↓ 对称密钥怎么安全交给对方？非对称解决了分发
-② 确认内容没被改             → Hash（只管完整性，没有密钥）
-   ↓ 中间人能改内容再重算 Hash
-③ 确认是谁发的、不能抵赖       → Digital Signature（用发送方私钥签摘要）
-   ↓ 怎么知道这把公钥真是对方的？
-④ 确认公钥属于对方            → Digital Certificate + CA = PKI
-   ↓ 非对称太慢，不能全程用
-⑤ 又快又安全                  → Hybrid（TLS：非对称握手 + 对称传输）
+① 对称加密（AES）                   同一把钥匙锁、同一把钥匙开；快
+      ↓ 问题：钥匙怎么安全地交给对方？人一多钥匙数量爆炸；分不清是谁发的
+② 非对称加密（RSA / ECC）           公钥公开、私钥自己留；不用事先交换钥匙
+      ↓ 问题：只解决了「看不懂」，没解决「有没有被改」；而且很慢
+③ Hash（MD5 / SHA-2）               给内容算一个指纹，改一个字指纹全变
+      ↓ 问题：Hash 没有密钥，中间人改了内容可以重算一个新指纹
+④ 数字签名（私钥签摘要）            只有 Alice 签得出来 → 发现篡改 + 证明是谁 + 不可抵赖
+      ↓ 问题：Bob 怎么知道这把公钥真的是 Alice 的？攻击者可以拿自己的密钥对冒充
+⑤ 数字证书 + CA = PKI               受信任的第三方背书「这把公钥属于 Alice」
+      ↓ 问题：非对称太慢，不能整个会话都用
+⑥ Hybrid（TLS / PGP）               非对称验证身份、交换 session key，之后全部用对称
 ```
 
-每一步都是「**解决了上一步的什么问题、又留下了什么新问题**」。长题最爱这样问。
+之后两个「应用 + 风险」：**Blockchain** 是把 ③ 哈希链 + ④ 签名 + 分布式账本组合起来的业务案例；**风险与量子计算** 说明再好的算法，也会因为密钥管理不善或算法过时而失效。
+
+**一个贯穿全课的类比：寄箱子**
+
+| 工具 | 类比 |
+|---|---|
+| 对称加密 | 一把钥匙配两份，你一份我一份——但第一次怎么把钥匙交给对方？ |
+| 非对称加密 | 你寄给我一把**打开的挂锁**（公钥），谁都能把箱子锁上，只有我有开锁的钥匙（私钥） |
+| Hash | 给箱子里的东西拍一张照片——谁都能重新拍一张假照片 |
+| 数字签名 | 在照片上盖**只有你才有的印章** |
+| 数字证书 / CA | 去公证处证明「这个印章真的是你的」 |
+| Hybrid | 先用挂锁寄过去一把钥匙，之后大家都用这把钥匙开保险箱 |
+
+| 工具 | 解决了什么 | 留下什么问题 | 做到哪个目标（p.29） |
+|---|---|---|---|
+| 对称 | 快速加密大量数据 | 密钥分发、不可扩展、无不可抵赖 | C |
+| 非对称 | 不用事先交换密钥 | 慢；没管完整性 | C（+ 密钥分发） |
+| Hash | 发现内容被改 | 没有密钥，可被重算 | I（脆弱） |
+| 数字签名 | 只有私钥持有人签得出 | 公钥属于谁？ | I + A + N |
+| 证书 / CA | 公钥和身份绑定 | 要管理生命周期（吊销） | A（身份信任） |
+| Hybrid | 又快又安全 | 密钥管理仍是关键 | C + I + A |
+
+<L4SortQuiz set="why" />
+
+<Callout type="warn" title="三个最容易混的地方">
+
+1. **「Private-key encryption」是对称加密的别名**（p.9），不是「用私钥加密」。非对称的别名是 public-key encryption。
+2. **「用私钥加密摘要」= 签名，不是保密**：谁都有公钥，谁都能解开，所以它证明的是「谁签的」，不是「谁能读」。要保密，用的是**收件人的公钥**。
+3. **Hash 不是加密**：没有密钥、不可逆、输出长度固定。加密是可逆的（有钥匙就能解回原文）。
+
+</Callout>
 
 ---
 
 ## 1. 🟡 加密基础（p.3–8）📝🔍
 
+<Figure src="images/page_06.png" caption="Vigenère Square：SACK GAUL SPARE NO ONE + 密钥 ITALY → ATCVEINLDNIKEYMWGE" source="Slide 6" />
+
 **课件原文**
 
 - Cryptography: **algorithm / formula to protect data**；最早的例子 **Scytale（公元前 487 年）**
-- Encryption: **process of converting a message into a form that is unreadable to unauthorized people**；Plaintext → Ciphertext
+- Encryption: **process of converting a message into a form that is unreadable to unauthorized people**；Plaintext → Ciphertext（加密）、Ciphertext → Plaintext（解密），两边都要 key
 - **Substitution Cipher**：Vigenère Square（26×26 字母表，用户定义的 encryption key 决定用哪一行）
-- **Transposition**（block cipher）：打乱顺序，keep a message secret from unintended audiences
+- **Transposition**（block cipher）：keep a message secret from unintended audiences；Caesar block：fit the text to a number square（e.g. 5 by 5）
 
 **需要理解**
 
-- **加密 = 算法 + 密钥**。Scytale 里缠绕书写的规则是算法，木棍的粗细是密钥。
-- 加密强度由算法和密钥共同决定，**密钥更重要**（p.36）。
-- Substitution 换的是字母本身，Transposition 换的是字母位置。
+- **加密 = 算法 + 密钥**。Scytale：缠绕书写的规则是算法，木棍的粗细是密钥。算法通常是公开的（AES、RSA 全世界都知道怎么算），**秘密全在密钥里**——所以 p.36 说 *key more important*。
+- **Substitution 换「字母是什么」，Transposition 换「字母在哪里」**。
+  - Vigenère（课件例子）：每个字母按密钥字母右移。S + I(8) = A，A + T(19) = T，C + A(0) = C，K + L(11) = V……密钥 ITALY 不够长就重复。
+  - Caesar block（课件例子）：空格写成 _，把 SACK_GAUL_SPARE_NO_ONE 竖着填进 5×5 方阵，再横着读 → SGS_NAAPNECUAO_KLR____EO。字母一个没变，只换了位置。
+
+<CipherLab />
+
+<Callout type="extra" title="古典密码为什么不安全（课件没讲）">
+
+字母频率是藏不住的：英文里 E 最多，换字母之后「出现最多的那个字母」大概率就是 E；换位置之后字母本身都还在。现代算法（AES、RSA）基于数学难题，密钥空间大到暴力试不完，这些弱点才被堵上。
+
+</Callout>
 
 <MCQ q="（课件原题）Which term describes the information used in conjunction with an algorithm to create the ciphertext from the plaintext?" a="Cipher" b="Code" c="Clear text" d="Key" answer="D">
 *EN:* Encryption = algorithm + **key**; the key is the information used with the algorithm to turn plaintext into ciphertext.
@@ -96,6 +143,8 @@ tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS
 
 ## 2. 🔴 对称加密 Symmetric Encryption（p.9–11、p.15）📝✍️
 
+<Figure src="images/page_10.png" caption="Figure 10-5：Rachel 生成一把 secret key，要用 out of band（另找渠道，图上是 private courier）交给 Alex，双方用同一把钥匙加解密" source="Slide 10" />
+
 **课件原文**
 
 > - **Same 'secret' key** is used both to encrypt and decrypt the message, also known as **private-key encryption**.
@@ -103,19 +152,33 @@ tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS
 > - Both sender and receiver **must possess the same secret key**.
 > - If either copy of the key is compromised, an intermediate can decrypt and read messages **without sender / receiver knowledge**.
 
-标准算法 **AES**：金融（交易、账户、支付数据，**PCI DSS** 合规）、加密钱包私钥和助记词、**HTTPS / TLS（after secret key exchange）**、WPA2 / WPA3。
+标准算法 **AES**：金融（交易、账户、支付数据，**PCI DSS** 合规）、加密钱包私钥和助记词、**HTTPS / TLS（after secret key exchange）**、WPA2 / WPA3（192 / 256-bit AES）。
 
 p.15「Systemic Key Cryptography」：
 - Number of keys for n parties：**n(n−1)/2**
 - Advantage：**simple, fast (1,000–10,000× faster than asymmetric)**；theoretically strong if key is secured
 - Disadvantage：**key distribution is a major problem**；**not scalable for larger groups**；**key must be regenerated often**；**does not implement nonrepudiation**
 
-**需要理解**
+**需要理解：类比「一把钥匙配两份」**
 
-- 对称的根本问题是**密钥分发**：要先安全地把密钥交给对方，而「安全地交」本身就需要安全通道（先有鸡还是先有蛋）。
-- 人数一多，密钥数量爆炸：10 人要 45 把，100 人要 4,950 把。
-- 双方共用一把钥匙，所以**无法证明消息是哪一方发的**（没有不可抵赖）。
-- 「Private-key encryption」是**对称**加密的别名，不要和非对称里的「私钥」搞混。
+你和朋友各拿一份同样的钥匙，用同一个保险箱传东西。好用、开锁快，但有四个麻烦，正好是课件的四个缺点：
+
+| 缺点 | 具体是什么 | 例子 |
+|---|---|---|
+| **Key distribution** | 第一次怎么把钥匙交给对方？在网上发 → 可能被截获；要安全地发，又需要一条安全通道——先有鸡还是先有蛋 | 图上 Rachel 只能找 private courier 送钥匙（out of band） |
+| **Not scalable** | 每两个人要一把单独的钥匙 | 10 人 45 把，100 人 4,950 把，1,000 人 499,500 把（见下面的计算器） |
+| **Regenerated often** | 用久了被破解或泄露的风险变大，要常换；每换一次又要重新分发 | 每次换钥匙都要再找一次快递员 |
+| **No nonrepudiation** | 两个人拿的是同一把钥匙，谁都能「冒充」对方写一条 | Alex 收到一条转账指令，Rachel 可以说「这是你自己用钥匙伪造的」 |
+
+还有课件第 4 点：**钥匙一旦被偷，对方能在你们完全不知情的情况下读所有消息**——没有任何告警。
+
+<KeyCountLab />
+
+<Callout type="warn" title="命名陷阱">
+
+「Private-key encryption」= 对称加密的别名，因为那把钥匙是两人「私下共享」的。和非对称里的 private key（只有一个人有）是两回事。选择题里 *private-key encryption*、*symmetric encryption*、*AES* 是同一类。
+
+</Callout>
 
 <QA q="（A2 原题 / A2 question）List 3 challenges with symmetric cryptography.（9 marks）">
 
@@ -135,7 +198,7 @@ p.15「Systemic Key Cryptography」：
 
 ## 3. 🔴 非对称加密 Asymmetric Encryption（p.12–14、p.16，PKI p.14）📝🔍
 
-<Figure src="images/page_13.png" caption="Public Key Encryption：用 Rachel 的公钥加密，只有 Rachel 的私钥能解" source="Slide 13" />
+<Figure src="images/page_13.png" caption="Figure 10-6：Rachel 把公钥放进 public key repository；Alex 用 Rachel 的公钥加密，只有 Rachel 的私钥能解" source="Slide 13" />
 
 **课件原文**
 
@@ -143,18 +206,45 @@ p.15「Systemic Key Cryptography」：
 > - **Either key can be used to encrypt** a message, but then **the other key is required to decrypt** it. If Key A encrypts, only Key B can decrypt.
 > - Greatest value when one key serves as **private key** and the other as **public key**. Public keys are freely shared; private key is kept secret.
 
-PKI 专题 p.14 的 Benefits：**easier key management and distribution**；**the private key is never distributed**, therefore more secure；**scalable**。Weakness：**slow to generate fresh strong keys**；**slow to encrypt**。
+PKI 专题 p.14 的 Benefits：**easier key management and distribution**；**the private key is never distributed**, therefore more secure；**scalable**。Weakness：**slow to generate fresh strong keys**；**slow to encrypt**。RSA（1977）：no published methods to defeat the system if a **large enough key** is used。
 
 常见算法：**RSA**、**Diffie-Hellman**、**ECC**。用途（Protect data in motion）：**Secure web traffic**（TLS 握手用 RSA 等验证服务器身份、协商临时共享密钥）；**Remote access (SSH)**（ECDH）。
 
-**需要理解：哪把钥匙干什么（最常考）**
+**需要理解：类比「打开的挂锁」**
 
-| 目的 | 发送方用 | 接收方用 |
+Bob 做了很多把一样的**挂锁**，打开着到处送人（公钥），开锁的钥匙只有他自己有（私钥）。谁想给 Bob 寄东西，就拿一把挂锁「咔」地锁上箱子——锁上以后连寄件人自己都打不开，只有 Bob 能开。
+
+- 它一次解决了对称的两个问题：**不用事先交换钥匙**（挂锁本来就可以公开发）；**可扩展**（n 个人只要 n 对，见上面计算器）。
+- 代价：**慢**，比对称慢 1,000–10,000 倍，所以不拿来加密大量数据（→ §7 Hybrid）。
+
+<Figure src="images/page_14.png" caption="Sender use which key? How about receiver?——Alice 用 Bob 的公钥加密，Bob 用 Bob 的私钥解密" source="Slide 14" />
+
+**哪把钥匙干什么（最常考）**
+
+| 目的 | 发送方 Alice 用 | 接收方 Bob 用 | 口诀 |
+|---|---|---|---|
+| **保密**（只有 Bob 能读） | **Bob 的公钥**加密 | **Bob 的私钥**解密 | 用**收件人**的钥匙 |
+| **签名**（证明是 Alice 发的） | **Alice 的私钥**签 | **Alice 的公钥**验证 | 用**发件人**的钥匙 |
+
+记法：**私钥永远只在主人自己手上用**——要么解密寄给自己的东西，要么签自己发出去的东西。
+
+<L4SortQuiz set="key" />
+
+| 对比 | Symmetric | Asymmetric |
 |---|---|---|
-| **保密**（只有 Bob 能读） | **Bob 的公钥**加密 | **Bob 的私钥**解密 |
-| **签名**（证明是 Alice 发的） | **Alice 的私钥**签 | **Alice 的公钥**验证 |
+| 钥匙 | 1 把共享 | 每人 1 对（公钥 + 私钥） |
+| n 人需要 | n(n−1)/2 | 2n |
+| 速度 | 快 | 慢 1,000–10,000 倍 |
+| 密钥分发 | 难（最大痛点） | 容易：公钥公开，私钥从不传送 |
+| 不可抵赖 | 不支持 | 支持（配合签名） |
+| 算法 | AES | RSA、Diffie-Hellman、ECC |
+| 典型用途 | 加密大量数据（数据库、文件、TLS 传输阶段） | 交换密钥、验证身份、签名 |
 
-课件 p.14 的问题「Sender use which key? How about receiver?」就是这张表。
+<Callout type="extra" title="为什么从公钥推不出私钥（课件没讲）">
+
+非对称基于「一个方向好算、反方向极难」的数学问题。RSA 的例子：两个大质数相乘很容易，把乘积分解回那两个质数极难——足够大的密钥，今天的计算机要算成千上万年（p.37）。这也是量子计算威胁它的原因（§11）。
+
+</Callout>
 
 <MCQ q="（课件原题）What term describes a cryptographic method that incorporates mathematical operations involving both a public key and a private key to encipher or decipher a message?" a="Private-key encryption" b="Symmetric encryption" c="Advanced Encryption Standard (AES)" d="Asymmetric encryption" answer="D">
 *EN:* Using both a public and a private key is the definition of **asymmetric** encryption; A, B and C all describe symmetric encryption.
@@ -177,20 +267,56 @@ A、B、C 都是对称加密的说法或算法。
 
 ---
 
-## 4. 🔴 哈希 Hashing（p.19–22）📝🔍
+## 4. 🔴 哈希 Hashing（p.19–23）📝🔍
+
+<Figure src="images/page_21.png" caption="任意文件（光盘、邮件、密码）经过 Hash Algorithm（MD5、SHA-1、SHA-2）→ 固定长度的 Hash Value / Message Digest；用途：Protect Password、Message Digest；不能反推（红叉）" source="Slide 21" />
 
 **课件原文**
 
 > Hash functions are mathematical algorithms used to **confirm the identity of a specific message** and **confirm that the content has not been changed**. It generates a **hash value or message digest**. Convert **variable-length** messages into a single **fixed-length** value.
 
-特性：**one-way, irreversible**；**same data → same hash value**；**small change → big change in hash value**；**uniqueness**（不可能找到两条哈希相同的消息，即 hash collision）
-用途：**password storage & protection**；**data integrity verification（message digest）**；**digital signatures**
+特性（p.22）：**one-way, irreversible**；**same data → same hash value**；**small change → big change in hash value**；**uniqueness**（impossible to find two messages with the same hash value — **hash collision**）
+用途（p.23）：**password storage & protection**；**data integrity verification（message digest）**；**digital signatures**（via public key cryptography & hashing functions）
 
-**需要理解**
+**需要理解：类比「指纹」和「榨汁」**
 
-- 哈希**不需要密钥**——任何人用同样的算法和输入都能算出同样的结果。这是它最大的弱点：攻击者改了内容可以重新算一个哈希。
-- 存密码时存的是哈希（加盐防彩虹表，见 L2）。
-- 哈希只提供**完整性**，不提供机密性，也不能证明是谁发的。
+- 像**指纹**：一个人对应一个固定的指纹，看指纹能认出是不是同一个人；但从指纹变不回一个人。
+- 像**榨汁**：苹果榨成汁很容易，汁变不回苹果（one-way）；同样的苹果榨出同样的汁（same data → same hash）。
+
+| 特性 | 意思 | 为什么重要 |
+|---|---|---|
+| One-way | 只能从消息算哈希，不能反推 | 数据库里存密码哈希，被偷也拿不到原密码 |
+| Same data → same hash | 同样输入永远同样输出 | Bob 重算一遍就能比对 |
+| Small change → big change | 改一个字，哈希大约一半的位都变 | 看不出「只差一点」，篡改无处可藏 |
+| Uniqueness | 找不到两条不同消息哈希相同 | 不然攻击者能换成另一条哈希相同的假消息 |
+| Fixed length | 一本书和一个字的哈希一样长（SHA-256 永远 256 位） | 方便比对和签名 |
+
+<HashLab />
+
+| | 加密 | Hash |
+|---|---|---|
+| 要不要密钥 | 要 | **不要**（课件原题） |
+| 能不能还原 | 有钥匙就能解回原文 | **不能**，单向 |
+| 输出长度 | 随原文变长 | **固定** |
+| 目的 | 机密性（C） | 完整性（I） |
+
+**三个用途怎么用**
+
+1. **存密码**：只存哈希。登录时把输入的密码再算一次哈希，和存的比对。还要**加盐**（每个用户加一段随机值再哈希，L2），否则常见密码的哈希人人都查得到——PKI 课件图里的摘要 `e10adc3949ba59abbe56e057f20f883e` 其实就是密码「123456」的 MD5，网上一搜就能查到。
+2. **检查完整性**：下载软件时官网公布一个 SHA-256 值，自己算一遍对得上就说明文件没坏、没被换。
+3. **数字签名**：先对消息做哈希得到摘要，再签摘要（§5）。
+
+<Callout type="warn" title="Hash 最大的弱点：谁都能算">
+
+因为**没有密钥**，任何人用同样算法、同样输入都能算出同样结果。所以攻击者改了内容可以**重新算一个新哈希**一起发过去，Bob 比对照样通过——这就是 §5 Step ① 的问题，也是需要数字签名的原因。
+
+</Callout>
+
+<Callout type="extra" title="MD5 和 SHA-1 已经不安全（了解即可）">
+
+课件图里的 MD5、SHA-1 已经被找到碰撞（两份不同的文件哈希相同），违反了 uniqueness，不能再用于签名或证书；现在用 SHA-256（属于 SHA-2）。这也是 §10「cryptographic algorithm obsolescence」的例子。
+
+</Callout>
 
 <MCQ q="（课件原题）True or False: Hashing functions require the use of keys?" a="True" b="False" answer="B">
 *EN:* **False** — hash functions use no key, which is why a hash alone cannot prove who sent a message.
@@ -200,11 +326,18 @@ A、B、C 都是对称加密的说法或算法。
 
 ---
 
-## 5. 🔴 Hash → 数字签名 → 数字证书（PKI 专题 p.15–19）📝✍️
+## 5. 🔴 Hash → 数字签名 → 数字证书（PKI 专题 p.15–22）📝✍️
 
-这是全课设计最精心的部分，三张图层层递进。配合下面的互动组件一起看：
+这是全课设计最精心的部分：同一张图加了三次东西，每次补上一个漏洞。先用下面的组件自己扮演攻击者试一遍：
 
 <PkiTrustLab />
+
+| | 做法 | 攻击者能做什么 | 做到了 | 新问题 |
+|---|---|---|---|---|
+| ① 只用 Hash | 消息 + 哈希一起发，Bob 重算比对 | 改内容、**重算哈希**，Bob 照样通过 | 脆弱的 I | 没有密钥 |
+| ② + 数字签名 | 用 **Alice 私钥**签摘要；Bob 用 Alice 公钥验 | 改内容后签不出对得上的签名 → 被发现；但可以拿**自己的密钥对冒充 Alice** | I + A + N | 公钥属于谁？ |
+| ③ + 数字证书 | CA 签发证书，背书「这把公钥是 Alice 的」 | 拿不到受信任 CA 签发的「Alice」证书 → 冒充被拒 | 再加身份信任 | 要管理证书生命周期 |
+| 三步都**没有** | — | — | **C**：签名不加密消息本身 | 要保密还得加密 → Hybrid |
 
 ### 5.1 Step ①：只用 Hash
 
@@ -212,37 +345,67 @@ A、B、C 都是对称加密的说法或算法。
 
 **课件原文**：Does this process ensure confidentiality and integrity? — **only integrity**. Subject to what types of attack? — **sniffing, spoofing, and man in the middle**.
 
-**需要理解**：没有密钥，中间人可以改内容、重算哈希，Bob 比对仍然一致。所以只是**脆弱的完整性**，也没有机密性（消息是明文）。
+**需要理解**：消息是明文（被 sniffing 看光，没有 C）；中间人截获后改内容、重算哈希再发给 Bob（MITM），Bob 比对仍然一致；攻击者还可以直接冒充 Alice 发一条全新的消息（spoofing）。所以只是**脆弱的完整性**。
 
 ### 5.2 Step ②：加上数字签名
 
-<Figure src="images/pki_03.png" caption="Alice 用自己的私钥加密摘要 = 数字签名；Bob 用 Alice 的公钥解开再比对" source="PKI p.16" />
+<Figure src="images/pki_04.png" caption="PKI with Digital Signature：Alice 用红色私钥把摘要锁成 Digital Signature；Bob 用 Alice 的蓝色公钥解开，和自己重算的摘要 Compare" source="PKI p.16–17" />
 
 **课件原文**：Does this process now ensure confidentiality, integrity, and authenticity? — **Only ensures integrity and authenticity of the sender.**
 
-**需要理解**
+**需要理解：逐步拆开**
 
-- 做法：Alice 先哈希消息得到摘要，再用**自己的私钥**加密摘要 → 签名。Bob 用 **Alice 的公钥**解开签名得到原摘要，和自己重算的摘要比对。
-- 攻击者没有 Alice 的私钥，改了内容就签不出能对上的签名 → 篡改被发现；能用 Alice 公钥解开 → 证明是持有 Alice 私钥的人签的（**真实性**，也带来**不可抵赖**）。
-- 仍然**没有机密性**（签名不是加密消息本身）。
-- **新问题**：Bob 怎么知道这把公钥真的属于 Alice？攻击者可以拿自己的密钥对冒充。
+```
+Alice：消息 ──Hash──► 摘要 ──用 Alice 私钥加密──► 签名；把「消息 + 签名」发出去
+Bob：  签名 ──用 Alice 公钥解开──► 摘要 A
+       消息 ──自己 Hash──────────► 摘要 B
+       A = B → ✓ 没被改，而且是 Alice 签的；A ≠ B → ✗
+```
+
+- 攻击者改了消息，摘要 B 就变了；他想配一个新签名，必须有 **Alice 的私钥**——没有 → 篡改被发现（**Integrity**）。
+- 能用 Alice 的公钥解开 → 一定是 Alice 的私钥签的（**Authenticity**）→ Alice 事后赖不掉（**Nonrepudiation**）。
+- **为什么签摘要而不签整条消息？** 非对称很慢，摘要固定又短（几十个字节），签它快得多；而摘要和消息一一对应，签摘要等于签了消息。
+- 仍然**没有机密性**：消息本身是明文发出去的。
+- **新问题**：Bob 手上的「Alice 公钥」是哪来的？攻击者可以生成自己的密钥对，签好名，再告诉 Bob「这是 Alice 的公钥」——验证在数学上完全通过，Bob 认错了人。
 
 ### 5.3 Step ③：加上数字证书
 
-<Figure src="images/pki_05.png" caption="证书 = 用户公钥 + CA 的数字签名 + 有效期" source="PKI p.18–19" />
+<Figure src="images/pki_05.png" caption="证书 = User's public key + CA's digital signature + Validation period" source="PKI p.18–19" />
 
 **课件原文**
 
 > A digital certificate is an electronic document that contains **a public key value and identifying information about the entity that controls the key**. Often issued by a third party, i.e., a **certificate authority (CA)**.
 > 证书内容：**User's public key · CA's digital signature · Validation period**
 
-主课件 p.24：Digital certificates provide communicating parties with the **assurance that the people they are communicating with truly who they claim to be**; essentially **endorsed copies of individual's public key**. CA 例子：Symantec、IdenTrust、AWS、GlobalSign、Comodo、Entrust、DigiCert。
+主课件 p.25：Digital certificates provide communicating parties with the **assurance that the people they are communicating with truly who they claim to be**; essentially **endorsed copies of individual's public key**. CA 例子：Symantec、IdenTrust、AWS、GlobalSign、Comodo、Entrust、DigiCert。
 
-**需要理解**
+**需要理解：证书就是「CA 签了名的公钥」**
 
-- 证书由**大家都信任的 CA** 签名，背书「这把公钥属于这个身份」。Bob 先验证证书（是不是受信任的 CA 签的、在不在有效期），再用里面的公钥验签名。
-- 攻击者能自己生成密钥对，但**没法让受信任的 CA 给他签一张写着 Alice 的证书**。
-- 课堂实操（Amazon 证书）要会回答：哪个 CA 签发、根 CA 是谁、有效期、主体公钥、证书签名用的哈希函数。
+- CA 核实 Alice 的身份后，把「Alice 的身份 + Alice 的公钥 + 有效期」打包，**用 CA 自己的私钥签名**，这就是证书。
+- Bob 收到证书：用 **CA 的公钥**验证这个签名 → 通过就相信「里面的公钥真的属于 Alice」→ 再用这把公钥去验 Alice 的签名。
+- 攻击者能自己生成密钥对，但**没法让受信任的 CA 给他签一张写着 Alice 的证书**。他自签的证书，浏览器会直接报「不受信任」。
+- 那 CA 的公钥又靠谁证明？→ **证书链（certificate chain）**，一直追到浏览器 / 操作系统**预装**的根 CA（PKI 课堂实操 3：Chrome Root Store）。
+
+<Figure src="images/page_26.png" caption="Figure 10-7：证书的 General / Details / Certification Path 三个标签页——amazon.com 由 DigiCert Global CA G2 签发，链条顶端是 DigiCert Global Root G2" source="Slide 26" />
+
+```
+DigiCert Global Root G2      ← 根 CA：预装在浏览器的 Root Store 里，自己给自己签
+   └─ DigiCert Global CA G2  ← 中间 CA：由根 CA 签发
+        └─ www.amazon.com    ← 网站证书：由中间 CA 签发
+```
+
+**PKI 课堂实操 2 的五个问题怎么找**（Chrome 打开 amazon.com → 锁头 → Certificate）
+
+| 问题 | 去哪看 | 例子 |
+|---|---|---|
+| 哪个 CA 签发的 | General：Issued by | DigiCert Global CA G2 |
+| 根 CA 是谁 | Certification Path 最上面 | DigiCert Global Root G2 |
+| 有效期 | General：Valid from / to | 通常一年左右 |
+| 主体的公钥 | Details：Public key | RSA 2048 位等 |
+| 证书签名用的哈希函数 | Details：Signature algorithm / hash algorithm | sha256RSA → SHA-256 |
+
+- 实操 1：安装包「属性」里的 **Digital Signatures** 标签——厂商用私钥签了安装包；不是所有程序都有，没有签名的安装包来源无法验证。
+- 证书还要能**吊销（revocation）**：私钥泄露、员工离职、网站停用时，CA 宣布这张证书作废，浏览器检查时就会拒绝（§6）。
 
 <QA q="Explain why a digital certificate solves a problem that a digital signature alone cannot.">
 
@@ -273,21 +436,34 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 
 ---
 
-## 6. 🔴 PKI 的价值与密码学四个目标（p.27–28）📝✍️
+## 6. 🔴 PKI 的价值与密码学四个目标（p.27–29）📝✍️
 
-**课件原文（p.27 课堂讨论的答案）**
+**课件原文（p.28，课堂讨论的答案）**
 
 - **Trust Establishment and Identity Verification**
 - **Data Confidentiality and Integrity Protection**
 - Typical PKI solution integrates：**A certificate authority (CA)** · **Certificate Enrollment** · **Verification** · **Revocation**
 
-**四个根本目标（p.28）**：**Confidentiality · Integrity · Authentication · Nonrepudiation**（nonrepudiation means customers or partners can be **held accountable for transactions**, such as online purchases, which they **cannot later deny**）
+**四个根本目标（p.29）**：**Confidentiality · Integrity · Authentication · Nonrepudiation**（nonrepudiation means customers or partners can be **held accountable for transactions**, such as online purchases, which they **cannot later deny**）
 
 **需要理解**
 
-- PKI 的核心价值：让**互不认识的双方**能规模化地建立信任。没有 PKI，每两方都要事先见面交换密钥。
-- **Revocation（吊销）** 容易漏：私钥泄露或员工离职时，要能宣布证书作废。
-- 各工具做到什么：对称 → 机密性（快）；非对称 → 机密性 + 密钥分发；哈希 → 完整性；签名 → 完整性 + 真实性 + 不可抵赖；证书 / CA → 身份信任。
+- **PKI 是什么**：不是某一个算法，而是一整套**基础设施**——CA、证书、注册、验证、吊销的流程和规则，让前面的非对称、哈希、签名能在**互不认识的人之间规模化地使用**。
+- 没有 PKI：每两个人都要事先见面确认对方的公钥。有了 PKI：只要信任少数几个根 CA，就能信任全世界几百万个网站。
+- 四个环节对应证书的一生：**Enrollment**（申请：CA 核实身份后签发）→ **Verification**（使用：对方检查签名、有效期、域名）→ **Revocation**（作废：私钥泄露或员工离职时宣布无效）。Revocation 最容易漏答。
+
+**p.27 第二问：每种工具各自做到什么**
+
+| | Confidentiality | Integrity | Authentication | Nonrepudiation |
+|---|---|---|---|---|
+| 对称加密 | ✅ | | | |
+| 非对称加密 | ✅（+ 解决密钥分发） | | | |
+| Hash | | ✅（脆弱） | | |
+| 数字签名 | | ✅ | ✅ | ✅ |
+| 数字证书 / CA | | | ✅（公钥属于谁） | |
+| Hybrid（TLS） | ✅ | ✅ | ✅（验证服务器） | |
+
+<L4SortQuiz set="goal" />
 
 <QA q="（课堂讨论 / class discussion）How does public key infrastructure add value to an organisation seeking to use cryptography to protect information assets?（10 marks）">
 
@@ -309,12 +485,37 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 
 ## 7. 🔴 Hybrid Cryptography 与 TLS（p.16–17，PKI p.23–30）📝✍️
 
-<Figure src="images/page_17.png" caption="HTTPS：Client Hello / Server Hello → Certificate → 非对称协商 → Key Exchange → 对称加密传输" source="Slide 17" />
+<Figure src="images/pki_10.png" caption="Hybrid Cryptography System：先用非对称 + 证书验证 Amazon 的身份，连接建立后双方用同一把对称 session key（黄色钥匙）加密后续所有流量" source="PKI p.23" />
 
 **课件原文**
 
 > **Hybrid Cryptography System**：Asymmetric key algorithm is used **to verify the identity of the owner and its public key**. Once connection is built, **symmetric key (session key)** is used to encrypt and decrypt **all following traffic** between the two parties.
 > HTTP does not encrypt the data, making it susceptible to eavesdropping. **HTTPS**: the browser and server establish a **secure channel using TLS/SSL before any actual data** is exchanged.
+
+**需要理解：为什么要「混合」**
+
+| 只用对称 | 只用非对称 | Hybrid |
+|---|---|---|
+| 快，但第一次的钥匙怎么在公网上交给对方？也验证不了对方是谁 | 能解决分发和身份，但慢 1,000–10,000 倍，传网页、视频扛不住 | 非对称**只做开头那一小段**（验证身份 + 交换钥匙），之后全部交给快的对称 |
+
+类比：先用 Bob 的**挂锁**把一把普通钥匙锁在小盒子里寄过去（慢，但安全）；之后两人都用这把钥匙开保险箱传大件（快）。
+
+<Figure src="images/page_17.png" caption="TLS/SSL Handshake in HTTPS：Client Hello / Server Hello → Certificate（CA）→ Key Exchange（非对称）→ Session Key Established（对称）" source="Slide 17" />
+
+<TlsLab />
+
+| 阶段 | 用什么 | 作用 |
+|---|---|---|
+| 握手 | **证书 + 非对称**（RSA / ECDH） | 验证服务器身份（证书由 CA 签）；安全地协商出 session key，不怕被窃听 |
+| 传输 | **对称**（AES） | 用 session key 加密网页数据，快 |
+| 全程 | **哈希 / MAC** | 检查数据在传输中没被改 |
+
+<Figure src="images/pki_13.png" caption="SSL：Client A 和 Server A 每次会话（1st / 2nd / 3rd session）都用一把新的 session key" source="PKI p.27" />
+
+- **Session key 只用一次**：每次连接重新协商。好处是某一把泄露了也只影响那一次会话，攻击者不能拿它解密以前和以后的流量。
+- **HTTP vs HTTPS**（PKI p.26）：HTTP 走 80 端口、明文（浏览器显示 *Not secure*）；HTTPS 走 443 端口、有 SSL 证书、加密（显示锁头）。SSL 是 TLS 的前身，现在实际用的都是 TLS，但习惯上还叫「SSL 证书」。
+
+**各种环境用的协议（PKI p.25）**
 
 | 环境 | 协议 |
 |---|---|
@@ -323,18 +524,19 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 | Wireless | WEP、WPA、WPA2、WPA3 |
 | Bluetooth | Passkey only |
 
-PGP：**hybrid cryptosystem**，free or low cost，邮件和文件加密的开源标准；**compress (ZIP) after signing, before encrypting**。
-Bluetooth：约 30 英尺范围内可被利用；不接受陌生配对、不在公共场所配对、删除不用的连接、不用时关闭。
+- **PGP（Pretty Good Privacy）**：**hybrid cryptosystem**，免费或低成本，成了邮件和文件加密的开源标准。顺序是**先签名 → 再 ZIP 压缩 → 最后加密**。（为什么压缩放在加密之前：加密后的数据像随机乱码，几乎压缩不了；压缩还顺便打乱了原文的规律。）
 
-**需要理解：TLS 里两种加密各自的角色**
+<Figure src="images/pki_15.png" caption="WEP vs WPA vs WPA2 vs WPA3" source="PKI p.29" />
 
-| 阶段 | 用什么 | 作用 |
-|---|---|---|
-| 握手 | **证书 + 非对称**（RSA / ECDH） | 验证服务器身份（证书由 CA 签）；安全地协商出 session key，不怕被窃听 |
-| 传输 | **对称**（AES） | 用 session key 加密网页数据，快，扛得住大流量 |
-| 全程 | **哈希 / MAC** | 检查数据在传输中没被改 |
+| | WEP | WPA | WPA2 | WPA3 |
+|---|---|---|---|---|
+| 年份 | 1997 | 2003 | 2004 | 2018 |
+| 加密 | RC4 | TKIP / RC4 | **AES**-CCMP | **AES**-CCMP / GCMP |
+| 安全等级 | 很低 | 低 | 中 | 高 |
+| 弱点 | 加密不安全，容易被破 | 加密弱、兼容问题 | KRACK 重装密钥攻击 | 部署复杂 |
 
-为什么不只用一种：只用对称 → 没法在不安全的网络上安全地交换密钥，也验证不了对方身份；只用非对称 → 太慢（慢 1,000–10,000 倍），不适合大量数据。
+- 规律：越新越安全，核心是从 RC4 换成 **AES**（呼应 p.11：WPA2 / WPA3 用 AES）。WEP 是「算法过时」的经典例子（§10）。
+- **Bluetooth**：约 30 英尺（10 米）内的人都可能利用。不接受不认识的配对请求、不在公共场所配对、删除不用的连接、不用时关闭。
 
 <QA q="（A2 原题 / A2 question）Explain hybrid encryption (3). Why does TLS use both asymmetric and symmetric encryption rather than one type (4)? Include the specific roles each plays in a TLS session (8).">
 
@@ -361,18 +563,30 @@ Bluetooth：约 30 英尺范围内可被利用；不接受陌生配对、不在�
 
 ## 8. 🔴 业务里怎么用（老师强调）✍️
 
-老师说要知道密码学**在业务里怎么组合起来用**。准备好下面这些场景，每个都能说出「用了哪几种技术、解决了什么」：
+老师说要知道密码学**在业务里怎么组合起来用**。答业务题用一个固定的四步：
 
-| 业务场景 | 用到的技术 | 解决的问题 |
-|---|---|---|
-| **网银 / 网购 HTTPS** | 证书（验证网站）+ 非对称（协商会话密钥）+ 对称 AES（传输）+ 哈希（完整性） | 不被冒充、不被窃听、不被篡改 |
-| **电子合同 / 交易确认** | 哈希 + 发送方私钥签名 + 证书 | 真实性、完整性、**不可抵赖** |
-| **软件更新 / 安装包签名**（PKI 课堂实操 1） | 厂商用私钥签名，用户用证书验证 | 确认安装包来自真厂商、没被改（SolarWinds 的教训：签名本身也可能被滥用，所以构建过程也要保护） |
-| **密码存储** | 加盐哈希 | 数据库被偷也拿不到明文密码 |
-| **数据库 / 备份加密** | 对称 AES + 密钥管理 | 数据被偷也读不了（PCI DSS 要求） |
-| **远程办公** | VPN（IPSec / TLS）、SSH | 公共网络上的机密性、完整性、身份验证 |
-| **Passkey 无密码登录**（L6 开场） | 设备存私钥、服务器存公钥、对随机 challenge 签名、绑定域名 | 防重放、服务器被攻破也没密码可偷、防钓鱼 |
-| **区块链** | 每块存上一块的哈希 + 每个参与者用 PKI 签交易 | 完整性、来源可验证、不可抵赖（但**不提供机密性**） |
+<Callout type="exam" title="业务题答题模板">
+
+1. **场景要保护什么**：对照 C / I / A / N 四个目标，先说清楚这个业务最怕什么（被看到？被改？被冒充？事后赖账？）。
+2. **选工具**：每个目标对应哪种技术（§6 的表）。
+3. **怎么组合**：通常是 hybrid——证书确认身份、非对称交换钥匙、对称加密数据、哈希 / 签名保完整和不可抵赖。
+4. **剩下的风险**：密钥管理（被偷、内鬼）、算法过时、易用性（§10）。
+
+</Callout>
+
+| 业务场景 | 最怕什么 | 用到的技术 | 解决的问题 |
+|---|---|---|---|
+| **网银 / 网购 HTTPS** | 被冒充、被窃听、被改 | 证书（验证网站）+ 非对称（协商会话密钥）+ 对称 AES（传输）+ 哈希（完整性） | A + C + I |
+| **电子合同 / 交易确认** | 事后赖账、被改 | 哈希 + 发送方私钥签名 + 证书 | I + A + **N** |
+| **软件更新 / 安装包签名**（PKI 实操 1） | 被换成恶意程序 | 厂商用私钥签，用户用证书验证 | A + I（SolarWinds 的教训：签名本身也可能被滥用，构建过程也要保护） |
+| **密码存储** | 数据库被偷后密码泄露 | 加盐哈希 | 拿不到明文密码 |
+| **数据库 / 备份加密** | 硬盘或备份被偷 | 对称 AES + 密钥管理 | C（PCI DSS 要求） |
+| **远程办公** | 公共网络被窃听 | VPN（IPSec / TLS）、SSH | C + I + A（L3 §4） |
+| **加密邮件** | 邮件被看、被冒充 | PGP / S/MIME（hybrid + 签名） | C + A + I |
+| **Passkey 无密码登录**（L6 开场） | 钓鱼、撞库 | 设备存私钥、服务器存公钥、对随机 challenge 签名、绑定域名 | 防重放、服务器被攻破也没密码可偷、防钓鱼 |
+| **区块链** | 账本被改、交易被否认 | 每块存上一块的哈希 + 每个参与者用 PKI 签交易 | I + A + N（**不提供 C**） |
+
+<L4SortQuiz set="biz" />
 
 ---
 
@@ -387,15 +601,23 @@ Bluetooth：约 30 英尺范围内可被利用；不接受陌生配对、不在�
 - Peer-to-peer：no central controller，不需要银行或 VISA 这类第三方
 - Distributed ledger：each peer holds **a copy of the complete ledger**
 - Cryptographically-secure：provides **non-repudiation, data integrity and data origin authentication**
-- Satoshi Nakamoto 2008；去中心化，**no single party can shut the system down**
-- Transaction integrity：**a chain of inter-related hash values**
+- Satoshi Nakamoto 2008：digital equivalence of cash；fully decentralized（not minted or managed by any central bank）；highly resilient to changes；all transactions perfectly traceable and verifiable；**no single party can shut the system down**
+- Transaction integrity：**a chain of inter-related hash values**；hash the entire block of data to produce a summary
 - **Cryptography is a MUST**：everyone must use **PKI**, no opt-out；**Bitcoin blockchain is the largest civilian deployment of PKI in the world**
 - 课件问题：Does blockchain provide **confidentiality** on the transactions within the block?
 
-**需要理解**
+**需要理解：区块链 = 本课工具的组合**
 
-- 为什么难改：改了一个旧块的交易，它的哈希就变了，后面每一块的 Prev Hash 都对不上，要全部重算并说服大多数节点。
-- 课件问题的答案：**不提供机密性**。账本对所有节点公开，提供的是完整性、来源认证和不可抵赖。
+| 区块链的特性 | 靠哪个工具 |
+|---|---|
+| 改不了（immutable） | **哈希链**：每块存上一块的哈希，改一块后面全断（下面自己试） |
+| 知道是谁转的、赖不掉（origin authentication、nonrepudiation） | **数字签名**：每笔交易用转账人的私钥签名 |
+| 没有中心、没人能关掉 | **分布式账本 + 共识**：每个节点都有完整副本，改账要说服大多数节点 |
+
+<ChainLab />
+
+- 为什么难改：改了一个旧块，它的哈希就变了，后面每一块的 Prev Hash 都对不上；攻击者要把后面全部重算，还要让大多数节点接受他的版本，而每个节点都有完整副本。
+- **课件问题的答案：不提供机密性**。账本对所有节点公开，任何人都能看到每笔交易（谁转给谁、多少钱）；它提供的是完整性、来源认证和不可抵赖。
 
 ---
 
@@ -409,19 +631,47 @@ Bluetooth：约 30 英尺范围内可被利用；不接受陌生配对、不在�
 - **Best practices**：**strong key management**、**layered security**、**regular audits**
 - Importance of **user education**
 
-**需要理解**：再强的算法，密钥被偷或管理不善就没用，所以密钥管理是重点。「算法过时」直接连到下面的量子计算。
+**需要理解：为什么密钥比算法重要**
+
+算法是公开的（AES、RSA 全世界都知道怎么算），安全全靠密钥保密、够长、管得好。钥匙被偷了，算法再强也没用——就像最好的锁，钥匙丢了照样被打开。
+
+| 课件 | 具体是什么 | 例子 / 对策 |
+|---|---|---|
+| Key theft | 私钥或对称密钥被偷 | 私钥放在专门的硬件里（HSM）、不写进代码；泄露就吊销证书 |
+| Insider threats | 有权限的人滥用密钥 | 最小权限、职责分离、审计谁用过密钥（L3 Least Privilege） |
+| Algorithm obsolescence | 算法被破或算力进步后不安全 | MD5、SHA-1、WEP 已淘汰；量子计算威胁 RSA（§11） |
+| Security vs usability | 太麻烦用户就绕过 | 强制复杂密码 → 用户写在便利贴上；passkey 两者兼顾 |
+| System integration | 老系统不支持新算法 | 迁移要盘点所有用到加密的地方 |
+| Strong key management | 密钥的一生都要管 | 生成 → 分发 → 存储 → 轮换 → 吊销 / 销毁 |
+| Layered security | 不只靠加密 | 加密 + 访问控制 + 监控（L3 Defense in Depth） |
+| Regular audits | 定期检查 | 证书快过期了吗？还有人在用弱算法吗？ |
+| User education | 人是最弱的一环 | 看到浏览器证书警告不要点「继续访问」 |
 
 ---
 
 ## 11. 🟢 量子计算（p.37–39）✍️
 
+<Figure src="images/page_38.png" caption="Quantum Computing – Not a 2036 Problem：金融业量子计算采用率仅 7%；KPMG 的审计问题——做过加密资产盘点吗？知道自己在用哪些算法吗？有 PQC 迁移时间表吗？" source="Slide 38" />
+
 **课件原文**
 
 - Quantum computing uses **qubits** in **superpositions**，可以同时做大量运算
 - Today's computers would take **thousands, even millions of years** to crack RSA; a suitably powerful quantum computer could do it **in minutes**
-- **Quantum Computing – Not a 2036 Problem**（KPMG）；Quantum Resilience & **PQC**
+- **Quantum Computing – Not a 2036 Problem**（KPMG）：Audit considerations：cryptographic asset inventory？which encryption algorithms do you rely on？timeline for PQC migration？what products / services might quantum impact？
+- Quantum Resilience & **PQC**（Post-Quantum Cryptography，HKIB / IBM）
 
-**需要理解**：现在就要盘点自己用了哪些加密算法、规划 PQC 迁移；对手可能**现在偷、以后解**（Harvest now, decrypt later），所以长期敏感的数据已经有风险。这是「cryptographic algorithm obsolescence」风险的具体例子。
+**需要理解**
+
+- 威胁的是 §3 那个「反方向极难」的数学问题：量子计算机能很快地把大数分解，RSA、ECC 这类非对称算法首当其冲 → 证书、TLS 握手、数字签名都会受影响。
+- **为什么现在就要做**：对手可以**现在偷、以后解**（Harvest now, decrypt later）——今天截获加密数据存起来，等量子计算机成熟再解密。需要保密很多年的数据（病历、国家机密、长期合同）已经有风险。
+- 现在能做的：**盘点**自己在哪里用了哪些算法（KPMG 的第一个问题）→ 规划 **PQC 迁移**时间表 → 系统设计成能换算法（crypto agility）。
+- 这是 §10「cryptographic algorithm obsolescence」的具体例子。
+
+<Callout type="extra" title="对称加密受的影响小得多（课件没讲）">
+
+量子计算对 AES 这类对称算法的威胁有限，把密钥加长（AES-256）就能应对；真正要换掉的是 RSA、ECC 这类非对称算法。
+
+</Callout>
 
 ---
 
@@ -443,5 +693,21 @@ Each tool covers one property, and PKI combines them into trust that scales.
 **中文解析**
 
 ① 浏览器连接时，银行服务器发出由 CA 签发的**数字证书**，证书里有银行的公钥和 CA 的签名；② 浏览器用信任的根 CA 公钥验证证书签名（**数字签名**），并检查有效期和域名，确认对方确实是银行；③ 双方用**非对称**算法（RSA / ECDH）协商出一把会话密钥，窃听者无法得到；④ 之后的登录信息和交易数据都用**对称** AES 和会话密钥加密，速度快；⑤ 每条数据附带基于**哈希**的完整性校验，篡改会被发现；⑥ 银行存密码时只存加盐哈希；⑦ 交易确认可用签名提供不可抵赖。结论：每种工具各管一项，PKI 把它们组合成可规模化的信任。
+
+</QA>
+
+<QA q="A company wants to replace paper contracts with an online e-contract platform. Recommend the cryptographic controls it needs and explain what each achieves, including the remaining risks.（12 marks）">
+
+**English**
+
+1. **What must be protected**: contracts must not be altered (integrity), signers must be who they claim (authentication), nobody can later deny signing (nonrepudiation), and contract contents stay private (confidentiality).
+2. **Hash + digital signature**: each signer's software hashes the contract and signs the digest with the signer's **private key**; any later change breaks verification, and only the signer could have produced the signature.
+3. **Digital certificates from a trusted CA** bind each signer's public key to their verified identity, so a forged key pair is rejected; revocation handles leaked keys or departed staff.
+4. **TLS (hybrid)** protects contracts in transit; stored contracts are encrypted with **AES**.
+5. **Remaining risks**: private key theft or insider misuse (use hardware key storage, least privilege, audit), algorithm obsolescence and quantum risk for long-lived contracts (plan PQC migration), and usability (signing must stay simple enough that users do not bypass it).
+
+**中文解析**
+
+① **要保护什么**：合同不能被改（I）、签署人身份真实（A）、签了不能赖（N）、内容保密（C）。② **哈希 + 数字签名**：对合同算摘要，用签署人**私钥**签名；之后任何改动都会让验证失败，且只有本人签得出。③ **CA 签发的数字证书**把每个签署人的公钥和核实过的身份绑定，伪造的密钥对会被拒；私钥泄露或员工离职时吊销证书。④ 传输用 **TLS**（hybrid），存储用 **AES** 加密。⑤ **剩余风险**：私钥被偷或内部滥用（硬件存储私钥、最小权限、审计）；合同要保存多年，有算法过时和量子风险（规划 PQC 迁移）；易用性（签署流程要简单，否则用户会绕过）。
 
 </QA>
