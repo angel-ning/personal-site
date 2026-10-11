@@ -62,6 +62,7 @@ tags: [FinalReview, ZeroTrust, Firewall, DMZ, IDPS, SIEM, SOC, DefenseInDepth]
   - [6.2 🔴 SIEM（p.44–45）📝✍️](#62--siemp4445️)
   - [6.3 🔴 SOC、XDR、SOAR 与 AI SOC（p.50–55）📝🔍✍️](#63--socxdrsoar-与-ai-socp5055️)
   - [6.4 🟡 FIND → CONFIRM → FIX（p.49）📝✍️](#64--find--confirm--fixp49️)
+  - [6.5 🔴 Playbook 是什么（p.49、p.53）📝✍️](#65--playbook-是什么p49p53️)
 - **[7. ★ 把所有工具串起来：Zero Trust 与安全控制策略](#7--把所有工具串起来zero-trust-与安全控制策略)**
   - [7.1 🔴 Defense in Depth（p.47）📝✍️](#71--defense-in-depthp47️)
   - [7.2 🔴 Zero Trust 落地：四个 Right（p.48）📝](#72--zero-trust-落地四个-rightp48)
@@ -897,6 +898,23 @@ Tunnel：     [ 新 header：你 → VPN 网关 ][ 🔒🔒 原 header + 数据 
   - 很多 incident 根本不是 intrusion：员工误删数据库、笔记本丢了
   - 一次 intrusion 要不要升级成 incident，需要**人**判断（呼应 p.39 limitation）
 
+> **🧠 S = P + D + R 是 security 的定义吗？（复习时问的）**
+>
+> 算是，但它说的不是「安全是什么」，而是**安全要靠什么做到**：Security = Prevention + Detection + Response。
+>
+> |      | CIA（L1）     | S = P + D + R（L3） |
+> | ---- | ----------- | ----------------- |
+> | 回答什么 | 安全要**保护什么** | 安全要**怎么做到**       |
+> | 性质   | 目标          | 能力 / 过程           |
+>
+> 重点是**加号**：P 一定会失败 → 必须有 D 发现 → 发现了必须有 R 处置，否则告警响了也没用。类比一栋楼：门锁是 P，摄像头和警报器是 D，保安和赶来的警察是 R。
+>
+> IDS 在公式里属于 **D**：Monitoring → Analysis → Detection 是在做检测，Alerting 把问题交给 R，Logging 留给事后取证。加上自动响应变成 IPS，就是 D + R。
+>
+> 同一结构在课程里反复出现：L1 政府角色（Prevention / Detection / **Recovery**）、L3 工具分类、L6 IR 阶段（Preparation / Detection & Analysis / Containment → Recovery）。注意 L1 的 R 是 **Recovery**，L3 是 **Response**。
+>
+> 考「为什么有了防火墙还要 IDS」：防火墙是 P，P 一定会失败，所以需要 D，D 之后还要接 R。
+
 ### 5.2 🔴 Network-based vs Host-based IDPS（p.33–34）📝✍️
 
 ![Figure 9-2：Network IDPS 紧挨 external router 检查经过的包；Host IDPS 检查主机上的文件变化](images/page_34.png)
@@ -1160,6 +1178,30 @@ Key message：**False negatives are the serious IDPS failure — an undetected a
 - **EDR = 主机侧的 HIDS + 自动响应 + 调查取证**，检测原理是 anomaly-based（deviations from normal behavior）。和传统杀毒软件的区别：杀毒靠特征库认识已知病毒（signature），EDR 看行为，而且能自动隔离、事后还原过程。
 - 四步正好覆盖 **D + R**：Monitor / Detect 是 D，Contain / Remediate 是 R。
 
+**EDR 和 Host-based IDS 有什么区别？**（两者都装在主机上）
+
+|      | HIDS                                  | EDR                                   |
+| ---- | ------------------------------------- | ------------------------------------- |
+| 全称   | Host-based Intrusion Detection System | **Endpoint Detection and Response**   |
+| 看什么  | 文件有没有被改、日志、用户登录                       | 持续记录**所有行为**：进程、文件、网络连接、注册表           |
+| 怎么判断 | 多为规则 / 特征比对                           | 主要看**行为**是否偏离正常                       |
+| 发现之后 | 报警，等人处理                               | **自动处置**：隔离这台电脑、杀进程、删文件               |
+| 事后   | 有日志                                   | 能**还原完整过程**（谁开了附件 → 起了什么进程 → 连了哪个 IP） |
+| 管理   | 通常一台一台看                               | 中央控制台统一管全公司终端                         |
+
+一句话：**EDR ≈ HIDS + 主机上的 IPS + 取证 + 集中管理**。
+
+> **⚠️ 我当时的两个误解**
+>
+> - 「firewall 和 IDS 是管理的手段」→ 它们是**技术工具（technical controls）**。安全里的「管理手段」指制度、培训、审计等 administrative controls。
+> - 「EDR 是单纯保护终端」→ EDR 的重点是**检测 + 响应**，不是预防（预防是杀毒、host firewall 的事）。
+>
+> |          | 装在哪     | P / D / R |
+> | -------- | ------- | --------- |
+> | Firewall | 网络边界或主机 | P         |
+> | IDS      | 网络或主机   | D         |
+> | EDR      | 终端      | D + R     |
+
 ![同事转发的邮件附件打不开：安全链接要求验证收件人身份](images/page_43.png)
 
 *同事转发的邮件附件打不开：安全链接要求验证收件人身份（Slide 43）*
@@ -1186,7 +1228,18 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 **需要理解**
 
-- 类比：每个工具是一个摄像头，SIEM 是**把所有摄像头画面接到一起的监控中心**。
+- **全称：Security Information and Event Management**（安全信息与事件管理）。名字来自两样东西合并：SIM（Security Information Management，存日志、做合规报表）+ SEM（Security Event Management，实时监控事件）。
+- 它是所有安全系统的**中枢**，不是「终端」——终端（endpoint）在这门课里指员工的电脑，正好是反过来的意思。
+- 类比：每个工具是一个摄像头，SIEM 是**把所有摄像头画面接到一起的监控中心**。**它自己不拦截任何东西**，是纯粹的 D。
+
+```
+防火墙日志 ─┐
+IDS 告警   ─┤
+EDR 数据   ─┤──► SIEM（收集 → 统一格式 → 关联分析 → 告警 / 报表）──► 分析师
+VPN 登录   ─┤
+AD 账号变更 ─┘
+```
+
 - 核心价值是 **Correlation（关联分析）**：VPN 登录、加入管理员组、下载脚本、外传 8 GB，分别来自 VPN、AD、EDR、防火墙，单独看都正常，串起来是一次数据窃取。
 - 工作步骤：**Collect → Normalize（统一格式）→ Correlate → Alert / Report**。
 - 合规价值：集中保存日志，满足监管要求，也给事后取证用。
@@ -1215,7 +1268,39 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 - **SOAR**（Security Orchestration, Automation & **Remediation**）：**reduces analyst effort/time per incident, increasing SecOps capacity**
 - AI SOC：ML & AI、UEBA、SOAR、SIEM 在一起；Security Copilot；Expert Assistance / Managed Security Operations（**scarce skills**）；案例 CITIC TrustCSI 3.0：**Dual SIEM、SOC-as-a-service、Red/Blue synergy**
 
-**需要理解：p.50 → p.54 是同一张图一步步加东西**
+**需要理解：先分清全称和「是什么东西」——这四个不全是软件**
+
+| 缩写         | 全称                                                               | 中文           | 是什么东西                       | P / D / R |
+| ---------- | ---------------------------------------------------------------- | ------------ | --------------------------- | --------- |
+| **SOC**    | Security Operations Center                                       | 安全运营中心       | **组织**：一群人 + 流程（+ 一间监控室）    | 全流程       |
+| **XDR**    | Extended Detection and Response                                  | 扩展检测与响应      | **软件平台**（通常来自一家厂商）          | D + R     |
+| **SOAR**   | Security Orchestration, Automation and Response（课件写 Remediation） | 安全编排、自动化与响应  | **软件平台**                    | R         |
+| **AI SOC** | —                                                                | AI 驱动的安全运营中心 | **运营模式**：SOC + AI 工具 + 外部专家 | 全流程       |
+
+- **SOC**：7×24 盯全公司安全的团队。常见分层：L1 分析师看告警、过滤误报；L2 深入调查；L3 / threat hunter 主动找藏起来的攻击者。可以自建，也可以外包（SOC-as-a-Service）。SIEM、XDR、SOAR 都是它手里的工具。
+- **XDR**：EDR 的扩展，从终端扩到**身份、SaaS 应用、邮件和协作工具**（课件例子是 Microsoft Defender XDR）。同一厂商的产品天生互通，能把「钓鱼邮件 → 账号被盗 → 终端中毒」自动串起来，并 *at machine speed* 处置（禁用账号、隔离电脑 = *auto-heal*）。
+- **SOAR** 三个词各有含义：**Orchestration（编排）** 用 API 把防火墙、EDR、邮件、工单系统连起来；**Automation（自动化）** 把重复步骤交给机器；**Response（响应）** 按事先写好的 **playbook** 执行（见 §6.5）。**没有 playbook，SOAR 就没有用。**
+- **AI SOC**：在 SOC 里加入 ML、**UEBA**（User and Entity Behavior Analytics，就是 anomaly-based 用在人身上）、**Security Copilot**（帮分析师总结告警、写查询、给建议），再加外部专家支援（人才稀缺）。p.55 CITIC 案例：Dual SIEM（两套互补）、SOC-as-a-service、Red / Blue synergy。
+
+|      | SIEM      | XDR        |
+| ---- | --------- | ---------- |
+| 收什么  | 什么厂商的日志都收 | 主要是自家产品的数据 |
+| 关联规则 | 自己写、自己调   | 厂商预先配好     |
+| 能动手吗 | 不能，只告警    | 能直接响应      |
+| 缺点   | 调优工作量大、贵  | 被一家厂商锁定    |
+
+**用一栋大楼来类比**
+
+| 工具      | 大楼里对应的                              |
+| ------- | ----------------------------------- |
+| EDR     | 每个房间的智能门锁 + 摄像头，发现异常能自动锁门           |
+| SIEM    | 监控中心那面接了所有摄像头的大屏                    |
+| XDR     | 一家厂商的一体化系统：门禁、摄像头、电梯卡全部打通           |
+| SOAR    | 应急手册 + 自动执行的机器人（火警响了自动开喷淋、关电梯、通知消防） |
+| **SOC** | **保安队和指挥室**，上面这些都是他们手里的工具           |
+| AI SOC  | 给保安队配了 AI 助手，人手不够再请外部保安公司           |
+
+**p.50 → p.54 是同一张图一步步加东西**
 
 | 页    | 新加的                                        | 解决什么问题                          |
 | ---- | ------------------------------------------ | ------------------------------- |
@@ -1234,7 +1319,7 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 - **SOC 不是软件，是组织**。
 - **Dwell time** = 攻击者从进来到被清除，在你系统里待了多久；**MTTR** 越短，dwell time 越短，损失越小。这是衡量 SOC 好坏的指标。
-- **SIEM vs XDR**：SIEM 什么日志都收但要自己写关联规则；XDR 厂商配好、能直接响应，但锁定单一厂商；现实中两者用 API 并存（p.52 的 API integration）。
+- SIEM 和 XDR 现实中常用 API 并存（p.52 的 API integration）。
 - **SOAR 的例子**：钓鱼告警进来 → 自动查发件人信誉 → 删掉所有人邮箱里的同一封邮件 → 封锁链接域名 → 开工单通知分析师。原来人工 20 分钟，现在几秒。
 - 现代 SOC 的瓶颈是**人**（人才短缺）→ AI 降低门槛或外包（SOC-as-a-Service）。AI 的价值是**缩短 dwell time / MTTR**，而不是裁员。
 - Red/Blue synergy：红队模拟攻击、蓝队防守，互相检验。
@@ -1262,6 +1347,99 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 | **FIX**（Automated response）       | **Cyber drills** + automated IR playbook (**SOAR**) at **cross-department** level      | **75% lack playbooks** |
 
 **需要理解**：三个数字层层递进——数据太多（每天上百万条）、大部分是盲区（只有 20% 被索引）、发现了也没有处置剧本（75%）→ 需要 AI 分诊 + SOAR。答「为什么现代 SOC 需要 AI 和自动化」时直接用这条链。UBA 就是 anomaly-based 思路用在「人」身上。
+
+**它是一个框架吗？** 不是 NIST 那种正式标准，是课件用来描述现代安全运营流程的框架：发现 → 确认 → 处置，对应 S = P + D + R 里 **D → R** 那一段。
+
+| 阶段          | 要回答的问题        | 用什么                              |
+| ----------- | ------------- | -------------------------------- |
+| **FIND**    | 哪里不对劲？        | EDR、NIDS、网络流量分析、UBA              |
+| **CONFIRM** | 是真攻击还是误报？多严重？ | SIEM 关联、AI 分诊、分析师                |
+| **FIX**     | 怎么挡住、怎么恢复？    | SOAR playbook、EDR 隔离、防火墙封锁、跨部门演练 |
+
+中间为什么要 CONFIRM：不确认就处置，误报会误伤正常业务；全靠人确认又太慢 → AI 分诊。
+
+> **🎯 公司怎么设计安全系统：把 L3 全部串起来（长题答题框架）**
+>
+> **第 0 步：风险评估**（L5）——关键资产、威胁、损失，决定钱花在哪。
+>
+> **第 1 步：设计原则**——Zero Trust、Defense in Depth、Least Privilege、Fail-safe defaults、Simplicity（p.60）。
+>
+> **第 2 步：按 P / D / R 布置工具**
+>
+> ```
+> P 预防   IAM + MFA + RBAC → NGFW（默认拒绝）→ DMZ（screened subnet）→ VPN → 打补丁 + host firewall
+>           ↓ P 一定会失败
+> D 检测   IDPS（网络）+ EDR（终端）+ 蜜罐 → 日志汇入 SIEM / XDR        ← FIND、CONFIRM
+>           ↓
+> R 响应   SOC 团队 + playbook + SOAR + 事件响应计划（L6）+ 演练         ← FIX
+> ```
+>
+> **第 3 步：用一次攻击检验**——员工点了钓鱼链接、输了密码：
+>
+> 1. **P**：有 MFA，攻击者登录不进去。假设他绕过了 MFA……
+> 2. **FIND**：凌晨从国外登录，UBA 发现异常；员工电脑跑脚本，EDR 发现可疑进程。
+> 3. **CONFIRM**：SIEM 把「异地登录 + 可疑进程 + 大量外传」串成攻击链，AI 分诊判定为真攻击、高优先级。
+> 4. **FIX**：SOAR 按 playbook 禁用账号，EDR 隔离电脑，防火墙封锁外传目的 IP，SOC 开始调查。
+> 5. 因为最小权限，这个账号本来就碰不到核心数据库，损失被控制住。
+>
+> **第 4 步：按规模取舍**
+>
+> |      | 小公司                   | 大公司 / 银行                 |
+> | ---- | --------------------- | ------------------------ |
+> | P    | MFA、NGFW、默认拒绝         | 上面全部 + DMZ + PAM         |
+> | D    | EDR，日志集中保存            | NIDPS + EDR / XDR + SIEM |
+> | R    | 外包（SOC-as-a-Service）  | 自建 SOC + SOAR            |
+> | 先投什么 | MFA 和 playbook：便宜、效果大 | 按风险评估排优先级                |
+
+### 6.5 🔴 Playbook 是什么（p.49、p.53）📝✍️
+
+**课件出现的地方**：p.49 *75% LACK PLAYBOOKS*、*automated Incident Response Playbook (SOAR)*；p.53 SOAR 按 playbook 自动处置。
+
+**需要理解**
+
+**Playbook（应急剧本）= 针对某一类事件，事先写好的「发生了就照着做」的步骤清单。** 名字来自美式橄榄球的战术本：比赛前就练好每种局面怎么跑位，临场不用现想。
+
+一份 playbook 通常包括：
+
+| 部分           | 内容              | 钓鱼邮件的例子                                                |
+| ------------ | --------------- | ------------------------------------------------------ |
+| **触发条件**     | 什么情况下启用         | 员工举报可疑邮件，或邮件网关告警                                       |
+| **角色分工**     | 谁负责、谁批准、谁对外沟通   | SOC L1 处理；超过 10 人点击升级给 L2；涉及客户数据通知法务                   |
+| **步骤 + 判断点** | 按顺序做什么，遇到情况怎么分支 | 查发件人信誉 → 找出所有收件人 → 删邮件 → 封链接域名 → 有人输过密码？是 → 重置密码、查登录记录 |
+| **沟通**       | 通知谁、什么时候、用什么话   | 全员提醒邮件模板；监管要求的通报时限                                     |
+| **记录与复盘**    | 留什么证据，事后怎么改进    | 工单记录每一步；事后更新 playbook                                  |
+
+**几个相近的概念**
+
+|                        | 范围                  | 例子                                      |
+| ---------------------- | ------------------- | --------------------------------------- |
+| **IR Plan（事件响应计划，L6）** | 整个组织怎么应对事件：团队、分级、流程 | 「发生安全事件时，由 CISO 领导 IR 团队……」             |
+| **Playbook**           | **某一类事件**的具体处置步骤    | 钓鱼 playbook、勒索软件 playbook、DDoS playbook |
+| **Runbook**            | 某一步的**技术操作细节**      | 「在防火墙控制台封锁 IP 的具体点法」                    |
+
+**手动 vs 自动**
+
+- 手动 playbook：一份文档，分析师照着做。
+- **自动 playbook**：写进 **SOAR**，告警一来机器自动执行能自动的步骤，需要人判断的地方（比如要不要关掉生产系统）停下来等人批准。课件 p.49 的 *automated IR playbook (SOAR)* 就是这个。
+- 顺序是**先有 playbook，再有 SOAR**：SOAR 只会执行写好的剧本。
+
+**为什么重要（p.49 的 75%）**
+
+- 事件发生时压力极大、时间极短，没有 playbook 就是临场乱想：谁该做决定？要不要断网？要不要通知客户？——拖延直接拉长 dwell time 和 MTTR。
+- Playbook 让新人也能按标准处理，结果一致、可审计（呼应 p.60 *Simplicity and Auditability*）。
+- 写 playbook 几乎不花钱，是性价比最高的投资之一（§10 长题的「先写 playbook 再买 SOAR」）。
+- **Cyber drills（演练）** 就是拿 playbook 来演一遍，看步骤能不能走通、跨部门能不能配合——p.49 强调 *cross-department*，因为真实事件要 IT、法务、公关、管理层一起动。
+
+**What is an incident response playbook, and why does p.49 highlight that 75% of organisations lack one?**
+
+> **English**
+>
+> A **playbook** is a predefined, step-by-step procedure for responding to a **specific type of incident** (e.g. phishing, ransomware): the trigger, roles and approvals, ordered steps with decision points, communication, and documentation.  
+> Without playbooks, responders improvise under pressure — decisions are delayed, steps are missed and responses are inconsistent — so **dwell time and MTTR grow**. Playbooks are also the prerequisite for **SOAR**, which can only automate steps that have been written down. They are cheap to write, and **cyber drills** test them across departments before a real incident.
+>
+> **中文解析**
+>
+> Playbook 是针对**某一类事件**事先写好的处置步骤：触发条件、角色和审批、带判断点的步骤、沟通、记录。没有它，事件发生时只能临场想办法——决策拖延、漏步骤、每次处理不一致，dwell time 和 MTTR 都会变长。它也是 SOAR 的前提（SOAR 只能自动化写好的步骤）；而且写起来几乎不花钱，再通过跨部门演练检验能不能走通。
 
 ---
 
