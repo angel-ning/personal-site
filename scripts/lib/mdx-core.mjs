@@ -48,7 +48,7 @@ import { toBits, toHex, readOctet, decompose, andTable, BINARY_PRESETS, AND_PRES
 import { prefixRows, fitRequirements, fieldSplit, NEED_PRESETS, SPLIT_PRESETS } from "../../src/components/mdx/mask-logic.mjs";
 import { DEMO as STATEFUL_DEMO, STATELESS_RULES, runStateful } from "../../src/components/mdx/stateful-logic.mjs";
 import { MODES as VPN_MODES, MODE_IDS as VPN_MODE_IDS } from "../../src/components/mdx/vpn-logic.mjs";
-import { vigenere, transposition, CIPHER_PRESETS, keyCount, KEY_COUNT_PRESETS } from "../../src/components/mdx/cipher-logic.mjs";
+import { vigenere, transposition, CIPHER_PRESETS, keyCount, KEY_COUNT_PRESETS, keyStrength, KEY_STRENGTH_PRESETS } from "../../src/components/mdx/cipher-logic.mjs";
 import { avalanche, HASH_PRESETS, chainCheck, sealChain, CHAIN_DATA } from "../../src/components/mdx/hash-logic.mjs";
 import { TLS_STEPS } from "../../src/components/mdx/tls-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
@@ -880,6 +880,12 @@ const components = {
     return [
       note("（网页版此处可以输入人数 n，比较对称和非对称各需要几把钥匙）"),
       table(["人数 n", "对称 n(n−1)/2", "非对称 2n"], KEY_COUNT_PRESETS.map((n) => { const k = keyCount(n); return [String(n), k.symmetric.toLocaleString("en-US"), k.asymmetric.toLocaleString("en-US")]; })),
+    ];
+  },
+  KeyStrengthLab() {
+    return [
+      note("（网页版此处可以输入任意密钥长度，看暴力破解最多要猜几次、要多久；下表按课件 Table 10-5 的同一假设计算）"),
+      table(["密钥长度", "最多猜测次数 2^k", "最长时间", "平均时间"], KEY_STRENGTH_PRESETS.map((b) => { const r = keyStrength(b); return [`${b} 位`, r.guessesText, r.max, r.avg]; })),
     ];
   },
   HashLab() {

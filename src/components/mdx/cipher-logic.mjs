@@ -44,3 +44,27 @@ export function keyCount(n) {
 }
 
 export const KEY_COUNT_PRESETS = [2, 5, 10, 100, 1000];
+
+// Slide 36 (Table 10-5, Whitman): brute force needs up to 2^k guesses for a k-bit key.
+// The table's times assume one 2020-era desktop CPU doing about 5.85 × 10^11 guesses a second.
+export const GUESSES_PER_SECOND = 65536 / 0.000000112;
+const YEAR = 365 * 24 * 3600;
+
+function humanTime(sec) {
+  if (sec < 1) return `${sec.toPrecision(3)} 秒`;
+  if (sec < 3600) return `${(sec / 60).toPrecision(3)} 分钟`;
+  if (sec < 86400 * 2) return `${(sec / 3600).toPrecision(3)} 小时`;
+  if (sec < YEAR) return `${(sec / 86400).toPrecision(3)} 天`;
+  const y = sec / YEAR;
+  return y < 1e6 ? `${Math.round(y).toLocaleString("en-US")} 年` : `${y.toExponential(2)} 年`;
+}
+
+/** Brute-force effort for a k-bit key: maximum guesses and the max / average time at the table's speed. */
+export function keyStrength(bits) {
+  const k = Math.max(1, Math.min(1024, Math.floor(bits)));
+  const guesses = 2 ** k;
+  const max = guesses / GUESSES_PER_SECOND;
+  return { k, guesses, guessesText: k <= 64 ? (2n ** BigInt(k)).toLocaleString("en-US") : guesses.toExponential(2), max: humanTime(max), avg: humanTime(max / 2) };
+}
+
+export const KEY_STRENGTH_PRESETS = [16, 32, 56, 64, 128, 256];

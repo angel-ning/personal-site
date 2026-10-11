@@ -121,6 +121,7 @@ tags: [IPv4, NAT, DHCP]
 | `<L4SortQuiz set="why\|key\|goal\|biz" />` | ISOM 5280 L4 点选练习：问题 → 密码工具 / 用谁的哪把钥匙 / CIA + Nonrepudiation 哪个目标 / 业务场景靠哪种技术（`data/l4-quiz.json`） |
 | `<CipherLab />` | Vigenère（逐字母右移）与 Caesar block 换位（竖填横读）：可自己输入明文和密钥，默认是课件 p.6、p.7 的例子（`cipher-logic.mjs`） |
 | `<KeyCountLab />` | n 个人两两通信：对称 n(n−1)/2 vs 非对称 2n 把钥匙（`cipher-logic.mjs`） |
+| `<KeyStrengthLab />` | 密钥长度 → 暴力破解最多猜 2^k 次、最长 / 平均时间（按课件 p.36 Table 10-5 的同一 CPU 假设，`cipher-logic.mjs`） |
 | `<HashLab />` | SHA-256 雪崩效应：两条消息的哈希逐字符高亮差异、统计不同的位数（纯 JS SHA-256，`hash-logic.mjs`） |
 | `<ChainLab />` | 三个 block 的哈希链：改任何一块的交易，看从哪块开始失效；可「重新计算整条链」（`hash-logic.mjs`） |
 | `<TlsLab />` | HTTPS 握手六步：每步用了哪种密码工具、解决什么、窃听者看到什么（`tls-logic.mjs`） |

@@ -19,7 +19,7 @@ tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS
 > 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可
 > 掌握要求：📝 **默写**（能写出名字、定义、清单）· 🔍 **区分**（给场景能判断是哪一个，选择题）· 🧮 **计算** · ✍️ **分析**（能写成有结构的一段论述，长题）
 >
-> **10 月 11 日修订**：按 L3 的讲法重写——每个工具「解决了上一步什么问题、又留下什么新问题」；补了类比、课件算例、每一步攻击者能做什么、证书链、TLS 逐步拆解、WEP–WPA3 对比；新增 6 个互动练习（古典密码、钥匙数量、SHA-256 雪崩、哈希链、TLS 握手、四组点选题）。
+> **10 月 11 日修订**：按 L3 的讲法重写——每个工具「解决了上一步什么问题、又留下什么新问题」；补了类比、课件算例、每一步攻击者能做什么、证书链、TLS 逐步拆解、WEP–WPA3 对比；新增 6 个互动练习（古典密码、钥匙数量、SHA-256 雪崩、哈希链、TLS 握手、四组点选题）。之后又补了：**所有课件问题都写出原题再给答案**（标「课件原题」）；§5 签名一定是非对称 + MAC 对比 + 这里的 A 是 Authentication；§7 各协议详解（SSL → TLS、邮件三种协议、Wi-Fi 四代、蓝牙）及需要掌握的程度；§10 补上 p.36 的 Table 10-5 和密钥长度计算器。
 
 <Callout type="exam" title="这一课在期末怎么考（老师点名）">
 
@@ -45,6 +45,7 @@ tags: [FinalReview, Cryptography, PKI, DigitalSignature, DigitalCertificate, TLS
   - [5.3 Step ③：加上数字证书](#53-step-加上数字证书)
 - **[6. 🔴 PKI 的价值与密码学四个目标（p.27–29）📝✍️](#6--pki-的价值与密码学四个目标p2729️)**
 - **[7. 🔴 Hybrid Cryptography 与 TLS（p.16–17，PKI p.23–30）📝✍️](#7--hybrid-cryptography-与-tlsp1617pki-p2330️)**
+  - [7.1 🟡 各种环境用的协议（PKI p.25–30）🔍](#71--各种环境用的协议pki-p2530)
 - **[8. 🔴 业务里怎么用（老师强调）✍️](#8--业务里怎么用老师强调️)**
 - **[9. 🟡 Blockchain（p.30–34）📝🔍](#9--blockchainp3034)**
 - **[10. 🟡 风险、挑战与最佳实践（p.36、p.40）📝](#10--风险挑战与最佳实践p36p40)**
@@ -217,7 +218,15 @@ Bob 做了很多把一样的**挂锁**，打开着到处送人（公钥），开
 - 它一次解决了对称的两个问题：**不用事先交换钥匙**（挂锁本来就可以公开发）；**可扩展**（n 个人只要 n 对，见上面计算器）。
 - 代价：**慢**，比对称慢 1,000–10,000 倍，所以不拿来加密大量数据（→ §7 Hybrid）。
 
-<Figure src="images/page_14.png" caption="Sender use which key? How about receiver?——Alice 用 Bob 的公钥加密，Bob 用 Bob 的私钥解密" source="Slide 14" />
+<Figure src="images/page_14.png" caption="p.14：Alice 用 Bob 的公钥加密，Bob 用 Bob 的私钥解密" source="Slide 14" />
+
+<QA q="（课件原题 p.14）Sender use which key? How about receiver?">
+
+**答案**：图上的场景是保密通信——**Sender（Alice）用 Bob's Public Key 加密，Receiver（Bob）用 Bob's Private Key 解密**。图上另外两把（Alice's Private Key、Alice's Public Key）是干扰项：它们用在 Alice 要**签名**的时候（Alice 私钥签，Bob 用 Alice 公钥验）。
+
+*EN:* For confidentiality the sender encrypts with the **receiver's public key** and the receiver decrypts with **its own private key**. Alice's key pair would be used only if she wanted to sign the message.
+
+</QA>
 
 **哪把钥匙干什么（最常考）**
 
@@ -239,6 +248,32 @@ Bob 做了很多把一样的**挂锁**，打开着到处送人（公钥），开
 | 不可抵赖 | 不支持 | 支持（配合签名） |
 | 算法 | AES | RSA、Diffie-Hellman、ECC |
 | 典型用途 | 加密大量数据（数据库、文件、TLS 传输阶段） | 交换密钥、验证身份、签名 |
+
+<Figure src="images/page_18.png" caption="Quick Recap #1 课堂讨论" source="Slide 18" />
+
+<QA q="（课件原题 p.18 Class Discussion）What is the fundamental difference between symmetric and asymmetric encryption?">
+
+**English**
+
+Symmetric encryption uses **one shared secret key** for both encryption and decryption; asymmetric encryption uses **a mathematically related key pair** — a public key that is freely shared and a private key kept secret — where what one key encrypts only the other can decrypt.
+
+**中文解析**
+
+根本区别在**钥匙的数量和归属**：对称是双方**共用同一把**秘密钥匙；非对称是**每人一对**、数学相关的钥匙，公钥公开、私钥只有自己有，一把加密只有另一把能解。其他差别（速度、密钥分发、不可抵赖）都是从这一点推出来的。
+
+</QA>
+
+<QA q="（课件原题 p.18 Class Discussion）What is the limitation of symmetric encryption?">
+
+**English**
+
+**Key distribution** is the fundamental limitation: the shared key must reach the other party through a secure channel before any secure communication can start. It also does not scale (n(n−1)/2 keys for n parties), keys must be regenerated often, and it cannot provide nonrepudiation because both parties hold the same key.
+
+**中文解析**
+
+最根本的局限是**密钥分发**：开始加密通信之前，必须先找一条安全渠道把同一把钥匙交给对方。另外还有：不可扩展（n 人要 n(n−1)/2 把）、要经常换钥匙、没有不可抵赖（双方拿同一把钥匙，分不清是谁发的）。
+
+</QA>
 
 <Callout type="extra" title="为什么从公钥推不出私钥（课件没讲）">
 
@@ -339,11 +374,31 @@ A、B、C 都是对称加密的说法或算法。
 | ③ + 数字证书 | CA 签发证书，背书「这把公钥是 Alice 的」 | 拿不到受信任 CA 签发的「Alice」证书 → 冒充被拒 | 再加身份信任 | 要管理证书生命周期 |
 | 三步都**没有** | — | — | **C**：签名不加密消息本身 | 要保密还得加密 → Hybrid |
 
+<Callout type="warn" title="表里的 A 是 Authentication，不是 Availability">
+
+这里用的是 p.29 **密码学的四个目标**（C / I / **A**uthentication / N），不是 L1 的 CIA 三元组。数字签名证明的是「发送方是谁」= Authentication；PKI p.16 原话是 *integrity and **authenticity** of the sender*。密码学工具本来就不负责 Availability（证书过期、钥匙丢了反而会让系统用不了）。
+
+| 出现的地方 | A 代表 |
+|---|---|
+| L1 CIA 三元组 | **Availability** |
+| L3 VPN 要做到的 CIA（p.29） | **Authentication** |
+| L4 密码学四个目标（p.29） | **Authentication** |
+
+判断方法：讲密码学工具或 VPN 时，A 是 Authentication；讲信息安全总体目标时，A 是 Availability。
+
+</Callout>
+
 ### 5.1 Step ①：只用 Hash
 
 <Figure src="images/pki_02.png" caption="Alice 把消息和哈希一起发给 Bob，Bob 重算比对" source="PKI p.15" />
 
-**课件原文**：Does this process ensure confidentiality and integrity? — **only integrity**. Subject to what types of attack? — **sniffing, spoofing, and man in the middle**.
+**课件原题（PKI p.15）**
+
+> **Q1：** Does this process ensure confidentiality and integrity?
+> **课件答案：** only integrity
+>
+> **Q2：** Subject to what types of attack?
+> **课件答案：** sniffing, spoofing, and man in the middle
 
 **需要理解**：消息是明文（被 sniffing 看光，没有 C）；中间人截获后改内容、重算哈希再发给 Bob（MITM），Bob 比对仍然一致；攻击者还可以直接冒充 Alice 发一条全新的消息（spoofing）。所以只是**脆弱的完整性**。
 
@@ -351,7 +406,10 @@ A、B、C 都是对称加密的说法或算法。
 
 <Figure src="images/pki_04.png" caption="PKI with Digital Signature：Alice 用红色私钥把摘要锁成 Digital Signature；Bob 用 Alice 的蓝色公钥解开，和自己重算的摘要 Compare" source="PKI p.16–17" />
 
-**课件原文**：Does this process now ensure confidentiality, integrity, and authenticity? — **Only ensures integrity and authenticity of the sender.**
+**课件原题（PKI p.16）**
+
+> **Q：** Does this process now ensure confidentiality, integrity, and authenticity?
+> **课件答案：** Only ensures integrity and authenticity of the sender.
 
 **需要理解：逐步拆开**
 
@@ -368,9 +426,36 @@ Bob：  签名 ──用 Alice 公钥解开──► 摘要 A
 - 仍然**没有机密性**：消息本身是明文发出去的。
 - **新问题**：Bob 手上的「Alice 公钥」是哪来的？攻击者可以生成自己的密钥对，签好名，再告诉 Bob「这是 Alice 的公钥」——验证在数学上完全通过，Bob 认错了人。
 
+<Callout type="memo" title="只要是数字签名，就一定是非对称吗？——是（复习时问的）">
+
+要做到 **nonrepudiation**，必须只有签名人自己有那把钥匙 → 只能用非对称的**私钥**。但对称加密也有一个「像签名」的工具：**MAC（Message Authentication Code，如 HMAC）**，要分清：
+
+| | 数字签名 | MAC（HMAC） |
+|---|---|---|
+| 钥匙 | 发送方**私钥**签，任何人用**公钥**验 | 双方**共享同一把**对称密钥 |
+| 做法 | Hash → 用私钥签摘要 | Hash（消息 + 共享密钥） |
+| Integrity | ✅ | ✅ |
+| Authentication | ✅ | ✅（证明是「有这把钥匙的人」发的） |
+| **Nonrepudiation** | ✅ | ❌ |
+| 速度 | 慢 | 快 |
+| 用在哪 | 电子合同、软件签名、证书、PGP / S/MIME | TLS 传输阶段每条记录的完整性校验 |
+
+MAC 做不到不可抵赖的原因，和对称加密的第四个缺点一样：两个人拿同一把钥匙，Alice 可以说「这条是 Bob 自己算出来的」。
+
+还要注意两点：
+- **签名本身还不够**：私钥被偷了，签名人就能说「不是我签的」。所以不可抵赖还要靠私钥保管好，以及证书把公钥和身份绑定（Step ③）。
+- **电子签名 ≠ 数字签名**：PDF 上贴一张手写签名的图、打上名字，法律上可能算电子签名，但没用到密码学，谁都能复制。课件讲的 digital signature 指用私钥签。
+
+</Callout>
+
 ### 5.3 Step ③：加上数字证书
 
 <Figure src="images/pki_05.png" caption="证书 = User's public key + CA's digital signature + Validation period" source="PKI p.18–19" />
+
+**课件原题（PKI p.18）**
+
+> **Q：** How to ensure the validity of someone's public key?
+> **答案：** 用 **digital certificate**——由受信任的第三方 **certificate authority (CA)** 签发，把公钥和持有者身份绑定在一起（就是同一页右边的定义）。
 
 **课件原文**
 
@@ -394,17 +479,26 @@ DigiCert Global Root G2      ← 根 CA：预装在浏览器的 Root Store 里�
         └─ www.amazon.com    ← 网站证书：由中间 CA 签发
 ```
 
-**PKI 课堂实操 2 的五个问题怎么找**（Chrome 打开 amazon.com → 锁头 → Certificate）
+**PKI 课堂实操（p.20–22）**
 
-| 问题 | 去哪看 | 例子 |
+<Figure src="images/pki_07.png" caption="In-Class Try Out (1)：看安装包属性里的 Digital Signatures 标签" source="PKI p.20" />
+
+> **课件原题（Try Out 1）：** Download an installation file → right click for its properties → go to the "Digital Signatures" tab — **does all program have this tab?**
+> **答案：** **不是**。只有厂商用自己的私钥签过名的程序才有这个标签（点 Details 能看到签名者和证书）。没有这个标签 = 没签名，来源和完整性都无法验证，安装前要更小心。
+
+<Figure src="images/pki_08.png" caption="In-Class Try Out (2)：在 Chrome 查看 amazon.com 的证书" source="PKI p.21" />
+
+**课件原题（Try Out 2）**：Open Chrome and visit www.amazon.com → click on the Secure logo → "Connection is secure" → "Certificate is valid", check the General and Details tabs, and answer:
+
+| 课件原题 | 去哪看 | 答案（以课件 p.26 截图为例） |
 |---|---|---|
-| 哪个 CA 签发的 | General：Issued by | DigiCert Global CA G2 |
-| 根 CA 是谁 | Certification Path 最上面 | DigiCert Global Root G2 |
-| 有效期 | General：Valid from / to | 通常一年左右 |
-| 主体的公钥 | Details：Public key | RSA 2048 位等 |
-| 证书签名用的哈希函数 | Details：Signature algorithm / hash algorithm | sha256RSA → SHA-256 |
+| 1) Which CA issued this digital certificate? | General：Issued by | DigiCert Global CA G2 |
+| 2) Who is the root CA for this certificate? | Certification Path 最上面 | DigiCert Global Root G2 |
+| 3) What's the validation period of this certificate? | General：Valid from / to | 通常一年左右（每次看到的日期不同） |
+| 4) What is the subject's public key? | Details：Public key | 一长串数字，常见 RSA 2048 位 |
+| 5) What hash function is used to generate a digital signature of the certificate? | Details：Signature algorithm / hash algorithm | sha256RSA → **SHA-256** |
 
-- 实操 1：安装包「属性」里的 **Digital Signatures** 标签——厂商用私钥签了安装包；不是所有程序都有，没有签名的安装包来源无法验证。
+**Try Out 3**（没有问题，只是操作）：Chrome Settings → Privacy and Security → Security → Manage certificates → **Chrome Root Store**，双击任一证书查看。这里列的就是浏览器**预装、无条件信任**的根 CA，证书链最终都要追到这里。
 - 证书还要能**吊销（revocation）**：私钥泄露、员工离职、网站停用时，CA 宣布这张证书作废，浏览器检查时就会拒绝（§6）。
 
 <QA q="Explain why a digital certificate solves a problem that a digital signature alone cannot.">
@@ -438,6 +532,8 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 
 ## 6. 🔴 PKI 的价值与密码学四个目标（p.27–29）📝✍️
 
+<Figure src="images/page_27.png" caption="Class Discussion（6 minutes）：PKI 给组织带来什么价值；本课的密码工具各自做到什么" source="Slide 27" />
+
 **课件原文（p.28，课堂讨论的答案）**
 
 - **Trust Establishment and Identity Verification**
@@ -452,7 +548,13 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 - 没有 PKI：每两个人都要事先见面确认对方的公钥。有了 PKI：只要信任少数几个根 CA，就能信任全世界几百万个网站。
 - 四个环节对应证书的一生：**Enrollment**（申请：CA 核实身份后签发）→ **Verification**（使用：对方检查签名、有效期、域名）→ **Revocation**（作废：私钥泄露或员工离职时宣布无效）。Revocation 最容易漏答。
 
-**p.27 第二问：每种工具各自做到什么**
+<QA q="（课件原题 p.27 Class Discussion）What are the cryptographic tools discussed in this module, and what does each accomplish?">
+
+**答案**：五种工具，各自对应四个目标中的一部分（见下表）：对称加密 → 快速保密大量数据；非对称加密 → 保密 + 解决密钥分发；Hash → 完整性；数字签名 → 完整性 + 身份 + 不可抵赖；数字证书 / CA → 确认公钥属于谁。实际部署时组合成 hybrid（TLS）。
+
+*EN:* Symmetric encryption provides fast confidentiality for bulk data; asymmetric encryption provides confidentiality and solves key distribution; hashing provides integrity; digital signatures provide integrity, authentication and nonrepudiation; digital certificates issued by CAs bind public keys to identities. TLS combines them in a hybrid system.
+
+</QA>
 
 | | Confidentiality | Integrity | Authentication | Nonrepudiation |
 |---|---|---|---|---|
@@ -465,7 +567,7 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 
 <L4SortQuiz set="goal" />
 
-<QA q="（课堂讨论 / class discussion）How does public key infrastructure add value to an organisation seeking to use cryptography to protect information assets?（10 marks）">
+<QA q="（课件原题 p.27 Class Discussion）How does public key infrastructure add value to an organisation seeking to use cryptography to protect information assets?（10 marks）">
 
 **English**
 
@@ -515,29 +617,6 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 - **Session key 只用一次**：每次连接重新协商。好处是某一把泄露了也只影响那一次会话，攻击者不能拿它解密以前和以后的流量。
 - **HTTP vs HTTPS**（PKI p.26）：HTTP 走 80 端口、明文（浏览器显示 *Not secure*）；HTTPS 走 443 端口、有 SSL 证书、加密（显示锁头）。SSL 是 TLS 的前身，现在实际用的都是 TLS，但习惯上还叫「SSL 证书」。
 
-**各种环境用的协议（PKI p.25）**
-
-| 环境 | 协议 |
-|---|---|
-| Web (https://) | SSL、TLS |
-| Email | S/MIME、PEM、**PGP** |
-| Wireless | WEP、WPA、WPA2、WPA3 |
-| Bluetooth | Passkey only |
-
-- **PGP（Pretty Good Privacy）**：**hybrid cryptosystem**，免费或低成本，成了邮件和文件加密的开源标准。顺序是**先签名 → 再 ZIP 压缩 → 最后加密**。（为什么压缩放在加密之前：加密后的数据像随机乱码，几乎压缩不了；压缩还顺便打乱了原文的规律。）
-
-<Figure src="images/pki_15.png" caption="WEP vs WPA vs WPA2 vs WPA3" source="PKI p.29" />
-
-| | WEP | WPA | WPA2 | WPA3 |
-|---|---|---|---|---|
-| 年份 | 1997 | 2003 | 2004 | 2018 |
-| 加密 | RC4 | TKIP / RC4 | **AES**-CCMP | **AES**-CCMP / GCMP |
-| 安全等级 | 很低 | 低 | 中 | 高 |
-| 弱点 | 加密不安全，容易被破 | 加密弱、兼容问题 | KRACK 重装密钥攻击 | 部署复杂 |
-
-- 规律：越新越安全，核心是从 RC4 换成 **AES**（呼应 p.11：WPA2 / WPA3 用 AES）。WEP 是「算法过时」的经典例子（§10）。
-- **Bluetooth**：约 30 英尺（10 米）内的人都可能利用。不接受不认识的配对请求、不在公共场所配对、删除不用的连接、不用时关闭。
-
 <QA q="（A2 原题 / A2 question）Explain hybrid encryption (3). Why does TLS use both asymmetric and symmetric encryption rather than one type (4)? Include the specific roles each plays in a TLS session (8).">
 
 **English**
@@ -558,6 +637,128 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 **TLS 中的角色**：① 握手时服务器发送 CA 签发的证书，客户端用 CA 公钥验证证书，确认服务器身份；② 用非对称算法（RSA 或 ECDH）协商出会话密钥，窃听者拿不到；③ 之后的网页数据都用对称算法（AES）和会话密钥加密，速度快；④ 每条记录附带完整性校验，检测篡改；⑤ 会话结束后会话密钥作废，下次重新协商。
 
 </QA>
+
+### 7.1 🟡 各种环境用的协议（PKI p.25–30）🔍
+
+<Figure src="images/pki_11.png" caption="Protocols for Secure Communication" source="PKI p.25" />
+
+| 环境 | 协议 |
+|---|---|
+| Web (https://) | SSL、TLS |
+| Email | S/MIME、PEM、PGP |
+| Wireless | WEP、WPA、WPA2、WPA3 |
+| Bluetooth | Passkey only |
+
+<Callout type="exam" title="这些协议要掌握到什么程度（我的判断）">
+
+依据：老师点名的是对称、非对称、哈希、PKI 和 TLS（A2 考过）；课件原题和课堂讨论都没考这些协议；它们在 PKI 专题里各只占一页，WEP 那页只有一张图。这是推断，不是老师划的范围。
+
+| 内容 | 优先级 | 要做到什么 |
+|---|---|---|
+| **TLS / HTTPS** | 🔴 | 能写成论述：hybrid、为什么两种都用、各自的角色 |
+| 环境 → 协议对照表 | 🟡 | 给协议名能说出用在哪个环境 |
+| PGP | 🟡 | hybrid cryptosystem；邮件和文件；**签名 → 压缩 → 加密** |
+| SSL vs TLS | 🟡 | SSL 是 TLS 的前身，现在实际用 TLS |
+| WEP → WPA3 | 🟢 | 越新越安全；WEP 不安全；WPA2 / WPA3 用 AES |
+| S/MIME、PEM | 🟢 | 认得出是邮件协议 |
+| Bluetooth | 🟢 | 约 30 英尺（10 米）；四条使用建议的意思 |
+
+**不用背**：WEP–WPA3 的年份、TKIP / CCMP / GCMP、KRACK、会话密钥位数。
+
+可能的考法：*Which protocol secures email?* → PGP / S/MIME；*PGP is a ___ cryptosystem* → hybrid；*In PGP the message is compressed ___* → after signing, before encrypting；*Which wireless protocol is the least secure?* → WEP；*WPA2 / WPA3 use which standard?* → AES。
+
+</Callout>
+
+**它们都是前面工具的组合，只是用在不同地方**
+
+| 环境 | 协议 | 用了哪些工具 | 保护什么 |
+|---|---|---|---|
+| Web | SSL → TLS | 证书 + 非对称握手 + 对称 AES + MAC | 浏览器和网站之间传输的数据 |
+| Email | S/MIME、PGP（PEM 已淘汰） | 签名 + hybrid 加密 | 邮件本身（从写信人到收信人） |
+| Wireless | WEP → WPA3 | 主要是对称（RC4 → AES） | 设备和 Wi-Fi 路由器之间的无线信号 |
+| Bluetooth | Passkey 配对 | 配对码 + 对称加密 | 两台设备之间的短距离连接 |
+
+#### ① SSL / TLS：Web
+
+**解决什么问题**：HTTP 是明文，路上的人能看到密码、能改网页、能冒充网站。TLS 夹在 HTTP 和网络之间：HTTP + TLS = **HTTPS（端口 443）**，一次解决 C（加密）、I（MAC）、A（证书）。
+
+<Figure src="images/pki_12.png" caption="HTTP vs HTTPS：HTTP（80）是 Insecure Connection；HTTPS（443）有 SSL Certificate，是 Encrypted Connection" source="PKI p.26" />
+
+**为什么前身叫 SSL，后来改叫 TLS**
+
+| 年份 | 版本 | 发生了什么 |
+|---|---|---|
+| 1995 | SSL 2.0 | 网景公司（Netscape，早期浏览器）为网上购物开发。1.0 有缺陷，没公开发布 |
+| 1996 | SSL 3.0 | 修了 2.0 的漏洞，大规模使用 |
+| 1999 | **TLS 1.0** | 交给国际标准组织 IETF 统一管理，**改名 TLS**，技术上是 SSL 3.0 的改进版 |
+| 2006 / 2008 | TLS 1.1 / 1.2 | 修补漏洞，支持更强的算法（SHA-256、AES-GCM） |
+| 2018 | TLS 1.3 | 删掉所有不安全的旧算法，握手更快，每次会话强制用新的临时密钥 |
+
+- **改名的原因**：从一家公司的私有技术变成开放的国际标准，换一个中立的名字。
+- **TLS 比 SSL 解决了什么**：SSL 本身被攻破了（2014 年 POODLE 攻击破解 SSL 3.0，之后 SSL 全面禁用；TLS 1.0 / 1.1 也在 2020 年前后被淘汰）；淘汰了 MD5、SHA-1、RC4 这些过时算法（§10「算法过时」）；TLS 1.3 下即使服务器私钥以后泄露，以前录下来的会话也解不开。
+- **为什么还叫「SSL 证书」**：纯粹是习惯。证书本身（X.509 格式，CA 签发）和用 SSL 还是 TLS 无关。
+- 除了网页，TLS 还用在：邮件服务器之间的传输、L3 的 **SSL VPN**、手机 App 和服务器通信、网银 API。
+
+#### ② Email：PGP、S/MIME、PEM
+
+**为什么邮件要单独的协议？TLS 不够吗？** TLS 只保护**一段路**（你的电脑 → 邮件服务器）；邮件在服务器上、中转服务器上是明文存着的。PGP 和 S/MIME 是**端到端**的，从写信人一路加密到收信人。
+
+```
+TLS：       你 ══🔒══ 你的邮件服务器（明文存放）══🔒══ 对方服务器（明文存放）══🔒══ 收信人
+PGP/S/MIME：你 ═══════════════════ 🔒 整封信一路加密 🔒 ═══════════════════ 收信人
+```
+
+<Figure src="images/pki_14.png" caption="PGP：hybrid cryptosystem，免费或低成本，邮件和文件加密的开源标准；签名之后、加密之前用 ZIP 压缩" source="PKI p.28" />
+
+**PGP（Pretty Good Privacy）**：1991 年由 Phil Zimmermann 开发，免费（现在的开源版本叫 OpenPGP / GPG）。发信三步：
+
+```
+① 签名：Hash 邮件 → 用发件人私钥签摘要                         （I + A + N）
+② 压缩：用 ZIP 压缩「邮件 + 签名」                              （变小，打乱规律）
+③ 加密：随机生成一把对称 session key，用它 AES 加密整个包；
+        再用收件人的公钥加密这把 session key，一起发出去        （C，这就是 hybrid）
+```
+
+收信人反过来：自己的私钥解出 session key → 解密 → 解压 → 用发件人公钥验签名。
+
+- **签名为什么最先**：签的是原始内容，收信人解开后能直接验证原文。**压缩为什么在加密前**：加密后的数据看起来是随机的，几乎压缩不了；压缩还打乱原文规律，让破解更难。
+- **怎么信任对方的公钥**：不靠 CA，靠 **web of trust（信任网）**——用户之间互相给对方的公钥签名担保。
+
+**S/MIME（Secure/Multipurpose Internet Mail Extensions）**：功能和 PGP 一样（签名 + hybrid 加密），区别是**靠 CA 签发的证书**信任公钥，内置在 Outlook、Apple Mail，适合企业统一给员工发证书。
+
+**PEM（Privacy-Enhanced Mail）**：1993 年 IETF 最早的邮件加密标准，基本没普及就被 S/MIME 取代；留下来的是**文件格式**——证书、密钥文件常见的 `.pem` 后缀。
+
+| | PGP | S/MIME |
+|---|---|---|
+| 信任公钥靠 | web of trust（用户互相担保） | CA 签发的证书（PKI） |
+| 适合 | 个人、技术社群 | 企业 |
+| 成本 | 免费 / 低成本 | 买证书或公司统一发 |
+
+#### ③ Wireless：WEP → WPA → WPA2 → WPA3
+
+无线信号在空气里传播，附近谁都收得到，所以必须加密。这一段主要用**对称加密**：Wi-Fi 密码就是双方共享的钥匙（或用来推算钥匙）。
+
+<Figure src="images/pki_15.png" caption="WEP vs WPA vs WPA2 vs WPA3" source="PKI p.29" />
+
+| | 为什么出现 | 加密 | 问题 |
+|---|---|---|---|
+| **WEP**（1997） | 第一代，目标是「和有线一样隐私」（Wired Equivalent Privacy） | RC4 | 密钥固定不变、初始化向量太短会重复，几分钟就能破 |
+| **WPA**（2003） | **救急方案**：WEP 被破后，旧设备升级固件就能用；每个数据包换一把密钥（TKIP） | TKIP / RC4 | 底层还是 RC4，只是临时补丁 |
+| **WPA2**（2004） | 正式标准，换成 **AES**，用了十几年 | AES-CCMP | 2017 年 KRACK 能骗设备重装密钥（打补丁可修）；共享密码的版本怕离线暴力猜密码 |
+| **WPA3**（2018） | 新的握手方式（SAE），**密码简单也很难离线暴力破解**；每次连接用新密钥 | AES-CCMP / GCMP | 新设备才支持，部署复杂 |
+
+- 规律：越新越安全，核心是 RC4 → **AES**（呼应 p.11）；WEP 是「算法过时」的经典例子（§10）。
+- **Personal vs Enterprise**：Personal 是大家共用一个 Wi-Fi 密码（家里）；Enterprise 是每人用自己的账号登录（802.1X，公司、学校，例如用学校账号登录的 eduroam）——这就是 L3 的 authentication 落到 Wi-Fi 上。
+
+#### ④ Bluetooth：Passkey only
+
+- 第一次连接要**配对**：屏幕显示或要求输入一个配对码（passkey），双方确认一致才连上，之后用对称加密通信。*Passkey only* 指蓝牙主要靠这个配对码保证安全。
+- 范围约 **30 英尺（10 米）**内的人都可能尝试连你。常见攻击名（了解即可）：**Bluejacking**（发垃圾消息）、**Bluesnarfing**（偷读通讯录、文件）、**Bluebugging**（控制设备）。
+- 课件四条建议：不接受不认识的配对请求、不在公共场所配对、删除不用的连接、不用时关闭。
+- ⚠️ 这个 passkey（蓝牙配对码）和 L6 的 **passkey 无密码登录**（设备存私钥、对服务器的 challenge 签名，属于非对称）不是一回事。
+
+**串回主线**：TLS 和 PGP 都是 hybrid（非对称交换钥匙 / 签名，对称加密数据）；协议里只要有「签名」就是非对称，TLS 传输阶段的完整性校验是对称的 MAC；SSL → TLS、WEP → WPA3、MD5 → SHA-256 都是「算法过时就换」。
+
 
 ---
 
@@ -604,7 +805,6 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 - Satoshi Nakamoto 2008：digital equivalence of cash；fully decentralized（not minted or managed by any central bank）；highly resilient to changes；all transactions perfectly traceable and verifiable；**no single party can shut the system down**
 - Transaction integrity：**a chain of inter-related hash values**；hash the entire block of data to produce a summary
 - **Cryptography is a MUST**：everyone must use **PKI**, no opt-out；**Bitcoin blockchain is the largest civilian deployment of PKI in the world**
-- 课件问题：Does blockchain provide **confidentiality** on the transactions within the block?
 
 **需要理解：区块链 = 本课工具的组合**
 
@@ -617,11 +817,48 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 <ChainLab />
 
 - 为什么难改：改了一个旧块，它的哈希就变了，后面每一块的 Prev Hash 都对不上；攻击者要把后面全部重算，还要让大多数节点接受他的版本，而每个节点都有完整副本。
-- **课件问题的答案：不提供机密性**。账本对所有节点公开，任何人都能看到每笔交易（谁转给谁、多少钱）；它提供的是完整性、来源认证和不可抵赖。
+<Figure src="images/page_34.png" caption="Cryptography on Blockchain：每个参与者都必须用 PKI；比特币是全世界最大的民用 PKI 部署" source="Slide 34" />
+
+<QA q="（课件原题 p.34）Is Blockchain provide confidentiality on the financial transactions within the Block?">
+
+**答案：不提供机密性。** 账本对所有节点公开，每个节点都有完整副本，任何人都能看到每笔交易（哪个地址转给哪个地址、多少钱）。区块链提供的是 **integrity**（哈希链）、**data origin authentication** 和 **nonrepudiation**（每笔交易都有转账人的数字签名），也就是 p.31 *cryptographically-secure* 列的三项——里面本来就没有 confidentiality。
+
+*EN:* **No.** The ledger is shared with every peer, so all transactions are visible. Blockchain provides integrity (the hash chain), data origin authentication and nonrepudiation (signed transactions), not confidentiality.
+
+</QA>
 
 ---
 
 ## 10. 🟡 风险、挑战与最佳实践（p.36、p.40）📝
+
+<Figure src="images/page_36.png" caption="Strength of Encryption?——Table 10-5 Encryption Key Power：k 位密钥最多要猜 2^k 次；56 位平均 17.1 小时，128 位平均 9.2×10^18 年；Encryption + Key determine the strength (Key more important)" source="Slide 36" />
+
+<Figure src="images/page_40.png" caption="Risk & Challenges：Risks / Challenges / Best Practices / Importance of user education" source="Slide 40" />
+
+> **课件原题（p.36 标题）：** Strength of Encryption?
+> **课件答案：** Encryption + Key determine the strength encryption! (Key more important)
+
+**这两页在讲什么**
+
+- **p.36** 用标题提问 *Strength of Encryption?*（加密有多强取决于什么），答案写在下面：**Encryption + Key determine the strength, key more important**。中间那张 **Table 10-5（Encryption Key Power）** 是证据：暴力破解要把所有可能的钥匙试一遍，k 位的钥匙最多有 **2^k** 种。表里每一行就是多一段长度后，要猜多少次、一台电脑要猜多久。
+- **p.40** 是全课的收尾：用了加密之后还剩下哪些**风险**、落地时有哪些**挑战**、该怎么做（**最佳实践**），以及别忘了**用户教育**。
+
+**怎么读 Table 10-5**
+
+| 密钥长度 | 最多猜测次数 | 平均破解时间（表里的数字） | 说明 |
+|---|---|---|---|
+| 16 位 | 65,536 | 0.000000056 秒 | 一眨眼 |
+| 56 位 | 7.2 × 10^16 | **17.1 小时** | 老的 DES 就是 56 位，所以被淘汰 |
+| 64 位 | 1.8 × 10^19 | 182 天 | |
+| 128 位 | 3.4 × 10^38 | **9.2 × 10^18 年** | AES 最短的密钥，宇宙年龄才 1.4 × 10^10 年 |
+| 256 位 | 1.16 × 10^77 | 3.1 × 10^57 年 | AES-256 |
+
+- **规律：多 1 位，工作量翻一倍**；从 56 位到 128 位只多了 72 位，时间却从 17 小时变成上亿亿年。
+- 「平均」是「最多」的一半：平均猜到一半就中。
+- 表的注释说明这是**一台 2020 年的桌面 CPU** 算的；用很多台电脑一起算会快很多，但对 128 位以上仍然没用。量子计算是另一回事（§11）。
+- 所以 *key more important*：算法是公开的，强度来自**钥匙够长、够随机、保管得好**。
+
+<KeyStrengthLab />
 
 **课件原文**
 
@@ -652,6 +889,11 @@ Confidentiality additionally requires encryption — in practice a hybrid system
 ## 11. 🟢 量子计算（p.37–39）✍️
 
 <Figure src="images/page_38.png" caption="Quantum Computing – Not a 2036 Problem：金融业量子计算采用率仅 7%；KPMG 的审计问题——做过加密资产盘点吗？知道自己在用哪些算法吗？有 PQC 迁移时间表吗？" source="Slide 38" />
+
+<Figure src="images/page_37.png" caption="Latest Threat：Quantum Computing（BBC 2025 年 2 月）" source="Slide 37" />
+
+> **课件原题（p.37，BBC 文章标题）：** Will quantum computers disrupt critical infrastructure?
+> **答案要点：** **有可能，但不知道什么时候。** 今天的基础设施（网银、TLS、证书、数字签名）都依赖 RSA 这类非对称算法；足够强的量子计算机理论上几分钟就能破解，而普通计算机要上百万年。文章强调「我们无法准确预测它什么时候从理论变成现实」，而数字技术无处不在，修起来更复杂——所以现在就要开始准备（下面 KPMG 的审计问题）。
 
 **课件原文**
 
