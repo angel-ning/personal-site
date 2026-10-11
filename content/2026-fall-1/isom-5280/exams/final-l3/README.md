@@ -6,7 +6,7 @@ summary:
   en: "Lesson 3 for the final: slide definitions, what to understand and likely questions for authentication, access control, Zero Trust, firewalls and architectures, VPN, IDPS, EDR, SIEM, XDR, SOAR, SOC, honeypots and the security control strategies that tie them together."
   zh: "第 3 课期末版：认证与授权、访问控制、Zero Trust、防火墙与架构、VPN、IDPS、EDR、SIEM、XDR、SOAR、SOC、蜜罐，以及把这些工具串起来的安全控制策略——每个点给课件原文、需要理解的逻辑和可能的问法。"
 week: 3
-date: 2026-10-08
+date: 2026-10-11
 tags: [FinalReview, ZeroTrust, Firewall, DMZ, IDPS, SIEM, SOC, DefenseInDepth]
 ---
 # 期末复习 L3 · 防护工具与 Zero Trust
@@ -14,6 +14,8 @@ tags: [FinalReview, ZeroTrust, Firewall, DMZ, IDPS, SIEM, SOC, DefenseInDepth]
 **课件**：Lesson 3（65 页）　**详细笔记**：[第 3 课复习笔记](../../lectures/lesson-03/)（§37 易混对照、§40 自测题建议再做一遍）　**练习题**：[L3 练习题](../practice-l3/)　**总览**：[期末总复习](../final-review/)
 
 > **怎么读这一页**：每个知识点按 **课件原文 → 需要理解 → 可能的问法** 写。
+>
+> **10 月 11 日修订**：§2–§8 按复习时的追问重写——host firewall 怎么保护设备、为什么不按 MAC 过滤、network firewall 装在哪、stateless 的漏洞、proxy 完整流程、tunnel vs transport vs proxy、IDPS 两步法（含我做错的一题）、Defense in Depth 逐层对照、蜜罐的法律问题。新增三个互动练习：Stateless vs Stateful 发包实验、VPN「谁能看到什么」、七组点选分类题。
 >
 > 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可  
 > 掌握要求：📝 **默写**（能写出名字、定义、清单）· 🔍 **区分**（给场景能判断是哪一个，选择题）· 🧮 **计算** · ✍️ **分析**（能写成有结构的一段论述，长题）
@@ -231,7 +233,23 @@ Three Principles：
 
 ## 2. 防火墙
 
+> **🧠 先分清两个维度（复习时最容易混的一点）**
+>
+> 防火墙这一块的名词可以挂在**三根互相独立的轴**上，同一台防火墙在每根轴上各取一个值：
+>
+> | 维度            | 选项                                            | 本页位置     |
+> | ------------- | --------------------------------------------- | -------- |
+> | **装在哪**       | Network-based / Host-based                    | §2.1     |
+> | **怎么判断（看多深）** | MAC → Stateless → Stateful → Proxy；NGFW 把它们打包 | §2.2–2.7 |
+> | **怎么摆放（架构）**  | Screened Host → Screened Subnet（DMZ）          | §3       |
+>
+> 例：Windows 自带的防火墙 = **host-based + stateful**。所以「host 防火墙过滤什么」和「stateless 是什么意思」是两个不同的问题。
+
 ### 2.1 🔴 定义 + Network vs Host-based（p.12–13）📝🔍
+
+![Network-based firewall 在企业网络和 Internet 之间；Host-based firewall 装在每台设备上（如 Web Server）](images/page_13.png)
+
+*Network-based firewall 在企业网络和 Internet 之间；Host-based firewall 装在每台设备上（如 Web Server）（Slide 13）*
 
 **课件原文**
 
@@ -247,9 +265,68 @@ Three Principles：
 
 **需要理解**
 
-- 防火墙是**功能**，不是某种盒子。
-- 两种都要：网络防火墙看不到**内网主机之间**的横向移动（流量不经过边界）；主机防火墙管不了没装它的设备、规模化管理难。
-- 「Network vs Host」在 IDPS 又出现一次（NIDS vs HIDS），逻辑一样。
+- 防火墙是**功能**，不是某种盒子。Hardware = 专门的设备；Software = 装在电脑 / 服务器上的程序（Windows Defender Firewall、macOS 防火墙、Linux iptables）；Hybrid = 两者结合。Host-based 基本都是 software，network-based 通常是 hardware，但也可以是跑在服务器或云上的软件。
+- 类比：**network firewall = 小区大门的保安**，管小区和外面之间的进出；**host firewall = 你家的门锁**。
+
+**Host-based firewall 是怎么保护设备本身的？**
+
+```
+网线 / Wi-Fi → 网卡 → 操作系统网络栈 →【host firewall 在这里检查】→ 交给程序（Chrome、微信…）
+```
+
+- 所有进出这台电脑的包都要经过它，它是设备的**最后一道门**。
+- 它主要过滤的也是 **IP、端口、协议、方向**，和 packet filter 一样，**不是 MAC**。
+- 它独有的一项：**知道是哪个程序**。例如「允许 Chrome 上网，禁止某个陌生 .exe 往外连」「不让任何人连我的 445 端口（文件共享）」。网络防火墙在半路只看得到一个个包，不知道是哪个程序发的——这就是课件说的 *granular control at the device level*。
+
+> **⚠️ 为什么 host firewall 不按 MAC 过滤**
+>
+> - MAC 地址**只在同一个局域网里有效**。包每经过一个路由器，源 MAC 就被换成那台路由器的 MAC，所以从互联网来的包到你电脑时，MAC 全是你家路由器的，按 MAC 过滤没有意义。
+> - MAC 很容易伪造。
+> - 按 MAC 过滤的是另一类：**MAC layer firewall**（L2，见 §2.6），例如交换机只允许登记过的设备接入、Wi-Fi 的 MAC 白名单。
+
+**为什么 We need Both？**
+
+1. **内网攻击**：同一个办公室网络里，同事电脑中毒后来扫你的电脑。同一交换机下的两台 PC 互相通信，**流量根本不经过边界防火墙**，只有 host firewall 能拦。
+2. **设备离开公司**：笔记本带去咖啡店连 Wi-Fi，公司的防火墙不在身边了，只剩自己的。
+3. 反过来，host firewall 管不了没装它的设备，规模化管理也难。
+4. 「Network vs Host」在 IDPS 又出现一次（NIDPS vs HIDPS，§5.2），逻辑一样。
+
+**Network-based firewall 装在哪？**
+
+关键不是它是什么设备，而是**放在所有流量必经的路口（chokepoint）**——内网和外网之间，进出公司的每个包都要经过它。
+
+```
+        Internet
+           │
+   [边界路由器 Router]     ← 负责转发、连 ISP，也可以做简单的包过滤
+           │
+   [防火墙 Firewall]       ← network-based firewall，公司里通常是一台专门的设备
+           │
+   [交换机 Switch]
+     ┌─────┼─────┐
+    PC    PC   Server      ← 每台机器上还可以再装 host-based firewall
+```
+
+| 形态       | 例子                                              | 常见于         |
+| -------- | ----------------------------------------------- | ----------- |
+| 专门的防火墙设备 | Palo Alto、Fortinet、Cisco 等硬件                    | 公司、学校       |
+| 路由器兼任    | 在路由器上配 ACL 做包过滤（*screening / filtering router*） | 小公司；大公司的第一层 |
+| 家用路由器自带  | 家里的 Wi-Fi 路由器内置了简单的防火墙                          | 家庭          |
+
+公司一般把**路由**（包往哪走）和**过滤**（包能不能走）分给两台设备，因为大流量下做 stateful 检查很吃性能。
+
+*（网页版此处是点选练习：该用哪一个？（装在哪：network 还是 host）；下表是全部题目和答案）*
+
+| 情景                             | 答案                   | 理由                                                                         |
+| ------------------------------ | -------------------- | -------------------------------------------------------------------------- |
+| 一台互联网上的机器正在攻击内网多台服务器，要最快挡住它    | **Network firewall** | 课件原题 p.64：单一来源 + 多个目标 → 在边界加一条规则，一次保护全部                                    |
+| 同一个办公室里，同事的电脑中毒后开始扫描你的电脑，要挡住它  | **Host firewall**    | 同一交换机下的两台 PC 互相通信，流量根本不经过边界防火墙                                             |
+| 员工带笔记本去咖啡店连公共 Wi-Fi，电脑仍要有过滤保护  | **Host firewall**    | 离开公司后公司的边界防火墙就不在了，只剩装在电脑上的那一层                                              |
+| 只允许 Chrome 上网，禁止一个陌生的 .exe 往外连 | **Host firewall**    | 只有装在电脑上的软件知道包是哪个程序发的（granular control at the device level）                 |
+| 想发现「某个 IP 在几秒内把整个网段的端口都扫了一遍」   | **NIDPS**            | 一个传感器看整个网段的流量模式，这是 NIDPS 的长处                                               |
+| 想发现「服务器上的系统文件被人篡改了」            | **HIDPS**            | 文件变化发生在主机内部，NIDPS 看不到；Figure 9-2：examines the data in files stored on host |
+| 流量大多是 HTTPS / VPN 加密的，仍想检查内容   | **HIDPS**            | 加密流量经过网络时看不到内容（A1 原题），到主机上已经解密，HIDPS 能看到                                   |
+| 有人凌晨 3 点用管理员账号登录了财务服务器         | **HIDPS**            | 监控 the actions of connected users（p.33）是 host-based 的内容                    |
 
 **（课件原题）An incident originates from a single system on the Internet targeting multiple systems on this network. What control could stop the incident ASAP?**
 
@@ -266,16 +343,54 @@ Three Principles：
 
 ### 2.2 🔴 Packet Filtering / Stateless + Bastion Host（p.15–17）📝🔍
 
+![Figure 8-10：Packet-filtering router 挡掉 blocked packets、放行 filtered packets（渔网只拦大鱼的比喻）](images/page_16.png)
+
+*Figure 8-10：Packet-filtering router 挡掉 blocked packets、放行 filtered packets（渔网只拦大鱼的比喻）（Slide 16）*
+
 **课件原文**
 
 - Packet-filtering firewalls examine the **header information**：**IP source and destination address**、**direction (inbound / outbound)**、**TCP source and destination port**；functions at the **IP layer**，deny (drop) or allow (forward)
 - **Stateless / Static**：**most basic form**；decisions based on **static rules** on header info；**has no way of knowing** if a packet is **part of an existing connection**, trying to **establish a new connection**, or just a **rogue packet**；**Fast, but vulnerable to spoofing**
 - **Bastion Host**：a device placed between an external, untrusted network and an internal, trusted network; also known as a **sacrificial host**, as it serves as the **sole target for attack**
 
-**需要理解**
+**需要理解：只看信封，不拆信**
 
-- Stateless 每个包独立判断，没有记忆 → 为了让回包进来，只能永久开放一大片高位端口（规则表第 1 条）→ 攻击者伪造源地址就能塞包。
+一个数据包 = **信封（header）+ 信纸（payload）**。Packet filter 只看信封：
+
+| 信封上的信息   | Header 字段                     |
+| -------- | ----------------------------- |
+| 寄件人地址    | Source IP                     |
+| 收件人地址    | Destination IP                |
+| 收件人的哪个部门 | Port（443 = HTTPS，22 = SSH）    |
+| 寄进来还是寄出去 | Direction（inbound / outbound） |
+
+规则表从上往下逐条比对，命中 allow 就 forward，命中 deny 就 drop。
+
+**Stateless = 看一个忘一个**
+
+```
+去：Amy 10.0.0.5:50000   →  网站 93.184.216.34:443   ✅ 规则允许出站 443
+回：网站 93.184.216.34:443 →  Amy 10.0.0.5:50000    ❓ 防火墙不记得这是 Amy 请求的
+```
+
+为了让回包进来，stateless 只能写一条规则：**永远允许外面「源端口 443」的包进入 1024–65535 的高端口**（规则表 p.18 第 1 条也是这种思路）。这就开了一个大洞：攻击者伪造一个看起来像回包的包（源端口写成 443），也能直接进来——这就是 *vulnerable to spoofing*。
+
 - Bastion host = 故意放在最前面吸引火力的机器，必须加固，并且假设它迟早会失守。
+
+> **🧠 分类关系（我复习时理清的）**
+>
+> ```
+> Firewall（按「怎么判断」分）
+> ├── Packet Filtering Firewall      ← 只看 header（信封）
+> │   ├── Stateless（Static packet filtering）   没有记忆
+> │   └── Stateful Inspection（SPI）             有 state table
+> ├── Application Layer Proxy Firewall  ← 拆开信看内容，替你转交
+> └── MAC layer firewall                ← 按 MAC 过滤，只在局域网内有效
+> ```
+>
+> **我的理解（✅ 正确）**：Application proxy 和 packet filter 是同一层级的不同种类；stateless 和 stateful 都是 packet filter 的子类（课本里 SPI 就列在 packet-filtering 下面）。
+>
+> ⚠️ 考试时：题目问「比较三种防火墙」→ 把 **Stateless / Stateful / Proxy 并列**按安全程度从低到高答（笔记 §37.1 的表）；问「stateful 属于哪一类」→ 答 packet filtering。两种说法不矛盾。
 
 ### 2.3 🔴 规则表逐条读（p.18）🔍✍️
 
@@ -329,9 +444,25 @@ Three Principles：
 
 **需要理解**
 
-- 新连接怎么建立？先查 state table，属于已有连接就放行；不属于就去查 ruleset，允许则放行**并新建一条记录**。state table 是防火墙自己写的「登记簿」，不是管理员配的白名单。
-- Stateless 永久开一大片端口；Stateful 只在连接期间为那一个 IP 和端口开小口，结束就关。
+- Stateful 多了一张 **state table（连接登记簿）**：Amy 往外发包时，它记下「10.0.0.5:50000 正在和 93.184.216.34:443 通信」；回来的包要和表里对得上才放行，对不上就丢；连接结束就删掉这条。
+- 新连接怎么建立？先查 state table，属于已有连接就放行；不属于就去查 ruleset，允许则放行**并新建一条记录**。state table 是防火墙自己写的，不是管理员配的白名单。
+- Stateless 永久开一大片端口；Stateful 只在连接期间为那一个 IP 和端口开一个**针眼大的口**，结束就关。
 - state table 本身是攻击面：SYN flood 能把它撑满（L2）。
+
+下面这个实验用的就是上面的例子：先发「Amy 访问网站」，再发「攻击者伪造回包」，看两种防火墙的判断哪里不一样。
+
+*（网页版此处可以任意顺序发包，看 stateless 和 stateful 各自怎么判、state table 怎么变化；下表是笔记里的演示顺序）*
+
+**Stateless 规则表：**1. 出站：内网 any → 外部 any:443 → Allow；2. 入站：外部 any:443 → 内网 any:>1023 → Allow（为了让回包进来）；3. 其他一律 Deny
+
+| # | 包                                                           | Stateless | Stateful | Stateful 的理由                                                            | 之后的 state table                    |
+| - | ----------------------------------------------------------- | --------- | -------- | ----------------------------------------------------------------------- | ---------------------------------- |
+| 1 | Amy 访问网站（发出请求）（10.0.0.5:50000 → 93.184.216.34:443 SYN）      | ✅ 放行      | **✅ 放行** | 查规则：出站 443 允许 → 放行，并在 state table 登记这条连接                                | 10.0.0.5:50000 ↔ 93.184.216.34:443 |
+| 2 | 网站回包（93.184.216.34:443 → 10.0.0.5:50000 ACK）                | ✅ 放行      | **✅ 放行** | state table 里有「10.0.0.5:50000 ↔ 93.184.216.34:443」→ 是 Amy 自己发起的连接的回包，放行 | 10.0.0.5:50000 ↔ 93.184.216.34:443 |
+| 3 | 攻击者伪造「回包」（源端口写 443）（198.51.100.66:443 → 10.0.0.5:50001 ACK） | ✅ 放行      | **⛔ 丢弃** | state table 里没有对应的连接 → 不是任何人请求过的包，丢弃                                    | 10.0.0.5:50000 ↔ 93.184.216.34:443 |
+| 4 | 外部直接连 Amy 的 SSH（198.51.100.66:51515 → 10.0.0.5:22 SYN）      | ⛔ 丢弃      | **⛔ 丢弃** | state table 里没有对应的连接 → 不是任何人请求过的包，丢弃                                    | 10.0.0.5:50000 ↔ 93.184.216.34:443 |
+| 5 | Amy 关闭连接（10.0.0.5:50000 → 93.184.216.34:443 FIN）            | ✅ 放行      | **✅ 放行** | 出站允许；连接结束，从 state table 删掉这一条                                           | （空）                                |
+| 6 | 网站回包（93.184.216.34:443 → 10.0.0.5:50000 ACK）                | ✅ 放行      | **⛔ 丢弃** | state table 里没有对应的连接 → 不是任何人请求过的包，丢弃                                    | （空）                                |
 
 | p.20 讨论表           | Stateless    | Stateful                     |
 | ------------------ | ------------ | ---------------------------- |
@@ -339,6 +470,7 @@ Three Principles：
 | Context awareness  | 无            | 知道每条连接的状态                    |
 | Resources usage    | 低            | 高（维护 state table）            |
 | Performance impact | 小（快）         | 较大，高并发可能成瓶颈                  |
+| 安全                 | 容易被 spoofing | 安全得多                         |
 
 **（课件原题）\_\_\_\_\_ inspection firewalls keep track of each network connection between internal and external systems using a state table.**
 
@@ -353,6 +485,16 @@ Three Principles：
 >
 > Dynamic 是干扰项（课件说的是 dynamic state table，但技术名叫 Stateful）。
 
+**外部攻击者伪造一个源端口 = 443 的包，打向内网主机的高端口。Stateless 和 stateful 防火墙分别会怎样？**
+
+> **English**
+>
+> A **stateless** filter lets it in: its rule only checks that the source port is 443 and the destination port is above 1023. A **stateful** firewall drops it: no internal host opened a connection to that address and port, so there is no matching entry in the state table.
+>
+> **中文解析**
+>
+> Stateless 会放行：它的规则只看「源端口 443、目的端口 > 1023」，分不清是不是真的回包。Stateful 会丢弃：state table 里没有对应的连接（内网没人请求过）。
+
 ### 2.5 🔴 Application Layer Proxy Firewall（p.21）📝🔍
 
 **课件原文**
@@ -362,33 +504,117 @@ Three Principles：
 > - **Additional filtering routers** can be implemented **behind** the proxy firewall
 > - The proxy's IP acts as an **intermediary** — websites see the proxy's IP instead of your real IP
 
-**需要理解**
+**需要理解：保安 vs 前台**
 
-- 本质区别：**连接被切成两段**。外部的包到 proxy 就终止，proxy 用自己的身份重新发起 → 没有外部包真正进入内网。
-- 能力：架构性隔离、天然默认拒绝（没有代理模块的协议过不去）、**内容级过滤**（封 URL、禁止下载 .exe）、完整审计。
-- 缺点：**慢**；**每种协议要单独开发模块**；单点瓶颈；本身是高危目标（bastion host）。
-- 别名 Application-Level Gateway（ALG）。
+- **Packet filter = 门口保安**：看一眼证件（header），没问题就让**访客本人走进公司**，访客包里装了什么不知道。
+- **Proxy = 公司前台**：访客**根本进不了办公室**。东西交给前台，前台拆开检查，确认没问题后**由前台自己送进去**。
+
+```
+Packet filter：PC ─────────[✓/✗]─────────► Server   （同一条连接，包原封不动到达）
+Proxy：        PC ══ 连接① ══► [Proxy] ══ 连接② ══► Server   （Server 只看到 proxy 的 IP）
+```
+
+**完整走一遍：员工 Amy（10.0.0.5）下载 `http://example.com/report.pdf`**
+
+1. Amy 把请求发给 **proxy**，不是发给网站。连接 ① 到 proxy 就结束。
+2. Proxy **读懂这个请求**（所以它必须理解 HTTP——这就是 *application layer* 的意思）：example.com 在黑名单上吗？允许下载 .pdf 吗？记一笔日志「Amy，14:03，example.com/report.pdf」。
+3. Proxy **用自己的 IP 新建连接 ②** 去访问网站。网站只看到 proxy。
+4. 网站把文件返回给 proxy，proxy 再检查一遍（有没有病毒、是不是真的 PDF）。
+5. 确认没问题后，proxy 通过连接 ① 把文件交给 Amy。
+
+🔑 **没有一个来自外部的包真正进入过内网**，进到内网的都是 proxy 自己重新生成的。
+
+| 需求               | Packet filter                     | Application proxy |
+| ---------------- | --------------------------------- | ----------------- |
+| 禁止访问某个网站         | ❌ 只看得到 IP，网站 IP 会变、一个 IP 上可能有很多网站 | ✅ 直接看得到网址         |
+| 允许下载、禁止上传        | ❌ 上传和下载用同一个端口                     | ✅ 看得懂是下载还是上传      |
+| 禁止下载 .exe        | ❌                                 | ✅                 |
+| 拦截藏在正常请求里的攻击     | ❌ 端口 80 看起来完全正常                   | ✅                 |
+| 记录「谁、什么时候、访问了什么」 | 只能记 IP 和端口                        | ✅ 具体到网址和文件        |
+| 挡住畸形包、协议栈漏洞攻击    | 包可能直达内网主机                         | ✅ 只会打到 proxy      |
+
+- **天然 default-deny**：每种协议都要一个对应的 proxy 模块（HTTP、FTP、邮件……），没有模块的协议根本过不去。
+- 缺点：**慢**（每个请求都要拆开、读懂、重建连接）；**每种协议要单独的模块**；**单点瓶颈和单点故障**；**本身是高危目标**（直面互联网 = bastion host）。
+- 别名 **Application-Level Gateway（ALG）**；放在 DMZ 时它同时就是 bastion host，几个名字可能指同一台机器。
+
+**p.21 第 4 条为什么读起来跳了一下：proxy 有两种用法**
+
+|      | 正向代理 Forward proxy                | 反向代理 Reverse proxy       |
+| ---- | --------------------------------- | ------------------------ |
+| 替谁出面 | 内部员工（客户端）                         | 公司的服务器                   |
+| 效果   | 网站只看到 proxy 的 IP ← **p.21 第 4 条** | 外部用户只看到 proxy，看不到真正的服务器  |
+| 例子   | 员工上网都经过公司 proxy                   | 外部访问公司官网，先到 DMZ 里的 proxy |
+
+**部署位置（p.21 第 2、3 条）**：proxy 要和外部打交道 → 只能放 **DMZ** → 它直面攻击，就是 **bastion / sacrificial host** → 万一被攻破，要在它和内网之间**再加一个 filtering router**（第 3 条的 *behind*）。前面再放一个 router 预筛（p.25），中间夹着 DMZ，就是 §3.2 的 Screened Subnet。
+
+> **➕ 延伸：HTTPS 下 proxy 还看得到内容吗（一般不考）**
+>
+> 现在大多数网站用 HTTPS，内容是加密的，普通 proxy 只看得到域名。公司要看内容，就得在员工电脑上装公司的证书来解密（TLS inspection）。
+
+> **🎯 Proxy 的常见考法**
+>
+> - *Which firewall operates at the highest OSI layer?* → **Application layer proxy firewall**（L7）
+> - *Websites see the proxy's IP instead of your real IP* → proxy 的 **intermediary** 作用（正向代理）
+> - *Why put a packet-filtering router in front of the proxy?* → **安全 + 性能**两个理由（§3.1）
+>
+> 一句话：packet filter 是**检查站**，包从身边穿过，看一眼信封决定放不放；proxy 是**中转站**，包到它那里就结束了，它拆开看懂后自己重新寄一份。
 
 ### 2.6 🔴 各类防火墙在 OSI 的哪一层（p.24）📝🔍
 
-![Figure 8-11：MAC layer（L2）→ Packet-filtering（L3）→ SPI（L3–L4）→ Application proxy（L5–L7）](images/OSI_FIREWALL_LAYERS.png)
+![Figure 8-11：MAC layer（L1–L2）→ Packet-filtering（L3）→ SPI（L3–L4）→ Application proxy（L5–L7）](images/OSI_FIREWALL_LAYERS.png)
 
-*Figure 8-11：MAC layer（L2）→ Packet-filtering（L3）→ SPI（L3–L4）→ Application proxy（L5–L7）（Slide 24）*
+*Figure 8-11：MAC layer（L1–L2）→ Packet-filtering（L3）→ SPI（L3–L4）→ Application proxy（L5–L7）（Slide 24）*
 
-| 防火墙                   | 层         | 看什么            |
-| --------------------- | --------- | -------------- |
-| MAC layer firewall    | L1–L2     | MAC 地址         |
-| **Packet-filtering**  | **L3**    | IP             |
-| **SPI（Stateful）**     | **L3–L4** | IP + 端口 + 连接状态 |
-| **Application proxy** | **L5–L7** | 应用层内容          |
+| 防火墙                   | 层                  | 看什么            |
+| --------------------- | ------------------ | -------------- |
+| MAC layer firewall    | L1–L2（图上指向 Subnet） | MAC 地址         |
+| **Packet-filtering**  | **L3**             | IP             |
+| **SPI（Stateful）**     | **L3–L4**          | IP + 端口 + 连接状态 |
+| **Application proxy** | **L5–L7**          | 应用层内容          |
 
 规律：**层次越高，看得越深越安全，但越慢越贵**。课件用橙圈标出 packet-filtering 和 application proxy。
 
+- **MAC layer firewall**（课件只在图里出现）：按 MAC 地址过滤，只在同一个局域网内有效（交换机端口只允许登记过的设备、Wi-Fi MAC 白名单）；弱点是 MAC 容易伪造。考试问层次答 **Data link（L2）** 最稳。
+
+> **⚠️ 陷阱：packet filtering 明明读端口，为什么算 L3**
+>
+> p.15 说 packet filtering 会看 TCP 端口（端口属于 L4），但 Figure 8-11 把它放在 **L3**，p.15 也写了 *functions at the IP layer*。考试按图答：**packet filtering = Network layer（L3）**。SPI 横跨 L3–L4，因为它要追踪 TCP 连接。
+
 ### 2.7 🟡 Next-Generation Firewall（NGFW，p.46）📝
+
+![NGFW = Packet inspection + Stateful inspection + IDPS + Malware filtering + Antivirus，装进一台设备](images/page_46.png)
+
+*NGFW = Packet inspection + Stateful inspection + IDPS + Malware filtering + Antivirus，装进一台设备（Slide 46）*
 
 **课件原文**：Firewall + **IDS/IPS**（block in real-time）+ **Deep Packet Inspection**（inspects **payload**, not just headers）+ **Identity Awareness**（**links traffic to specific users and groups**, user-based policy）+ **Threat Intelligence Integration**（external feeds, block proactively）
 
-**需要理解**：Identity Awareness 让规则从「按 IP」变成「按人」——这是 **Zero Trust 在防火墙上的落地**。NGFW 也说明「概念是分开的，产品是打包的」。
+**需要理解**：NGFW **不是一种新的判断方法，而是把很多功能打包进一台设备**——「概念是分开的，产品是打包的」。
+
+| 功能                          | 意思                   | 和前面的关系                               |
+| --------------------------- | -------------------- | ------------------------------------ |
+| Firewall（packet + stateful） | 基础过滤                 | 就是 §2.2–2.4                          |
+| IDS / IPS                   | 识别攻击模式并实时拦截          | §5                                   |
+| DPI                         | 看 payload，不只看 header | 和 proxy 一样看内容，但一般在流量经过时直接检查，不把连接切成两段 |
+| **Identity Awareness**      | 规则**按人**而不是按 IP      | 见下例                                  |
+| Threat Intelligence         | 订阅外部情报，自动更新黑名单       | 从被动防守变成**主动拦截**                      |
+
+- **Identity Awareness 例子**：传统规则「允许 10.0.0.5 访问财务系统」——Amy 换台电脑或 IP 被重新分配，规则就失效。NGFW 可以写「允许**财务部的员工**访问财务系统」，不管她用哪台电脑。信任依据从「你在哪个 IP」变成「你是谁」——这是 **Zero Trust 在防火墙上的落地**。
+- **Threat Intelligence 例子**：某地发现一个新的勒索软件服务器，厂商把它的 IP 和域名推送到你的防火墙，**你还没被攻击就已经能拦住它**。
+- DPI 这个词在 IDPS 部分还会出现（SPA 的别名也叫 DPI，§5.5），两处都指「看 payload」。
+
+*（网页版此处是点选练习：这是哪种防火墙？（p.15–24、p.46）；下表是全部题目和答案）*
+
+| 情景                                       | 答案            | 理由                                                                                                                  |
+| ---------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------------- |
+| 每个包单独判断，只看源 / 目的 IP、端口和方向，判断完就忘          | **Stateless** | Static packet filtering：没有记忆（p.17），最基础、最快，但容易被 spoofing                                                             |
+| 维护一张 state table，外面来的包只有对得上已登记的连接才放行     | **Stateful**  | Stateful inspection（p.19）：Accept traffic from the outside that matches an existing entry in the dynamic state table |
+| 员工的请求到它这里就结束，它读懂 HTTP 请求后用自己的 IP 重新去访问网站 | **App proxy** | 连接被切成两段——这是 application layer proxy 的本质（p.21）                                                                       |
+| 能写「允许上网，但禁止访问某个网址、禁止下载 .exe」这种规则         | **App proxy** | 要看懂应用层内容（L7）才做得到，包过滤只看得到 IP 和端口                                                                                     |
+| 规则写成「财务部的员工可以访问财务系统」，不管她用哪台电脑、IP 是多少     | **NGFW**      | Identity Awareness：links traffic to specific users and groups（p.46）                                                 |
+| 订阅外部威胁情报，新发现的勒索软件服务器 IP 被自动加入黑名单         | **NGFW**      | Threat Intelligence Integration：block them proactively（p.46）                                                        |
+| 只允许登记过 MAC 地址的设备接入这个局域网交换机               | **MAC layer** | 看 MAC 地址，工作在 L2；只在同一个局域网里有效，而且 MAC 很容易伪造                                                                            |
+| 考题问：工作在 OSI 最高层的防火墙                      | **App proxy** | Application layer proxy firewall 在 L5–L7（Figure 8-11）                                                               |
+| 考题问：工作在 Network layer（L3）的防火墙            | **Stateless** | Packet-filtering firewall 在图上指向 L3——即使 p.15 说它也读 TCP 端口，考试按图答 L3                                                    |
 
 ---
 
@@ -396,9 +622,9 @@ Three Principles：
 
 ### 3.1 🔴 Screened Host Architecture（p.25）📝🔍
 
-![Figure 8-13：Packet-filtering router → Application firewall（Bastion host）→ 内网](images/SCREENED_HOST.png)
+![Figure 8-13：只有一个 packet-filtering router；proxy（bastion host）挂在它旁边，通过 proxy access 进入内网](images/SCREENED_HOST.png)
 
-*Figure 8-13：Packet-filtering router → Application firewall（Bastion host）→ 内网（Slide 25）*
+*Figure 8-13：只有一个 packet-filtering router；proxy（bastion host）挂在它旁边，通过 proxy access 进入内网（Slide 25）*
 
 **课件原文**
 
@@ -406,10 +632,29 @@ Three Principles：
 - App-level Firewall / Proxy Server：a **dedicated layer** to inspect and manage traffic
 - Bastion Host Protection：acts as a **sacrificial device exposed to threats**, provides web services to the untrusted network
 
-**需要理解**
+**需要理解：按图的真实结构读**
 
-- 为什么在 proxy 前加 router？两个理由都要答：**安全**（两道机制不同的关卡）+ **性能**（router 先挡掉大部分垃圾，减轻 proxy 负担）。
-- **致命弱点**：bastion host 还连在内网上，它被攻破，攻击者就在内网里了。
+```
+                    [Proxy = Bastion Host]
+                      ↑ Filtered    │ Proxy access
+                      │             ↓
+Untrusted ─────[Packet-filtering router]──────── Trusted network（员工电脑、内部服务器）
+network               ↓
+                 Blocked packets（直接丢弃）
+```
+
+1. 外面来的流量先到 router **粗筛**，明显有问题的直接丢（Blocked）。
+2. 通过粗筛的交给 proxy **深查**（Filtered）。
+3. 只有 proxy 能代为访问内网（Proxy access）。
+
+- 名字：Screened = 被筛过；Host = 那一台 bastion host →「这台主机前面有个 router 替它筛一道」。
+- 课件里的 Proxy 和 Bastion Host **是同一台机器**：一个说它做什么，一个说它的处境。
+- 为什么在 proxy 前加 router？两个理由都要答：**安全**（两道机制不同的关卡）+ **性能**（router 先挡掉大部分垃圾，*lessening the proxy server's load*）。只答安全只能拿一半分。
+- 🔴 **致命弱点**：proxy 和内网之间**没有第二道防线**，它被攻破，攻击者就在内网里了。
+
+> **📌 更正**
+>
+> 讲 proxy 时我一度把它画成「Router → Proxy → Router → 内网」一条直线。那其实是 §3.2 的 Screened Subnet；**Screened Host 只有一个 router**。
 
 ### 3.2 🔴 Screened Subnet with DMZ（p.26）📝🔍✍️
 
@@ -419,19 +664,33 @@ Three Principles：
 
 **课件原文**
 
-- **3-part** network architecture with at least one firewall to create a **buffer zone** between the untrusted internet and the internal network
+- **3-part** network architecture with **at least one firewall** to create a **buffer zone** between the untrusted internet and the internal network
 - **DMZ** hosts **public-facing servers** like web or email servers, **preventing direct access from the internet to internal systems**
 - **Multiple filtering routers and bastion hosts** enforce strict access controls
-- 图：外 → DMZ 是 **Controlled access**；DMZ → 内网是 **Proxy access**
+- 图：外 → DMZ 是 **Controlled access**；DMZ → 内网是 **Proxy access**；内网往外是 **Outbound data**
 
-|          | Screened Host | Screened Subnet（DMZ） |
-| -------- | ------------- | -------------------- |
-| 堡垒主机在哪   | 内网上           | 独立的 DMZ 子网           |
-| 过滤路由器    | 通常 1 个        | 2 个（外 + 内）           |
-| 堡垒主机被攻破后 | 攻击者已在内网       | 攻击者只在 DMZ，还要再过内部路由器  |
-| 成本 / 安全  | 低 / 中         | 高 / 高                |
+```
+Untrusted ── [External router] ── DMZ（Web、邮件服务器、proxy） ── [Internal router] ── Trusted
+```
 
-**需要理解**：唯一的核心差异是**堡垒主机有没有被隔离在独立的 DMZ**。DMZ 是一个**区域**，bastion host 是一台**机器**，不要混。
+|           | Screened Host | Screened Subnet（DMZ）              |
+| --------- | ------------- | --------------------------------- |
+| Router 数量 | 1 个           | 通常 2 个（外层 + 内层）                   |
+| 堡垒主机在哪    | 和内网之间没有隔离     | 独立的 DMZ 子网                        |
+| 堡垒主机被攻破后  | 😱 攻击者已在内网    | 😌 攻击者只在 DMZ，还要再过 internal router |
+| 成本 / 安全   | 低 / 中         | 高 / 高（设备更多、配置更复杂）                 |
+
+**需要理解**
+
+- 唯一的核心差异是**堡垒主机有没有被隔离在独立的 DMZ**。DMZ 是一个**区域**，bastion host 是一台**机器**，不要混。
+- 3-part = untrusted（外网）/ DMZ（缓冲区）/ trusted（内网）。DMZ 来自军事上的「非军事区」：夹在两方中间的缓冲带。
+- 课件写 **at least one firewall**：不一定要两个 router，也可以用**一台防火墙接出三个区域**：
+
+```
+Internet ── [Firewall] ── 内网（员工电脑）
+                │
+               DMZ（Web 服务器、proxy、bastion host）
+```
 
 **Compare screened host and screened subnet architectures. Which would you recommend for a bank and why?**
 
@@ -455,14 +714,19 @@ Three Principles：
 
 ## 4. 🟡 VPN（p.27–29）📝🔍
 
+![Figure 8-19 Transport mode VPN：Remote Access to Office，加密 payload、原 IP header 不加密](images/page_28.png)
+
+*Figure 8-19 Transport mode VPN：Remote Access to Office，加密 payload、原 IP header 不加密（Slide 28）*
+
 **课件原文**
 
-> VPN: Extends an organization's **internal network to remote locations** (e.g. Work From Home). Provide **private and secure** network connection between systems.
+> VPN: Extends an organization's **internal network to remote locations** (e.g. Work From Home). Provide **private and secure** network connection between systems.  
+> How it works: the user installs **VPN client software**; when they connect, the VPN creates an **encrypted tunnel** between the device and the organization's network. Common protocols: **SSL/TLS, IPSec**.
 
 |      | Tunnel Mode                           | Transport Mode                                                             |
 | ---- | ------------------------------------- | -------------------------------------------------------------------------- |
 | 加密范围 | **entire IP packet including header** | **only the payload**；original IP header **remains intact and unencrypted** |
-| 课件场景 | 站点到站点                                 | **Remote Access to Office**（Figure 8-19）                                   |
+| 课件场景 | 站点到站点（两边网关）                           | **Remote Access to Office**（Figure 8-19，p.28 标题 *Host-to-Host*）            |
 
 **VPN must accomplish (CIA)**：
 
@@ -470,17 +734,157 @@ Three Principles：
 - **Integrity** through **encapsulation**（messages cannot be changed easily in transport）
 - **Authentication** through **passwords, keys, digital signatures**（users from both ends authenticate）
 
-**需要理解**：这里的 **A = Authentication，不是 Availability**（VPN 走公共网络，保证不了可用性）。课件说 Remote Access 是 Transport Mode，考试按课件答。
+**需要理解：VPN 是什么**
+
+在**公共的互联网**上挖一条**加密的私人隧道**，让你在家的电脑就像接在公司内网里一样。Virtual = 不是真拉专线，用加密模拟出来；Private = 路上的人看不到里面。例：在家连学校 VPN，才能打开只限校内访问的系统和数据库。
+
+```
+你家电脑 ══════ 🔒 加密隧道 ══════ 公司 VPN 网关 ── 公司内网
+         （经过咖啡店 Wi-Fi、运营商、互联网……都看得到包经过，但打不开）
+```
+
+**Tunnel vs Transport：继续用信封比喻**
+
+```
+原始包：     [ IP header：你 → 公司服务器 ][ 数据 ]
+
+Transport：  [ IP header：你 → 公司服务器 ][ 🔒🔒 数据 🔒🔒 ]
+               ↑ 原信封，明文                 ↑ 只加密信纸
+
+Tunnel：     [ 新 header：你 → VPN 网关 ][ 🔒🔒 原 header + 数据 🔒🔒 ]
+               ↑ 套上去的外层信封             ↑ 整个原始包都被加密
+```
+
+- Tunnel 为什么要加新 header？原 header 被加密后，路由器读不出该送去哪，所以外面写一个新地址（VPN 网关）。网关收到后拆外层、解密，再按原 header 把包送进内网——像把整封信塞进公司的内部邮袋，邮袋上只写「香港分公司 → 上海分公司」，到了收发室再拆袋派送。
+- Transport **没有中转站**：两台主机自己加解密（*secure link **directly** with remote host*），header 是明文，路由器直接按原地址送。
+
+|         | Transport       | Tunnel          |
+| ------- | --------------- | --------------- |
+| 加密什么    | 只有 payload      | 整个原始包，包括 header |
+| 路上的人能看到 | 真正的两端是谁和谁，看不到内容 | 只知道两个 VPN 端点在通信 |
+| 额外开销    | 小               | 大一点（多一层 header） |
+| 谁来加解密   | 两端主机自己          | 通常是两边的 VPN 网关   |
+
+*（网页版此处可以切换 transport / tunnel / proxy，并站在不同观察者的位置看包；下表是全部情况）*
+
+**Transport mode**：Amy 在咖啡店，用 transport mode 连公司服务器（课件 p.28：Remote Access to Office）
+
+| 段                     | 包的结构（🔒 = 加密）                                                                     |
+| --------------------- | --------------------------------------------------------------------------------- |
+| Amy → 公司服务器（端到端，没有中转） | \[IP header: 203.0.113.7 → 198.51.100.20] 🔒\[Payload: GET /payroll/2026-10.xlsx] |
+
+| 观察者             | 能看到                                                             | 看不到             |
+| --------------- | --------------------------------------------------------------- | --------------- |
+| 咖啡店 Wi-Fi / 运营商 | 发送者 203.0.113.7（Amy）；目的地 198.51.100.20——具体是哪一台公司服务器；什么时间、传了多少数据 | 内容（payload 被加密） |
+| 公司服务器           | 发送者 203.0.113.7；内容：GET /payroll/2026-10.xlsx（自己解密）              | —               |
+
+目的地看到的发送者：203.0.113.7（Amy 本人）
+
+**Tunnel mode**：同一个请求换成 tunnel mode：整个原始包加密，外面再套一个发往 VPN 网关的新 header
+
+| 段                     | 包的结构（🔒 = 加密）                                                                                                                     |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 互联网上：Amy → VPN 网关     | \[新 IP header: 203.0.113.7 → 198.51.100.1（网关）] 🔒\[原 IP header: 10.8.0.5 → 198.51.100.20] 🔒\[Payload: GET /payroll/2026-10.xlsx] |
+| 网关之后：拆掉外层、解密，原包原样送进内网 | \[原 IP header: 10.8.0.5 → 198.51.100.20] \[Payload: GET /payroll/2026-10.xlsx]                                                    |
+
+| 观察者             | 能看到                                                                 | 看不到                                                  |
+| --------------- | ------------------------------------------------------------------- | ---------------------------------------------------- |
+| 咖啡店 Wi-Fi / 运营商 | 发送者 203.0.113.7（Amy）；目的地 198.51.100.1——只知道她在连公司的 VPN 网关；什么时间、传了多少数据 | 她在访问内网里的哪一台服务器（原 header 被加密）；内容；她的 VPN 内网地址 10.8.0.5 |
+| 公司内网（网关之后）      | 10.8.0.5 → 198.51.100.20；内容：GET /payroll/2026-10.xlsx               | —                                                    |
+| 公司服务器           | 发送者 10.8.0.5——就像 Amy 人在公司内网里；内容：GET /payroll/2026-10.xlsx           | —                                                    |
+
+目的地看到的发送者：10.8.0.5（Amy，VPN 分配的内网地址）
+
+**对照：Proxy（不是 VPN）**：Amy 在公司里上网，所有请求都经过公司的 proxy（课件 p.21：websites see the proxy's IP）
+
+| 段                           | 包的结构（🔒 = 加密）                                                                                   |
+| --------------------------- | ----------------------------------------------------------------------------------------------- |
+| 连接 ①：Amy → Proxy（到这里就结束）    | \[IP header: 10.0.0.5 → 10.0.0.1（proxy）] \[Payload: GET http\://example.com/report.pdf]         |
+| 连接 ②：Proxy 读懂请求后，用自己的身份重新发起 | \[IP header: 198.51.100.2（proxy）→ 93.184.216.34] \[Payload: GET http\://example.com/report.pdf] |
+
+| 观察者      | 能看到                                     | 看不到                   |
+| -------- | --------------------------------------- | --------------------- |
+| 公司外的互联网  | 发送者是 proxy 198.51.100.2；内容（proxy 本身不加密） | 真正发请求的是 Amy（10.0.0.5） |
+| Proxy 自己 | 谁（Amy）、访问哪个网址、下载什么文件——它就是要看内容才能过滤       | —                     |
+| 网站       | 发送者 198.51.100.2（proxy）                 | Amy 的真实 IP            |
+
+目的地看到的发送者：198.51.100.2（proxy，不是 Amy）
+
+> **🧠 复习时的自测：咖啡店管理员能看到什么（我的回答 ✅）**
+>
+> | 咖啡店管理员能看到的 | Transport  | Tunnel          |
+> | ---------- | ---------- | --------------- |
+> | 你的 IP      | ✅          | ✅               |
+> | 你在访问哪一台机器  | ✅ 具体的公司服务器 | ❌ 只知道是公司 VPN 网关 |
+> | 内容         | ❌          | ❌               |
+>
+> 我的回答：transport「看得到你在访问公司服务器，看不到内容」；tunnel「看得到你在访问公司网关，看不到整个原始信息」。✅ 都对。「整个原始信息」= **原 header + 内容**。
+>
+> 关键在中间那一行：transport 会暴露你在访问内网的哪台机器，攻击者能借此摸清内部网络结构；tunnel 连这一点也藏起来了——这是 tunnel 更安全的原因。两种模式都藏不住**时间和数据量**：加密藏得住内容，藏不住「在通信」这件事。
+
+> **⚠️ 我问的：tunnel 是不是和 proxy 一样，都在中转？——只对一半**
+>
+> **像的地方**：从路上的人看，两者都把真正的目的地藏在一个中间点后面。
+>
+> **相反的地方**：你的原始包进不进内网。
+>
+> |           | Proxy              | VPN Tunnel                          |
+> | --------- | ------------------ | ----------------------------------- |
+> | 目的        | 检查和隔离（防火墙）         | 运输途中保密（CIA）                         |
+> | 中间点做什么    | 读懂内容，**重新发起**一个新请求 | 解密后把**原包**转进去                       |
+> | 原始包进内网吗   | ❌ 不进               | ✅ 进（这正是 *extends internal network*） |
+> | 目的地看到的发送者 | Proxy              | 你                                   |
+> | 一定加密吗     | 不一定                | 一定                                  |
+> | 看内容吗      | 要看（L7 检查）          | 不看，只负责运送                            |
+> | 协议        | 每种协议要单独模块          | IPSec 在 L3，什么协议都能过                  |
+>
+> 口诀：**Proxy 替你说话（代购），Tunnel 替你运送（运钞车）。**
+>
+> ⚠️ 用 VPN 翻墙时网站看到的是 VPN 服务器的 IP——那是两步：tunnel 把包运到 VPN 服务器，服务器在出口**把发送者地址换成自己的**（NAT）。隐藏 IP 是第二步做到的，不是 tunnel 本身。课件讲的是公司 VPN，目的是把你接进内网。
+
+> **⚠️ 两个考试陷阱**
+>
+> 1. 这里的 **A = Authentication，不是 Availability**：VPN 走公共网络，网断了或 VPN 网关被 DDoS，VPN 自己控制不了。
+> 2. 课件说 **Remote Access 是 Transport Mode**（p.28 标题 *Host-to-Host*，因为图里是员工电脑自己加密）。现实中远程办公多数用 tunnel mode 或 SSL VPN，但**考试按课件答 Transport**。
+
+- 和防火墙的联系：VPN 网关通常装在公司的防火墙 / NGFW 上。风险：VPN 一连上，你家电脑就等于进了内网，它中毒了病毒也跟着进来 → 还需要 host-based firewall / EDR，以及 Zero Trust（连上 VPN 不代表可信）。
+
+*（网页版此处是点选练习：这是 Proxy、VPN Tunnel 还是 VPN Transport？；下表是全部题目和答案）*
+
+| 情景                                      | 答案                 | 理由                                                         |
+| --------------------------------------- | ------------------ | ---------------------------------------------------------- |
+| 原始 IP header 保持明文，只加密 payload           | **Transport mode** | p.28：the original IP header remains intact and unencrypted |
+| 整个原始包连同 header 一起加密，外面再套一个新 header      | **Tunnel mode**    | p.27：encrypt entire IP packet including header             |
+| 中间点读懂请求内容，再用自己的身份重新发起一个新请求              | **Proxy**          | Proxy 替你说话：外部的包永远进不了内网                                     |
+| 中间点解密后，把你的原包原样转进内网，服务器看到的发送者是你          | **Tunnel mode**    | Tunnel 替你运送：VPN 网关只拆外层，不重新发起请求                             |
+| 两台主机自己加密解密，没有中转站                        | **Transport mode** | p.28 标题 Host-to-Host：secure link directly with remote host |
+| 咖啡店管理员只看得到「你在连公司的 VPN 网关」，不知道你访问的是哪台服务器 | **Tunnel mode**    | 真正的目的地址在被加密的原 header 里                                     |
+| 课件说 Remote Access to Office 用的是这一种      | **Transport mode** | 考试按课件答 Transport（现实中远程办公多数用 tunnel 或 SSL VPN）              |
+| 网站看到的是它的 IP，不是员工的真实 IP；它不一定加密任何东西       | **Proxy**          | p.21：websites see the proxy's IP instead of your real IP   |
+| 香港分公司和上海分公司的两个网关之间建一条加密通道               | **Tunnel mode**    | 站点到站点：由两边的网关负责加解密                                          |
 
 ---
 
 ## 5. IDPS
 
+> **🧠 IDPS 和防火墙的分工**
+>
+> |                     | 类比                           | S = P + D + R |
+> | ------------------- | ---------------------------- | ------------- |
+> | Firewall            | 门卫：按规则放行或拦截                  | **P**         |
+> | **IDS**（Detection）  | 监控摄像头 + 警报器：盯着看、发现异常就报警、留下录像 | **D**         |
+> | **IPS**（Prevention） | 摄像头 + 能自动锁门的保安               | **D + R**     |
+> | IDPS                | IDS 和 IPS 的统称                |               |
+>
+> 为什么有了防火墙还要 IDPS？**P 一定会失败**：攻击可以伪装成正常流量（端口 80 看起来完全正常），也可能是内部人员作案。
+>
+> IDPS 的三根轴：**装在哪**（NIDPS / HIDPS）· **怎么检测**（Signature / Anomaly / SPA）· **发现后做什么**（Passive / Active）。
+
 ### 5.1 🔴 IDS 的角色、S = P + D + R、Intrusion vs Incident（p.31–33）📝✍️
 
 **课件原文**
 
-- 五个动作：**Monitoring → Analysis → Detection → Alerting → Logging**
+- 五个动作：**Monitoring → Analysis → Detection → Alerting → Logging**（课件把前两个灰掉，突出后三个：发现、报警、记录）
 - **S = P + D + R**（Security = Prevention + Detection + Response）
 - 提问：**Is Intrusion = Incident?**
 
@@ -488,9 +892,16 @@ Three Principles：
 
 - IDS 的输出是**告警 + 日志**，不是阻断（这是它和防火墙的根本区别）。
 - **预防一定会失败**（零日、内鬼、社工、配置错误）→ 光有 P 不叫安全，必须有 D 和 R。这和 Zero Trust 的 **Assume Breach** 是同一个思想。
-- **Intrusion** = 未授权访问的尝试（没成功也算）；**Incident** = 真的违反安全策略、造成影响的事。员工误删数据库是 incident 但不是 intrusion。
+- **Intrusion** = 攻击这个**行为**（撬锁，没撬开也算）；**Incident** = 真正违反安全策略、造成或可能造成**后果**的事件。
+  - 入侵被挡住 → 是 intrusion，不一定是 incident
+  - 很多 incident 根本不是 intrusion：员工误删数据库、笔记本丢了
+  - 一次 intrusion 要不要升级成 incident，需要**人**判断（呼应 p.39 limitation）
 
 ### 5.2 🔴 Network-based vs Host-based IDPS（p.33–34）📝✍️
+
+![Figure 9-2：Network IDPS 紧挨 external router 检查经过的包；Host IDPS 检查主机上的文件变化](images/page_34.png)
+
+*Figure 9-2：Network IDPS 紧挨 external router 检查经过的包；Host IDPS 检查主机上的文件变化（Slide 34）*
 
 **课件原文**
 
@@ -499,9 +910,14 @@ Three Principles：
 
 |      | NIDPS                          | HIDPS                     |
 | ---- | ------------------------------ | ------------------------- |
+| 装在哪  | 网络关键位置（图上紧挨 external router）   | 某一台主机上，通常是重要服务器           |
 | 监控什么 | 整段网络的数据包                       | 单台主机的文件变更、用户行为            |
+| 例子   | 某 IP 几秒内扫遍所有端口                 | 系统关键文件被改；凌晨 3 点有人用管理员账号登录 |
 | 优点   | 一个点看整个网段；能发现扫描、DDoS、横向移动       | 看得细；能看到加密流量解密后的结果、文件篡改、提权 |
 | 局限   | **看不到加密流量的内容**（A1 原题）；流量大时可能漏包 | 每台都要装、管理成本高；只看到这一台        |
+
+- 和 VPN 的联系：加密流量（VPN、HTTPS）经过 NIDPS 时看不到内容，但到了主机上已经解密，HIDPS 仍能看到——这也是两种都要的原因。
+- ⚠️ 别和 host-based firewall 混：host firewall **过滤进出这台机器的流量**；HIDPS **监视这台机器里面发生了什么**（文件、用户行为）。
 
 **（A2 原题 / A2 question）Compare NIDPS and HIDPS in terms of what each monitors, a key strength and a key limitation of each.（12 marks）**
 
@@ -560,11 +976,44 @@ Three Principles：
 
 Key message：**False negatives are the serious IDPS failure — an undetected attack is far more dangerous than a false alarm.**
 
-**需要理解**
+**需要理解：一张 2×2 表 + 两步法**
 
-- 2×2 表：**Positive / Negative 看「报没报」，True / False 看「对不对」**。
-- **Noise ≠ False Positive**：Noise 是真实发生但无威胁；FP 是根本没发生。
-- 误报的危害：太多会让分析师麻木 → 真告警被忽略 → **最终变成漏报**。
+|             | 真的有攻击                           | 其实没有攻击                   |
+| ----------- | ------------------------------- | ------------------------ |
+| **IDS 报警了** | ✅ True Positive                 | ❌ **False Positive（误报）** |
+| **IDS 没报警** | ❌ **False Negative（漏报）** 🔴 最严重 | ✅ True Negative          |
+
+按顺序问两个问题：① **IDS 报警了吗？** 报了 = Positive，没报 = Negative；② **IDS 判断对了吗？** 对 = True，错 = False。
+
+**烟雾报警器类比**
+
+- **False positive**：煎牛排触发报警，其实没着火
+- **False negative**：真着火了，报警器没响 → **最致命**
+- **Noise**：报警**准确**，确实有烟，但没有威胁。网络里：互联网上随时有扫描器在扫你的端口，报警没报错，但防火墙早就挡住了。
+- ⚠️ **Noise ≠ False Positive**：noise 是**真的发生了，只是不危险**；FP 是**根本没发生**。
+- 误报的危害：太多会让分析师麻木（狼来了）→ 真告警被忽略 → **最终变成漏报**。但 key message 很明确：tuning 首先要压低漏报。
+
+> **📌 我做错的一题（复习记录）**
+>
+> **题**：IDS 报警说有 SQL 注入，调查后发现只是一个正常的搜索请求。  
+> **我答**：True Negative ❌　**正确**：**False Positive**
+>
+> 错因：把 Negative 理解成了「实际没有攻击」。**Positive / Negative 描述的是 IDS 有没有报警，不是实际情况**。用两步法：报了 → Positive；判断错了 → False。  
+> True Negative 是「没有攻击、IDS 也没报警」——风平浪静的状态，一般不会单独出场景题。
+>
+> 同一轮的另外两题答对了：zero-day 没触发 signature IDS → **False Negative**，换 **anomaly-based** 更可能抓到；检测服务器系统文件被篡改 → **HIDPS**。
+
+*（网页版此处是点选练习：这是哪种结果？先问「报没报警」，再问「对不对」（p.36）；下表是全部题目和答案）*
+
+| 情景                                            | 答案                 | 理由                                                                                    |
+| --------------------------------------------- | ------------------ | ------------------------------------------------------------------------------------- |
+| IDS 报警说有 SQL 注入，调查后发现只是一个正常的搜索请求              | **False Positive** | 报了（Positive）+ 判断错了（False）。容易误选 True Negative：Positive / Negative 说的是 IDS 有没有报警，不是实际情况 |
+| NIDS 报警说有 DDoS，调查确认真的发生了                      | **True Positive**  | 课件原题 p.65：报了 + 确实发生                                                                   |
+| 一种全新的攻击（zero-day）没有触发 signature-based IDS 的报警 | **False Negative** | 真的有攻击，却没报警——most grievous IDPS failure                                                |
+| 有员工把客户数据偷偷传了出去，IDS 一直没报警                      | **False Negative** | 没报（Negative）+ 判断错了（False）                                                             |
+| 防火墙已经挡住了外部的端口扫描，IDS 还是报了警：扫描确实发生，但没有威胁        | **Noise**          | Noise = accurate but non-threatening。和 FP 的区别：noise 真的发生了，FP 根本没发生                    |
+| 平常的一天，没有攻击，IDS 也没有报警                          | **True Negative**  | 没报 + 判断对了；风平浪静的状态                                                                     |
+| 月底财务结账流量暴增，anomaly-based IDS 报警，其实是正常业务       | **False Positive** | Anomaly-based 的典型缺点就是误报多：正常的变化也会超过 clipping level                                     |
 
 **（课件原题）NIDS alerted to a DDoS attack, and investigation revealed that this type of attack did take place. What type of report?**
 
@@ -604,6 +1053,10 @@ Key message：**False negatives are the serious IDPS failure — an undetected a
 
 ### 5.5 🔴 三种检测方法（p.37）📝🔍
 
+![IDPS Detection Methods：Signature-based / Anomaly-based / Stateful Protocol Analysis](images/page_37.png)
+
+*IDPS Detection Methods：Signature-based / Anomaly-based / Stateful Protocol Analysis（Slide 37）*
+
 **课件原文**
 
 |    | Signature-based                                                  | Anomaly-based                                                                          | Stateful Protocol Analysis                                                                  |
@@ -613,39 +1066,113 @@ Key message：**False negatives are the serious IDPS failure — an undetected a
 | 优点 | widely used; effective against **known** attacks                 | detect **novel, previously unseen** attacks                                            | detect anomalous protocol behaviour; inspect **authentication sessions** in depth           |
 | 缺点 | **cannot detect new or unknown attacks**; needs constant updates | **high false-positive rate**, processing overhead, less deployed                       | **heavy processing overhead**; may **interfere with normal protocol operations under load** |
 
-**需要理解**
+**需要理解：三种类比 + 三个例子**
+
+|    | Signature            | Anomaly                          | SPA                                        |
+| -- | -------------------- | -------------------------------- | ------------------------------------------ |
+| 类比 | **对照通缉令**：长得像已知坏人就报警 | **行为反常**：这个人今天很不正常               | **不按流程办事**：没走规定步骤                          |
+| 例子 | 请求里出现一段已知病毒代码        | Amy 平时白天下载 50MB，某天凌晨 3 点往外传 20GB | 登录协议规定先发用户名再发密码，这个会话跳过了步骤，或用户名里塞了 5000 个字符 |
 
 - 区别在**参照物**：已知的坏（signature）/ 自己网络学来的正常（anomaly）/ 厂商给的协议规范（SPA）。
-- 典型误差：Signature → **漏报**；Anomaly → **误报**。所以要一起用，互相补。
-- **Stateful Protocol Analysis ≠ Stateful firewall**：一个是 IDPS 检测方法（跟踪协议阶段），一个是防火墙（跟踪连接）。
+- Anomaly 和 SPA 都在和「正常」比，看**「正常」是谁定义的**：anomaly 从**自己的流量**统计出 baseline；SPA 用**协议厂商写好的规范**（profile）。
+- **Clipping level = 阈值**：日常流量本来就有波动，超过这条线才报警。
+- 典型误差：Signature → **漏报**；Anomaly → **误报**（月底结账流量暴增也会报警）。所以要一起用，互相补。
 - A1 原题：signature-based 的缺点是「**It can't recognize unknown attacks**」。
+
+> **⚠️ 陷阱：两个 stateful 完全不是一回事**
+>
+> - **Stateful Inspection Firewall**（p.19）问的是：「这个包属于一条已经建立的**连接**吗？」（查 state table）
+> - **Stateful Protocol Analysis**（p.37）问的是：「这一步符合**协议规范**吗？」——它是 IDPS 的检测方法
+>
+> 看到 stateful，先看题目问的是防火墙还是 IDPS。
+
+*（网页版此处是点选练习：这是哪种检测方法？看「拿什么当参照」（p.37）；下表是全部题目和答案）*
+
+| 情景                                          | 答案                             | 理由                                                                                  |
+| ------------------------------------------- | ------------------------------ | ----------------------------------------------------------------------------------- |
+| 请求里出现了一段已知病毒的代码特征，和特征库里的一条匹配                | **Signature-based**            | 参照物是已知攻击的特征库（Knowledge-based / Misuse）                                              |
+| Amy 平时白天下载 50MB，某天凌晨 3 点往外传了 20GB           | **Anomaly-based**              | 参照物是从自己网络统计出来的正常基线，超过 clipping level 报警                                             |
+| 登录协议规定先发用户名再发密码，这个会话跳过了步骤，用户名字段还塞了 5000 个字符 | **Stateful Protocol Analysis** | 参照物是协议厂商提供的「协议正常应该怎么走」（protocol profile），能深入检查 authentication 会话                    |
+| 缺点是抓不到新的或未知的攻击，特征库要不停更新                     | **Signature-based**            | A1 原题：It can't recognize unknown attacks                                            |
+| 缺点是误报率高、计算开销大，部署得比较少                        | **Anomaly-based**              | High false-positive rate, significant processing overhead, less commonly deployed   |
+| 缺点是开销最大，流量大时可能干扰正常的协议运作                     | **Stateful Protocol Analysis** | Heavy processing overhead; may interfere with normal protocol operations under load |
+| 又叫 Behavior-based detection                 | **Anomaly-based**              | 别名要背：Anomaly = Behavior-based                                                       |
+| 又叫 Deep Packet Inspection（DPI）              | **Stateful Protocol Analysis** | 注意 NGFW 也有 DPI 功能；两处都是「看 payload」                                                   |
 
 ### 5.6 🟡 Passive vs Active（p.38）🔍
 
 **课件原文**：Passive = analyze and report, **does not interfere with traffic**, alert but **wait for administrator**；Active = **automatically initiate responses**：terminate session / connection、block access from the source、**modify firewall's rule set**、replace malicious content。参考 **NIST SP 800-94**。
 
-**需要理解**：IDS（旁路，只告警，D）+ 自动响应 = IPS（串接，能阻断，D + R）。常常是同一套软件，区别在部署位置和是否允许它动手。Active 的风险是**误报会切断正常业务**。
+|       | Passive（IDS）      | Active（IPS）       |
+| ----- | ----------------- | ----------------- |
+| 做什么   | 分析、报告、发出警报        | 警报触发后**自动响应**     |
+| 影响流量吗 | 不干扰（通常在旁边看一份流量副本） | 会（串在流量必经的路上）      |
+| 谁来处置  | 等管理员              | 系统自己动手            |
+| 风险    | 太慢，人可能来不及         | **一旦误报，就会误伤正常业务** |
+
+**需要理解**：IDS + 自动响应 = IPS，常常是同一套软件，区别在部署位置和是否允许它动手。注意 *Modify firewall's rule set*：D 发现了问题反过来改 P——这就是 NGFW 把 IDS/IPS 和防火墙装进同一台设备的原因。
 
 ### 5.7 🟡 Strengths 与 Limitations（p.39）📝
 
-**课件原文（Limitations）**：① cannot compensate for **weak or missing underlying security mechanisms** ② cannot detect newly published attacks not yet in signature databases ③ cannot automatically investigate incidents **without human analyst** ④ cannot fully resist attacks engineered to **evade or disable the IDPS itself**
+| Strengths（能做到）  | Limitations（做不到）             |
+| --------------- | ---------------------------- |
+| 实时监控系统事件和用户行为   | **弥补不了**本来就薄弱或缺失的安全措施        |
+| 建立安全基线，持续追踪配置变化 | 抓不到特征库里还没有的新攻击               |
+| 发现攻击或违规就通知安全人员  | **没有人参与就没法自动调查事件**           |
+| 让非专家也能做有效的安全监控  | 挡不住专门针对 IDPS 本身设计的攻击（绕过或弄瘫它） |
 
-**需要理解**：第 ① 条最常考——弱密码、没补丁、权限乱给，装 IDPS 也救不了。第 ④ 条说明监控者本身也是攻击目标。
+**需要理解**：Limitation ① 最常考——弱密码、没补丁、权限乱给，装 IDPS 也救不了（不能替代防火墙和打补丁）。④ 说明监控者本身也是攻击目标。
 
 ---
 
 ## 6. 端点与集中监控
 
+> **🧠 这一节在讲什么：从「单点」到「全局」再到「人」**
+>
+> ```
+> 单台设备               跨设备关联             自动化处置          组织
+> EDR（端点）  ──日志──►  SIEM / XDR  ──告警──►  SOAR  ──────────►  SOC（人 + 流程）
+>    D + R                   D                    R                  全流程
+> ```
+>
+> 前面的 firewall、IDPS 各管一段；这一节回答两个问题：**最弱的端点怎么守**，以及**这么多工具产生的告警谁来看、怎么串起来、怎么快速处置**。
+
 ### 6.1 🟡 Endpoint Security 与 EDR（p.41–43）📝
+
+![EDR 四步：Monitor → Detect → Contain → Investigate & Remediate（图为 FortiClient Zero-Trust Fabric Agent）](images/page_42.png)
+
+*EDR 四步：Monitor → Detect → Contain → Investigate & Remediate（图为 FortiClient Zero-Trust Fabric Agent）（Slide 42）*
 
 **课件原文**
 
 - Endpoints include desktop, laptop, smartphones, tablets and **IoT** devices
 - Security is only as strong as its **weakest link**; the weakest link is **usually endpoints**
 - Reasons：**Number and variety**；**End users**；**Privilege** (e.g. local administrator)
-- EDR：① Monitor endpoints（**software agents** continuously collect data）② Detect threats（**deviations from normal behavior**）③ Contain（**isolating the endpoint**, blocking malicious processes）④ Investigate & remediate
+- EDR：① Monitor endpoints（**software agents** continuously collect data from devices and file activity）② Detect threats（malware、unauthorized access、**data exfiltration**，by looking for **deviations from normal behavior**）③ Contain（**isolating the endpoint**, blocking malicious processes）④ Investigating incidents & remediating endpoints
 
-**需要理解**：EDR = 主机侧的 HIDS + 自动响应 + 调查取证，检测原理是 anomaly-based。
+**需要理解**
+
+- 端点为什么最弱，三条各举一例：
+  - **Number and variety**：几千台设备、几十种系统版本，IoT 摄像头甚至打不了补丁
+  - **End users**：人会点钓鱼邮件、插来路不明的 U 盘
+  - **Privilege**：员工有本机管理员权限，恶意软件一跑就能装驱动、关杀毒
+- 端点也是边界防护**看不到**的地方：加密流量到端点才解密；员工带电脑出门、连 VPN 回公司（§4 的风险）。
+- **EDR = 主机侧的 HIDS + 自动响应 + 调查取证**，检测原理是 anomaly-based（deviations from normal behavior）。和传统杀毒软件的区别：杀毒靠特征库认识已知病毒（signature），EDR 看行为，而且能自动隔离、事后还原过程。
+- 四步正好覆盖 **D + R**：Monitor / Detect 是 D，Contain / Remediate 是 R。
+
+![同事转发的邮件附件打不开：安全链接要求验证收件人身份](images/page_43.png)
+
+*同事转发的邮件附件打不开：安全链接要求验证收件人身份（Slide 43）*
+
+**p.43「How is the design?」怎么答**
+
+同事把带安全链接的邮件转发给你，你打不开附件——页面要求 *Verify your identity*，而且提示这个邮箱不是被分享的对象。设计思路：
+
+1. **访问权跟着身份走，不跟着链接走**：拿到链接（甚至在公司内网、是同事转来的）都不代表你被授权 → **Never trust, always verify**。
+2. **只给原收件人**：转发不能扩大访问范围 → **Least privilege / need-to-know**。
+3. 保护的是**数据本身**（p.48 Right Data），即使邮件被转到外部也打不开，防止敏感文件（课件里是事件报告表）外泄。
+
+代价是用起来麻烦一点，要请原分享人再加你——这正是安全和便利之间的取舍。
 
 ### 6.2 🔴 SIEM（p.44–45）📝✍️
 
@@ -659,9 +1186,11 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 **需要理解**
 
-- 核心价值是 **Correlation（关联分析）**：VPN 登录、加入管理员组、下载脚本、外传 8 GB，单独看都正常，串起来是一次数据窃取。
-- 工作步骤：Collect → **Normalize** → Correlate → Alert / Report。
-- 局限：SIEM 只吃别人的日志，**garbage in, garbage out**；贵（按日志量收费）；告警多需要调优；仍要靠人判断。
+- 类比：每个工具是一个摄像头，SIEM 是**把所有摄像头画面接到一起的监控中心**。
+- 核心价值是 **Correlation（关联分析）**：VPN 登录、加入管理员组、下载脚本、外传 8 GB，分别来自 VPN、AD、EDR、防火墙，单独看都正常，串起来是一次数据窃取。
+- 工作步骤：**Collect → Normalize（统一格式）→ Correlate → Alert / Report**。
+- 合规价值：集中保存日志，满足监管要求，也给事后取证用。
+- 局限：SIEM 只吃别人的日志，**garbage in, garbage out**；贵（常按日志量收费）；告警多需要调优；仍要靠人判断。
 
 **Why can't individual security devices detect many attacks, and how does SIEM help?**
 
@@ -681,35 +1210,58 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 **课件原文**
 
-- **SOC**：analysts and hunters + case management + classic SIEM；指标：reduce **attacker dwell time** via **Mean Time to Remediate (MTTR)**
-- **XDR**（Enhancement of EDR）：covers **endpoints, identities, SaaS apps, email and collaboration**；disrupt attacks **at machine speed**、prioritized incidents、**auto-heal**、proactive hunting
+- **SOC**：analysts and hunters + case management + classic SIEM；目标 *measure and reduce **attacker dwell time*** via **Mean Time to Remediate (MTTR)**
+- **XDR**（Enhancement of EDR）：covers **endpoints, identities, SaaS apps, email and collaboration tools**；automatically disrupt attacks **at machine speed**、XDR-prioritized incidents、**auto-heal** affected assets、proactively hunt
 - **SOAR**（Security Orchestration, Automation & **Remediation**）：**reduces analyst effort/time per incident, increasing SecOps capacity**
-- AI SOC：ML & AI、UEBA、SOAR、SIEM 在一起；Security Copilot；Expert Assistance / Managed Security Operations（**scarce skills**）；SOC-as-a-Service
+- AI SOC：ML & AI、UEBA、SOAR、SIEM 在一起；Security Copilot；Expert Assistance / Managed Security Operations（**scarce skills**）；案例 CITIC TrustCSI 3.0：**Dual SIEM、SOC-as-a-service、Red/Blue synergy**
+
+**需要理解：p.50 → p.54 是同一张图一步步加东西**
+
+| 页    | 新加的                                        | 解决什么问题                          |
+| ---- | ------------------------------------------ | ------------------------------- |
+| p.50 | 分析师 + case management + classic SIEM       | 有人看日志了，但全靠人                     |
+| p.52 | **XDR** + Threat Intelligence（API 接进 SIEM） | 跨端点 / 身份 / 邮件 / 云直接串好攻击链，还能自动处置 |
+| p.53 | **SOAR**                                   | 重复性的处置按 playbook 自动做，分析师省时间     |
+| p.54 | **AI**（Copilot）+ 外部专家                      | 人才不够：AI 降低门槛，或者外包给专家            |
 
 |         | 一句话                  | P / D / R | 是什么            |
 | ------- | -------------------- | --------- | -------------- |
+| EDR     | 单台端点上检测 + 隔离         | D + R     | 平台             |
 | SIEM    | 收全部日志做关联             | D         | 平台             |
 | XDR     | 跨端点、身份、邮件、云串攻击链，还能动手 | D + R     | 平台（厂商栈）        |
 | SOAR    | 按 **playbook** 自动处置  | R         | 平台             |
 | **SOC** | 运营这一切                | 全流程       | **组织（人 + 流程）** |
 
-**需要理解**
-
 - **SOC 不是软件，是组织**。
-- SIEM vs XDR：SIEM 什么日志都收但要自己调；XDR 厂商配好、能直接响应，但锁定单一厂商；现实中两者用 API 并存。
-- 现代 SOC 的瓶颈是**人**（人才短缺）→ AI 降低门槛或外包。这和老师对项目的点评相连：AI 的价值是**缩短 dwell time / MTTR**，而不是裁员。
+- **Dwell time** = 攻击者从进来到被清除，在你系统里待了多久；**MTTR** 越短，dwell time 越短，损失越小。这是衡量 SOC 好坏的指标。
+- **SIEM vs XDR**：SIEM 什么日志都收但要自己写关联规则；XDR 厂商配好、能直接响应，但锁定单一厂商；现实中两者用 API 并存（p.52 的 API integration）。
+- **SOAR 的例子**：钓鱼告警进来 → 自动查发件人信誉 → 删掉所有人邮箱里的同一封邮件 → 封锁链接域名 → 开工单通知分析师。原来人工 20 分钟，现在几秒。
+- 现代 SOC 的瓶颈是**人**（人才短缺）→ AI 降低门槛或外包（SOC-as-a-Service）。AI 的价值是**缩短 dwell time / MTTR**，而不是裁员。
+- Red/Blue synergy：红队模拟攻击、蓝队防守，互相检验。
+
+*（网页版此处是点选练习：这是哪个工具？（p.41–58）；下表是全部题目和答案）*
+
+| 情景                                                  | 答案           | 理由                                                                                           |
+| --------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------- |
+| 在每台笔记本上装 agent，发现可疑进程就自动把这台电脑隔离出网络                  | **EDR**      | Monitor endpoints → detect → contain by isolating the endpoint（p.42）                         |
+| 把 VPN 登录、加入管理员组、下载脚本、外传 8GB 这四条来自不同设备的日志串成一次攻击      | **SIEM**     | 核心价值是跨来源关联（correlation）                                                                      |
+| 从端点扩展到身份、SaaS 应用、邮件，跨这些来源串攻击链，还能 machine speed 自动处置 | **XDR**      | Enhancement of EDR（p.51）                                                                     |
+| 告警来了就按 playbook 自动封账号、开工单，减少分析师每个事件花的时间             | **SOAR**     | reduces analyst effort/time per incident, increasing SecOps capacity（p.53）                   |
+| 一群分析师和威胁猎人，目标是缩短 attacker dwell time / MTTR         | **SOC**      | SOC 是组织（人 + 流程），不是一个软件                                                                       |
+| 一台故意放着假「财务数据」的服务器，正常员工不会碰，谁碰它就报警                    | **Honeypot** | Decoy system：entices attackers with simulated rich content while notifying the administrator |
+| 把多个蜜罐组成一个被监控的网络                                     | **Honeypot** | Honeynet = a monitored network that contains multiple honeypot systems（p.58）                 |
 
 ### 6.4 🟡 FIND → CONFIRM → FIX（p.49）📝✍️
 
 **课件原文**
 
-| 阶段                                | 做法                                                                                | 痛点数据                   |
-| --------------------------------- | --------------------------------------------------------------------------------- | ---------------------- |
-| **FIND**（Real-time detection）     | Real-Time Network Flow Analytics；**UBA** flags baseline deviations                | **1M+ daily feeds**    |
-| **CONFIRM**（AI-driven validation） | **A.I. Triage** eliminates manual search fatigue                                  | **20% intel indexed**  |
-| **FIX**（Automated response）       | **Cyber drills** + automated IR playbook (**SOAR**) at **cross-department** level | **75% lack playbooks** |
+| 阶段                                | 做法                                                                                     | 痛点数据                   |
+| --------------------------------- | -------------------------------------------------------------------------------------- | ---------------------- |
+| **FIND**（Real-time detection）     | 从静态日志 / SIEM 转向行为分析：Real-Time Network Flow Analytics；**UBA** flags baseline deviations | **1M+ daily feeds**    |
+| **CONFIRM**（AI-driven validation） | **A.I. Triage** eliminates manual search fatigue                                       | **20% intel indexed**  |
+| **FIX**（Automated response）       | **Cyber drills** + automated IR playbook (**SOAR**) at **cross-department** level      | **75% lack playbooks** |
 
-**需要理解**：三个数字层层递进——数据太多、大部分是盲区、发现了也没有处置剧本 → 需要 AI 分诊 + SOAR。答「为什么现代 SOC 需要 AI 和自动化」时直接用这条链。
+**需要理解**：三个数字层层递进——数据太多（每天上百万条）、大部分是盲区（只有 20% 被索引）、发现了也没有处置剧本（75%）→ 需要 AI 分诊 + SOAR。答「为什么现代 SOC 需要 AI 和自动化」时直接用这条链。UBA 就是 anomaly-based 思路用在「人」身上。
 
 ---
 
@@ -727,8 +1279,34 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 **需要理解**
 
-- 三个形容词都要有：**Multiple**（不止一层）、**Independent**（机制不同，一层被绕过不影响另一层）、**Overlapping**（覆盖有交叠，不留缝隙）。
-- 这张图是全课的「总装图」：横向是一层层关卡，纵向是所有日志汇入 SIEM。
+- 三个形容词都要有：
+  - **Multiple**：不止一层
+  - **Independent**：机制不同，绕过一层的手法不一定绕得过下一层（router 看包头、proxy 看内容、IDPS 看行为）
+  - **Overlapping**：覆盖有交叠，不留缝隙
+- 这张图是全课的「总装图」，每一层都能对上前面的一节：
+
+| 图上的层                 | 挡什么                       | 本页        |
+| -------------------- | ------------------------- | --------- |
+| Screened router      | 粗筛明显不合法的包，减轻后面的负担         | §2.2、§3.1 |
+| Perimeter firewall   | 按规则（最好 stateful、默认拒绝）控制进出 | §2.3–2.4  |
+| IDPS                 | 发现混进来的攻击（P 失败后的 D）        | §5        |
+| DMZ（Web、Mail server） | 对外服务和内网隔开，被攻破也只在 DMZ      | §3.2      |
+| Internal firewall    | 第二道边界，DMZ 失守后还有一层         | §3.2      |
+| Endpoint security    | 最后一道门：host firewall、EDR   | §2.1、§6.1 |
+| SIEM（纵向的 Logs）       | 把每一层的日志汇总关联               | §6.2      |
+
+- 用一次攻击走一遍：攻击者先要过 router 和防火墙；混进来的流量被 IDPS 盯着；攻破 DMZ 的 Web 服务器还要过内层防火墙；到了员工电脑还有 EDR；每一步留下的日志在 SIEM 里被串起来。**任何一层都不需要完美，攻击者必须每一层都成功才行。**
+
+**Explain defense in depth using the layers in the Lesson 3 diagram. Why must the controls be independent?**
+
+> **English**
+>
+> Defence in depth uses **multiple, independent and overlapping** controls around critical assets: a screened router pre-filters traffic, the perimeter firewall enforces default-deny rules, an IDPS detects attacks that get through, public servers sit in a DMZ, an internal firewall separates the DMZ from the internal network, endpoint security protects each device, and all layers send logs to a SIEM for correlation.  
+> The controls must be **independent** — use different mechanisms — so that a technique that defeats one layer (e.g. traffic that looks legitimate to a packet filter) is still caught by another (content inspection or behaviour monitoring). Otherwise one weakness bypasses every layer at once.
+>
+> **中文解析**
+>
+> Defense in depth 用多层、独立、重叠的控制保护关键资产：screened router 预筛，perimeter firewall 默认拒绝，IDPS 检测漏进来的攻击，对外服务器放在 DMZ，内层防火墙把 DMZ 和内网隔开，端点安全保护每台设备，所有层的日志汇入 SIEM 做关联。必须**独立**（机制不同），这样绕过一层的手法（比如在包过滤看来完全正常的流量）仍会被另一层抓到（内容检查或行为监控）；否则一个弱点就能一次穿透所有层。
 
 ### 7.2 🔴 Zero Trust 落地：四个 Right（p.48）📝
 
@@ -736,14 +1314,17 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 > The foundation of modern enterprise security relies on **shifting from legacy perimeter defenses** to a comprehensive **Zero Trust architecture** and **AI-driven Threat Management Lifecycle**.
 
-| Right                    | 课件原文                                                                                                                  |
-| ------------------------ | --------------------------------------------------------------------------------------------------------------------- |
-| **Right Users**          | identity governance, behavioral analytics, and **privileged access management (PAM)** to mitigate **insider threats** |
-| **Right Authentication** | **MFA**, **dynamic risk scoring** based on **user, device, time and geolocation**                                     |
-| **Right Data**           | categorize sensitive data, **end-to-end encryption**, real-time **Data Activity Monitoring (DAM)**                    |
-| **Right Reason**         | cloud access auditing, proactive fraud detection, configuration management                                            |
+| Right                    | 课件原文                                                                                                                  | 对应前面的工具                     |
+| ------------------------ | --------------------------------------------------------------------------------------------------------------------- | --------------------------- |
+| **Right Users**          | identity governance, behavioral analytics, and **privileged access management (PAM)** to mitigate **insider threats** | RBAC、UBA、EDR                |
+| **Right Authentication** | **MFA**, **dynamic risk scoring** based on **user, device, time and geolocation**                                     | MFA、NGFW Identity Awareness |
+| **Right Data**           | categorize sensitive data, **end-to-end encryption**, real-time **Data Activity Monitoring (DAM)**                    | VPN 加密、p.43 安全链接            |
+| **Right Reason**         | cloud access auditing, proactive fraud detection, configuration management                                            | SIEM、审计日志                   |
 
-**需要理解**：动态风险评分的四个因子（用户、设备、时间、地点）正好对应授权定义里的 **if, when, from where**。
+**需要理解**
+
+- 动态风险评分的四个因子（用户、设备、时间、地点）正好对应授权定义里的 **if, when, from where**。例：Amy 平时在香港用公司电脑白天登录；某天凌晨从国外一台新设备登录 → 风险分高 → 要求再做一次 MFA 或直接拒绝。
+- *Shifting from legacy perimeter defenses*：边界防护（防火墙、DMZ）还在，但不再是唯一的依据。
 
 ### 7.3 🔴 Summary：四条安全控制策略（p.60）📝✍️
 
@@ -756,20 +1337,31 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 | **Fail-Safe Defaults / Zero-Trust** | **access is denied by default unless explicitly permitted**                                                            |
 | **Simplicity and Auditability**     | **simple configurations reduce errors**; auditability allows tracking and reviewing activities                         |
 
-**需要理解**：**横向移动**（攻陷一台后在内网扩散）靠最小权限掐断；**简单**本身就是安全——规则越复杂越容易出错，「更多控制 ≠ 更安全」。
+**需要理解**：**横向移动**（攻陷一台后在内网扩散）靠最小权限掐断；**简单**本身就是安全——规则越复杂越容易出错，「更多控制 ≠ 更安全」。Fail-safe defaults 在本课出现过三次：规则表最后一条 Deny（p.18）、proxy 没有模块的协议过不去（p.21）、这里。
 
 ### 7.4 🔴 为什么说 Zero Trust 把所有工具串起来 ✍️
 
 这是老师最想让你记住的一点，很可能出成一道分析题。答题时按三原则把工具对上：
 
-| Zero Trust 原则                  | 对应的工具和控制                                                            |
-| ------------------------------ | ------------------------------------------------------------------- |
-| **Never trust, always verify** | MFA、passkey；授权（RBAC / TBAC）；NGFW Identity Awareness；动态风险评分；VPN 两端认证 |
-| **Least privilege**            | RBAC / TBAC、PAM、微分段、DMZ、防火墙只开必要端口                                   |
-| **Assume breach**              | IDPS、EDR 检测；SIEM / XDR 关联；SOC + SOAR 响应；蜜罐引开和收集情报；日志用于取证            |
-| **Fail-safe defaults**（p.60）   | 规则表最后一条 Default Deny；proxy 天然默认拒绝                                   |
+| Zero Trust 原则                  | 对应的工具和控制                                                                      |
+| ------------------------------ | ----------------------------------------------------------------------------- |
+| **Never trust, always verify** | MFA、passkey；授权（RBAC / TBAC）；NGFW Identity Awareness；动态风险评分；VPN 两端认证；p.43 安全链接 |
+| **Least privilege**            | RBAC / TBAC、PAM、微分段、DMZ、防火墙只开必要端口                                             |
+| **Assume breach**              | IDPS、EDR 检测；SIEM / XDR 关联；SOC + SOAR 响应；蜜罐引开和收集情报；日志用于取证                      |
+| **Fail-safe defaults**（p.60）   | 规则表最后一条 Default Deny；proxy 天然默认拒绝                                             |
 
 一句话：**工具是零件，Zero Trust 是设计图，Defense in Depth 是摆放方式。**
+
+*（网页版此处是点选练习：这体现哪条原则？（p.10、p.47、p.60）；下表是全部题目和答案）*
+
+| 情景                                                     | 答案                             | 理由                                                             |
+| ------------------------------------------------------ | ------------------------------ | -------------------------------------------------------------- |
+| 同事把带安全链接的邮件转发给你，你打不开附件——链接只认原收件人的身份                    | **Never trust, always verify** | p.43 Microsoft 例子：被转发、在公司内网都不算数，每次都要验证是不是本人                    |
+| 防火墙规则表最后一条是 Any / Any / Any / Any / Deny               | **Fail-safe defaults**         | access is denied by default unless explicitly permitted        |
+| 实习生只能看自己负责的那几个客户的资料                                    | **Least privilege**            | 只给完成工作必需的权限，被盗号时也能限制横向移动                                       |
+| 即使有防火墙，仍然部署 IDPS、EDR 和 SIEM 盯着内网                       | **Assume breach**              | 假设攻击者已经在里面，所以要有检测和响应                                           |
+| 外层 router + 防火墙 + IDPS + DMZ + 内层防火墙 + 端点防护，一层被绕过还有下一层 | **Defense in depth**           | multiple, independent, and overlapping security controls（p.47） |
+| 连上了公司 VPN，访问财务系统时仍要再做一次 MFA                            | **Never trust, always verify** | 连上 VPN（在内网）不代表可信                                               |
 
 **Explain how Zero Trust provides the guiding principle for combining access control, firewalls, IDPS, SIEM and SOAR in an organisation.（15 marks）**
 
@@ -790,29 +1382,46 @@ Capabilities：**Real-time monitoring · Incident response · User monitoring ·
 
 ## 8. 🔴 Honeypot 与 Honeynet（p.57–59）📝✍️
 
+![HoneyPots / HoneyNets：Designed to distract or mislead attackers away from actual critical systems（Decoy System）](images/page_58.png)
+
+*HoneyPots / HoneyNets：Designed to distract or mislead attackers away from actual critical systems（Decoy System）（Slide 58）*
+
 **课件原文**
 
-> **HoneyPot**: an application that **entices** people who are illegally perusing the internal areas of a network by providing **simulated rich content** while the software **notifies the administrator**.  
-> **HoneyNet**: a monitored network that contains **multiple honeypot systems**.  
+> **HoneyPot**: an application that **entices** people who are illegally perusing the internal areas of a network by providing **simulated rich content** while the software **notifies the administrator** of the intrusion.  
+> **HoneyNet**: a **monitored network** that contains **multiple honeypot systems**, to detect intrusion.  
 > Designed to **distract or mislead** attackers away from actual critical systems (**Decoy System**).
 
-三个目的：**Divert** an attacker from accessing critical systems；**Collect** information about the attacker's activity；**Encourage the attacker to stay** long enough for administrators to document the event and respond（**Delay**）。
+三个目的（p.59）：**Divert** an attacker from accessing critical systems；**Collect** information about the attacker's activity；**Encourage the attacker to stay** long enough for administrators to document the event and perhaps respond（**Delay**）。
 
 **需要理解**
 
-- 误报率接近零：正常员工根本不会碰它，所以任何访问都可疑。
-- p.59「Any potential issues?」：① 法律与伦理（诱捕争议、隐私、证据效力）；② 被攻破后被当成**跳板**攻击内网或第三方；③ 老练攻击者能识别，甚至故意喂假情报；④ 只能看到来碰它的攻击者，覆盖面有限；⑤ 不直接防护任何东西，ROI 难向管理层论证。
+- 类比：一罐**蜂蜜**摆在显眼的地方，引苍蝇过来，真正的食物放在别处。一台看起来装满「财务数据」「客户名单」的服务器，其实全是假的，而且布满了监控。
+- **Honeypot vs Honeynet**：一台诱饵机器 vs 一整个由多个诱饵组成、被监控的网络（模拟出一个像样的内网，攻击者能在里面「横向移动」，你能看到完整手法）。
+- 为什么它的**误报率接近零**：正常员工根本没理由碰它，所以**任何访问都可疑**。这正好补 IDPS 的短板（§5.4：误报太多让分析师麻木）。
+- 在 S = P + D + R 里它主要是 **D**（检测 + 收集情报），Delay 给 R 争取时间；它**不直接保护任何东西**。对应 Zero Trust 的 **Assume Breach**：假设攻击者已经进来了，就给他准备一个陷阱。
+- 常见放法：DMZ 里（看外面的人怎么攻）或内网里（抓已经进来、在横向移动的人）。
+
+**p.59「Any Potential Issues?」**
+
+| 问题      | 说明                                                                                                   |
+| ------- | ---------------------------------------------------------------------------------------------------- |
+| 法律与伦理   | **Enticement（引诱）vs Entrapment（诱捕）**：在系统里放诱饵、记录本来就想入侵的人，通常可以接受；诱导原本没打算犯罪的人犯罪则有争议。还有隐私问题、收集的证据在法庭上能不能用 |
+| 被反过来利用  | 蜜罐被攻破后可能变成**跳板**，攻击内网或第三方，带来下游责任                                                                     |
+| 被识破     | 老练的攻击者能认出蜜罐，绕开它，甚至故意喂假情报                                                                             |
+| 覆盖面有限   | 只看得到来碰它的攻击者，**只能补充、不能替代** firewall 和 IDPS                                                            |
+| 成本与 ROI | 要搭建、维护、有人盯；它不直接防护任何东西，ROI 难向管理层论证                                                                    |
 
 **What are the purposes of a honeypot, and what potential issues should management consider before deploying one?**
 
 > **English**
 >
-> **Purposes**: **Divert** attackers away from critical systems; **Collect** information about their activity and techniques; **Delay** them long enough for administrators to document the event and respond.  
-> **Issues**: legal and ethical risks (entrapment, privacy, admissibility of evidence); a compromised honeypot can become a **stepping stone** to attack internal systems or third parties, creating downstream liability; skilled attackers may detect it or feed false information; it only sees attackers who touch it, so it **complements but cannot replace** IDPS and firewalls; its cost and ROI are hard to justify.
+> **Purposes**: **Divert** attackers away from critical systems; **Collect** information about their activity and techniques; **Delay** them long enough for administrators to document the event and respond. Because legitimate users have no reason to touch it, any access is suspicious, so it gives high-quality alerts.  
+> **Issues**: legal and ethical risks (enticement vs entrapment, privacy, admissibility of evidence); a compromised honeypot can become a **stepping stone** to attack internal systems or third parties, creating downstream liability; skilled attackers may detect it or feed false information; it only sees attackers who touch it, so it **complements but cannot replace** IDPS and firewalls; its cost and ROI are hard to justify.
 >
 > **中文解析**
 >
-> 目的：Divert（引开攻击者，保护关键系统）、Collect（收集攻击手法情报）、Delay（拖住攻击者，争取时间记录和响应）。问题：法律和伦理风险（诱捕、隐私）；被攻破后可能成为攻击内网或第三方的跳板，带来下游责任；可能被识破或被反向利用；只能补充而不能替代 IDPS 和防火墙；成本和 ROI 难以证明。
+> 目的：Divert（引开攻击者，保护关键系统）、Collect（收集攻击手法情报）、Delay（拖住攻击者，争取时间记录和响应）。正常用户没理由碰它，所以任何访问都可疑，告警质量高。问题：法律和伦理风险（引诱与诱捕的界线、隐私、证据效力）；被攻破后可能成为攻击内网或第三方的跳板，带来下游责任；可能被识破或被反向利用；只能补充而不能替代 IDPS 和防火墙；成本和 ROI 难以证明。
 
 ---
 

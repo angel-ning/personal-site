@@ -1,0 +1,136 @@
+{
+  "fw": {
+    "title": "这是哪种防火墙？（p.15–24、p.46）",
+    "options": [
+      { "id": "MAC", "label": "MAC layer" },
+      { "id": "SL", "label": "Stateless" },
+      { "id": "SF", "label": "Stateful" },
+      { "id": "PX", "label": "App proxy" },
+      { "id": "NG", "label": "NGFW" }
+    ],
+    "items": [
+      { "q": "每个包单独判断，只看源 / 目的 IP、端口和方向，判断完就忘", "a": "SL", "why": "Static packet filtering：没有记忆（p.17），最基础、最快，但容易被 spoofing" },
+      { "q": "维护一张 state table，外面来的包只有对得上已登记的连接才放行", "a": "SF", "why": "Stateful inspection（p.19）：Accept traffic from the outside that matches an existing entry in the dynamic state table" },
+      { "q": "员工的请求到它这里就结束，它读懂 HTTP 请求后用自己的 IP 重新去访问网站", "a": "PX", "why": "连接被切成两段——这是 application layer proxy 的本质（p.21）" },
+      { "q": "能写「允许上网，但禁止访问某个网址、禁止下载 .exe」这种规则", "a": "PX", "why": "要看懂应用层内容（L7）才做得到，包过滤只看得到 IP 和端口" },
+      { "q": "规则写成「财务部的员工可以访问财务系统」，不管她用哪台电脑、IP 是多少", "a": "NG", "why": "Identity Awareness：links traffic to specific users and groups（p.46）" },
+      { "q": "订阅外部威胁情报，新发现的勒索软件服务器 IP 被自动加入黑名单", "a": "NG", "why": "Threat Intelligence Integration：block them proactively（p.46）" },
+      { "q": "只允许登记过 MAC 地址的设备接入这个局域网交换机", "a": "MAC", "why": "看 MAC 地址，工作在 L2；只在同一个局域网里有效，而且 MAC 很容易伪造" },
+      { "q": "考题问：工作在 OSI 最高层的防火墙", "a": "PX", "why": "Application layer proxy firewall 在 L5–L7（Figure 8-11）" },
+      { "q": "考题问：工作在 Network layer（L3）的防火墙", "a": "SL", "why": "Packet-filtering firewall 在图上指向 L3——即使 p.15 说它也读 TCP 端口，考试按图答 L3" }
+    ]
+  },
+  "where": {
+    "title": "该用哪一个？（装在哪：network 还是 host）",
+    "options": [
+      { "id": "NFW", "label": "Network firewall" },
+      { "id": "HFW", "label": "Host firewall" },
+      { "id": "NIDS", "label": "NIDPS" },
+      { "id": "HIDS", "label": "HIDPS" }
+    ],
+    "items": [
+      { "q": "一台互联网上的机器正在攻击内网多台服务器，要最快挡住它", "a": "NFW", "why": "课件原题 p.64：单一来源 + 多个目标 → 在边界加一条规则，一次保护全部" },
+      { "q": "同一个办公室里，同事的电脑中毒后开始扫描你的电脑，要挡住它", "a": "HFW", "why": "同一交换机下的两台 PC 互相通信，流量根本不经过边界防火墙" },
+      { "q": "员工带笔记本去咖啡店连公共 Wi-Fi，电脑仍要有过滤保护", "a": "HFW", "why": "离开公司后公司的边界防火墙就不在了，只剩装在电脑上的那一层" },
+      { "q": "只允许 Chrome 上网，禁止一个陌生的 .exe 往外连", "a": "HFW", "why": "只有装在电脑上的软件知道包是哪个程序发的（granular control at the device level）" },
+      { "q": "想发现「某个 IP 在几秒内把整个网段的端口都扫了一遍」", "a": "NIDS", "why": "一个传感器看整个网段的流量模式，这是 NIDPS 的长处" },
+      { "q": "想发现「服务器上的系统文件被人篡改了」", "a": "HIDS", "why": "文件变化发生在主机内部，NIDPS 看不到；Figure 9-2：examines the data in files stored on host" },
+      { "q": "流量大多是 HTTPS / VPN 加密的，仍想检查内容", "a": "HIDS", "why": "加密流量经过网络时看不到内容（A1 原题），到主机上已经解密，HIDPS 能看到" },
+      { "q": "有人凌晨 3 点用管理员账号登录了财务服务器", "a": "HIDS", "why": "监控 the actions of connected users（p.33）是 host-based 的内容" }
+    ]
+  },
+  "outcome": {
+    "title": "这是哪种结果？先问「报没报警」，再问「对不对」（p.36）",
+    "options": [
+      { "id": "TP", "label": "True Positive" },
+      { "id": "FP", "label": "False Positive" },
+      { "id": "FN", "label": "False Negative" },
+      { "id": "TN", "label": "True Negative" },
+      { "id": "NO", "label": "Noise" }
+    ],
+    "items": [
+      { "q": "IDS 报警说有 SQL 注入，调查后发现只是一个正常的搜索请求", "a": "FP", "why": "报了（Positive）+ 判断错了（False）。容易误选 True Negative：Positive / Negative 说的是 IDS 有没有报警，不是实际情况" },
+      { "q": "NIDS 报警说有 DDoS，调查确认真的发生了", "a": "TP", "why": "课件原题 p.65：报了 + 确实发生" },
+      { "q": "一种全新的攻击（zero-day）没有触发 signature-based IDS 的报警", "a": "FN", "why": "真的有攻击，却没报警——most grievous IDPS failure" },
+      { "q": "有员工把客户数据偷偷传了出去，IDS 一直没报警", "a": "FN", "why": "没报（Negative）+ 判断错了（False）" },
+      { "q": "防火墙已经挡住了外部的端口扫描，IDS 还是报了警：扫描确实发生，但没有威胁", "a": "NO", "why": "Noise = accurate but non-threatening。和 FP 的区别：noise 真的发生了，FP 根本没发生" },
+      { "q": "平常的一天，没有攻击，IDS 也没有报警", "a": "TN", "why": "没报 + 判断对了；风平浪静的状态" },
+      { "q": "月底财务结账流量暴增，anomaly-based IDS 报警，其实是正常业务", "a": "FP", "why": "Anomaly-based 的典型缺点就是误报多：正常的变化也会超过 clipping level" }
+    ]
+  },
+  "method": {
+    "title": "这是哪种检测方法？看「拿什么当参照」（p.37）",
+    "options": [
+      { "id": "SIG", "label": "Signature-based" },
+      { "id": "ANO", "label": "Anomaly-based" },
+      { "id": "SPA", "label": "Stateful Protocol Analysis" }
+    ],
+    "items": [
+      { "q": "请求里出现了一段已知病毒的代码特征，和特征库里的一条匹配", "a": "SIG", "why": "参照物是已知攻击的特征库（Knowledge-based / Misuse）" },
+      { "q": "Amy 平时白天下载 50MB，某天凌晨 3 点往外传了 20GB", "a": "ANO", "why": "参照物是从自己网络统计出来的正常基线，超过 clipping level 报警" },
+      { "q": "登录协议规定先发用户名再发密码，这个会话跳过了步骤，用户名字段还塞了 5000 个字符", "a": "SPA", "why": "参照物是协议厂商提供的「协议正常应该怎么走」（protocol profile），能深入检查 authentication 会话" },
+      { "q": "缺点是抓不到新的或未知的攻击，特征库要不停更新", "a": "SIG", "why": "A1 原题：It can't recognize unknown attacks" },
+      { "q": "缺点是误报率高、计算开销大，部署得比较少", "a": "ANO", "why": "High false-positive rate, significant processing overhead, less commonly deployed" },
+      { "q": "缺点是开销最大，流量大时可能干扰正常的协议运作", "a": "SPA", "why": "Heavy processing overhead; may interfere with normal protocol operations under load" },
+      { "q": "又叫 Behavior-based detection", "a": "ANO", "why": "别名要背：Anomaly = Behavior-based" },
+      { "q": "又叫 Deep Packet Inspection（DPI）", "a": "SPA", "why": "注意 NGFW 也有 DPI 功能；两处都是「看 payload」" }
+    ]
+  },
+  "relay": {
+    "title": "这是 Proxy、VPN Tunnel 还是 VPN Transport？",
+    "options": [
+      { "id": "PX", "label": "Proxy" },
+      { "id": "TU", "label": "Tunnel mode" },
+      { "id": "TR", "label": "Transport mode" }
+    ],
+    "items": [
+      { "q": "原始 IP header 保持明文，只加密 payload", "a": "TR", "why": "p.28：the original IP header remains intact and unencrypted" },
+      { "q": "整个原始包连同 header 一起加密，外面再套一个新 header", "a": "TU", "why": "p.27：encrypt entire IP packet including header" },
+      { "q": "中间点读懂请求内容，再用自己的身份重新发起一个新请求", "a": "PX", "why": "Proxy 替你说话：外部的包永远进不了内网" },
+      { "q": "中间点解密后，把你的原包原样转进内网，服务器看到的发送者是你", "a": "TU", "why": "Tunnel 替你运送：VPN 网关只拆外层，不重新发起请求" },
+      { "q": "两台主机自己加密解密，没有中转站", "a": "TR", "why": "p.28 标题 Host-to-Host：secure link directly with remote host" },
+      { "q": "咖啡店管理员只看得到「你在连公司的 VPN 网关」，不知道你访问的是哪台服务器", "a": "TU", "why": "真正的目的地址在被加密的原 header 里" },
+      { "q": "课件说 Remote Access to Office 用的是这一种", "a": "TR", "why": "考试按课件答 Transport（现实中远程办公多数用 tunnel 或 SSL VPN）" },
+      { "q": "网站看到的是它的 IP，不是员工的真实 IP；它不一定加密任何东西", "a": "PX", "why": "p.21：websites see the proxy's IP instead of your real IP" },
+      { "q": "香港分公司和上海分公司的两个网关之间建一条加密通道", "a": "TU", "why": "站点到站点：由两边的网关负责加解密" }
+    ]
+  },
+  "tool": {
+    "title": "这是哪个工具？（p.41–58）",
+    "options": [
+      { "id": "EDR", "label": "EDR" },
+      { "id": "SIEM", "label": "SIEM" },
+      { "id": "XDR", "label": "XDR" },
+      { "id": "SOAR", "label": "SOAR" },
+      { "id": "SOC", "label": "SOC" },
+      { "id": "HP", "label": "Honeypot" }
+    ],
+    "items": [
+      { "q": "在每台笔记本上装 agent，发现可疑进程就自动把这台电脑隔离出网络", "a": "EDR", "why": "Monitor endpoints → detect → contain by isolating the endpoint（p.42）" },
+      { "q": "把 VPN 登录、加入管理员组、下载脚本、外传 8GB 这四条来自不同设备的日志串成一次攻击", "a": "SIEM", "why": "核心价值是跨来源关联（correlation）" },
+      { "q": "从端点扩展到身份、SaaS 应用、邮件，跨这些来源串攻击链，还能 machine speed 自动处置", "a": "XDR", "why": "Enhancement of EDR（p.51）" },
+      { "q": "告警来了就按 playbook 自动封账号、开工单，减少分析师每个事件花的时间", "a": "SOAR", "why": "reduces analyst effort/time per incident, increasing SecOps capacity（p.53）" },
+      { "q": "一群分析师和威胁猎人，目标是缩短 attacker dwell time / MTTR", "a": "SOC", "why": "SOC 是组织（人 + 流程），不是一个软件" },
+      { "q": "一台故意放着假「财务数据」的服务器，正常员工不会碰，谁碰它就报警", "a": "HP", "why": "Decoy system：entices attackers with simulated rich content while notifying the administrator" },
+      { "q": "把多个蜜罐组成一个被监控的网络", "a": "HP", "why": "Honeynet = a monitored network that contains multiple honeypot systems（p.58）" }
+    ]
+  },
+  "zt": {
+    "title": "这体现哪条原则？（p.10、p.47、p.60）",
+    "options": [
+      { "id": "NT", "label": "Never trust, always verify" },
+      { "id": "LP", "label": "Least privilege" },
+      { "id": "AB", "label": "Assume breach" },
+      { "id": "FS", "label": "Fail-safe defaults" },
+      { "id": "DD", "label": "Defense in depth" }
+    ],
+    "items": [
+      { "q": "同事把带安全链接的邮件转发给你，你打不开附件——链接只认原收件人的身份", "a": "NT", "why": "p.43 Microsoft 例子：被转发、在公司内网都不算数，每次都要验证是不是本人" },
+      { "q": "防火墙规则表最后一条是 Any / Any / Any / Any / Deny", "a": "FS", "why": "access is denied by default unless explicitly permitted" },
+      { "q": "实习生只能看自己负责的那几个客户的资料", "a": "LP", "why": "只给完成工作必需的权限，被盗号时也能限制横向移动" },
+      { "q": "即使有防火墙，仍然部署 IDPS、EDR 和 SIEM 盯着内网", "a": "AB", "why": "假设攻击者已经在里面，所以要有检测和响应" },
+      { "q": "外层 router + 防火墙 + IDPS + DMZ + 内层防火墙 + 端点防护，一层被绕过还有下一层", "a": "DD", "why": "multiple, independent, and overlapping security controls（p.47）" },
+      { "q": "连上了公司 VPN，访问财务系统时仍要再做一次 MFA", "a": "NT", "why": "连上 VPN（在内网）不代表可信" }
+    ]
+  }
+}

@@ -115,6 +115,9 @@ tags: [IPv4, NAT, DHCP]
 | `<SeqAckLab preset={0} hide />` | 给两边 ISN + window size 画 SEQ / ACK 时序图：三次握手 → 一窗一窗发段 → 期望型 ACK，可选按段 / 按字节编号、丢一段（超时重传）；`hide` 先隐藏数字。轮次逻辑复用 `tcp-logic.mjs` 的 `simulateWindow`（`seqack-logic.mjs`） |
 | `<BinaryLab />` | 开卷用二进制助手：一个 octet 十进制 ↔ 二进制 ↔ 十六进制（位权高亮、是不是合法掩码值、当第一段时是哪个 Class），以及地址 AND 掩码逐段计算子网和广播（`binary-logic.mjs`） |
 | `<MaskSizeLab mode="need\|split" />` | Determining Subnet Mask Size：① 需求（子网数、地址数）→ min / max 借位与可行掩码；② 地址 + 掩码 → Network \| Subnet \| Host 彩色 32 位（Slide 25）、子网号、子网 / 广播 / 范围；下面的前缀表按当前输入高亮（`mask-logic.mjs`） |
+| `<StatefulLab />` | 同一批包分别交给 stateless 包过滤（固定规则）和 stateful 防火墙（规则 + state table）：任意顺序发包，看伪造「回包」和连接关闭后的迟到包两者判断的差别（`stateful-logic.mjs`，ISOM 5280 L3） |
+| `<VpnModeLab />` | VPN transport / tunnel 模式 + proxy 对照：包的结构（哪层加密）、站在咖啡店 Wi-Fi / 内网 / 目的服务器看能读到什么、目的地看到的发送者是谁（`vpn-logic.mjs`） |
+| `<L3SortQuiz set="fw\|where\|outcome\|method\|relay\|tool\|zt" />` | ISOM 5280 L3 点选练习：防火墙类型 / network 还是 host / TP·FP·FN·TN·Noise / 检测方法 / proxy·tunnel·transport / EDR·SIEM·XDR·SOAR·SOC·蜜罐 / Zero Trust 原则（题目在 `data/l3-quiz.json`，共用 `SortQuizView`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 

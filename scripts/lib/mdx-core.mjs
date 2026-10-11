@@ -46,6 +46,8 @@ import { topologyById, requirements as addrRequirements, addressPlan, routingTab
 import { SEQACK_PRESETS, seqAckLadder, ladderSvg, arrowLabel } from "../../src/components/mdx/seqack-logic.mjs";
 import { toBits, toHex, readOctet, decompose, andTable, BINARY_PRESETS, AND_PRESETS } from "../../src/components/mdx/binary-logic.mjs";
 import { prefixRows, fitRequirements, fieldSplit, NEED_PRESETS, SPLIT_PRESETS } from "../../src/components/mdx/mask-logic.mjs";
+import { DEMO as STATEFUL_DEMO, STATELESS_RULES, runStateful } from "../../src/components/mdx/stateful-logic.mjs";
+import { MODES as VPN_MODES, MODE_IDS as VPN_MODE_IDS } from "../../src/components/mdx/vpn-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -63,6 +65,7 @@ const irPicerlData = readJson("src/components/mdx/data/ir-picerl-items.json");
 const sqlPractice = readJson("src/components/mdx/data/sql-practice.json");
 const aiTrendQuiz = readJson("src/components/mdx/data/ai-trend-quiz.json");
 const txnQuiz = readJson("src/components/mdx/data/txn-quiz.json");
+const l3Quiz = readJson("src/components/mdx/data/l3-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -851,6 +854,42 @@ const components = {
     return [
       note("（网页版此处是「这条语句属于哪一类」的点选练习；下表是全部题目和答案）"),
       table(["语句", "类别", "理由"], COMMAND_ITEMS.map((it) => [{ type: "inlineCode", value: it.sql }, strong(it.a), it.why])),
+    ];
+  },
+  L3SortQuiz(_node, a) {
+    const set = l3Quiz[a.set] ?? l3Quiz.fw;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  StatefulLab() {
+    const verdict = (x) => (x.allow ? "✅ 放行" : "⛔ 丢弃");
+    return [
+      note("（网页版此处可以任意顺序发包，看 stateless 和 stateful 各自怎么判、state table 怎么变化；下表是笔记里的演示顺序）"),
+      para(strong("Stateless 规则表："), text(STATELESS_RULES.map((r) => `${r.id}. ${r.text}`).join("；"))),
+      table(
+        ["#", "包", "Stateless", "Stateful", "Stateful 的理由", "之后的 state table"],
+        runStateful(STATEFUL_DEMO).map((s, i) => [String(i + 1), `${s.pkt.label}（${s.pkt.src} → ${s.pkt.dst} ${s.pkt.flag}）`, verdict(s.stateless), strong(verdict(s.stateful)), s.stateful.why, s.table.join("；") || "（空）"]),
+      ),
+    ];
+  },
+  VpnModeLab() {
+    return [
+      note("（网页版此处可以切换 transport / tunnel / proxy，并站在不同观察者的位置看包；下表是全部情况）"),
+      ...VPN_MODE_IDS.flatMap((id) => {
+        const m = VPN_MODES[id];
+        return [
+          para(strong(m.label), text(`：${m.story}`)),
+          table(
+            ["段", "包的结构（🔒 = 加密）"],
+            m.packets.map((p) => [p.title, p.layers.map((l) => `${l.enc ? "🔒" : ""}[${l.part}: ${l.value}]`).join(" ")]),
+          ),
+          table(
+            ["观察者", "能看到", "看不到"],
+            Object.values(m.observers).map((o) => [o.label, o.sees.join("；"), o.hidden.join("；") || "—"]),
+          ),
+          para(text(`目的地看到的发送者：${m.sender}`)),
+        ];
+      }),
     ];
   },
   TxnSortQuiz(_node, a) {
