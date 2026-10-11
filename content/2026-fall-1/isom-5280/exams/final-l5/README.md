@@ -3,22 +3,22 @@ title:
   en: "Final Review L5 · Risk Management & AI Risk"
   zh: "期末复习 L5 · 风险管理与 AI 风险"
 summary:
-  en: "Lesson 5 for the final, built as two chains — why each AI concept appears, and what question each risk-management step answers — covering AI risks, shadow AI, AI for security, the definition of risk, risk appetite, the six-step process, asset valuation, TVA, quantitative assessment and heat maps, the four risk treatment strategies and why risk management fails, with labs and every slide question answered."
-  zh: "第 5 课期末版：串成两条线——AI 的每个概念为什么出现、风险管理每一步在回答什么问题；AI 风险、Shadow AI、AI 用于防御、风险定义、风险胃口、六步流程、资产打分、TVA、定量评估与热力图、四种风险处理、风险管理为什么失败；配互动练习，所有课件问题写出原题。"
+  en: "Lesson 5 for the final, built as two chains — why each AI concept appears, and what question each risk-management step answers — with a Chinese explanation under every slide point: AI risks and limitations, shadow AI, AI for security and governance, the definition of risk, risk appetite, the six-step process (what to check at each step and how it is examined), asset valuation, TVA, quantitative assessment and heat maps, the four risk treatment strategies and why risk management fails."
+  zh: "第 5 课期末版：串成两条线——AI 的每个概念为什么出现、风险管理每一步在回答什么问题；每条课件原文下面都有中文解析：AI 风险与局限、Shadow AI、AI 用于防御与治理、风险定义、风险胃口、六步流程（每步检查什么、怎么考）、资产打分、TVA、定量评估与热力图、四种风险处理、风险管理为什么失败。"
 week: 5
-date: 2026-10-11
+date: 2026-10-12
 tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, ShadowAI]
 ---
 # 期末复习 L5 · 风险管理与 AI 风险
 
 **课件**：Lesson 5（48 页）　**详细笔记**：[第 5 课复习笔记](../../lectures/lesson-05/)　**阅读**：[CrowdStrike 2024](../../readings/crowdstrike-2024/)　**练习题**：[L5 练习题](../practice-l5/)　**总览**：[期末总复习](../final-review/)
 
-> **怎么读这一页**：先读 §0 把整课串成两条线，再逐节看。每个知识点按 **课件原文 → 需要理解（类比 + 例子）→ 可能的问法** 写；所有课件上的问题都写出原题再给答案（标「课件原题」）。
+> **怎么读这一页**：先读 §0 把整课串成两条线，再逐节看。**每条课件原文下面都有中文解析**（表格里「课件原文 → 中文解析 → 例子」），所有课件上的问题都写出原题再给答案（标「课件原题」）。§2.4 专门讲风险管理六步：每一步要不要背、检查什么、怎么考。
 >
 > 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可  
 > 掌握要求：📝 **默写**（能写出名字、定义、清单）· 🔍 **区分**（给场景能判断是哪一个，选择题）· 🧮 **计算**（要带计算器）· ✍️ **分析**（能写成有结构的一段论述，长题）
 >
-> **10 月 11 日修订**：按 L3 / L4 的讲法重写——两条主线、每一步「解决什么问题」；补上原来漏掉的 p.4 AI 层级图、p.9–10 局限的例子、p.13 Shadow AI 的代价数字、p.14 **AI for Security vs Security for AI**、p.30 NIST CSF 2.0 结构、p.33 **资产加权打分**、TVA 怎么读、热力图每一格；**更正 p.23 配对题**（Threat 和 Attack 原来写反了）；新增互动练习：资产打分、热力图 + 风险胃口、六组点选题。
+> **修订记录**：10 月 11 日按 L3 / L4 的讲法重写（两条主线、资产打分、热力图、更正 p.23 配对题）。10 月 12 日：**每条课件原文都补中文解析**——AI 三视角逐条解释 + 「同一件事的两面」；两大局限讲清楚为什么是 6 个框；Shadow AI 每一点的解析；p.18 的 Human Oversight 图；风险管理六步每一步的检查清单和考法；四种 treatment 逐句解析。
 
 > **🎯 这一课在期末怎么考（老师点名）**
 >
@@ -42,7 +42,7 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
   - [2.1 🔴 术语复习（p.23）🔍](#21--术语复习p23)
   - [2.2 🔴 Risk 与 Risk Management 的定义（p.24–25）📝✍️](#22--risk-与-risk-management-的定义p2425️)
   - [2.3 🔴 Risk Appetite（p.26–27）📝](#23--risk-appetitep2627)
-  - [2.4 🔴 风险管理六步流程（p.28–30）📝](#24--风险管理六步流程p2830)
+  - [2.4 🔴 风险管理六步：每一步要知道什么、检查什么、怎么考（p.28–30）📝✍️](#24--风险管理六步每一步要知道什么检查什么怎么考p2830️)
   - [2.5 🟡 Risk Identification、资产清单与资产打分（p.31–33）📝🧮](#25--risk-identification资产清单与资产打分p3133)
   - [2.6 🟡 Risk Analysis 与 TVA 矩阵（p.34–35）📝🔍](#26--risk-analysis-与-tva-矩阵p3435)
   - [2.7 🔴 定量风险评估（p.36）📝🧮](#27--定量风险评估p36)
@@ -64,13 +64,13 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
       ↓ 问题：AI 用得越多，风险从哪里来？
 ② 三个视角（p.8）                                       AI 帮我们管风险 / 我们用 AI 的风险 / 别人用 AI 攻击我们
       ↓ 问题：为什么 AI 会出错？
-③ 两大局限（p.9–10）                                    概率模型不是事实库（幻觉、注入）；偏见、黑箱
+③ 两大局限（p.9–10）                                    技术上：概率模型不是事实库；伦理上：偏见、版权、黑箱
       ↓ 问题：员工偷偷用，公司根本看不见
 ④ Shadow AI（p.11–13）                                  禁止没用，要说「How」不说「No」
       ↓ 问题：AI 只是风险吗？
 ⑤ AI for Security（p.14–16）                            反过来用 AI 加强 firewall、IDPS、EDR、UEBA（L3 那些工具）
       ↓ 问题：怎么让 AI 用得安全、可信？
-⑥ AI Governance 六支柱（p.18）                          治理、公平、透明、隐私、问责、安全
+⑥ AI Governance 六支柱 + 人类监督（p.18）               治理、公平、透明、隐私、问责、安全；风险越高越要人把关
 ```
 
 ### 主线二：风险管理部分——每一步回答一个问题
@@ -109,28 +109,64 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 
 *Artificial Intelligence vs LLM：AI ⊃ Machine learning ⊃ Neural networks ⊃ Deep learning ⊃ Foundation model ⊃ LLM（Slide 4）*
 
-**课件原文**
+**p.4：AI 和 LLM 是什么关系——一圈套一圈**
 
-- p.4 层级（一圈套一圈）：**Artificial intelligence**（machines capable of intelligent behaviour；三个层次 Narrow AI / AGI / Superintelligence）⊃ **Machine learning**（learning and acting on data without explicit instructions）⊃ **Neural networks**（inspired by the human brain）⊃ **Deep learning**（multiple hidden layers）⊃ **Foundation model**（understands and generates text, images, code; needs a lot of data）⊃ **LLM**（focused on language tasks）
-- Generative AI（e.g. ChatGPT）uses **deep learning** / multi-layer neural networks（like **Generative Pre-trained Transformer**）
-- AI 演进（p.5）：**Predictive AI**（credit tech、fraud detection）→ **Generative AI**（productivity & upskilling、content generation、hyper-personalization）→ **Agentic AI**（autonomous execution，human + AI）
-- p.6：**Chat collects messages; GPT generates a response from the supplied context**（context window = dialogue + history + message + rule）。**GPT is a type of LLM; ChatGPT is an application built around models.**
-- p.7 **Agentic AI**：**Autonomous systems that perceive the environment, make decisions, and take actions towards specific goals**；self-reasons to choose the right apps and tools；有 memory（database）
+| 层                           | 课件原文                                                                                                                                    | 中文解析                                                                                 |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **Artificial intelligence** | Machines / software capable of intelligent behaviour：three levels — **Narrow AI**（performs limited tasks）、**AGI**、**Superintelligence** | 最大的概念：能表现出智能的机器。今天所有的 AI（包括 ChatGPT）都还是 **Narrow AI**，只能做特定任务；AGI（和人一样通用）、超级智能都还没有出现 |
+| **Machine learning**        | Learning and acting on data **without explicit instructions**                                                                           | 不是人写死规则，而是从数据里**自己学**规律。例：不告诉它什么是诈骗，给它一堆标好的交易，它自己学出诈骗长什么样                            |
+| **Neural networks**         | Models inspired by the human brain                                                                                                      | 模仿大脑神经元连接的一种机器学习方法                                                                   |
+| **Deep learning**           | Uses **multiple hidden layers** of artificial neural networks                                                                           | 层数很多（「深」）的神经网络，能学更复杂的东西，如图像、语言                                                       |
+| **Foundation model**        | Understands and generates text and/or images, code; **needs a lot of data** for training                                                | 用海量数据训练出来的「通用底座」，之后可以拿去做很多不同的任务                                                      |
+| **LLM**                     | Focused on **language tasks**                                                                                                           | 专门处理语言的 foundation model。GPT 就是一种 LLM                                                |
 
-![How Generative AI works vs How AI agents work：Agent 会自己选应用和工具去完成目标，还有记忆](images/page_07.png)
+p.4 底下那句：Generative AI（e.g. ChatGPT）uses **deep learning** … multi-layer neural networks（like **Generative Pre-trained Transformer**）→ 也就是说 **GPT 的全名**是 Generative Pre-trained Transformer：会**生成**（Generative）、事先用海量数据**训练好**（Pre-trained）、用的是 **Transformer** 这种神经网络结构。
 
-*How Generative AI works vs How AI agents work：Agent 会自己选应用和工具去完成目标，还有记忆（Slide 7）*
+![Artificial Intelligence Progress：Predictive → Generative → Agentic](images/page_05.png)
 
-**需要理解：三代 AI 一句话**
+*Artificial Intelligence Progress：Predictive → Generative → Agentic（Slide 5）*
 
-|                | 做什么               | 例子             | 出错时的后果                     |
-| -------------- | ----------------- | -------------- | -------------------------- |
-| **Predictive** | 根据历史数据**打分 / 预测** | 信用评分、反欺诈       | 一个错误的分数                    |
-| **Generative** | **生成**新内容         | ChatGPT 写邮件、画图 | 一段错误的内容，人决定用不用             |
-| **Agentic**    | **自己决定、自己调用工具去做** | 自动订机票、自动处理工单   | **一个被真的执行了的错误动作**（转错账、删数据） |
+**p.5：AI 的演进**
 
-- **ChatGPT ≠ GPT**：GPT 是模型（LLM 的一种）；ChatGPT 是包在模型外面的应用，负责收集你的对话、拼成 context window 交给模型。
-- Agentic 风险更高：它能动手，而且可能没有人在回路中把关。
+| 阶段                | 课件原文                                                                               | 中文解析                                         |
+| ----------------- | ---------------------------------------------------------------------------------- | -------------------------------------------- |
+| **Predictive AI** | Credit tech、Fraud detection                                                        | 根据历史数据**打分 / 预测**：这个人会不会违约、这笔交易是不是诈骗。银行用了很多年 |
+| **Generative AI** | Productivity & upskilling、Content / image / video generation、Hyper-personalization | **生成新内容**：写邮件、画图、做视频、给每个客户写不同的营销文案。提升员工效率    |
+| **Agentic AI**    | Autonomous execution；Human + A.I.                                                  | **自己去执行**：给它一个目标，它自己决定步骤、调用工具完成。人和 AI 一起工作   |
+
+p.5 底下那句：Generative AI models use neural network and **Transformer-based models** to **identify the patterns and structures within existing data to generate new and original content** → 它是从已有数据里学「规律和结构」，再组合出新内容——所以它擅长「像」，不保证「对」（→ §1.3 的 Core Issue）。
+
+![Chat and GPT：Chat app 收集对话，拼成 context window 交给 GPT 生成回答](images/page_06.png)
+
+*Chat and GPT：Chat app 收集对话，拼成 context window 交给 GPT 生成回答（Slide 6）*
+
+**p.6：Chat 和 GPT 是两样东西**
+
+| 课件原文                                                                                         | 中文解析                                                                                                                                |
+| -------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| **Chat collects messages; GPT generates a response from the supplied context.**              | 你在用的「聊天界面」只负责**收集**你的消息；真正生成回答的是后面的 **GPT 模型**                                                                                      |
+| You → Chat app（dialogue + history）→ **Context window**（message + rule）→ GPT / LLM → response | 每次你发问，Chat app 会把**这次的问题 + 之前的对话记录 + 系统规则**拼在一起，塞进模型的 **context window（上下文窗口）**，模型只根据窗口里的内容回答。窗口有大小上限（→ §1.3 Context window limits） |
+| **GPT is a type of LLM. ChatGPT is an application built around models.**                     | GPT 是**模型**；ChatGPT 是包在模型外面的**应用程序**。同一个模型可以被很多应用使用                                                                                 |
+
+![How Generative AI works vs How AI agents work](images/page_07.png)
+
+*How Generative AI works vs How AI agents work（Slide 7）*
+
+**p.7：Agentic AI**
+
+| 课件原文                                                                                                                                                                                        | 中文解析                                                                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| **Autonomous systems that perceive the environment, make decisions, and take actions towards specific goals**                                                                               | 三个动词：**感知**环境（读数据、看结果）→ **自己做决定** → **采取行动**。和 generative 最大的区别是「会动手」 |
+| How Generative AI works：users give text / images / speech → LLM analyses vast data with Transformer → question answering / content generation                                               | 你问，它答。产出是**内容**                                                       |
+| How AI agents work：users give a goal → agent **self-reasons to choose the right apps and tools** to achieve assigned goals；uses **preference, contexts, database, structured data, memory** | 你给目标，它**自己规划**要用哪些应用和工具，还会**记住**你的偏好和之前的结果。产出是**行动**                  |
+
+**三代 AI 一句话对比**
+
+|                | 做什么           | 例子                | 出错时的后果            |
+| -------------- | ------------- | ----------------- | ----------------- |
+| **Predictive** | 打分 / 预测       | 信用评分、反欺诈          | 一个错误的分数           |
+| **Generative** | 生成内容          | ChatGPT 写邮件、画图    | 一段错误的内容，人决定用不用    |
+| **Agentic**    | 自己决定、自己调用工具去做 | 自动订机票、自动处理工单、自动转账 | **一个被真的执行了的错误动作** |
 
 **Why is Agentic AI riskier than Generative AI, even though both can hallucinate?**
 
@@ -148,24 +184,89 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 
 *Risk view when implemented AI and Gen AI：三栏（Slide 8）*
 
-**课件原文**
+> **🎯 这一页要掌握到什么程度**
+>
+> 依据：老师点名的 L5 重点是「怎么衡量风险」和 risk treatment；AI 部分是小组项目和长题的一个**角度**；这一页没有课件原题。
+>
+> | 要做到              | 优先级           |
+> | ---------------- | ------------- |
+> | 说出三栏分别是什么        | 🔴            |
+> | 给一个场景，判断属于哪一栏    | 🟡 选择题可能考     |
+> | 每栏能举 2–3 个例子写进长题 | 🟡            |
+> | 逐条背课件原文          | 🟢 不用，但每条要看得懂 |
 
-| AI for Risk Management                                                           | Risks from using AI                                                     | Risks from others using AI                                       |
-| -------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| Transaction monitoring at scale                                                  | **Hallucination**（fabricate facts, citations, rationales）               | **Hyper-personalized phishing** at scale                         |
-| Credit risk & underwriting                                                       | **Bias** and unfair outcome                                             | **Deepfake** voice / video for social engineering                |
-| **UEBA**：real-time abnormal detection                                            | **Explainability gaps**（can't defend it to regulators, auditors, court） | **Synthetic identity** factories                                 |
-| Operational risk analytics（NLP mines incident reports, audit findings）           | **Model drift** and decay                                               | Automated scam conversation（chatbot）                             |
-| **Third-party / vendor risk**（AI scans contracts, SOC reports, news, financials） | **Adversarial manipulation**（probe model, poison data, craft inputs）    | **Evasion** of fraud controls（probe thresholds, stay just under） |
-|                                                                                  | Regulatory and legal uncertainty；IP and copyright                       | Document forgery on demand                                       |
+**三栏的本质：AI 和「我们」的三种关系**
 
-**需要理解：三栏 = AI 和「我们」的三种关系**
+| 栏                              | AI 的角色      | 一句话                    |
+| ------------------------------ | ----------- | ---------------------- |
+| **AI for Risk Management**     | 我们的**工具**   | AI 帮我们管风险              |
+| **Risks from using AI**        | 我们的**风险来源** | 我们自己用 AI，它会出错          |
+| **Risks from others using AI** | 攻击者的**武器**  | 别人用 AI 让攻击更逼真、更便宜、规模更大 |
 
-- **AI for Risk Management**：AI 是我们的**工具**，帮我们管风险（好处）。
-- **Risks from using AI**：AI 是我们的**风险来源**——我们自己用它时它会出错。
-- **Risks from others using AI**：AI 是**攻击者的武器**——让钓鱼、诈骗、伪造更逼真、更便宜、更大规模（L2 的社交工程升级版）。
+**判断方法：问「谁在用 AI、谁受害」**——我们用、帮到我们 → 第一栏；我们用、害了我们 → 第二栏；别人用、害了我们 → 第三栏。
 
-判断方法：问「是谁在用 AI、谁受害」。我们用、帮我们 → 第一栏；我们用、害了我们 → 第二栏；别人用、害了我们 → 第三栏。
+**第一栏：AI for Risk Management（AI 帮我们）**
+
+| 课件原文                                                                                                                          | 中文解析                                  | 例子                                              |
+| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- | ----------------------------------------------- |
+| **Transaction monitoring at scale**, flagging in real time, reduce error                                                      | 人看不过来的海量交易，AI 实时盯着，标出可疑的，还减少人工出错      | 银行每秒几千笔交易，AI 发现同一张卡在两个国家同时刷                     |
+| **Credit risk & underwriting**：adding richer behaviour signals                                                                | 审批贷款、保险时，AI 加入更多**行为信号**，评估更快更准       | 除了收入，还看还款习惯、缴费记录；没有信用记录的新移民也能被评估                |
+| **User and Entity Behavior Analytics (UEBA)**：real-time abnormal detection from users, devices and applications across entity | 学习每个人、每台设备、每个应用的「正常样子」，偏离就报警          | 会计平时白天登录，某天凌晨从海外下载大量文件（L3 的 anomaly-based、UEBA） |
+| **Operational risk analytics**：NLP mines incident reports, audit findings, call logs and controls                             | 用 NLP（让电脑读懂文字）去读事件报告、审计发现、客服通话记录，找出规律 | 发现某个流程反复出错，提早修                                  |
+| **Third-party / vendor risk**：AI scans contracts, SOC reports, news, cyber signals and financials to assess impact            | AI 扫描供应商的合同、审计报告、新闻、财报，评估供应商出事对我们的影响  | 发现关键供应商财务恶化、被曝漏洞（对应 CrowdStrike 的教训）            |
+
+**第二栏：Risks from using AI（我们用 AI 的风险）**
+
+| 课件原文                                                                                                                    | 中文解析                                        | 例子                                        |
+| ----------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ----------------------------------------- |
+| **Hallucination**：models can fabricate「facts」, citations, or rationales                                                 | 一本正经地编造事实、引用、理由                             | AI 客服编出不存在的退款政策；律师用 AI 写状纸引用了假判例          |
+| **Bias and unfair outcome**                                                                                             | 训练数据有偏见，结果就不公平                              | 贷款模型对某些族群、性别系统性地打低分（p.13 金融业被罚 $2.5M+）    |
+| **Explainability gaps**：inability to defend it to regulators, auditors, or in court                                     | 说不清 AI 为什么这样判，**对监管、审计、法庭交代不了**             | 客户问「为什么拒绝我的贷款」，银行答不上来（= p.10 的 black box） |
+| **Model drift and decay**：functionality can break as behaviour, fraud patterns or markets shift                         | 世界变了，模型没变，**慢慢变不准**                         | 疫情后消费习惯大变，反欺诈模型开始乱报或漏报                    |
+| **Adversarial manipulations**：fraudsters and criminals probe the model, poison data, or craft inputs to evade detection | 坏人专门针对**我们的模型**：反复试探、往训练数据里**投毒**、构造特殊输入骗过它 | 诈骗者摸清什么样的交易不会被模型拦                         |
+| **Regulatory and legal uncertainty**                                                                                    | AI 法规还在变，现在合规不代表以后合规                        | EU AI Act 2026 年起，最高罚 €35M 或全球营收 7%       |
+| **IP and copyright risk**                                                                                               | AI 生成的内容可能侵权；或者我们的机密被拿去当训练数据                | 逐字复现了有版权的代码；Shadow AI 也属于这一栏              |
+
+**第三栏：Risks from others using AI（别人用 AI 害我们）**
+
+| 课件原文                                                                                                                            | 中文解析                               | 例子                                |
+| ------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | --------------------------------- |
+| **Hyper-personalized phishing at scale**：AI writes polished, context-aware messages that mimic tone and job roles               | AI 写出语气、职位都对得上的钓鱼邮件，而且能批量生成        | 冒充老板的口吻，提到你们上周真的开过的会（L2 社交工程的升级版） |
+| **Deepfake voice / video** for social engineering                                                                               | 伪造声音、视频来骗人                         | 克隆 CFO 的声音或视频，在电话会议里要求转账          |
+| **Synthetic identity factories**：AI helps generate consistent「full profiles」                                                    | 批量造出「完整但不存在的人」：名字、证件、照片、社交账号前后都对得上 | 用假身份开户、借钱，然后消失                    |
+| **Automated scam conversation**：chatbot                                                                                         | 聊天机器人自动和受害人聊天，一个骗子同时骗几千人           | 假客服、杀猪盘                           |
+| **Evasion of fraud controls**：criminals use AI to probe what triggers alerts, then adjust behaviour to sit just under threshold | 用 AI 试探反欺诈系统什么情况会报警，然后把行为压在门槛下面    | 发现超过 $10,000 会被查，就每笔转 $9,800      |
+| **Document forgery on demand**：generative tools can create realistic financial statements                                       | 随时生成逼真的假文件                         | 假财务报表、假银行流水，用来骗贷款或骗付款             |
+
+> **🧠 为什么 Credit risk 是好处、Bias 是风险？——同一件事的两面**
+>
+> 第一栏写的是「**用 AI 来做什么**」（用途），第二栏写的是「**用 AI 做这件事时会出什么错**」（失败方式）。同一个应用可以同时出现在两栏：
+>
+> ```
+> 同一个信用审批模型
+>   ├─ 做对了 → 更快、更准、覆盖更多人      （第一栏：Credit risk & underwriting）
+>   └─ 学歪了 → 系统性地对某些群体不公平    （第二栏：Bias and unfair outcome）
+> ```
+>
+> 「更多的行为信号」恰恰可能是偏见的来源：模型学的是过去的审批记录，过去的歧视会被自动化；邮政编码、手机型号这些**代理变量（proxy）**和族群、收入高度相关，没直接用种族也会间接歧视。
+>
+> | 第一栏：用途                          | 同一件事在第二栏的风险              |
+> | ------------------------------- | ------------------------ |
+> | Credit risk & underwriting      | Bias、Explainability gaps |
+> | UEBA、Transaction monitoring     | Model drift              |
+> | 所有 AI 检测模型                      | Adversarial manipulation |
+> | Operational risk analytics（读报告） | Hallucination            |
+>
+> 第三栏还会**攻击**第一栏：我们用 AI 做交易监控，诈骗者就用 AI 试探监控门槛（Evasion）。
+>
+> **这一页真正想说的：用 AI 来管风险，AI 本身也变成一个要管的风险**（业界叫 model risk）。部署时要同时配上控制：偏见 → 公平性测试；说不清 → 可解释、人工复核和申诉渠道；漂移 → 持续监控、定期重新训练。
+>
+> **考试怎么分**：题目描述的是**目的**（enhance、detect、assess、monitor）→ 第一栏；描述的是**坏结果**（unfair、wrong、fabricate、can't explain、drift）→ 第二栏。
+
+> **⚠️ 两个容易混的**
+>
+> 1. **Adversarial manipulation（第二栏）vs Evasion of fraud controls（第三栏）**：都是「试探门槛」。前者攻击的是**我们用的 AI 模型**——风险因为我们用了 AI 才存在；后者重点是**坏人用 AI** 来规避我们的控制，不管这个控制是不是 AI。
+> 2. **Shadow AI 属于第二栏**：是我们自己的员工在用 AI，风险是数据外泄、违反隐私法。
 
 *（网页版此处是点选练习：这属于 AI 风险的哪一个视角？（p.8）；下表是全部题目和答案）*
 
@@ -182,36 +283,43 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 
 ### 1.3 🟡 AI 的两大局限（p.9–10）📝
 
+> **🧠 为什么「两大局限」有 6 + 3 个框**
+>
+> 「两大」是**两类**，不是两条：
+>
+> - **Limitation I（p.9）= 技术上的局限：AI 会出错、会被骗。** 6 个框里，左上角的 **The Core Issue 是根本原因**，另外 5 个是它造成的**症状**。
+> - **Limitation II（p.10）= 伦理上的局限：AI 不公平、可能侵权、说不清。** 3 个框。
+>
+> 所以记的时候抓住一句话：**模型是在猜「统计上最可能的下一个词」，不是在查事实**——幻觉、推理漏洞、被注入、能造假、会忘事，都是从这里来的。
+
 ![Limitation I：The Core Issue、Hallucinations、Reasoning Gaps、Prompt Injection & Hacking、Deepfakes & Misinformation、Context Window Limits](images/page_09.png)
 
 *Limitation I：The Core Issue、Hallucinations、Reasoning Gaps、Prompt Injection & Hacking、Deepfakes & Misinformation、Context Window Limits（Slide 9）*
 
-**课件原文（p.9 Limitation I：Hallucinations, Injection & Reasoning）**
+**Limitation I：Hallucinations, Injection & Reasoning（技术上的局限）**
 
-| 项目                             | 课件原文                                                                                                                                         | 课件例子                                                                                      |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| **The Core Issue**             | Models are **probabilistic pattern-matchers, not truth databases**. They predict the next likely word based on statistics, not fact-checking | —                                                                                         |
-| Hallucinations                 | Confidently producing false information                                                                                                      | 法律聊天机器人引用不存在的判例；医疗 AI 编造看似合理但危险的药物相互作用                                                    |
-| Reasoning Gaps                 | Lack of true understanding                                                                                                                   | 数学题换个说法就做错；追问时自相矛盾                                                                        |
-| **Prompt Injection & Hacking** | System manipulation through carefully crafted text inputs                                                                                    | **Jailbreaking**（「Act as a villain…」绕过安全过滤）；**Indirect injection**（网页里藏不可见的恶意文字，AI 读到就执行） |
-| Deepfakes & Misinformation     | Generating convincing fake content at scale                                                                                                  | 候选人的假视频；克隆家人声音的紧急诈骗                                                                       |
-| Context Window Limits          | The「Memory」problem                                                                                                                           | 长对话或长文档里，超过 token 上限就「忘了」前面的内容                                                            |
+| 框                              | 课件原文                                                                                                                                                                                                                                          | 中文解析                                                                                | 为什么会这样                                          | 怎么控制                                           |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------------------- | ---------------------------------------------- |
+| ⭐ **The Core Issue**           | Models are **probabilistic pattern-matchers, not truth databases**. They predict the next likely word based on statistics, not fact-checking                                                                                                  | **根本原因**：模型不是一个存着正确答案的数据库，而是根据统计规律，猜「接下来最可能出现哪个词」。它不会去核对事实                          | —                                               | 把 AI 当「助手」不当「权威」                               |
+| Hallucinations                 | Confidently producing false information. Example: legal chatbots citing non-existent court cases with fake case numbers；medical AI inventing plausible but dangerous drug interactions                                                        | **幻觉**：很有自信地说出错误信息，而且编得很像真的（连案号都有）                                                  | 它只追求「听起来通顺、像真的」，不知道真假                           | 重要输出要**人工核对**、要求给来源、限定只能根据公司资料回答               |
+| Reasoning Gaps                 | Lack of true understanding. Example: solving a math problem correctly via pattern matching but failing if the wording is slightly altered；contradicting itself in follow-up questions                                                         | **推理漏洞**：看起来会推理，其实是在模式匹配；题目换个说法就做错，追问时前后矛盾                                          | 没有真正「理解」，只是见过类似的题                               | 关键计算和判断不能只靠 AI                                 |
+| **Prompt Injection & Hacking** | System manipulation through carefully crafted text inputs. **Jailbreaking**：using roleplay（'Act as a villain…'）to bypass safety filters. **Indirect injection**：embedding malicious invisible text in a webpage for an AI to read and execute | **提示词注入**：用精心设计的文字操纵 AI。**越狱**：让它「扮演反派」绕过安全限制。**间接注入**：在网页里藏看不见的文字，AI 读网页时把它当成指令去执行 | 模型分不清哪些文字是「要处理的数据」、哪些是「要听的指令」（L2：外部文本要当数据，不当指令） | 不让 AI 直接执行高风险动作、限制它能用的工具和权限（对 Agentic AI 尤其重要） |
+| Deepfakes & Misinformation     | Generating convincing fake content at scale. Political：fake videos of candidates to influence elections. Fraud：voice cloning to impersonate family members in emergency scams                                                                 | **深度伪造和假信息**：大规模生成以假乱真的内容                                                           | 它本来就擅长生成「像」的东西                                  | 回拨核实、多重确认、员工培训（这条也是 §1.2 第三栏的武器）               |
+| Context Window Limits          | The「Memory」problem：in long conversations or large documents, the model「forgets」early details once the token limit is exceeded                                                                                                                 | **上下文窗口限制**：对话太长或文件太大，超过上限后，前面的内容就被「忘掉」                                             | §1.1 的 context window 有大小上限                     | 长文件分段处理；重要规则每次都放进去                             |
 
 ![Limitation II：Training Data Bias、The Copyright Dilemma、The 'Black Box' Problem](images/page_10.png)
 
 *Limitation II：Training Data Bias、The Copyright Dilemma、The 'Black Box' Problem（Slide 10）*
 
-**课件原文（p.10 Limitation II：Ethics, Bias and the Black Box）**
+**Limitation II：Ethics, Bias and the Black Box（伦理上的局限）**
 
-- **Training Data Bias**：models mirror the internet's prejudices（画「CEO」「医生」默认白人男性；强化刻板印象）
-- **The Copyright Dilemma**：模仿在世艺术家的风格不付费；逐字复现有版权的代码
-- **The「Black Box」Problem**：lack of explainability——even creators cannot fully trace **why** a neural network reached a conclusion；critical for regulated industries（e.g. why was a loan denied?）
-- Training data bias / data drift and「black box」**long existed in machine learning models**
+| 框                         | 课件原文                                                                                                                                                                                                        | 中文解析                                                               | 怎么控制                                         |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | -------------------------------------------- |
+| **Training Data Bias**    | Models mirror the internet's prejudices. Visual generators often default to white male representations for「CEO」or「Doctor」；language models can reinforce cultural stereotypes found in their training corpus | **训练数据偏见**：模型是从网上的数据学的，网上有什么偏见它就学什么。让它画「CEO」「医生」，默认画白人男性；还会强化刻板印象  | 上线前和定期做公平性测试（治理支柱 Fairness）                  |
+| **The Copyright Dilemma** | The legal battle over intellectual property. Art：generators mimicking living artists' styles without compensation. Code：reproducing licensed snippets verbatim                                              | **版权困境**：模仿在世艺术家的画风却不付钱；把有许可证的代码一字不改地吐出来——公司用了可能侵权                 | 审查 AI 生成的代码和内容、选用有版权保障的企业版工具                 |
+| **The「Black Box」Problem** | Lack of explainability. Even creators cannot fully trace **why** a neural network reached a specific conclusion；critical issue for regulated industries（e.g. why was a loan denied?）                        | **黑箱问题**：连开发者都说不清神经网络为什么得出这个结论。银行、保险这类**受监管行业**必须能解释决定（为什么拒绝这笔贷款？） | 高风险决定保留人工复核、选用可解释的模型、记录决策依据（支柱 Transparency） |
 
-**需要理解**
-
-- **一切的根源是 The Core Issue**：模型是在算「统计上最可能的下一个词」，不是在查事实。所以通顺 ≠ 正确，它也分不清哪段文字是数据、哪段是指令——这就是 prompt injection 的原因（L2：外部文本要当数据，不能当指令）。
-- 课件最后一句的意思：偏见、漂移、黑箱**不是生成式 AI 才有的新问题**，传统机器学习（比如信用评分模型）早就有，只是现在规模更大。
+p.10 最底下一句：**Training data bias / data drift and「black box」long existed in Machine Learning Models** → 偏见、漂移、黑箱**不是生成式 AI 才有的新问题**，传统机器学习（例如十几年前的信用评分模型）早就有；生成式 AI 只是把规模放大了。
 
 *（网页版此处是点选练习：这是 AI 的哪种局限？（p.9–10）；下表是全部题目和答案）*
 
@@ -227,38 +335,55 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 
 ### 1.4 🟡 Shadow AI（p.11–13）📝✍️
 
-**课件原文**
+![Shadow A.I. Risk：定义、风险、例子、预防](images/page_11.png)
 
-> Definitions：**Unauthorized or unsanctioned use of A.I. tools within organizations**  
-> Risk：**data exposure, lack of governance, inconsistent security controls**  
-> Example：**Samsung 2023** data leakage — use of unauthorized AI tools by employees  
-> Prevention tools：**A.I. governance policies, user training** …  
-> Trend（p.12）：say **"How" instead of "No"** to Gen AI
+*Shadow A.I. Risk：定义、风险、例子、预防（Slide 11）*
 
-![左：Samsung 2023 禁止员工使用生成式 AI（员工把敏感代码上传到 ChatGPT）；右：McKinsey 2025——48% 的员工说正式培训会让他们更常用 AI](images/page_12.png)
+**p.11 逐条解析**
 
-*左：Samsung 2023 禁止员工使用生成式 AI（员工把敏感代码上传到 ChatGPT）；右：McKinsey 2025——48% 的员工说正式培训会让他们更常用 AI（Slide 12）*
+| 课件原文                                                                                | 中文解析                                                                                                                                                     |
+| ----------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Definitions：Unauthorized or unsanctioned use of A.I. tools within organizations** | **影子 AI**：组织里**没有被授权、没有经过正式批准**就在用的 AI 工具。unauthorized = 没有权限用；unsanctioned = 没有经过公司正式审批（比如主管口头说「用吧」，但 IT 和合规从没评估过，也算）。名字来自 Shadow IT：员工自己装的、IT 部门看不见的软件 |
+| **Risk：data exposure**                                                              | **数据外泄**：员工把客户资料、合同、源代码贴进外部 AI，数据就存到了别人的服务器上，**收不回、删不掉**，还可能被拿去训练模型                                                                                      |
+| **Risk：lack of governance**                                                         | **缺乏治理**：公司不知道谁在用、用来做什么、输入了什么——出事了也查不到，没人负责                                                                                                              |
+| **Risk：inconsistent security controls**                                             | **安全控制不一致**：每个人用的工具不一样，有的有加密、有的没有；公司的 DLP、访问控制、日志管不到这些工具                                                                                                 |
+| **Example：Samsung 2023 data leakage**：use of unauthorized AI tools by employees     | 三星员工把敏感的**源代码**上传到 ChatGPT 请它帮忙找错，导致机密外泄（详见下面 p.12）                                                                                                      |
+| **Prevention tools：A.I. governance policies, user training …**                      | 预防靠两样：**AI 治理政策**（哪些工具可以用、什么数据不能输入、谁审批）+ **员工培训**（让员工知道风险）。省略号表示还有其他，如技术控制（DLP、监控）                                                                       |
+| Suggested reading：IBM *What is Shadow AI? The Dark Horse of Cybersecurity Threats*  | 推荐阅读，了解即可                                                                                                                                                |
+
+![左：Samsung 2023 禁止员工使用生成式 AI；右：McKinsey 2025——48% 的员工说正式培训会让他们更常用 AI](images/page_12.png)
+
+*左：Samsung 2023 禁止员工使用生成式 AI；右：McKinsey 2025——48% 的员工说正式培训会让他们更常用 AI（Slide 12）*
+
+**p.12：Trend：say「How」instead of「No」to Gen AI**
+
+| 课件内容                                                                                                                                                                                                                                | 中文解析                                                    |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| The Straits Times（2023-05-02）：Samsung Electronics is **banning** employee use of popular generative AI tools like ChatGPT after discovering that staff had **uploaded sensitive code** to the platform                              | 三星发现员工把敏感代码传到 ChatGPT 后，**一刀切禁止**员工使用生成式 AI             |
+| The company is concerned that data transmitted to such AI platforms is **stored on external servers, making it difficult to retrieve and delete, and could end up being disclosed to other users**                                  | 三星担心的就是 data exposure：数据存在外部服务器，**拿不回来、删不掉，还可能被其他用户看到** |
+| McKinsey 2025：**48%** of employees say **formal training on gen AI** would make them more likely to use the tools；45% say they would be more likely to use AI if their companies seamlessly integrated them into existing workflows | 将近一半员工说，**公司正式培训**、把 AI 整合进日常工作流程，他们才更愿意用               |
+| Quote：「When respected team leaders share their AI learning journeys and publicly acknowledge that they're still learning, it reduces the psychological barriers for everyone else.」                                                 | 主管带头分享自己怎么学 AI、承认自己也在学，员工的心理障碍就会降低                      |
+
+**标题的意思**：三星的做法是说「**No**」（禁止）；趋势是说「**How**」（教大家怎么安全地用）。为什么？
+
+- 一刀切禁止**挡不住**：AI 真的好用，员工会改用私人手机、私人账号继续用——Shadow AI 反而更多、更看不见。
+- 给员工**批准的工具 + 规则 + 培训**，使用就回到公司看得见、管得到的地方。
 
 ![Real-World Costs of Ungoverned Shadow AI（Fortinet 2026）](images/page_13.png)
 
 *Real-World Costs of Ungoverned Shadow AI（Fortinet 2026）（Slide 13）*
 
-**p.13 的数字（Fortinet 2026）**
+**p.13：Cost of Ungoverned Shadow AI（没人管的 Shadow AI 要付出什么代价）**
 
-|                        | 发生了什么                     | 代价                  |
-| ---------------------- | ------------------------- | ------------------- |
-| EU AI Act（2026 年 8 月起） | 不合规的最高罚款                  | **€35M 或全球营收的 7%**  |
-| 普遍情况                   | **95%** 的企业有未被发现的 AI 使用   | —                   |
-| 医疗                     | 员工用 ChatGPT 总结病历，违反 HIPAA | **$3.5M+** 罚款       |
-| 金融                     | 贷款筛选 AI 延续歧视性模式           | **$2.5M+** 算法偏见罚款   |
-| 制造                     | 专有代码经 AI 编程助手的训练数据泄露      | **$54M+** 收入损失和法律费用 |
+| 课件内容                                                                                                                         | 中文解析                                                                                 |
+| ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| **€35M+ or 7% of global revenue**：the maximum penalty for non-compliance with the **EU AI Act**, starting August 2026        | 欧盟《AI 法案》2026 年 8 月起执行，违规最高罚 **3,500 万欧元或全球营收的 7%**（取较高者）——对应 §1.2 的 regulatory risk |
+| **95%** of enterprises have **undiscovered AI**                                                                              | 95% 的企业里有**公司不知道的 AI 使用**——说明 Shadow AI 非常普遍                                         |
+| Healthcare：staff used ChatGPT to summarize patient notes, **violating HIPAA** → **$3.5M+** fine from patient data leak       | 医护人员用 ChatGPT 总结病历，违反美国医疗隐私法 HIPAA，罚款 350 万美元以上 → **data exposure**                  |
+| Finance：a loan screening AI **perpetuated discriminatory lending patterns** → **$2.5M+** fine for algorithmic bias           | 贷款筛选 AI 延续了歧视性的放贷模式，罚款 250 万美元以上 → **bias**                                          |
+| Manufacturing：**proprietary code was leaked via AI coding assistant training data** → **$54M+** in lost revenue & legal fees | 公司的专有代码通过 AI 编程助手的**训练数据**泄露出去，损失收入加法律费用 5,400 万美元以上 → **data exposure + IP**        |
 
-**需要理解：类比「员工偷偷用私人 U 盘」**
-
-- 为什么会有 Shadow AI：AI 真的好用，公司又没给能用的工具，员工就自己去用免费版——把客户资料、代码贴进公司看不见、管不了的外部服务。
-- Samsung 的例子：员工把敏感源代码上传到 ChatGPT 帮忙改错，数据存在外部服务器上**收不回、删不掉**，可能被其他用户看到 → Samsung 的第一反应是**禁止**。
-- 为什么课件说 **「How」不说「No」**：一刀切禁止只会把使用逼到更看不见的地方（私人手机、私人账号），Shadow AI 反而更多。McKinsey 的数据也说明，给员工正式培训，他们才更愿意、也更安全地用。
-- 三个风险对应三种控制：**data exposure** → 数据分级、DLP、不准输入敏感数据；**lack of governance** → AI 治理政策、审批流程；**inconsistent security controls** → 提供统一的企业版 AI 工具。
+**一句话**：三个行业对应三种风险，都是因为**没人管**：不知道员工在用、没有规则、没有检查。
 
 **How should an organisation manage Shadow AI risk?**
 
@@ -276,22 +401,66 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 
 ### 1.5 🟡 AI for Security、Security for AI 与 AI 治理（p.14–18）📝✍️
 
-![Fortinet 2026：左边 AI for Security（用 AI 改进安全产品），右边 Security for AI（保护员工对 GenAI 的使用：Shadow AI Lockdown、LLM Security）](images/page_14.png)
+![Fortinet 2026：左边 AI for Security，右边 Security for AI](images/page_14.png)
 
-*Fortinet 2026：左边 AI for Security（用 AI 改进安全产品），右边 Security for AI（保护员工对 GenAI 的使用：Shadow AI Lockdown、LLM Security）（Slide 14）*
+*Fortinet 2026：左边 AI for Security，右边 Security for AI（Slide 14）*
 
-**课件原文**
+**p.14：两个方向，名字很像、方向相反**
 
-- p.14 两个方向：**AI for Security**（leveraging GenAI to improve security products & services：agents embedded into products, autonomous threat management）↔ **Security for AI**（secure customer use of GenAI：**visibility & control over all usage of AI (Shadow AI)**、secure AI components、LLM security）
-- p.15 AI is transforming defensive cybersecurity：enhance platforms, **detect sophisticated attacks, automate tasks, respond rapidly**；real-time analyse vast amounts of security event data；也有 **valid concerns** about AI's reliability and ethical use
-- p.16 AI-enhanced tools：① **Firewall / NGFW**——ML-driven multi-layer packet inspection, zero-day detection, adaptive rule tuning ② **IDPS / EDR / XDR**——deep-learning classifiers detect novel intrusions and insider misuse **without signatures** ③ **Threat hunting & malware analysis**——improve quality & turn-around ④ **UEBA** ⑤ **Agentic testing under guardrail**
-- p.18 **AI Governance**（include privacy & safety）：**Governance · Fairness · Transparency · Data Privacy · Accountability · Safety**
+|                     | 课件内容                                                                                                                                                                                                                                                                     | 中文解析                                                                             |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| **AI for Security** | Leveraging GenAI to **improve security products & services**：agents embedded into products that help streamline and automate daily operations（Assist）；leverage GenAI to improve or speed up threat detections（Protect）；Agentic AI framework、autonomous threat management | **用 AI 去保护**：AI 是**工具**，帮安全团队更快地发现和处理威胁                                          |
+| **Security for AI** | Using security products & services to **secure customer use of GenAI**：**visibility & control over all usage of AI (Shadow AI)**；secure the use of AI components including MCP, A2A and LLM security；Shadow AI lockdown、AI factory、LLM security                          | **保护 AI 的使用**：AI 是**被保护、被管控的对象**——看见并管住员工在用的 AI（Shadow AI）、保护公司自己的 AI 系统和大模型不被攻击 |
 
-**需要理解**
+**p.15：AI is transforming defensive cybersecurity**
 
-- **AI for Security vs Security for AI**，名字很像、方向相反：前者是**用 AI 去保护**（AI 是工具）；后者是**保护 AI 的使用**（AI 是被保护 / 被管控的对象，例如管住 Shadow AI）。
-- p.16 就是把 **L3 的工具一个个加上 AI**：NGFW 自动调规则、IDPS / EDR 不靠特征库也能发现新攻击（解决 signature-based 抓不到新攻击的弱点，L3 §5.5）、UEBA 学习每个人的正常行为。
-- AI 治理六支柱各管一类 §1.3 的问题：Fairness ↔ bias；Transparency ↔ black box；Data Privacy ↔ Shadow AI 泄露；Accountability ↔ 出错了谁负责；Safety ↔ 幻觉、agent 乱执行；Governance ↔ 统筹以上（政策、审批、监督）。
+| 课件原文                                                                                                                                                              | 中文解析                                                                |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Harnessing AI capabilities：organizations can **enhance their security platforms, detect sophisticated attacks, automate tasks, and respond rapidly** to incidents | AI 能帮安全做四件事：强化平台、**发现更复杂的攻击**、**自动化重复工作**、**更快响应**——正好对应 L3 的 D 和 R |
+| Along with the potential come **valid concerns** that must be addressed to ensure AI's **reliability and ethical use** in defensive cybersecurity                 | 但也有合理的担忧：AI 可靠吗？用得合乎伦理吗？（就是 §1.3 的局限）                               |
+| AI in security platforms is gaining momentum：**real-time analyse vast amounts of security event data** to detect and respond to potential threats                 | 安全设备每天产生海量日志（L3 p.49：每天 1M+ 条），人看不过来，AI 能实时分析                       |
+| Integration of AI capabilities：these platforms are becoming **more intelligent and efficient**                                                                    | 越来越多安全产品内置 AI                                                       |
+
+![AI-Enhanced Cybersecurity Defense Tools：五个加强方向](images/page_16.png)
+
+*AI-Enhanced Cybersecurity Defense Tools：五个加强方向（Slide 16）*
+
+**p.16：AI 怎么加强 L3 学过的工具**
+
+| 课件原文                                                                                                                  | 中文解析                                        | 解决了 L3 的哪个问题                        |
+| --------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- | ----------------------------------- |
+| 1. **Firewall / NGFW** — ML-driven multi-layer packet inspection, zero-day detection, **adaptive rule tuning**        | 用机器学习做多层检查，能发现零日攻击，还能**自动调整规则**             | 规则表要人手写、手动调；新攻击没有规则                 |
+| 2. **IDPS / EDR / XDR** — deep-learning classifiers detect **novel intrusions and insider misuse without signatures** | 深度学习分类器**不靠特征库**也能发现新的入侵和内部人员滥用             | **Signature-based 抓不到新攻击**（L3 §5.5） |
+| 3. **Threat hunting & malware analysis** — improve quality & turn-around                                              | 威胁狩猎和恶意软件分析：质量更好、**周转更快**                   | 分析师人手不够、分析慢                         |
+| 4. AI to learn individual users, systems and other logs to enhance **UEBA**                                           | 学习每个用户、每个系统的正常行为，加强 UEBA                    | 固定阈值误报多（L3 anomaly-based 的弱点）       |
+| 5. **Agentic testing — under guardrail**                                                                              | 用 AI agent 自动做攻击测试（模拟黑客），但要在**护栏**（限制和监督）之下 | 渗透测试贵、做得少；护栏是因为 agent 会动手（§1.1）     |
+
+**p.17：Risk Mitigation**——推荐阅读 HBR《Advancing the Use of Artificial Intelligence While Mitigating the Cybersecurity Threat》（Microsoft 赞助）。意思是：**一边推进 AI，一边降低它带来的风险**，两件事要同时做。
+
+![AI Governance include Privacy & Safety：六支柱 + Figure 7 Risk-based Approach to Human Oversight](images/page_18.png)
+
+*AI Governance include Privacy & Safety：六支柱 + Figure 7 Risk-based Approach to Human Oversight（Slide 18）*
+
+**p.18：AI Governance 六支柱**
+
+| 支柱                 | 中文解析                          | 管住 §1.2–1.4 的哪个问题                        |
+| ------------------ | ----------------------------- | ---------------------------------------- |
+| **Governance**     | 有人负责、有政策、有审批流程：哪些 AI 能用、用在哪里  | Shadow AI、lack of governance             |
+| **Fairness**       | 结果对不同群体公平，定期检查有没有偏见           | Bias、training data bias                  |
+| **Transparency**   | 能说清 AI 怎么做决定；告诉用户在和 AI 打交道    | Black box、explainability gaps            |
+| **Data Privacy**   | 个人数据怎么收集、使用、存放；敏感数据不准输入外部 AI  | Data exposure（Samsung、HIPAA 罚款）          |
+| **Accountability** | 出了错谁负责——不能说「是 AI 决定的」         | 监管、法庭追责                                  |
+| **Safety**         | AI 不能造成伤害：输出要核对，agent 的动作要有限制 | Hallucination、prompt injection、agent 乱执行 |
+
+**p.18 右边的图：Figure 7 Risk-based Approach to Human Oversight（按风险决定人要管多少）**
+
+| 级别                        | 课件原文                                                                                       | 中文解析              | 适用                    |
+| ------------------------- | ------------------------------------------------------------------------------------------ | ----------------- | --------------------- |
+| **Human-out-of-the-loop** | AI makes decisions **without human intervention**                                          | AI 自己决定，人不参与      | **低风险**：推荐商品、垃圾邮件过滤   |
+| **Human-in-command**      | Human actors **oversee the operation of AI and intervene whenever necessary**              | 人在旁边**监督**，必要时介入  | **中风险**：客服机器人，人随时可以接手 |
+| **Human-in-the-loop**     | Human actors **retain control in the decision-making process** to prevent any errors by AI | **决定权在人**，AI 只给建议 | **高风险**：批贷款、医疗诊断、大额转账 |
+
+图的意思：横轴是人的监督程度，纵轴是 AI 系统的风险等级——**AI 系统风险越高，越需要人把关**。这就是风险管理思想用在 AI 上：先评估风险，再决定控制强度。
 
 > **🧠 小组项目要求（p.20）+ 老师最后一课的点评**
 >
@@ -335,27 +504,29 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 
 ### 2.2 🔴 Risk 与 Risk Management 的定义（p.24–25）📝✍️
 
-![Threat ∩ Vulnerability ∩ Consequence = RISK](images/page_25.png)
+![Definition of Risk](images/page_24.png)
 
-*Threat ∩ Vulnerability ∩ Consequence = RISK（Slide 25）*
+*Definition of Risk（Slide 24）*
 
-**课件原文**
+| 课件原文                                                                                                                                                 | 中文解析                                                          |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Risk is always out there, perceived as something **hazardous**, and it might be either **expected and unexpected**                                   | 风险无处不在，有些预料得到，有些预料不到                                          |
+| **(Downside) Risk**：Any event or actions that may **adversely affect an organization's ability to achieve its objective** and execute its strategies | 定义一（**管理角度**）：任何可能妨碍组织**达成目标、执行策略**的事件或行为。「Downside」= 只看坏的那一面 |
+| or, alternatively, **the quantifiable likelihood of loss or less-than-expected returns**（McNeil, Alexander and Paul, 2015）                           | 定义二（**数字角度**）：**可以量化**的损失可能性，或回报低于预期的可能性——这就是 §2.7 要算的东西      |
 
-> **(Downside) Risk**：Any event or actions that may **adversely affect an organization's ability to achieve its objective** and execute its strategies or, alternatively, **the quantifiable likelihood of loss or less-than-expected returns**（McNeil, Alexander and Paul, 2015）  
-> **Risk Management**：「**The process of identifying risk, assessing its relative magnitude, and taking steps to reduce it to an acceptable level.**」（Whitman & Mattord, 2022）  
-> Core concept：**Threat ∩ Vulnerability ∩ Consequence = RISK**
+![Core Concept：Risk Management 的定义 + 三条原则 + Threat ∩ Vulnerability ∩ Consequence = RISK](images/page_25.png)
 
-三条原则：
+*Core Concept：Risk Management 的定义 + 三条原则 + Threat ∩ Vulnerability ∩ Consequence = RISK（Slide 25）*
 
-1. **CIA Triad Connection**：protect CIA **while enabling business processes** to function
-2. **Management, Not Just Technology**：risk management is fundamentally a **business and governance problem**; leadership, policy, process equally critical
-3. **No Risk-Free Activity**：「Risk is inherent in everything that we do」——the goal is **acceptable risk, not zero risk**
+| 课件原文                                                                                                                                                                                                | 中文解析                                                                                                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| **Risk Management**：「**The process of identifying risk, assessing its relative magnitude, and taking steps to reduce it to an acceptable level.**」（Whitman & Mattord, 2022, p.122）                  | 风险管理 = **识别**风险 → **评估**它相对有多大 → **采取措施把它降到可接受的程度**。三个动词刚好对应六步里的 Identify、Analyze / Evaluate、Treat；「可接受」就是风险胃口 |
+| **CIA Triad Connection**：Organizations must protect Confidentiality, Integrity, and Availability **while enabling business processes to function effectively**                                      | 原则一：保护 CIA 的同时**要让业务正常运转**——不能为了安全把业务锁死（例如把所有外网断掉）                                                             |
+| **Management, Not Just Technology**：Risk management is fundamentally a **business and governance problem** — technology alone cannot solve it. Leadership, policy, and process are equally critical | 原则二：这是**业务和治理**问题，光买技术解决不了；领导、政策、流程同样重要（和 L3 的 Zero Trust、NIST CSF 的 Govern 一致）                                |
+| **No Risk-Free Activity**：「Risk is inherent in everything that we do.」— Fitzgerald (2012). The goal is **acceptable risk, not zero risk**                                                           | 原则三：做任何事都有风险，**零风险不存在**；目标是「可接受」→ 所以必须先定风险胃口                                                                   |
+| **Threat ∩ Vulnerability ∩ Consequence = RISK**                                                                                                                                                     | 三者的**交集**才是风险（见下）                                                                                              |
 
-**需要理解**
-
-- 风险定义有两个说法：一个是「**影响目标**的事」（管理角度），一个是「**可量化的损失可能性**」（数字角度）——后者就是 §2.7 要算的东西。「Downside」指只看坏的一面。
-- **三者交集才是风险**：有威胁没漏洞（小偷想偷、但你家门锁很好）、有漏洞没威胁（门没锁、但住在无人岛）、两者都有但没后果（被偷的是空箱子）——都不构成风险。所以降低风险可以从三个方向下手：**挡住威胁、补上漏洞、减小后果**。
-- 三条原则的意思：安全要**让业务能运转**，不能为了安全把业务锁死；这是**管理问题**，光买技术不够（和 L3 的 Zero Trust、L6 的治理连起来）；**零风险不存在**，所以必须先定风险胃口。
+**三者交集才是风险**：有威胁没漏洞（小偷想偷，但你家门锁很好）、有漏洞没威胁（门没锁，但住在无人岛）、两者都有但没后果（被偷的是空箱子）——都不构成风险。所以降低风险可以从三个方向下手：**挡住威胁、补上漏洞、减小后果**。
 
 ### 2.3 🔴 Risk Appetite（p.26–27）📝
 
@@ -363,48 +534,79 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 
 *Risk Appetite：ISO 31000 定义（Slide 26）*
 
-**课件原文**
-
-> Risk appetite is defined as **the amount and type of risk an organization is willing to take in order to meet its strategic objectives**. It is the amount and type of risk an organization is willing to accept while pursuing value（ISO 31000）.  
-> Different appetites depending on **sector, culture and objectives**; a range of appetites exist for different risks and may change over time.  
-> Risk appetite and tolerance need to be **high on any board's agenda**; core consideration of enterprise risk management.  
-> p.27 How to measure and limit risk：**Risk Appetite & Risk Limit will be in the Board Agenda.**
+| 课件原文                                                                                                                                                                                          | 中文解析                                                                                          |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| Risk appetite is defined as **the amount and type of risk an organization is willing to take in order to meet its strategic objectives**                                                      | 风险胃口 = 为了达成战略目标，组织**愿意承担多少、什么类型**的风险。注意两个维度：**多少**（amount）和**哪种**（type）                       |
+| It is the amount and type of risk an organization is willing to accept **while pursuing value**（ISO 31000）                                                                                    | 为什么要承担风险？因为要**追求价值**——完全不冒险，生意也做不成                                                            |
+| Organizations will have **different risk appetites depending on their sector, culture and objectives**. A range of appetites exist for **different risks** and these **may change over time** | **不同组织胃口不同**：银行对客户数据泄露几乎零容忍，初创公司为了上线快可以多冒险。**同一组织对不同风险胃口也不同**（对罚款很敏感，对官网偶尔停机不在意）。胃口还会**随时间变** |
+| Risk appetite and **tolerance** need to be **high on any board's agenda** and is a core consideration of an **enterprise risk management** approach                                           | 风险胃口和容忍度要放在**董事会议程的重要位置**，是企业风险管理的核心                                                          |
+| p.27 How to measure and limit risk：**Risk Appetite & Risk Limit will be in the Board Agenda**                                                                                                 | 风险胃口和**风险限额**由董事会定                                                                            |
 
 **需要理解**
 
-- 风险胃口是**一条线**：评估阶段拿每个风险和它比，低于线可以接受，高于线必须处理（下面热力图的实验可以拖这条线）。
-- 它是**管理层的决策**，由**董事会**定，不是技术参数。为什么要承担风险？因为要追求价值（pursuing value）——完全不冒险，业务也做不成。
-- **不同组织胃口不同**：银行对客户数据泄露几乎零容忍；初创公司为了上线快可以接受更多风险。同一家公司对不同风险的胃口也不同（对罚款很敏感，对官网偶尔停机不太在意）。
-- **Risk limit** 是把胃口变成具体数字，例如「单项风险年化损失不超过 50 万」，方便衡量和监控。
+- 风险胃口是**一条线**：评估阶段拿每个风险和它比，低于线可以接受，高于线必须处理（§2.8 的实验可以拖这条线）。
+- 它是**管理层的决策**，由**董事会**定，不是技术参数。
+- 三个词的关系（课件提到 appetite、tolerance、limit）：**Appetite** 是总体态度（「我们对客户数据泄露零容忍」）；**Tolerance** 是对某一具体风险能接受的偏离程度；**Limit** 是可以衡量的具体数字（「单项风险年化预期损失不超过 50 万」），方便监控。
 
-### 2.4 🔴 风险管理六步流程（p.28–30）📝
+### 2.4 🔴 风险管理六步：每一步要知道什么、检查什么、怎么考（p.28–30）📝✍️
 
 ![Risk Management Process（课件 p.28 和 p.29 连续列了两遍）](images/page_28.png)
 
 *Risk Management Process（课件 p.28 和 p.29 连续列了两遍）（Slide 28）*
 
-**课件原文**
+**课件原文**：This process uses the following tasks：
 
-1. **Establishing the context**
-2. **Identifying risk**
-3. **Analyzing risk**
-4. **Evaluating the risk** and **comparing uncontrolled risks against the risk appetite**
-5. **Treating the unacceptable risk**
-6. **Summarizing the findings**
+| # | 课件原文                                                                                   | 中文                        |
+| - | -------------------------------------------------------------------------------------- | ------------------------- |
+| 1 | **Establishing the context**                                                           | 确立背景                      |
+| 2 | **Identifying risk**                                                                   | 识别风险                      |
+| 3 | **Analyzing risk**                                                                     | 分析风险                      |
+| 4 | **Evaluating the risk** and **comparing uncontrolled risks against the risk appetite** | 评估风险：把**还没控制住的风险**和风险胃口比较 |
+| 5 | **Treating the unacceptable risk**                                                     | 处理**不可接受**的风险             |
+| 6 | **Summarizing the findings**                                                           | 汇总结果                      |
 
-**需要理解：每一步回答一个问题**
+> **🎯 六步都要知道吗？——要知道，但深度不一样**
+>
+> 依据：课件把这六步**连续放了两页**（p.28、p.29），说明是重点；后面 p.31–44 的每一页都是在展开其中某一步；老师点名的 risk treatment 就是第 5 步。
+>
+> | 步骤           | 优先级       | 要掌握到什么程度                            | 本页展开     |
+> | ------------ | --------- | ----------------------------------- | -------- |
+> | **六步的名字和顺序** | 🔴 📝     | 能**按顺序默写**；知道第 4 步才和胃口比、第 5 步只处理超线的 | 本节       |
+> | ① Context    | 🟡        | 知道这一步要定范围、目标和风险胃口                   | §2.3     |
+> | ② Identify   | 🟡 🧮     | 五个子任务、六类资产；会算加权打分                   | §2.5     |
+> | ③ Analyze    | 🔴 🧮     | **会算定量四步**、会读热力图和 TVA               | §2.6–2.8 |
+> | ④ Evaluate   | 🔴 🔍     | 知道是「和风险胃口比」                         | §2.8     |
+> | ⑤ Treat      | 🔴 📝🔍✍️ | **四种策略的定义、条件、例子，会做场景判断，会写长题**       | §2.9     |
+> | ⑥ Summarize  | 🟡        | 和 p.45–46 一起：报告要支持决策、要传达给高层         | §2.10    |
 
-| 步骤          | 要回答的问题                  | 产出                      | 本页       |
-| ----------- | ----------------------- | ----------------------- | -------- |
-| ① Context   | 我们的目标、范围、风险胃口是什么？       | 评估范围 + 胃口那条线            | §2.3     |
-| ② Identify  | 有哪些资产、多重要？面对哪些威胁、哪里有漏洞？ | 资产清单 + 价值排序 + 威胁 / 漏洞清单 | §2.5     |
-| ③ Analyze   | 每个风险发生的可能性多大、损失多大？      | TVA 矩阵、风险值、热力图          | §2.6–2.8 |
-| ④ Evaluate  | 哪些风险**超出胃口**？           | 要处理的风险清单                | §2.8     |
-| ⑤ Treat     | 超出的怎么处理？                | 每项风险选一种策略               | §2.9     |
-| ⑥ Summarize | 怎么让高层看懂、做决定？            | 给董事会的报告                 | §2.10    |
+**每一步具体检查什么（检查清单）**
 
-- 关键顺序：**第 4 步才和风险胃口比**，**第 5 步只处理超出胃口的**。没超线的不用处理（等于 Accept，但要记录）。
-- 这是一个**循环**：威胁、资产、胃口都会变，要定期重新跑一遍。
+| 步骤                                   | 要回答 / 检查的问题                                                                                 | 产出                       | 用到的工具 / 课件页                             |
+| ------------------------------------ | ------------------------------------------------------------------------------------------- | ------------------------ | --------------------------------------- |
+| **① Establishing the context**       | 这次评估的**范围**是什么（哪些业务、系统、部门）？组织的**目标**是什么？**风险胃口**和限额是多少？谁负责、要遵守哪些法规（PCI DSS、个人资料隐私条例）？       | 评估范围 + 风险胃口这条线           | p.26–27 Risk appetite；NIST CSF 的 Govern |
+| **② Identifying risk**               | 我们有哪些**信息资产**（六类都列了吗：人、流程、数据、软件、硬件、网络）？每个资产**多重要**（加权打分）？面对哪些**威胁**？哪些资产**有漏洞**、哪个威胁会打哪个资产？ | 资产清单（按价值排序）+ 威胁清单 + 漏洞清单 | p.31–33 资产清单、加权打分                       |
+| **③ Analyzing risk**                 | 每个威胁利用每个漏洞打中资产的**可能性**多大？一旦发生**损失**多大？现有**控制**有哪些、够不够？哪些最急？                                 | TVA 矩阵、每项风险的数值或热力图位置     | p.34–37 TVA、定量四步、热力图                    |
+| **④ Evaluating the risk**            | 每项风险（还没控制住的部分）**超出风险胃口了吗**？                                                                 | 一张「必须处理」的风险清单            | 热力图上的胃口线；定量结果 vs appetite               |
+| **⑤ Treating the unacceptable risk** | 每项超线的风险选哪种策略？控制的**成本**值得吗（成本 vs 降低的损失）？处理完**剩下的风险**在胃口以内吗？                                  | 每项风险的处理决定和计划             | p.38–44 四种策略                            |
+| **⑥ Summarizing the findings**       | 高层看得懂吗？有没有附上**底层数据**和**不确定性**？报告能支持董事会**做哪个决定**？                                            | 给董事会的风险报告                | p.45–46 失败原因、better questions           |
+
+**这是一个循环**：威胁、资产、风险胃口都会变，处理完要持续监控、定期重做（Stulz 失败 ④：failure to monitor risks）。
+
+**这一部分会怎么考**
+
+| 题型               | 例子                                                                             | 答题要点                         |
+| ---------------- | ------------------------------------------------------------------------------ | ---------------------------- |
+| 📝 默写顺序          | List the steps of the risk management process.                                 | 六步按顺序，名字用课件原文                |
+| 🔍 选择题：是哪一步      | *Comparing uncontrolled risks against the risk appetite occurs in which step?* | **Evaluating**（不是 Analyzing） |
+| 🔍 选择题：第 5 步处理什么 | *Which risks are treated?*                                                     | **只处理超出风险胃口的**（unacceptable） |
+| 🔍 场景判断          | 「画 TVA 矩阵」「列资产清单」「选择买保险」各属于哪一步                                                 | 下面的点选题                       |
+| 🧮 计算            | 给资产分数和权重求总分；给可能性、损失比例求风险值并判断接受还是处理                                             | §2.5、§2.7                    |
+| ✍️ 长题            | 给一个公司场景，按六步走一遍，指出风险胃口、资产打分、热力图、treatment 各在哪里出现                                | §3 第二题的结构                    |
+
+> **⚠️ 最容易错的两点**
+>
+> - **Analyze 和 Evaluate 的区别**：Analyze 是**算出**风险有多大（可能性 × 影响）；Evaluate 是**拿去和胃口比**，决定要不要处理。课件把「comparing … against the risk appetite」写在第 4 步。
+> - **第 5 步只处理 unacceptable 的风险**：在胃口以内的不用处理（等于 Accept，但要记录）。
 
 *（网页版此处是点选练习：这是风险管理流程的哪一步？（p.28）；下表是全部题目和答案）*
 
@@ -422,19 +624,20 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 
 *NIST Cybersecurity Framework 2.0：Govern 在中心，外圈 Identify → Protect → Detect → Respond → Recover；右边是 Functions → Categories → Subcategories 三层结构（Slide 30）*
 
-**参考框架（p.30）**：**NIST Cybersecurity Framework 2.0**；Others：**ISO 27001、COBIT**。
+**参考框架（p.30）**：**NIST Cybersecurity Framework 2.0**；Others frameworks：**ISO 27001、COBIT**。
 
-| 功能                     | 做什么              | 和本课程的对应                                    |
-| ---------------------- | ---------------- | ------------------------------------------ |
-| **Govern**（2.0 新增，在中心） | 策略、风险胃口、角色、政策、监督 | 本课的 risk appetite、董事会议程；L3 的 Zero Trust 设计 |
-| Identify               | 资产清单、风险评估        | 本课 §2.5–2.8                                |
-| Protect                | 预防控制             | L3 防火墙、MFA；L4 加密                           |
-| Detect                 | 发现事件             | L3 IDPS、SIEM、EDR                           |
-| Respond                | 处置事件             | L3 SOAR、playbook；L6 事件响应                   |
-| Recover                | 恢复               | L6 BCP、备份                                  |
+| 功能                       | 做什么              | 和本课程的对应                                    |
+| ------------------------ | ---------------- | ------------------------------------------ |
+| **Govern**（2.0 新增，在圆环中心） | 策略、风险胃口、角色、政策、监督 | 本课的 risk appetite、董事会议程；L3 的 Zero Trust 设计 |
+| Identify                 | 资产清单、风险评估        | 本课 §2.5–2.8                                |
+| Protect                  | 预防控制             | L3 防火墙、MFA；L4 加密                           |
+| Detect                   | 发现事件             | L3 IDPS、SIEM、EDR                           |
+| Respond                  | 处置事件             | L3 SOAR、playbook；L6 事件响应                   |
+| Recover                  | 恢复               | L6 BCP、备份                                  |
 
-- 结构是三层：**Functions**（六个大功能）→ **Categories**（类别）→ **Subcategories**（具体要做到的结果）。
-- 把它当成整门课的**目录**：Protect / Detect / Respond 就是 L3 的 P / D / R，Govern 就是「管理问题，不只是技术问题」这条原则。
+- 结构是三层：**Functions**（六个大功能）→ **Categories**（每个功能下的类别）→ **Subcategories**（具体要做到的结果）。Govern 放在中心，表示它统领其他五个。
+- **ISO 27001**：国际信息安全管理体系标准，公司可以拿去认证；**COBIT**：IT 治理框架，偏管理和审计。了解名字即可。
+- 把 NIST CSF 当成整门课的**目录**：Protect / Detect / Respond 就是 L3 的 P / D / R，Govern 就是「管理问题，不只是技术问题」这条原则。
 
 *（网页版此处是点选练习：这属于 NIST CSF 2.0 的哪个功能？（p.30）；下表是全部题目和答案）*
 
@@ -449,22 +652,30 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 
 ### 2.5 🟡 Risk Identification、资产清单与资产打分（p.31–33）📝🧮
 
-**课件原文**
+![Risk Identification：五个子任务](images/page_31.png)
 
-Identifying risk：creating an **inventory of information assets** → **classifying and organizing** them → **assigning a value** to each → **identifying threats** to the cataloged assets → **pinpointing vulnerable assets** by tying specific threats to specific assets
+*Risk Identification：五个子任务（Slide 31）*
+
+| 课件原文                                                                           | 中文解析                       | 例子                                  |
+| ------------------------------------------------------------------------------ | -------------------------- | ----------------------------------- |
+| **Creating an inventory of information assets**                                | 建立**信息资产清单**：先把有什么都列出来     | 客户数据库、ERP、员工笔记本、外包工程师……             |
+| **Classifying and organizing** those assets meaningfully                       | **分类整理**：按六类（下表）或按部门、敏感程度分 | 按 People / Data / Software… 归类      |
+| **Assigning a value** to each information asset                                | **给每个资产定价值**（p.33 的加权打分）   | 客户订单系统 5 分、内部 wiki 2 分              |
+| **Identifying threats** to the cataloged assets                                | 找出每个资产**面对的威胁**            | 勒索软件、内部人员、供应商出错                     |
+| **Pinpointing vulnerable assets** by tying specific threats to specific assets | 把**具体威胁和具体资产对上**，找出哪些资产有漏洞 | 「勒索软件 × 没打补丁的文件服务器」→ 这就是下一步 TVA 的输入 |
 
 ![Information Assets Inventory：六类资产](images/page_32.png)
 
 *Information Assets Inventory：六类资产（Slide 32）*
 
-| 资产             | 课件原文                                                                                           | 例子             |
-| -------------- | ---------------------------------------------------------------------------------------------- | -------------- |
-| **People**     | internal (trusted / untrusted) and external personnel who access or manage information systems | 员工、外包工程师、供应商   |
-| **Procedures** | standard operational and sensitive IT procedures governing system access and data handling     | 离职收回账号的流程、备份流程 |
-| **Data**       | information in transmission, processing, and storage states — **the core asset to protect**    | 客户资料、交易记录      |
-| **Software**   | applications, operating systems, utilities, and security tools                                 | ERP、操作系统、EDR   |
-| **Hardware**   | physical systems, servers, endpoints, and dedicated security devices                           | 服务器、笔记本、防火墙设备  |
-| **Networking** | LAN, intranet, internet, and cloud components                                                  | 内网、VPN、云连接     |
+| 资产             | 课件原文                                                                                             | 中文解析                                  | 例子                    |
+| -------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------- | --------------------- |
+| **People**     | Internal（trusted / untrusted）and external personnel who access or manage information systems     | 能接触或管理信息系统的人，包括内部（可信的、不太可信的）和外部的      | 员工、外包工程师、供应商          |
+| **Procedures** | Standard operational and sensitive IT procedures governing system access and data handling       | 规定怎么访问系统、怎么处理数据的**流程**                | 离职收回账号的流程、备份流程        |
+| **Data**       | Information in transmission, processing, and storage states — **the core asset to protect**      | 三种状态的数据：**传输中、处理中、存储中**。**最核心要保护的资产** | 客户资料、交易记录、正在传给银行的转账指令 |
+| **Software**   | Applications, operating systems, utilities, and security tools running on organizational systems | 应用、操作系统、工具、安全软件                       | ERP、Windows、EDR       |
+| **Hardware**   | Physical systems, servers, endpoints, and dedicated security devices                             | 实体设备                                  | 服务器、笔记本、防火墙设备         |
+| **Networking** | LAN, intranet, internet, and cloud components connecting organizational information assets       | 把资产连起来的网络                             | 内网、VPN、云连接            |
 
 - 「人」和「流程」也是资产，容易漏。**Data 是核心**：其他五类资产存在的意义，很大程度是为了处理和保护数据。
 - 没有资产清单就做不了风险评估（L6 KPMG 的缺口 1：没记录清楚「皇冠上的宝石」）。
@@ -485,7 +696,7 @@ Identifying risk：creating an **inventory of information assets** → **classif
 
 *Assigning Value：三个准则加权打分（Weighted Factor Analysis）（Slide 33）*
 
-**p.33 Assigning Value（原来笔记漏掉的一页）**
+**p.33 Assigning Value**
 
 资产那么多，先保护哪个？课件用**加权打分**：每个资产按三个准则打 0–5 分，乘上权重再相加。
 
@@ -500,9 +711,11 @@ Identifying risk：creating an **inventory of information assets** → **classif
 
 **等级**：4.5–5 Critically Important · 3.5–4.4 Very Important · 2.5–3.4 Important · 1.5–2.4 Somewhat Important · 0.5–1.4 Not Important · 0–0.4 Not Applicable
 
-**算法**：EDI 1 = 5 × 0.3 + 5 × 0.4 + 3 × 0.3 = 1.5 + 2.0 + 0.9 = **4.4** → Very Important。
+**怎么读**
 
-- 权重加起来必须等于 1。**权重反映管理层看重什么**：这家公司最看重利润（0.4）。
+- 三个准则：这个资产出事会对**收入**、**利润**、**声誉**造成多大影响。课件里的资产不是电脑，而是**业务信息流**：客户经 SSL 下的订单、和外包物流 / 供应商交换的 EDI 电子单据、客户的服务邮件。
+- 算法：EDI 1 = 5 × 0.3 + 5 × 0.4 + 3 × 0.3 = 1.5 + 2.0 + 0.9 = **4.4** → Very Important。
+- 权重加起来必须等于 1。**权重反映管理层看重什么**：这家公司最看重利润（0.4）。客户服务邮件对收入、利润影响一般（3），但对声誉影响很大（5）。
 - 这一步把「重要」变成可比较的数字，后面 TVA 矩阵就按这个顺序排资产。
 
 *（网页版此处可以改权重和每项分数，看总分和排名怎么变；下表是课件 p.33 的数字）*
@@ -517,24 +730,28 @@ Identifying risk：creating an **inventory of information assets** → **classif
 
 ### 2.6 🟡 Risk Analysis 与 TVA 矩阵（p.34–35）📝🔍
 
-**课件原文（p.34）**
+![Risk Analysis：五个任务](images/page_34.png)
 
-- Determining the **likelihood** that vulnerable systems will be attacked by specific threats
-- Assessing the **relative risk** facing the organization's information assets so that risk management and control activities can **focus on those that require the most urgent and immediate attention**
-- **Calculating the risks** to which assets are exposed in their current setting
-- Looking at **controls** that might come into play for identified vulnerabilities
-- **Documenting and reporting** the findings of risk assessment
+*Risk Analysis：五个任务（Slide 34）*
+
+| 课件原文                                                                                                                                                                                                    | 中文解析                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Determining the **likelihood** that vulnerable systems will be attacked by specific threats                                                                                                             | 判断有漏洞的系统被**特定威胁**攻击的**可能性**                  |
+| Assessing the **relative risk** facing the organization's information assets so that risk management and control activities can **focus on those that require the most urgent and immediate attention** | 评估各资产的**相对风险**——重点是「相对」：排出先后，把有限的钱和人先花在最急的地方 |
+| **Calculating the risks** to which assets are exposed in their **current setting**                                                                                                                      | 在**现有状态下**（已经有的控制算进去）算出风险 → §2.7             |
+| Looking at **controls** that might come into play for identified vulnerabilities and ways to control the risks                                                                                          | 看看针对这些漏洞**有哪些控制可以用**——为下一步 Treat 做准备         |
+| **Documenting and reporting** the findings of risk assessment                                                                                                                                           | 把评估结果**记录下来、汇报出去**——为第 6 步 Summarize 做准备     |
 
 ![Threats-Vulnerabilities-Assets（TVA）矩阵：列是资产（按价值排序），行是威胁（按危险程度排序），格子里是 T1V1A1 这样的组合，颜色是处理优先级 1–8](images/page_35.png)
 
 *Threats-Vulnerabilities-Assets（TVA）矩阵：列是资产（按价值排序），行是威胁（按危险程度排序），格子里是 T1V1A1 这样的组合，颜色是处理优先级 1–8（Slide 35）*
 
-**需要理解：怎么读 TVA 矩阵**
+**怎么读 TVA 矩阵**
 
 - **列** = 资产（Asset 1, 2, 3…），从左到右按 §2.5 的**价值**从高到低排。
 - **行** = 威胁（Threat 1, 2, 3…），从上到下按**危险程度**从高到低排。
 - **格子里的编号**：**T1V1A1** = 威胁 1 利用漏洞 1 打资产 1；T1V2A1 = 同一个威胁利用另一个漏洞打同一个资产。一个格子里可以有好几个组合。
-- **颜色 = 处理优先级**（图下的 legend：1 红 → 8 灰）：左上角（最危险的威胁 × 最值钱的资产）是 1，最先处理；越往右下越靠后。图下的注释说这些优先级带要贯穿所有资产 × 威胁的组合。
+- **颜色 = 处理优先级**（图下的 legend：1 红 → 8 灰）：左上角（最危险的威胁 × 最值钱的资产）是 1，最先处理；越往右下越靠后。图下注释：*These bands of controls should be continued through all asset-threat pairs*——优先级带要贯穿所有资产 × 威胁的组合。
 - 作用：把抽象的「风险」变成一张**有先后顺序的待办清单**，有限的预算先花在左上角。
 
 ### 2.7 🔴 定量风险评估（p.36）📝🧮
@@ -552,15 +769,19 @@ Identifying risk：creating an **inventory of information assets** → **classif
 | ③ Calculate Risk     | **Loss Frequency × Loss Magnitude**（± uncertainty of all estimates） | 12.5% × 80 = 10，±10% → 9 \~ 11 |
 | ④ Risk Acceptability | **Calculated Risk vs Risk Appetite**                                | 超出 → 要处理                       |
 
-**需要理解：每一步在问什么**
+**每一步在问什么**
 
-| 步骤              | 白话                          | 类比（家里被偷）                            |
-| --------------- | --------------------------- | ----------------------------------- |
-| Loss Frequency  | 一年里**真的损失**的机率 = 有人来偷 × 偷得成 | 一年里有 25% 机会有小偷来，来了有 50% 偷得手 → 12.5% |
-| Loss Magnitude  | **一旦损失**会损失多少 = 资产值 × 损失比例  | 家里东西值 100，被偷一次损失 80%                |
-| Calculated Risk | 平均每年预期损失                    | 12.5% × 80 = 10                     |
-| ± Uncertainty   | 每个数字都是估的，给一个区间              | 9 \~ 11                             |
-| Acceptability   | 和胃口比                        | 你能接受每年预期损失多少？                       |
+| 步骤                         | 中文解析                      | 类比（家里被偷）            |
+| -------------------------- | ------------------------- | ------------------- |
+| Attack Likelihood          | 一年里**有人来攻击**的可能性          | 一年里有 25% 机会有小偷来     |
+| Attack Success Probability | 攻击**会成功**的可能性（取决于现有控制好不好） | 来了有 50% 偷得手（锁好就低一点） |
+| **Loss Frequency**         | 两者相乘 = 一年里**真的损失**的机率     | 12.5%               |
+| Asset Value                | 资产值多少                     | 家里东西值 100           |
+| Probable Loss              | 一旦出事会损失**百分之多少**          | 被偷一次损失 80%          |
+| **Loss Magnitude**         | 两者相乘 = **一旦出事**损失多少       | 80                  |
+| **Calculated Risk**        | 频率 × 损失 = 平均每年**预期损失**    | 12.5% × 80 = 10     |
+| ± Uncertainty              | 每个数字都是估的，所以给一个区间          | 9 \~ 11             |
+| **Risk Acceptability**     | 和胃口比                      | 你能接受每年预期损失多少？       |
 
 - **用区间上限和胃口比**更保守：上限超了就该处理。
 - 和 L6 的对应：**Loss Frequency ≈ ARO**，**Loss Magnitude ≈ SLE**，**Calculated Risk ≈ ALE**。题目给哪套符号就用哪套。
@@ -608,7 +829,7 @@ Identifying risk：creating an **inventory of information assets** → **classif
 
 - 规律：乘积 1–6 是 Low、8–12 是 Medium、15–20 是 High、只有 25（5 × 5）是 Critical。所以 **Severe × Rare 也只是 Low**——影响再大，几乎不会发生，排位也靠后。
 - 和 §2.7 的区别：定量评估给出**一个数字**；热力图把可能性和影响各分 5 档，翻译成管理层**一眼看懂的颜色**，用来排优先级、向董事会汇报。数据不够、算不出精确数字时也能用（定性评估）。
-- **风险胃口就是热力图上的一条线**：比如胃口定在 Medium，High 和 Critical 的格子就必须 Treat。下面的实验可以移动这条线。
+- **风险胃口就是热力图上的一条线**：比如胃口定在 Medium，High 和 Critical 的格子就必须 Treat——这就是第 4 步 Evaluate。下面的实验可以移动这条线。
 
 *（网页版此处可以点任一格看 Impact × Likelihood，并移动风险胃口这条线，看哪些格要 Treat；下表是课件 p.37 的矩阵）*
 
@@ -626,31 +847,96 @@ Identifying risk：creating an **inventory of information assets** → **classif
 
 *Risk Treatment / Risk Response（1 of 2）（Slide 38）*
 
-**课件原文（总述）**
+**p.38–39 总述**
 
-> After the RM team has identified, analyzed, and evaluated the level of risk (**risk assessment**), it must treat the risk that is deemed unacceptable when it **exceeds its risk appetite**. Also known as **risk response or risk control**. The team must choose one of **four basic strategies**: Mitigation · Transference · Acceptance · Termination.
+| 课件原文                                                                                                                                                                                                      | 中文解析                                         |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| After the RM process team has **identified, analyzed, and evaluated** the level of risk currently inherent in its information assets（**risk assessment**）                                                 | 前面三步（识别、分析、评估）合起来叫 **risk assessment（风险评估）** |
+| it then must **treat the risk that is deemed unacceptable when it exceeds its risk appetite**                                                                                                             | 之后只处理被判定为**不可接受**（超出风险胃口）的风险                 |
+| This process is also known as **risk response** or **risk control**                                                                                                                                       | 同义词：风险处理 = 风险应对 = 风险控制                       |
+| As risk treatment begins, the organization has **a list of information assets with currently unacceptable levels of risk**; the appropriate strategy must be selected and then applied **for each asset** | 手上有一张「风险超线的资产清单」，要**逐个资产**选策略、执行             |
+| The team must choose one of **four basic strategies**：Mitigation · Transference · Acceptance · Termination                                                                                                | 四种基本策略                                       |
 
-| 策略                             | 课件原文                                                                                                                                                                                                                                                                                                                                                                                                            |
-| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Mitigation**（risk defense）   | attempts to **prevent the exploitation of the vulnerability**. **This is the preferred approach**, by **countering threats, removing vulnerabilities, limiting access to assets, and adding protective safeguards**. Improve security by **reducing the likelihood or probability of a successful attack**.                                                                                                     |
-| **Transference**（risk sharing） | attempts to **shift risk to another entity**: rethinking how services are offered, revising deployment models, **outsourcing**, **purchasing insurance**, **service contracts with providers**. The key is an effective **service level agreement (SLA)**.                                                                                                                                                      |
-| **Acceptance**                 | the decision to **do nothing beyond the current level of protection** and accept the outcome. Valid **only when** the organization has: determined the level of risk; assessed the probability and likelihood; estimated the potential impact; evaluated potential controls; performed a thorough risk assessment; and **determined that the costs to treat the risk do not justify the cost of the controls**. |
-| **Avoidance / Termination**    | the organization's **intentional choice not to protect an asset**; removes it from the operating environment by **shutting it down or disabling its connectivity**. Sometimes the cost of protecting an asset outweighs its value. Termination must be **a conscious business decision, not simply the abandonment** of an asset.                                                                               |
+![Risk Mitigation](images/page_40.png)
 
-**需要理解：四种策略 = 对风险公式的四种动作**
+*Risk Mitigation（Slide 40）*
 
-| 策略               | 对风险做了什么         | 类比（家里被偷）  | 例子                |
-| ---------------- | --------------- | --------- | ----------------- |
-| **Mitigation**   | **降低**可能性（或影响）  | 换好锁、装监控   | MFA、EDR、打补丁、限制访问  |
-| **Transference** | 把**财务后果转给别人**   | 买家财险      | 网络保险、外包 + SLA     |
-| **Acceptance**   | **评估后**决定承担     | 旧自行车丢了就算了 | 低价值宣传网站，不再加控制，有记录 |
-| **Termination**  | **移除资产**，风险跟着消失 | 首饰不放家里    | 下线旧服务器、停掉某项服务     |
+**Mitigation（降低）**
+
+| 课件原文                                                                                                                               | 中文解析                                                    | 例子               |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- | ---------------- |
+| Sometimes referred to as **risk defense** or simply risk mitigation, attempts to **prevent the exploitation of the vulnerability** | 也叫风险防御：**不让漏洞被利用**                                      | —                |
+| **This is the preferred approach**                                                                                                 | **首选策略**：能自己降下来，就先自己降                                   | —                |
+| accomplished by means of **countering threats**                                                                                    | ① **对付威胁**                                              | 防火墙挡掉恶意 IP、封钓鱼域名 |
+| **removing vulnerabilities in assets**                                                                                             | ② **消除漏洞**                                              | 打补丁、改掉弱密码        |
+| **limiting access to assets**                                                                                                      | ③ **限制访问**                                              | 最小权限、MFA         |
+| **adding protective safeguards**                                                                                                   | ④ **加保护措施**                                             | EDR、加密、备份        |
+| improve the security of an information asset by **reducing the likelihood or probability of a successful attack**                  | 本质是**降低攻击成功的可能性**（§2.7 公式里的 Attack Success Probability） | —                |
+
+![Risk Transference](images/page_41.png)
+
+*Risk Transference（Slide 41）*
+
+**Transference（转移）**
+
+| 课件原文                                                                                                                  | 中文解析                                         | 例子                                   |
+| --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- | ------------------------------------ |
+| Sometimes known as **risk sharing** or simply risk transfer, attempts to **shift risk to another entity**             | 也叫风险分担：把风险**转给另一方**                          | —                                    |
+| **rethinking how services are offered**                                                                               | 重新设计服务的提供方式                                  | 不再自己存信用卡号，改用支付公司的代号（token）           |
+| **revising deployment models**                                                                                        | 改变部署模式                                       | 从自建机房搬到云服务（由云服务商负责机房安全）              |
+| **outsourcing to other organizations**                                                                                | 外包                                           | 把支付处理外包给 PCI 认证的服务商；SOC-as-a-Service |
+| **purchasing insurance**                                                                                              | 买保险                                          | 网络安全险赔勒索造成的财务损失                      |
+| **implementing service contracts with providers**                                                                     | 和供应商签服务合同                                    | 合同写明安全责任和赔偿                          |
+| The key to an effective transference strategy is the implementation of an effective **service level agreement (SLA)** | **关键是 SLA**：写清楚对方要做到什么（可用率、响应时间、安全要求）、做不到怎么赔 | 没写清楚就转不出去（CrowdStrike 的合同责任上限只有几百万）  |
+
+⚠️ 转出去的是**财务后果和执行工作**，**声誉和监管责任转不出去**——数据外泄了，客户和监管找的还是你。
+
+![Risk Acceptance：六个前提](images/page_42.png)
+
+*Risk Acceptance：六个前提（Slide 42）*
+
+**Acceptance（接受）**
+
+| 课件原文                                                                                                                                                                         | 中文解析                                                 |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| The decision to **do nothing beyond the current level of protection** to shield an information asset from risk and to **accept the outcome** from any resulting exploitation | **维持现有保护、不再加控制**，出事了就承担后果。关键词是「decision」——这是**一个决定** |
+| Acceptance is a valid strategy **only when** the organization has：                                                                                                           | **只有满足以下全部条件**，才算合格的 Acceptance：                     |
+| • Determined the level of risk to the information asset                                                                                                                      | ① 确定了这个资产的风险等级                                       |
+| • Assessed the probability and likelihood                                                                                                                                    | ② 评估了发生的可能性                                          |
+| • Estimated the potential impact of a successful attack                                                                                                                      | ③ 估计了攻击成功的影响                                         |
+| • Evaluated potential controls                                                                                                                                               | ④ 评估过有哪些控制可以用                                        |
+| • Performed a thorough risk assessment                                                                                                                                       | ⑤ 做过完整的风险评估                                          |
+| • Determined that **the costs to treat the risk do not justify the cost of the controls**                                                                                    | ⑥ 确认**处理的成本不值得**（控制比风险本身还贵）                          |
+
+例子：公司的宣传册网站，被改了损失很小，加一套 WAF 的成本比可能的损失还高 → 评估后决定接受，**写进风险登记册**。
+
+![Risk Avoidance / Termination](images/page_43.png)
+
+*Risk Avoidance / Termination（Slide 43）*
+
+**Avoidance / Termination（终止）**
+
+| 课件原文                                                                                                                                                                                                | 中文解析                                      | 例子                                  |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ----------------------------------- |
+| Risk avoidance or simply risk termination, is based on the organization's **intentional choice not to protect an asset**                                                                            | **有意识地选择不保护**这个资产                         | —                                   |
+| The organization does not want the information asset to remain at risk and **removes it from the operating environment** by **shutting it down or disabling its connectivity** to potential threats | 不想让它一直处在风险中，就把它**移出运营环境**：关机，或断开它和威胁之间的连接 | 下线一台 15 年没人用、还连着网的旧服务器；停掉一个高风险的线上功能 |
+| Sometimes **the cost of protecting an asset outweighs its value**                                                                                                                                   | 有时候保护它的成本比它本身的价值还高                        | 保护一个很少人用的旧系统要花大钱                    |
+| **Termination must be a conscious business decision, not simply the abandonment of an asset**                                                                                                       | 必须是**有意识的业务决定**，不是把资产丢在那里不管               | 「没人管的旧服务器」是被遗弃，不是 Termination       |
+
+**四种策略 = 对风险的四种动作**
+
+| 策略               | 对风险做了什么         | 类比（家里被偷）  |
+| ---------------- | --------------- | --------- |
+| **Mitigation**   | **降低**可能性（或影响）  | 换好锁、装监控   |
+| **Transference** | 把**财务后果转给别人**   | 买家财险      |
+| **Acceptance**   | **评估后**决定承担     | 旧自行车丢了就算了 |
+| **Termination**  | **移除资产**，风险跟着消失 | 首饰不放家里    |
 
 **管理层怎么选（老师强调「作为管理层怎么处理风险」）**
 
 1. 风险在**胃口以内** → 可以 **Accept**，但必须是评估过后的决定，有记录。
 2. 超出胃口，能自己加控制降下来，而且控制成本低于降低的损失 → **Mitigation**（首选）。
-3. 自己降不了或不划算 → **Transference**（保险、外包、SLA）。注意：转出去的是**财务后果**，**声誉和监管责任转不出去**；外包本身又带来第三方风险（§2.10 CrowdStrike）。
+3. 自己降不了或不划算 → **Transference**（保险、外包、SLA）。外包本身又带来第三方风险（§2.10 CrowdStrike）。
 4. 资产或业务不值得保护，或保护成本高于价值 → **Termination**。
 5. 可以**组合**：勒索风险先 Mitigate（MFA、EDR、备份），剩余风险再 Transfer（网络保险）。
 
@@ -734,15 +1020,15 @@ Identifying risk：creating an **inventory of information assets** → **classif
 
 **课件原文（p.46）**：**Good decision starts with better questions, not better reports**
 
-| First layer of question                                           | In-depth second thought                                                              |
-| ----------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| What are our top risks?                                           | What decision are we trying to make, and what uncertainties could change our choice? |
-| What's our risk appetite?                                         | Which option gives us the best chance of success given what we don't know?           |
-| How do we get the Risk Function into strategic planning sessions? | Are we considering uncertainties when we evaluate strategic options?                 |
+| First layer of question                                           | 中文             | In-depth second thought                                                              | 中文解析：为什么第二个问题更好                                    |
+| ----------------------------------------------------------------- | -------------- | ------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| What are our top risks?                                           | 我们最大的风险是什么？    | What decision are we trying to make, and what uncertainties could change our choice? | 列出前十大风险只得到一份清单；问「**我们要做哪个决定、哪些不确定性会改变这个决定**」才对决策有用 |
+| What's our risk appetite?                                         | 我们的风险胃口是多少？    | Which option gives us the best chance of success given what we don't know?           | 胃口是一个数字；问「**在我们不知道的情况下，哪个选项成功机会最大**」是在比较选项         |
+| How do we get the Risk Function into strategic planning sessions? | 怎么让风险部门参加战略会议？ | Are we considering uncertainties when we evaluate strategic options?                 | 关键不是风险部门有没有出席，而是**评估战略选项时有没有考虑不确定性**               |
 
-「**Have you seen the underlying data?**」
+「**Have you seen the underlying data?**」→ 你看过**底层数据**吗？好看的热力图背后，数字可能是拍脑袋估的。
 
-**需要理解**：左边的问题会得到一份「报告」，右边的问题才会帮你「做决定」。董事会不该只问「前十大风险是什么」，而要问「我们要做哪个决定、哪些不确定性会改变这个决定」，并且追问**底层数据**——好看的热力图背后，数字可能是拍脑袋估的。这正好对应 Stulz 的第 3 条失败：风险没被有效传达给高层。
+**需要理解**：左边的问题会得到一份「报告」，右边的问题才会帮你「做决定」。这正好对应第 6 步 Summarize 和 Stulz 的第 3 条失败：风险没被有效传达给高层。标题「Thinking Fast and Slow」来自 Kahneman 的书：快思考凭直觉，慢思考才会追问。
 
 ![Class Discussion：What the 2024 CrowdStrike Glitch Can Teach us about CyberRisk](images/page_47.png)
 
