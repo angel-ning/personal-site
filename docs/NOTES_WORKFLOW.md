@@ -125,6 +125,9 @@ tags: [IPv4, NAT, DHCP]
 | `<HashLab />` | SHA-256 雪崩效应：两条消息的哈希逐字符高亮差异、统计不同的位数（纯 JS SHA-256，`hash-logic.mjs`） |
 | `<ChainLab />` | 三个 block 的哈希链：改任何一块的交易，看从哪块开始失效；可「重新计算整条链」（`hash-logic.mjs`） |
 | `<TlsLab />` | HTTPS 握手六步：每步用了哪种密码工具、解决什么、窃听者看到什么（`tls-logic.mjs`） |
+| `<L5SortQuiz set="treat\|step\|asset\|view\|limit\|nist" />` | ISOM 5280 L5 点选练习：四种 risk treatment / 风险管理六步 / 六类信息资产 / AI 风险三视角 / AI 局限 / NIST CSF 2.0 功能（`data/l5-quiz.json`） |
+| `<AssetValueLab />` | 资产加权打分（课件 p.33）：改权重和 1–5 分，看总分、Importance 等级和排名（`risk-logic.mjs`） |
+| `<HeatMapLab />` | 课件 p.37 的 5×5 热力图：点格子看 Impact × Likelihood，移动风险胃口这条线看哪些要 Treat（`risk-logic.mjs`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 

@@ -64,6 +64,9 @@ import { KeyCountLab } from "./key-count-lab";
 import { KeyStrengthLab } from "./key-strength-lab";
 import { HashLab, ChainLab } from "./hash-lab";
 import { TlsLab } from "./tls-lab";
+import { L5SortQuiz } from "./l5-sort-quiz";
+import { AssetValueLab } from "./asset-value-lab";
+import { HeatMapLab } from "./heat-map-lab";
 import { collisionRows, collisionSvg } from "./collision-map.mjs";
 
 // Components available inside .mdx notes. scripts/mdx-to-md.mjs knows how to turn
@@ -222,5 +225,5 @@ export function Mk({ t, children }: { t: "e" | "a" | "v" | "c"; children: ReactN
 }
 
 export function noteComponents(assetBase: string) {
-  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab, PmrQuiz, CardinalityLab, NormalizationLab, ThreatActorQuiz, FirewallRuleLab, VendorTierCalculator, TcpHandshakeLab, WindowLab, PortLab, SubnetLab, SubnetPlanner, SqlPipelineLab, JoinLab, GrantLab, NormalizeWalkthrough, FdFinderLab, BiaTimeLab, AleCalculator, IrPhaseQuiz, CalcDrill, WriteQA, Pt, SeverityLadder, PriorityScoreLab, BudgetMixLab, SqlExercise, SqlTables, SqlScript, SqlProgress, CommandSortQuiz, Result, Ipv6Lab, Eui64Lab, RaOptionLab, Ipv6SubnetLab, BaselineLab, TrendSortQuiz, AddressingLab, AddressingQuiz, SeqAckLab, TxnSortQuiz, WalLab, RecoveryLab, BinaryLab, MaskSizeLab, StatefulLab, VpnModeLab, L3SortQuiz, L4SortQuiz, CipherLab, KeyCountLab, KeyStrengthLab, HashLab, ChainLab, TlsLab };
+  return { Callout, Figure: makeFigure(assetBase), QA, LayerStack, SwitchLab, FcsDemo, CollisionMap, IpAnalyzer, Mk, MCQ, LayerQuiz, RelAlgebraLab, BufferPoolLab, EerConstraintLab, HierarchyExplorer, FairCalculator, ControlRoiCalculator, InsuranceCalculator, SynFloodLab, PkiTrustLab, RiskAssessmentLab, PmrQuiz, CardinalityLab, NormalizationLab, ThreatActorQuiz, FirewallRuleLab, VendorTierCalculator, TcpHandshakeLab, WindowLab, PortLab, SubnetLab, SubnetPlanner, SqlPipelineLab, JoinLab, GrantLab, NormalizeWalkthrough, FdFinderLab, BiaTimeLab, AleCalculator, IrPhaseQuiz, CalcDrill, WriteQA, Pt, SeverityLadder, PriorityScoreLab, BudgetMixLab, SqlExercise, SqlTables, SqlScript, SqlProgress, CommandSortQuiz, Result, Ipv6Lab, Eui64Lab, RaOptionLab, Ipv6SubnetLab, BaselineLab, TrendSortQuiz, AddressingLab, AddressingQuiz, SeqAckLab, TxnSortQuiz, WalLab, RecoveryLab, BinaryLab, MaskSizeLab, StatefulLab, VpnModeLab, L3SortQuiz, L4SortQuiz, CipherLab, KeyCountLab, KeyStrengthLab, HashLab, ChainLab, TlsLab, L5SortQuiz, AssetValueLab, HeatMapLab };
 }

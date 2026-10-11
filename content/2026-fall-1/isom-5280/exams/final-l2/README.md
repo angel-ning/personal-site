@@ -55,15 +55,15 @@ tags: [FinalReview, Malware, RaaS, Phishing, DDoS, SupplyChain, PasswordAttack]
 
 | 术语                | 定义                                                                                                                      |
 | ----------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| **Threat**        | An intentional or unintentional act that can damage or otherwise compromise information and the systems that support it |
+| **Threat**        | An event that can cause negative impact (CIA) to an organization. A potential risk to an asset's loss of value          |
 | **Vulnerability** | A potential weakness in an asset or its defensive control system(s)                                                     |
 | **Exploit**       | A technique used to compromise a system; may also describe a tool, program or script used in the compromise             |
-| **Attack**        | An event that can cause negative impact (CIA) to an organization（L5 补的定义）                                               |
-| **Risk**          | A potential risk to an asset's loss of value                                                                            |
+| **Attack**        | An intentional or unintentional act that can damage or otherwise compromise information and the systems that support it |
 
 **需要理解**
 
-- 这是一条因果链：**Vulnerability**（墙上的洞）→ **Threat**（有人可能钻）→ **Exploit**（钻洞的工具或手法）→ **Attack**（真的钻进来并造成 CIA 影响）→ **Risk**（资产贬值的可能性）。
+- **配对以 L5 p.23 课件上的箭头为准**（L2 p.5 是空白版）：Threat ↔「event that can cause negative impact (CIA)… potential risk to an asset's loss of value」；Attack ↔「intentional or unintentional act…」。之前这里把 Threat 和 Attack 写反了，已更正；左边只有四个词，没有 Risk。
+- 这是一条因果链：**Vulnerability**（墙上的洞）→ **Threat**（可能有人或事利用它造成损失，还没发生）→ **Exploit**（钻洞的工具或手法）→ **Attack**（真的有一个动作在损害信息和系统）。
 - Threat 包括**无意**的行为（例如员工误操作），不一定是恶意的。
 - 这组术语在 L5 又复习了一遍，说明会反复考配对题。
 

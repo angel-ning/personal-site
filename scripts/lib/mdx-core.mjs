@@ -23,7 +23,7 @@ import { computeControlRoi, ROI_PRESETS, fmtM as fmtRoiM, fmtPct } from "../../s
 import { computeInsurance, INSURANCE_PRESETS, fmtM as fmtInsM } from "../../src/components/mdx/insurance-logic.mjs";
 import { CAPACITY, HALFOPEN_TIMEOUT, runScript } from "../../src/components/mdx/syn-flood-logic.mjs";
 import { MODES, scenarioLabel, verifyPki } from "../../src/components/mdx/pki-logic.mjs";
-import { computeRisk, RISK_SCENARIOS } from "../../src/components/mdx/risk-logic.mjs";
+import { computeRisk, RISK_SCENARIOS, HEATMAP_ROWS, IMPACT_LABELS as HM_IMPACT, LIKELIHOOD_LABELS as HM_LIK, VALUE_CRITERIA, VALUE_ASSETS, weightedValue } from "../../src/components/mdx/risk-logic.mjs";
 import { computeTimeline, TIMELINE_PRESETS, MTPD_PRESETS, fmtH, computeAle, ALE_PRESETS, fmtUsd } from "../../src/components/mdx/bia-logic.mjs";
 import { KINDS as DRILL_KINDS, makeQuestion as drillQuestion, fmtAnswer as drillAnswer } from "../../src/components/mdx/calc-drill-logic.mjs";
 import { classifySeverity, SEVERITY_PRESETS, DIMENSIONS as SEVERITY_DIMENSIONS } from "../../src/components/mdx/severity-logic.mjs";
@@ -70,6 +70,7 @@ const aiTrendQuiz = readJson("src/components/mdx/data/ai-trend-quiz.json");
 const txnQuiz = readJson("src/components/mdx/data/txn-quiz.json");
 const l3Quiz = readJson("src/components/mdx/data/l3-quiz.json");
 const l4Quiz = readJson("src/components/mdx/data/l4-quiz.json");
+const l5Quiz = readJson("src/components/mdx/data/l5-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -858,6 +859,24 @@ const components = {
     return [
       note("（网页版此处是「这条语句属于哪一类」的点选练习；下表是全部题目和答案）"),
       table(["语句", "类别", "理由"], COMMAND_ITEMS.map((it) => [{ type: "inlineCode", value: it.sql }, strong(it.a), it.why])),
+    ];
+  },
+  L5SortQuiz(_node, a) {
+    const set = l5Quiz[a.set] ?? l5Quiz.treat;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  AssetValueLab() {
+    const w = VALUE_CRITERIA.map((c) => c.weight);
+    return [
+      note("（网页版此处可以改权重和每项分数，看总分和排名怎么变；下表是课件 p.33 的数字）"),
+      table(["Information asset", ...VALUE_CRITERIA.map((c) => `${c.label}（${c.weight}）`), "Total", "Importance"], VALUE_ASSETS.map((a) => { const r = weightedValue(a.scores, w); return [a.name, ...a.scores.map(String), strong(String(r.total)), r.band]; })),
+    ];
+  },
+  HeatMapLab() {
+    return [
+      note("（网页版此处可以点任一格看 Impact × Likelihood，并移动风险胃口这条线，看哪些格要 Treat；下表是课件 p.37 的矩阵）"),
+      table(["Impact \\ Likelihood", ...HM_LIK.map((l, i) => `${l} (${i + 1})`)], [5, 4, 3, 2, 1].map((i) => [`${HM_IMPACT[i - 1]} (${i})`, ...HEATMAP_ROWS[5 - i]])),
     ];
   },
   L4SortQuiz(_node, a) {
