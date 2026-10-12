@@ -18,7 +18,7 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 > 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可  
 > 掌握要求：📝 **默写**（能写出名字、定义、清单）· 🔍 **区分**（给场景能判断是哪一个，选择题）· 🧮 **计算**（要带计算器）· ✍️ **分析**（能写成有结构的一段论述，长题）
 >
-> **修订记录**：10 月 11 日按 L3 / L4 的讲法重写（两条主线、资产打分、热力图、更正 p.23 配对题）。10 月 12 日：**每条课件原文都补中文解析**——AI 三视角逐条解释 + 「同一件事的两面」；两大局限讲清楚为什么是 6 个框；Shadow AI 每一点的解析；p.18 的 Human Oversight 图；风险管理六步每一步的检查清单和考法；四种 treatment 逐句解析。之后又补了 §2.6 TVA：行是威胁、格子才是风险；颜色怎么定、空格怎么处理；TVA 颜色和热力图颜色的区别。
+> **修订记录**：10 月 11 日按 L3 / L4 的讲法重写（两条主线、资产打分、热力图、更正 p.23 配对题）。10 月 12 日：**每条课件原文都补中文解析**——AI 三视角逐条解释 + 「同一件事的两面」；两大局限讲清楚为什么是 6 个框；Shadow AI 每一点的解析；p.18 的 Human Oversight 图；风险管理六步每一步的检查清单和考法；四种 treatment 逐句解析。之后又补了 §2.6 TVA：行是威胁、格子才是风险；颜色怎么定、空格怎么处理；TVA 颜色和热力图颜色的区别；§2.3 不同风险有不同胃口、胃口具体长什么样；§2.7 标明 p.36 的 ①–③ 是 Analyze、④ 是 Evaluate；定量评估的实验移到热力图之后。
 
 > **🎯 这一课在期末怎么考（老师点名）**
 >
@@ -45,7 +45,7 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
   - [2.4 🔴 风险管理六步：每一步要知道什么、检查什么、怎么考（p.28–30）📝✍️](#24--风险管理六步每一步要知道什么检查什么怎么考p2830️)
   - [2.5 🟡 Risk Identification、资产清单与资产打分（p.31–33）📝🧮](#25--risk-identification资产清单与资产打分p3133)
   - [2.6 🟡 Risk Analysis 与 TVA 矩阵（p.34–35）📝🔍](#26--risk-analysis-与-tva-矩阵p3435)
-  - [2.7 🔴 定量风险评估（p.36）📝🧮](#27--定量风险评估p36)
+  - [2.7 🔴 定量风险评估（p.36，横跨 Analyze 和 Evaluate）📝🧮](#27--定量风险评估p36横跨-analyze-和-evaluate)
   - [2.8 🔴 Heat Map（p.37）📝🔍](#28--heat-mapp37)
   - [2.9 🔴 四种 Risk Treatment（p.38–44）★老师点名 📝🔍✍️](#29--四种-risk-treatmentp3844老师点名-️)
   - [2.10 🟡 风险管理为什么失败（p.45–47）📝✍️](#210--风险管理为什么失败p4547️)
@@ -548,6 +548,31 @@ p.10 最底下一句：**Training data bias / data drift and「black box」long 
 - 它是**管理层的决策**，由**董事会**定，不是技术参数。
 - 三个词的关系（课件提到 appetite、tolerance、limit）：**Appetite** 是总体态度（「我们对客户数据泄露零容忍」）；**Tolerance** 是对某一具体风险能接受的偏离程度；**Limit** 是可以衡量的具体数字（「单项风险年化预期损失不超过 50 万」），方便监控。
 
+> **🧠 不同的风险，风险胃口可以不同吗？风险胃口具体长什么样？（复习时问的）**
+>
+> **可以不同。** p.26 原文：*A range of appetites exist for **different risks** and these may change over time.* 同一家公司对不同类型的风险容忍度差别很大：
+>
+> | 风险类型           | 一家银行的风险胃口（例子）     | 为什么                              |
+> | -------------- | ----------------- | -------------------------------- |
+> | 客户数据泄露         | **几乎零容忍**         | 监管罚款、声誉损失都很大                     |
+> | 核心交易系统停机       | **很低**：每年不超过 4 小时 | 停机直接影响客户和收入                      |
+> | 官网宣传页被改        | **中等**：可以接受偶尔出问题  | 损失小、恢复快                          |
+> | 试用新科技（如 GenAI） | **中等偏高**          | 想追求创新和效率（*while pursuing value*） |
+>
+> **具体长什么样**：一般是**董事会批准**的一份**风险胃口声明（risk appetite statement）**，通常有两层：
+>
+> | 层次                                  | 形式           | 例子                                                                                  |
+> | ----------------------------------- | ------------ | ----------------------------------------------------------------------------------- |
+> | **定性声明**（appetite）                  | 一句话说清态度      | 「我们对客户数据泄露零容忍」、「我们愿意为数字化创新承担中等风险」                                                   |
+> | **定量限额**（limit，p.27 的 *Risk Limit*） | 可以衡量、可以监控的数字 | 单项风险**年化预期损失 ≤ 50 万**；核心系统**每年停机 ≤ 4 小时**；热力图上**剩余风险不高于 Medium**；**高危漏洞 30 天内必须修补** |
+>
+> 在本课两个工具里的样子：
+>
+> - **定量评估（p.36）**：胃口是一个**和 calculated risk 同单位的数字**，例如「这类风险每年预期损失不能超过 12」，拿算出来的 9 \~ 11 去比。
+> - **热力图（p.37）**：胃口是图上的**一条线**，例如「不接受 High 以上」。
+>
+> 所以严格来说，**每一类风险有自己的那条线**；比较时，拿这个风险去比**它所属类别**的胃口。
+
 ### 2.4 🔴 风险管理六步：每一步要知道什么、检查什么、怎么考（p.28–30）📝✍️
 
 ![Risk Management Process（课件 p.28 和 p.29 连续列了两遍）](images/page_28.png)
@@ -816,7 +841,7 @@ p.10 最底下一句：**Training data bias / data drift and「black box」long 
 > 3. 格子里写了 T×V×A 才表示存在这个风险组合；空格表示目前没发现对应的漏洞。
 > 4. 长题问局限时可以写：行列排序只是粗略的，同一个威胁对不同资产的风险不同，**每个组合都要单独评估可能性和影响**，最终优先级以每格的评估结果为准。
 
-### 2.7 🔴 定量风险评估（p.36）📝🧮
+### 2.7 🔴 定量风险评估（p.36，横跨 Analyze 和 Evaluate）📝🧮
 
 ![Loss Frequency → Loss Magnitude → Calculate Risk → Risk Acceptability](images/page_36.png)
 
@@ -830,6 +855,29 @@ p.10 最底下一句：**Training data bias / data drift and「black box」long 
 | ② Loss Magnitude     | **Asset Value × Probable Loss**                                     | 100 × 80% = 80                 |
 | ③ Calculate Risk     | **Loss Frequency × Loss Magnitude**（± uncertainty of all estimates） | 12.5% × 80 = 10，±10% → 9 \~ 11 |
 | ④ Risk Acceptability | **Calculated Risk vs Risk Appetite**                                | 超出 → 要处理                       |
+
+> **⚠️ Analyze 只是算风险，为什么第 ④ 步要和胃口比？——第 ④ 步就是 Evaluating（复习时问的）**
+>
+> p.36 的标题是 **Quantitative Risk *Assessment***，不是 Risk Analysis。p.38 对 risk assessment 的定义：*After the RM team has **identified, analyzed, and evaluated** the level of risk … (**risk assessment**)*——**risk assessment = Identify + Analyze + Evaluate 三步合起来**。所以 p.36 这张图是一次完整的定量评估，横跨了两步：
+>
+> ```
+> p.36 Quantitative Risk Assessment
+>   ① Loss Frequency     ┐
+>   ② Loss Magnitude     ├─ 第 3 步 Analyzing：算出风险有多大
+>   ③ Calculate Risk     ┘
+>   ④ Risk Acceptability ── 第 4 步 Evaluating：和风险胃口比
+> ```
+>
+> p.37 热力图也一样：**把风险放到格子里**是 Analyze；**画出胃口线、看哪些格子在线上面**是 Evaluate。
+>
+> |      | Analyzing               | Evaluating                |
+> | ---- | ----------------------- | ------------------------- |
+> | 做什么  | **算出**每个风险有多大（可能性 × 影响） | 拿结果**和风险胃口比**，决定要不要处理     |
+> | p.36 | ① ② ③                   | ④ Risk Acceptability      |
+> | p.37 | 把风险放到对应的格子              | 看格子在不在胃口线上面               |
+> | 产出   | 风险值、热力图位置               | 「必须处理」的清单 → 交给第 5 步 Treat |
+>
+> **考试**：问「哪一步把风险和 risk appetite 比较」→ **Evaluating**（p.28 原文：*Evaluating the risk and comparing uncontrolled risks against the risk appetite*）。问 p.36 第 ④ 步属于哪一步，也答 Evaluating。
 
 **每一步在问什么**
 
@@ -845,18 +893,9 @@ p.10 最底下一句：**Training data bias / data drift and「black box」long 
 | ± Uncertainty              | 每个数字都是估的，所以给一个区间          | 9 \~ 11             |
 | **Risk Acceptability**     | 和胃口比                      | 你能接受每年预期损失多少？       |
 
-- **用区间上限和胃口比**更保守：上限超了就该处理。
+- **用区间上限和胃口比**更保守：上限超了就该处理。可以在 §2.8 最后的实验里改数字试一试。
 - 和 L6 的对应：**Loss Frequency ≈ ARO**，**Loss Magnitude ≈ SLE**，**Calculated Risk ≈ ALE**。题目给哪套符号就用哪套。
 - 降低风险的三个方向在公式里一目了然：降低 attack likelihood（挡住威胁）、降低 success probability（补漏洞，**Mitigation**）、降低 probable loss（减小后果，如备份）。
-
-*（网页版此处可交互：自己调 Asset Value / Likelihood / Probable Loss 等参数，实时看 Heat Map 落点；下表是几个例子的结果）*
-
-| 场景      | Loss Frequency    | Loss Magnitude    | Calculated Risk | Heat Map                   | 决定           |
-| ------- | ----------------- | ----------------- | --------------- | -------------------------- | ------------ |
-| 课件原例    | 25% × 50% = 12.5% | 100 × 80% = 80.0  | 9.0 \~ 11.0     | Unlikely × Severe → Medium | Accept       |
-| 收紧风险胃口  | 25% × 50% = 12.5% | 100 × 80% = 80.0  | 9.0 \~ 11.0     | Unlikely × Severe → Medium | **需要 Treat** |
-| 资产价值翻倍  | 25% × 50% = 12.5% | 200 × 80% = 160.0 | 18.0 \~ 22.0    | Unlikely × Severe → Medium | **需要 Treat** |
-| 攻击可能性更高 | 60% × 50% = 30.0% | 100 × 80% = 80.0  | 21.6 \~ 26.4    | Moderate × Severe → High   | **需要 Treat** |
 
 **Asset value 200; attack likelihood 40%; success probability 50%; probable loss 60%; uncertainty ±20%; risk appetite 27. Accept or treat?**
 
@@ -902,6 +941,17 @@ p.10 最底下一句：**Training data bias / data drift and「black box」long 
 | Moderate (3)        | Low      | Low          | Medium       | Medium     | High               |
 | Minor (2)           | Low      | Low          | Low          | Medium     | Medium             |
 | Insignificant (1)   | Low      | Low          | Low          | Low        | Low                |
+
+**把 §2.7 和 §2.8 合起来练**：下面的实验先按 p.36 的四步算出风险值（①–③ Analyze），再和风险胃口比（④ Evaluate），同时把这个风险放到热力图上。
+
+*（网页版此处可交互：自己调 Asset Value / Likelihood / Probable Loss 等参数，实时看 Heat Map 落点；下表是几个例子的结果）*
+
+| 场景      | Loss Frequency    | Loss Magnitude    | Calculated Risk | Heat Map                   | 决定           |
+| ------- | ----------------- | ----------------- | --------------- | -------------------------- | ------------ |
+| 课件原例    | 25% × 50% = 12.5% | 100 × 80% = 80.0  | 9.0 \~ 11.0     | Unlikely × Severe → Medium | Accept       |
+| 收紧风险胃口  | 25% × 50% = 12.5% | 100 × 80% = 80.0  | 9.0 \~ 11.0     | Unlikely × Severe → Medium | **需要 Treat** |
+| 资产价值翻倍  | 25% × 50% = 12.5% | 200 × 80% = 160.0 | 18.0 \~ 22.0    | Unlikely × Severe → Medium | **需要 Treat** |
+| 攻击可能性更高 | 60% × 50% = 30.0% | 100 × 80% = 80.0  | 21.6 \~ 26.4    | Moderate × Severe → High   | **需要 Treat** |
 
 ### 2.9 🔴 四种 Risk Treatment（p.38–44）★老师点名 📝🔍✍️
 
