@@ -19,7 +19,7 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 > 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可
 > 掌握要求：📝 **默写**（能写出名字、定义、清单）· 🔍 **区分**（给场景能判断是哪一个，选择题）· 🧮 **计算**（要带计算器）· ✍️ **分析**（能写成有结构的一段论述，长题）
 >
-> **修订记录**：10 月 11 日按 L3 / L4 的讲法重写（两条主线、资产打分、热力图、更正 p.23 配对题）。10 月 12 日：**每条课件原文都补中文解析**——AI 三视角逐条解释 + 「同一件事的两面」；两大局限讲清楚为什么是 6 个框；Shadow AI 每一点的解析；p.18 的 Human Oversight 图；风险管理六步每一步的检查清单和考法；四种 treatment 逐句解析。之后又补了 §2.6 TVA：行是威胁、格子才是风险；颜色怎么定、空格怎么处理；TVA 颜色和热力图颜色的区别；§2.3 不同风险有不同胃口、胃口具体长什么样；§2.7 标明 p.36 的 ①–③ 是 Analyze、④ 是 Evaluate；定量评估的实验移到热力图之后。
+> **修订记录**：10 月 11 日按 L3 / L4 的讲法重写（两条主线、资产打分、热力图、更正 p.23 配对题）。10 月 12 日：**每条课件原文都补中文解析**——AI 三视角逐条解释 + 「同一件事的两面」；两大局限讲清楚为什么是 6 个框；Shadow AI 每一点的解析；p.18 的 Human Oversight 图；风险管理六步每一步的检查清单和考法；四种 treatment 逐句解析。之后又补了 §2.6 TVA：行是威胁、格子才是风险；颜色怎么定、空格怎么处理；TVA 颜色和热力图颜色的区别；§2.3 不同风险有不同胃口、胃口具体长什么样；§2.7 标明 p.36 的 ①–③ 是 Analyze、④ 是 Evaluate；定量评估的实验移到热力图之后；§2.9 补 Termination vs Acceptance 的区别，并更正首饰的类比（放银行保险箱是 Transference，不是 Termination）。
 
 <Callout type="exam" title="这一课在期末怎么考（老师点名）">
 
@@ -104,7 +104,7 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 | Identify | 家里有什么值钱的：电脑、首饰、证件；门锁旧不旧 |
 | Analyze | 这一区一年被偷的可能性多大，被偷了损失多少 |
 | Evaluate | 算出来的损失超出你能承受的吗？ |
-| Treat | 换好锁（Mitigation）、买保险（Transference）、旧自行车丢了就算了（Acceptance）、把首饰放到银行保险箱、家里不放（Termination） |
+| Treat | 换好锁（Mitigation）、买保险或把首饰放银行保险箱（Transference）、旧自行车丢了就算了（Acceptance）、不买首饰 / 把首饰卖掉（Termination） |
 
 ---
 
@@ -943,7 +943,33 @@ Loss Frequency = 40% × 50% = 20%；Loss Magnitude = 200 × 60% = 120；Risk = 2
 | **Mitigation** | **降低**可能性（或影响） | 换好锁、装监控 |
 | **Transference** | 把**财务后果转给别人** | 买家财险 |
 | **Acceptance** | **评估后**决定承担 | 旧自行车丢了就算了 |
-| **Termination** | **移除资产**，风险跟着消失 | 首饰不放家里 |
+| **Termination** | **移除资产**，风险跟着消失 | 不买首饰 / 把首饰卖掉 |
+
+<Callout type="memo" title="Termination vs Acceptance：都是「不花钱保护」，区别在资产还留不留（复习时问的）">
+
+| | Acceptance | Termination / Avoidance |
+|---|---|---|
+| 资产 | **留着，继续用** | **拿掉**：关机、断网、停掉这项业务 |
+| 风险 | **还在**，出事了承担后果 | **消失**，资产不在运营环境里了 |
+| 课件原话 | *do nothing beyond the current level of protection … and **accept the outcome*** | ***removes it from the operating environment** by shutting it down or disabling its connectivity* |
+| 「成本太高」比的是 | 控制成本 > **这个风险可能造成的损失** | 保护成本 > **这个资产本身的价值** |
+| 代价 | 可能发生的损失 | 失去资产或业务带来的好处 |
+
+*intentional choice not to protect an asset* 的重点不是「不保护、放着」，而是「不花钱保护，**干脆移走**」。
+
+| 资产 | 情况 | 选择 |
+|---|---|---|
+| 公司宣传册网站 | 还要靠它营销；被改了损失小，加 WAF 比损失还贵 | **Acceptance**：照常运行 |
+| 15 年没人用、还连着网的旧服务器 | 没业务在用，却是攻击入口 | **Termination**：关机下线 |
+| 很少人用、却要存客户身份证的线上功能 | 收入很少，泄露罚款很重 | **Termination**：停掉这个功能 |
+
+**类比要分清**：不买首饰 / 卖掉 = Termination；首饰放银行保险箱 = **Transference**（首饰还在，只是交给银行保管）；家里装保险箱 = Mitigation；首饰不值钱照放抽屉 = Acceptance。
+
+**怎么选**：先问「这个资产还需要吗？」不需要或价值低于保护成本 → Termination；需要 → 风险在胃口内或控制不划算 → Acceptance，否则 Mitigation / Transference。
+
+**两者都不能是放着不管**：Acceptance 要做完 p.42 的六个前提；Termination 要是 *conscious business decision, not simply the abandonment*。关键词：shut down、disable、discontinue、remove → Termination；do nothing beyond current protection、accept the outcome → Acceptance。
+
+</Callout>
 
 **管理层怎么选（老师强调「作为管理层怎么处理风险」）**
 
