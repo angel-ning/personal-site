@@ -1,0 +1,75 @@
+{
+  "plan": {
+    "title": "这是应急规划的哪一部分？（p.8、p.15）",
+    "options": [
+      { "id": "BIA", "label": "BIA" },
+      { "id": "IR", "label": "IR plan" },
+      { "id": "DR", "label": "DR plan" },
+      { "id": "BC", "label": "BC plan" },
+      { "id": "CM", "label": "Crisis management" }
+    ],
+    "items": [
+      { "q": "列出所有业务流程，判断网上银行最多能停 4 小时、交易数据最多能丢 15 分钟", "a": "BIA", "why": "定出哪些业务最关键、MTD 和 RPO——其他三份计划的输入" },
+      { "q": "一台员工电脑中了勒索软件：隔离、清除、从备份恢复这台电脑", "a": "IR", "why": "单一系统的安全事件，按 IR 四阶段处理" },
+      { "q": "全公司服务器都被加密，在原来的机房重建系统、恢复数据", "a": "DR", "why": "事件失控变成灾难，在 primary site 重建运营" },
+      { "q": "总部大楼停电进不去，客服团队搬到备用办公室继续接电话", "a": "BC", "why": "原址用不了，在 alternate site 维持关键业务" },
+      { "q": "法律顾问决定怎么对外发声明、要不要通报监管、媒体问话谁来答", "a": "CM", "why": "Crisis management team 由 legal counsel 领导（p.16）" },
+      { "q": "系统还没修好，先改用人工纸本流程接单，让生意不中断", "a": "BC", "why": "重点是「业务继续」，不是修系统" }
+    ]
+  },
+  "metric": {
+    "title": "这说的是哪个 BIA 指标？（p.12–13）",
+    "options": [
+      { "id": "MTD", "label": "MTD" },
+      { "id": "RTO", "label": "RTO" },
+      { "id": "WRT", "label": "WRT" },
+      { "id": "RPO", "label": "RPO" },
+      { "id": "ARO", "label": "ARO" },
+      { "id": "EF", "label": "EF" },
+      { "id": "SLE", "label": "SLE" },
+      { "id": "ALE", "label": "ALE" }
+    ],
+    "items": [
+      { "q": "网上银行最多只能停 4 小时，超过就会造成无法接受的损失", "a": "MTD", "why": "业务能忍受的最长中断时间——硬上限" },
+      { "q": "IT 要花 3 小时把服务器重建、系统重新开起来", "a": "RTO", "why": "把系统修好要多久" },
+      { "q": "系统开起来后，还要 2 小时补录数据、测试，业务才真正能用", "a": "WRT", "why": "系统好了之后，让业务恢复正常还要多久" },
+      { "q": "最多只能接受丢失 1 小时的交易数据，所以至少每小时备份一次", "a": "RPO", "why": "往回看：能接受回退到哪个时间点" },
+      { "q": "预计这类洪水每 50 年发生一次 → 0.02", "a": "ARO", "why": "每年预计发生次数" },
+      { "q": "一次勒索攻击会毁掉这台服务器 25% 的价值", "a": "EF", "why": "一次事件损失资产价值的百分比" },
+      { "q": "资产值 20 万 × 25% = 一次事件损失 5 万", "a": "SLE", "why": "单次损失 = AV × EF" },
+      { "q": "5 万 × 每 4 年一次（0.25）= 平均每年损失 12,500", "a": "ALE", "why": "年度预期损失 = SLE × ARO" }
+    ]
+  },
+  "test": {
+    "title": "这是哪一种测试方法？（p.17）——不是事件的严重程度",
+    "options": [
+      { "id": "CL", "label": "Checklist" },
+      { "id": "TT", "label": "Tabletop（structured walk-through）" },
+      { "id": "SIM", "label": "Simulation" }
+    ],
+    "items": [
+      { "q": "把 IR 计划发给每位成员，各自核对：自己的职责、联系电话、需要的工具都对吗", "a": "CL", "why": "各自书面核对，最简单、最便宜" },
+      { "q": "CISO、COO、法律顾问坐在会议室，主持人说「早上 9 点发现勒索信」，大家轮流说自己接下来做什么", "a": "TT", "why": "一起按情景口头推演，不真的动系统" },
+      { "q": "按情景真的执行：IR 团队真的去隔离测试网段、从备份恢复测试服务器，但不中断真实业务", "a": "SIM", "why": "最接近真实，但不影响正常运作" },
+      { "q": "主持人中途加入新状况：「媒体打电话来了」「备份也被加密了」，大家讨论怎么调整", "a": "TT", "why": "仍然是讨论推演，只是情景更复杂" },
+      { "q": "检查 alert roster 上的电话号码和备用设备清单是不是最新的", "a": "CL", "why": "核对清单内容" }
+    ]
+  },
+  "lead": {
+    "title": "谁领导这个团队？（p.16）",
+    "options": [
+      { "id": "COO", "label": "COO" },
+      { "id": "CISO", "label": "CISO" },
+      { "id": "BOM", "label": "Manager of business operations" },
+      { "id": "MIS", "label": "Manager of information systems & services" },
+      { "id": "LC", "label": "Legal counsel" }
+    ],
+    "items": [
+      { "q": "CPMT（整个应急规划管理团队）", "a": "COO", "why": "决定哪个业务先恢复是运营决策" },
+      { "q": "IR team", "a": "CISO", "why": "技术性的事件响应" },
+      { "q": "DR team", "a": "BOM", "why": "课件 p.16：Manager of business operations as DR team lead" },
+      { "q": "BC team", "a": "MIS", "why": "课件 p.16：Manager of information systems and services as BC team lead" },
+      { "q": "Crisis management team", "a": "LC", "why": "对外沟通、合规、监管通报" }
+    ]
+  }
+}

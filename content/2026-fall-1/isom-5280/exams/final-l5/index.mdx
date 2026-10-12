@@ -19,7 +19,7 @@ tags: [FinalReview, RiskManagement, RiskAppetite, RiskTreatment, HeatMap, Shadow
 > 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可
 > 掌握要求：📝 **默写**（能写出名字、定义、清单）· 🔍 **区分**（给场景能判断是哪一个，选择题）· 🧮 **计算**（要带计算器）· ✍️ **分析**（能写成有结构的一段论述，长题）
 >
-> **修订记录**：10 月 11 日按 L3 / L4 的讲法重写（两条主线、资产打分、热力图、更正 p.23 配对题）。10 月 12 日：**每条课件原文都补中文解析**——AI 三视角逐条解释 + 「同一件事的两面」；两大局限讲清楚为什么是 6 个框；Shadow AI 每一点的解析；p.18 的 Human Oversight 图；风险管理六步每一步的检查清单和考法；四种 treatment 逐句解析。之后又补了 §2.6 TVA：行是威胁、格子才是风险；颜色怎么定、空格怎么处理；TVA 颜色和热力图颜色的区别；§2.3 不同风险有不同胃口、胃口具体长什么样；§2.7 标明 p.36 的 ①–③ 是 Analyze、④ 是 Evaluate；定量评估的实验移到热力图之后；§2.9 补 Termination vs Acceptance 的区别，并更正首饰的类比（放银行保险箱是 Transference，不是 Termination）。
+> **修订记录**：10 月 11 日按 L3 / L4 的讲法重写（两条主线、资产打分、热力图、更正 p.23 配对题）。10 月 12 日：**每条课件原文都补中文解析**——AI 三视角逐条解释 + 「同一件事的两面」；两大局限讲清楚为什么是 6 个框；Shadow AI 每一点的解析；p.18 的 Human Oversight 图；风险管理六步每一步的检查清单和考法；四种 treatment 逐句解析。之后又补了 §2.6 TVA：行是威胁、格子才是风险；颜色怎么定、空格怎么处理；TVA 颜色和热力图颜色的区别；§2.3 不同风险有不同胃口、胃口具体长什么样；§2.7 标明 p.36 的 ①–③ 是 Analyze、④ 是 Evaluate；定量评估的实验移到热力图之后；§2.9 补 Termination vs Acceptance 的区别，并更正首饰的类比（放银行保险箱是 Transference，不是 Termination）；§2.10 补「没传达」和「没处理」的区别。
 
 <Callout type="exam" title="这一课在期末怎么考（老师点名）">
 
@@ -1049,6 +1049,35 @@ Loss Frequency = 40% × 50% = 20%；Loss Magnitude = 200 × 60% = 120；Risk = 2
 | 没真正处理 | ⑤ Treat | 知道超线了却没有行动 |
 
 </QA>
+
+<Callout type="memo" title="「没传达给高层」和「没真正处理」有什么不同？（复习时问的）">
+
+都是「风险已经知道了，结果没处理好」，区别在**断在哪一环、谁出了问题**：
+
+| | Failure to **communicate** risk to top management | Failure to **manage** risks |
+|---|---|---|
+| 断在哪 | 风险**没传到**做决定的人手上（或传得不清楚） | 风险**传到了**，决策者**没有采取合适的行动** |
+| 高层知不知道 | **不知道**，或以为没那么严重 | **知道** |
+| 问题出在 | **信息**：报告、汇报、上报机制 | **决定和执行**：方案没做、做错、做一半 |
+| 谁的失误 | 掌握信息的人（风险团队、IT）和汇报流程 | 做决定、负责执行的人（高层、业务负责人） |
+| 对应六步 | ⑥ Summarizing the findings | ⑤ Treating the unacceptable risk |
+
+**类比**：医生发现肿瘤却没告诉病人、或报告写得病人看不懂（没传达）；病人清楚知道了却拖着不治、吃几天药就停（没处理）。
+
+**同一个漏洞的四种情况**（公司 VPN 没开 MFA，风险超出胃口）：
+
+| 情况 | 属于 |
+|---|---|
+| IT 早就知道，但给董事会的报告只写「整体风险 Medium」，没单独列出 | 没传达 |
+| 报告写了，但全是技术术语，董事会看不懂严重性 | 没传达（传了但没传清楚） |
+| 董事会看懂了、同意要补，但预算一直往后推 | 没处理 |
+| 决定补 MFA，只给部分员工开了，没人跟进剩下的 | 没处理（执行不到位） |
+
+**怎么防**：没传达 → 报告要让高层看得懂、做得了决定（p.46 *better questions, not better reports*；*Have you seen the underlying data?*），超出胃口的风险必须单独上报；没处理 → 每个方案要有负责人、期限和跟进，处理后重新评估剩余风险，不能因业务压力长期默认接受超线的风险。
+
+**考试怎么分**：看**高层知不知道**。*not reported / not escalated / the board was unaware / reports were unclear* → communicate；*aware but / approved but not implemented / delayed / ignored the warning* → manage。
+
+</Callout>
 
 <Figure src="images/page_46.png" caption="Thinking Fast and Slow：Good decision starts with better questions, not better reports" source="Slide 46" />
 

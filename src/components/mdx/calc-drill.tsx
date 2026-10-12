@@ -7,8 +7,8 @@ type Answer = { key: string; label: string; type: "num" | "bool"; value: number 
 type Question = { kind: string; prompt: string; answers: Answer[]; steps: string[] };
 
 // Random calculation questions for the ISOM 5280 final (ALE / CBA / MTD-RPO / Lesson 5 risk chain).
-export function CalcDrill() {
-  const [kind, setKind] = useState("all");
+export function CalcDrill({ start = "all" }: { start?: string }) {
+  const [kind, setKind] = useState(start);
   const [seed, setSeed] = useState(1);
   const [inputs, setInputs] = useState<Record<string, string>>({});
   const [checked, setChecked] = useState(false);

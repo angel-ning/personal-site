@@ -50,6 +50,7 @@ import { DEMO as STATEFUL_DEMO, STATELESS_RULES, runStateful } from "../../src/c
 import { MODES as VPN_MODES, MODE_IDS as VPN_MODE_IDS } from "../../src/components/mdx/vpn-logic.mjs";
 import { vigenere, transposition, CIPHER_PRESETS, keyCount, KEY_COUNT_PRESETS, keyStrength, KEY_STRENGTH_PRESETS } from "../../src/components/mdx/cipher-logic.mjs";
 import { avalanche, HASH_PRESETS, chainCheck, sealChain, CHAIN_DATA } from "../../src/components/mdx/hash-logic.mjs";
+import { costBalance, COST_PRESETS, fmtK as fmtCostK } from "../../src/components/mdx/cost-balance-logic.mjs";
 import { TLS_STEPS } from "../../src/components/mdx/tls-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
@@ -71,6 +72,7 @@ const txnQuiz = readJson("src/components/mdx/data/txn-quiz.json");
 const l3Quiz = readJson("src/components/mdx/data/l3-quiz.json");
 const l4Quiz = readJson("src/components/mdx/data/l4-quiz.json");
 const l5Quiz = readJson("src/components/mdx/data/l5-quiz.json");
+const l6Quiz = readJson("src/components/mdx/data/l6-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -859,6 +861,23 @@ const components = {
     return [
       note("（网页版此处是「这条语句属于哪一类」的点选练习；下表是全部题目和答案）"),
       table(["语句", "类别", "理由"], COMMAND_ITEMS.map((it) => [{ type: "inlineCode", value: it.sql }, strong(it.a), it.why])),
+    ];
+  },
+  L6SortQuiz(_node, a) {
+    const set = l6Quiz[a.set] ?? l6Quiz.plan;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  CostBalanceLab() {
+    return [
+      note("（网页版此处可以改每小时损失、ARO 和 MTD，看哪个恢复方案总成本最低、是否满足 MTD；下面是三个预设的结果，方案成本是示意数字）"),
+      ...COST_PRESETS.flatMap((p) => {
+        const r = costBalance(p);
+        return [
+          para(strong(`${p.label}：每小时损失 ${fmtCostK(p.lossPerHour)}，ARO ${p.aro}，MTD ${p.mtd} 小时`)),
+          table(["恢复方案", "停机", "恢复成本 / 年", "预期中断成本 / 年", "总成本", "满足 MTD"], r.rows.map((x) => [x.label, `${x.downtimeH} h`, fmtCostK(x.yearlyCost), fmtCostK(x.disruption), x.id === r.bestId ? strong(fmtCostK(x.total) + " ← 选这个") : fmtCostK(x.total), x.meetsMtd ? "✓" : "✗"])),
+        ];
+      }),
     ];
   },
   L5SortQuiz(_node, a) {
