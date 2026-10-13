@@ -1,0 +1,2021 @@
+---
+title:
+  en: "Final Review · Every Concept from Week 1 to 7"
+  zh: "期末总复习 · 第 1–7 周全部概念（开卷 Ctrl+F 用）"
+summary:
+  en: "All seven weeks on one page for the 30-minute open-book final: every concept with the slide wording, a detailed explanation, examples, common confusions and search synonyms, plus every formula with worked numbers, cross-week comparison tables, answer templates and an A–Z abbreviation list."
+  zh: "30 分钟开卷期末用：7 周全部概念放在同一页，每个概念都有课件原文、详细解释、例子、易混点和搜索同义词；另附全部公式和算好的例子、跨周对比表、答题模板和 A–Z 缩写总表。"
+date: 2026-10-13
+tags: [FinalReview, OpenBook, NIST CSF, FAIR, ROI, Vendor Risk, AI RMF, Incident Response, BCP, Strategy, Investment Plan]
+---
+# ISOM 5070 期末总复习 · Week 1–7 全部概念
+
+**用法**：考试时直接在这一页按 **Ctrl+F / ⌘F**，搜题目里的英文词、缩写或中文都能找到。每个概念都按同一个格式写：
+
+> **课件原文**（可以直接抄进答案的英文）→ **解释**（为什么、和什么有关）→ **例子** → **易混** → 🔎 **搜索词**（同义词和别的说法，只是为了让 Ctrl+F 搜得到）
+
+**考试信息**：30 分钟、纸笔作答、开卷，4–5 题，题型不确定（可能是简答 SA，也可能是情景长题 LA）。平均每题只有 6 分钟，**先找到对应的小节，再照「答题模板」（第 10 节）组织英文答案**。  
+**练习**：[期末模拟题（SA + LA）](../final-practice/)　**各周详细笔记**：[W1](../../lectures/week-01/) · [W2](../../lectures/week-02/) · [W3](../../lectures/week-03/) · [W4](../../lectures/week-04/) · [W5](../../lectures/week-05/) · [W6](../../lectures/week-06/) · [W7](../../lectures/week-07/)
+
+> 优先级：🔴 必考核心 · 🟡 需要理解 · 🟢 了解即可  
+> **优先级依据**：① 教学大纲的四个学习目标——**定性和定量评估网络风险**、**分析网络事件和安全投资的财务影响**、**向高管和董事会沟通网络风险**、**运用框架设计风险缓解和事件响应策略**；② 各周笔记里已经标好的优先级；③ 课件里反复出现、有公式、有正反例对比、有红字的地方。
+
+> **🎯 30 分钟怎么分配**
+>
+> 1. **前 2 分钟**：通读 4–5 道题，给每道题圈出关键词（例如 *FAIR*、*vendor*、*RTO*、*board*、*ransomware*），在这一页搜一遍，记下每题对应第几节。
+> 2. **每题 5–6 分钟**：先写**定义 / 框架名**（课件原文）→ 再按题目的场景**逐点套用** → 最后一句**结论或建议**。
+> 3. **计算题**：一定写出**公式 → 代入 → 结果 → 一句英文解释**（例如 *"so the control is worth funding because net benefit is positive"*）。
+> 4. **情景题**：用第 10 节的模板，先**诊断**（哪个控制失效了）再**开药**（该加什么控制），不要只堆名词。
+> 5. 留 1–2 分钟检查：缩写有没有写全称、数字单位对不对。
+
+## 本页大纲
+
+- **[全课一条线](#全课一条线)**
+- **[W1 · 风险基础与网络风险](#w1--风险基础与网络风险)**：风险定义、四种应对、Prevention / Mitigation / Remediation、五个评估维度、Cyber risk、攻击面、法律法规、CyberSec vs InfoSec vs BCP、ERM
+- **[W2 · 治理、框架与 AI 影响](#w2--治理框架与-ai-影响)**：为什么用框架、三类框架、NIST CSF 2.0、ISO 27001/27002、CIS、COBIT、FAIR 入门、ATT\&CK、D3FEND、红紫蓝队、Deepfake 案例、AI 攻防
+- **[W3 · 风险管理方法论与威胁建模](#w3--风险管理方法论与威胁建模)**：七步法、威胁建模五要素、固有风险、风险矩阵、控制评估、四种处置、Monitor / Test / Report / Reassess、Artifacts、FAIR 深挖
+- **[W4 · 财务建模与高管汇报](#w4--财务建模与高管汇报)**：财务建模、损失组件、控制 ROI、保险、数据质量、高管汇报
+- **[W5 · 第三方供应商风险与 AI 风险](#w5--第三方供应商风险与-ai-风险)**：VRM 生命周期、Onboarding、Tiering 公式、尽调、控制基线、合同、监控、治理、KRI、NIST AI RMF、AI 六类新风险
+- **[W6 · 事件响应、危机管理与 BCP](#w6--事件响应危机管理与-bcp)**：Incident 定义、IR 六阶段、Checklist、勒索案例、事件分级、危机管理、BCP、BIA、MTPD / RTO / RPO
+- **[W7 · 安全战略与投资计划](#w7--安全战略与投资计划)**：Cyber strategy、五个 outcomes、六大支柱、Priority score、路线图、KPI / KRI、InfoSec strategy、投资计划五原则、预算区间、Business case、Go slow、US$1.2M 案例、Mythos
+- **[8. 公式与计算总表](#8-公式与计算总表)**
+- **[9. 跨周易混对比](#9-跨周易混对比)**
+- **[10. 答题模板（英文句式）](#10-答题模板英文句式)**
+- **[11. 缩写 A–Z 总表](#11-缩写-az-总表)**
+
+---
+
+## 全课一条线
+
+```
+W1 风险是什么、网络风险从哪来、法律要求什么、它属于企业风险（ERM）
+ → W2 用什么框架管：NIST CSF（outcomes）、ISO 27001（ISMS）、CIS（控制清单）、COBIT（治理）、FAIR（算钱）、ATT&CK / D3FEND（攻防语言）
+  → W3 怎么一步步管：七步法（context → assets → threat model → inherent risk → treatment → residual risk → monitor）+ FAIR 量化
+   → W4 怎么把风险变成钱、怎么讲给高管：损失分布、控制 ROI、保险、Executive presentation
+    → W5 别人的系统连累你怎么办：供应商生命周期 + Tiering；AI 系统也是一种新依赖：NIST AI RMF
+     → W6 真出事了怎么办：IR 六阶段 → 事件分级 → 危机管理 → BCP / DR、BIA（MTPD / RTO / RPO）
+      → W7 把以上全部装成一个战略和一个有钱的投资组合：六大支柱、优先级公式、预算区间、business case
+```
+
+**贯穿全课的四句话**（写任何答案都可以拿来收尾）：
+
+1. **Cyber risk is a business risk, not just an IT problem**——网络风险要放进 ERM，由董事会定风险胃口（W1、W7）。
+2. **The goal is not zero risk, but residual risk within risk appetite**——不追求零风险，而是把剩余风险压到风险胃口以内（W2、W3、W7）。
+3. **Translate technical exposure into financial and business terms**——用 FAIR / ROI 把技术问题翻译成钱和业务影响，才能做投资决策（W3、W4、W7）。
+4. **An untested plan is only a document, not a capability**——控制、计划、备份都要测试并留证据（W3、W6、W7）。
+
+---
+
+## W1 · 风险基础与网络风险
+
+### 🟢 课程定位 Course positioning（business lens, cost/benefit）
+
+**课件原文**：This is a **business school course**; cyber security / InfoSec is viewed from a **cost/benefit tradeoff** perspective. The goal is to develop **realistic and financially sound** security strategies and investment plans.
+
+**解释**：这门课的所有答案都要回到「**值不值得花这笔钱**」「**对业务有什么影响**」。写答案时不要只写技术措施，要加上业务影响、成本收益、谁负责。
+
+🔎 搜索词：business perspective, cost-benefit, financially sound, 商学院视角, 成本效益
+
+### 🟡 Competence Model / T-shaped（职场胜任力、T 型人才）
+
+**课件原文**：Key success factors in career = **Integrity** (ethics, openness & honesty, do the right thing) + **Competency** (technical skills + soft skills) + **Mindset & Attitude** (ownership, positive & proactive, reflect on feedback, stay curious and learn). **T-shaped**: **Broad** = ability to work outside of core area; **Deep** = functional area, discipline or specialty (Kenneth S. Rubin, 2012).
+
+**解释**：横向是跨领域协作能力，纵向是某个专业的深度。安全岗位需要既懂技术又能和业务、法务、高管沟通。
+
+🔎 搜索词：career success, integrity, competency, mindset, T型, broad and deep
+
+### 🔴 Risk 风险的定义
+
+**课件原文**：*Risk is the possibility of an uncertain event within a given timeframe, which — if it happens — will have an **adverse effect** on business, operation, finance, legal and/or reputation.*
+
+**三个性质**（课件原文）：
+
+1. **Risks DO NOT have a single consequence**（一个风险不止一种后果）
+2. **A single event can trigger multiple risks**（一个事件能触发多个风险）
+3. **Risk can trigger other risks**（风险之间会连锁触发 → 对应 Connectivity 维度）
+
+**解释**：定义里有四个关键词——**可能性**（不确定）、**时间范围**、**负面影响**、**多种影响对象**（业务、运营、财务、法律、声誉）。答题时要把这几个词都带上。
+
+**例子**：CrowdStrike 2024 一次软件更新失误，同时造成运营中断（航班取消、ATM 停摆）、财务损失（约 $1.5B、股价两天跌 40%）、法律风险（Delta 索赔 $5 亿）和声誉损害——一个事件，多种后果。
+
+🔎 搜索词：definition of risk, adverse effect, uncertain event, single consequence, multiple risks, 风险定义, 连锁
+
+### 🔴 四种风险应对 4 Risk Responses（Avoid / Mitigate / Transfer / Accept）
+
+| 策略                       | 课件原文                                                | 解释                      | 例子                          |
+| ------------------------ | --------------------------------------------------- | ----------------------- | --------------------------- |
+| **Avoid** 规避             | Just don't do it                                    | 不做这件事，从源头消除风险           | 不上线不安全的遗留系统集成；不允许高风险数据用例    |
+| **Manage / Mitigate** 缓解 | Lower the likelihood or impact through controls     | 用控制降低可能性或影响             | MFA、PAM、网络分段、不可篡改备份、EDR、DLP |
+| **Transfer** 转移          | Shift the risk to another party, e.g. buy insurance | 让别人通过合同或财务方式承担部分损失      | 网络保险、合同赔偿条款、托管服务协议          |
+| **Accept** 接受            | Accept the risk and prepare for losses              | 剩余风险在风险胃口内，**被正式批准**后接受 | 对即将替换的遗留平台做**限时**风险接受       |
+
+**W3 补充的选择标准**（p.12）：**Mitigate** when controls can **cost-effectively** reduce likelihood or impact；**Avoid** when the activity is **outside risk appetite**；**Transfer** when another party can absorb part of the loss **contractually or financially**；**Accept** when residual risk is **within appetite and formally approved**.
+
+**易混**：Accept 不是「不管」，必须**正式批准、有人签字、通常有期限**（risk-acceptance register 带到期日）。Transfer 也不是「全部转走」——保险有自留额、上限、除外责任（见 W4 保险公式）。
+
+🔎 搜索词：risk response, risk treatment, avoid, mitigate, transfer, accept, insurance, 风险处置, 风险应对, 规避, 缓解, 转移, 接受
+
+### 🔴 Prevention vs Mitigation vs Remediation（预防 / 缓解 / 补救）
+
+| 术语                 | 时间点              | 课件定义                                                                      | 网络安全例子                                                  |
+| ------------------ | ---------------- | ------------------------------------------------------------------------- | ------------------------------------------------------- |
+| **Prevention** 预防  | 风险发生**之前**       | Proactive measures to **eliminate** the possibility of the risk occurring | 员工安全培训（employee security training）                      |
+| **Mitigation** 缓解  | 事前、事中、事后都可以      | Accept the risk may still occur, **reduce** its likelihood or impact      | 网络分段（network segmentation）限制入侵扩散                        |
+| **Remediation** 补救 | 风险发生 / 被发现**之后** | **Correct the root cause** so the specific risk does not recur            | 修补已经被利用的漏洞（patching a vulnerability that was exploited） |
+
+**口诀**：Prevention 防患于未然（消除）；Mitigation 退而求其次（降低）；Remediation 亡羊补牢（根治）。
+
+**易混**：「打补丁」要看时间点——漏洞**还没被利用**时打补丁是 Prevention；**已经被利用后**修复根因是 Remediation。
+
+🔎 搜索词：prevention, mitigation, remediation, proactive, root cause, 预防, 缓解, 补救, 修复
+
+### 🔴 Risk Assessment Dimensions 风险评估维度（5 个主维度 + 6 个次维度）
+
+**主维度 Primary dimensions（课件原文）**：
+
+| 维度                   | 课件原文                                                                                                                       | 解释                                      |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| **Likelihood** 可能性   | The possibility of a risk event to occur / materialize                                                                     | 发生的概率                                   |
+| **Severity** 严重程度    | The damage resulted from risk event materialization / occurrence                                                           | 发生后损害多大                                 |
+| **Velocity** 速度      | How fast a risk may impact an entity                                                                                       | 从发生到造成冲击有多快（勒索几分钟加密全网 vs 数据泄露几个月后才影响声誉） |
+| **Volatility** 波动性   | Continuous variation of the risk probability based on changes in circumstances (related to uncertainty and predictability) | 概率随环境变化而波动，越难预测越高                       |
+| **Connectivity** 关联性 | How this individual risk correlates to other risk events (risks should not be assessed in isolation)                       | 和其他风险的关联，不能孤立评估                         |
+
+**次维度 Secondary dimensions**（问句形式）：**Frequency? Duration? External / Internal-induced? Detectable? Effective Controls? Recoverable?**
+
+**类比**：把风险看成一场病——Likelihood 是得病的概率，Severity 是病多重，Velocity 是恶化多快，Volatility 是会不会因环境忽好忽坏，Connectivity 是会不会引发并发症。
+
+**易混**：Likelihood × Severity（Impact）就是 W3 风险矩阵和 Inherent Risk 的两个轴；另外三个维度（Velocity、Volatility、Connectivity）是矩阵**没有反映**的，答题时可以补一句 *"a 2-D heat map misses velocity, volatility and connectivity"*。
+
+🔎 搜索词：risk dimensions, likelihood, severity, velocity, volatility, connectivity, frequency, duration, detectable, recoverable, 风险维度, 可能性, 严重性, 速度, 波动, 关联
+
+### 🔴 Cyber Risk 网络风险的定义
+
+**课件原文**：*Cyber Risk is the possibility that **digital systems, data, network or connected services** will be compromised in any way that causes **data loss, operation disruption, fraud** that results in **financial, legal and reputational loss**.*
+
+**构建 Cyber Risk Profile 的四个维度**：**Actors**（external attackers / insiders / third-party vendors）· **Industry**（金融、制造、交通、零售、政府……）· **Application domains**（交易 / 支付 vs 结算；病人数据库 vs 库存）· **Countries / Jurisdictions**（各地法律不同）。
+
+**Cyber risk categories**：Malware / Ransomware · Phishing and social engineering · Hacking（web/app attacks 如 SQL injection、XSS；DDoS；identity theft / account compromise）· Data breaches · Insider threats。  
+2025 数据（Statista + 英国政府调查）：Phishing & social engineering **38%** · Hacking **30%** · Insider threats **28.7%** · Malware / Ransomware **15.2%**。
+
+**行业对比**：Hedge funds = **low volume, high impact**（目标：交易访问、研究、投资者数据）；Retail = **high volume, broad exposure**（目标：客户账户、支付系统）。
+
+🔎 搜索词：cyber risk definition, risk profile, actors, industry, jurisdiction, ransomware, phishing, hacking, data breach, insider threat, 网络风险
+
+### 🔴 Attack Surface 攻击面（NIST 定义 + 五类）
+
+**课件原文（NIST）**：*The set of points on the boundary of a system, a system element, or an environment where an attacker can try to enter, cause an effect on, or extract data from.*
+
+| 类别                                 | 内容                                                    |
+| ---------------------------------- | ----------------------------------------------------- |
+| **Digital** 数字                     | 面向互联网的服务、API、网站、云资源、SaaS、代码、开放端口、配置、凭证                |
+| **Physical** 物理                    | 台式机、笔记本、服务器、USB 口、废弃硬盘、网络设备                           |
+| **Human / social engineering** 人   | 用户、管理员、高管、供应商被钓鱼、欺骗、胁迫；弱密码、密码重用                       |
+| **Third-party / supply chain** 第三方 | 供应商、MSP、云服务商、API、数据源、第三方软件                            |
+| **AI / application layer** AI 层    | 暴露的模型、agent、工具和集成，可被 **prompt injection**、投毒数据、嵌入代码滥用 |
+
+🔎 搜索词：attack surface, entry points, digital, physical, human, social engineering, supply chain, AI layer, prompt injection, 攻击面
+
+### 🟡 Internal threats 内部威胁与 95% 人为错误
+
+**课件原文**：Intentionally（disgruntled employees / malicious insiders / partners 删除或窃取数据、商业机密、IP）；Unintentionally：**95% of cybersecurity breaches are related to human error**（点钓鱼邮件、便利贴写密码、生产数据复制到测试环境、公共打印机打印机密、丢失笔记本、服务器下线没擦盘、邮件发错人、权限配置错误）。
+
+**结论（课件原文精神）**：Besides policy and technical defences, building a **cyber-awareness culture, continuous training and periodical audit** is **KEY** to mitigating cyber risk.
+
+**例子**：Tesla 2018 员工 Martin Tripp 窃密破坏；2021 信用社员工离职前删 21GB 数据；GE 工程师 8 年窃取 8000+ 文件。
+
+🔎 搜索词：insider threat, human error, 95%, awareness training, culture, audit, 内部人员, 人为错误, 安全意识
+
+### 🟡 案例速查：外部攻击与 CrowdStrike
+
+| 案例                           | 要点                                                                                                               |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Colonial Pipeline** 2021   | 勒索软件，付 75 BTC（**$4.4M**），美国东岸燃油中断，6 天恢复                                                                          |
+| **Saudi Aramco** 2015        | **Shamoon** 恶意软件，3 万+ 工作站被覆盖 MBR，业务停摆 2 周+                                                                       |
+| **Seattle Airport** 2024     | 显示屏 / 网络 / WiFi 瘫痪，400+ 航班延误，手写登机牌，5 天+                                                                          |
+| **PlayStation Network** 2011 | 损失约 **$171M**，网络关闭 23 天                                                                                          |
+| **Yahoo** 2013/14            | 30 亿账户；和解 **$177.5M**，罚款 **$35M**                                                                                |
+| **CrowdStrike** 2024-07-19   | **软件更新失误**（out-of-bound memory error）→ **850 万台** Windows 蓝屏；约 **$1.5B** 损失；Delta 取消 7000 航班并索赔 $5 亿；股价 2 天跌 40% |
+
+**CrowdStrike 的考点**：这**不是攻击**，而是**第三方供应商的变更 / 质量失误**——说明 *cyber risk ≠ cyber attack*，第三方 / 供应链风险可以造成系统性冲击（→ W5）。
+
+🔎 搜索词：case study, Colonial Pipeline, Aramco, Shamoon, Seattle airport, PlayStation, Yahoo, CrowdStrike, blue screen, 蓝屏, 案例
+
+### 🔴 Cyber Security Law and Regulation 网络安全法律法规
+
+**五类法律**：**Cybercrime law**（未授权访问、黑客、欺诈、勒索定为犯罪）· **Data and privacy protection** · **Sector-specific regulation**（金融、医疗、政府）· **Critical infrastructure regulation**（韧性、事件报告、基本服务连续性）· **Information-sharing and reporting rules**。
+
+**美国 USA**（no single omnibus cyber law，分行业 / 分散式 + NIST 等自愿框架）：
+
+| 缩写                   | 全称                                                                                                                       | 要点                                |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| CFAA                 | Computer Fraud and Abuse Act (1986)                                                                                      | 禁止未授权访问受保护计算机、计算机欺诈               |
+| FISMA                | Federal Information Security Modernization Act (2014)                                                                    | 政府机构保护信息系统                        |
+| CISA（法）              | Cyber Security Information Sharing Act (2015)                                                                            | 跨行业共享威胁情报（注意和机构 CISA 同名）          |
+| CIRCIA               | Cyber Incident Reporting for Critical Infrastructure Act (2022)                                                          | 关键基础设施 **72 小时内**报告事件             |
+| COPPA                | Children Online Privacy Protection Act                                                                                   | 13 岁以下儿童隐私，家长同意                   |
+| FCRA                 | Fair Credit Reporting Act (1970)                                                                                         | 消费者信用报告数据                         |
+| GLBA                 | Gramm-Leach-Bliley Act (1999)                                                                                            | 金融机构说明信息共享、保护客户数据                 |
+| SEC disclosure rules | —                                                                                                                        | 上市公司 **Form 8-K，4 个工作日内**披露重大网络事件 |
+| HIPAA / HITECH       | Health Insurance Portability and Accountability Act / Health Information Technology for Economic and Clinical Health Act | 医疗健康信息                            |
+
+**欧盟 EU**（harmonized regional regulation，统一协调、重韧性和隐私）：
+
+| 缩写                                                                   | 要点                                                                                                                            |
+| -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| **GDPR** General Data Protection Regulation (2016)                   | 核心数据保护法；个人权利（access, rectification, erasure, portability, objection）；**72 小时内**报告泄露；部分情况要 **DPO**；罚款上限 **€20M 或全球营业额 4%**（取高） |
+| **NIS2** Network and Information System Security Directive v2 (2023) | 关键行业网络安全治理：风险管理、事件报告、供应链、问责                                                                                                   |
+| **DORA** Digital Operational Resilience Act (2022)                   | **金融机构**的 ICT / 网络风险统一规则                                                                                                      |
+| EU Cybersecurity Act (2019)                                          | 强化 ENISA，ICT 产品统一认证                                                                                                           |
+
+一句话：**GDPR = 数据保护，NIS2 = 全行业网络韧性，DORA = 金融业数字韧性**。
+
+**中国 China**（**国家安全优先**、cyber sovereignty 网络主权）：
+
+| 缩写                                                         | 要点                                                  |
+| ---------------------------------------------------------- | --------------------------------------------------- |
+| **CSL** Cybersecurity Law 网络安全法（2016，2025 修订）              | 网络运营者义务、关键信息基础设施、实名制、安全审查；2025 修订加重处罚、加 AI 条款       |
+| **DSL** Data Security Law 数据安全法（2021）                      | 数据分类分级、风险评估、**限制跨境传输**、向境外司法机构提供数据须批准               |
+| **PIPL** Personal Information Protection Law 个人信息保护法（2021） | 「中国版 GDPR」；合法依据、最小化、影响评估；罚款 **RMB 5000 万或上年营业额 5%** |
+
+CSL 管网络，DSL 管数据，PIPL 管个人信息。
+
+**中 / 欧 / 美对比（课件五个维度）**：
+
+| 维度                 | 中国                  | 欧盟                                  | 美国                              |
+| ------------------ | ------------------- | ----------------------------------- | ------------------------------- |
+| Governing approach | 国家中心，网络主权，强管控       | 区域协调统一监管                            | 分行业、分散，联邦 + 州 + 自愿框架，**无单一综合法** |
+| Core laws          | CSL、DSL、PIPL        | NIS2、GDPR、DORA、EU Cybersecurity Act | CFAA、行业规则、FTC / SEC 执法、NIST 指南  |
+| Main priority      | **国家安全**、数据管控、本地化   | 网络韧性、**个人数据保护**、市场统一                | 关键基础设施、国家安全、公私合作                |
+| Data flows         | **最严格**限制跨境         | 允许，但受 GDPR 传输机制约束                   | 总体更开放                           |
+| Enforcement style  | 集中、日趋严格（牌照、罚款、监管介入） | 行政监督 + 高额罚款 + 结构化报告                 | 多机构执法 + 诉讼                      |
+
+**香港 Hong Kong**（无单一综合网络法）：Crimes Ordinance (Cap. 200) & Telecommunications Ordinance (Cap. 106)（计算机犯罪）· **PDPO** Personal Data (Privacy) Ordinance（主要数据保护法，私隐专员可发执行通知）· **PCICSO** Protection of Critical Infrastructures (Computer Systems) Ordinance (Cap. 653)——**香港首部专门网络安全法，2026-01-01 生效**，适用能源、银行金融、IT、交通、医疗、电讯的关键基础设施运营者，罚款最高 **HK$5M** · 行业监管如 **HKMA** 通函、**SFC** 指引（→ W7 案例）。
+
+**AI 法规三种模式**：专门立法（**EU AI Act** Regulation 2024/1689，风险分级 unacceptable / high / limited / minimal，罚款 **€35M 或 7%**；韩国 **AI Basic Act** 2026-01）· 沿用现有法规（中国：CSL / DSL / PIPL + 算法推荐、深度合成规定）· 软法框架（美国 **NIST AI RMF**、州法拼凑；英国原则；新加坡 Model AI Governance Framework / AI Verify；日本 AI Promotion Act）。
+
+🔎 搜索词：law, regulation, compliance, GDPR, NIS2, DORA, CSL, DSL, PIPL, PDPO, PCICSO, HKMA, CFAA, GLBA, HIPAA, SEC 8-K, CIRCIA, 72 hours, EU AI Act, cyber sovereignty, data localization, cross-border, 法律, 法规, 合规, 跨境, 罚款
+
+### 🔴 CyberSecurity vs InfoSec vs BCP（三者区分）
+
+| 概念                     | 关注点                                                                                                 | 核心目标                                                                                                                                     |
+| ---------------------- | --------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **CyberSecurity** 网络安全 | 主要针对**外部威胁**（DoS/DDoS、MITM、phishing、ransomware、密码破解、SQL/URL injection、DNS spoofing、malware），也考虑内部威胁 | 防止财务、声誉、生产力、监管、数字资产、物理运营和设备的损失                                                                                                           |
+| **InfoSec** 信息安全       | 四大领域：**Network, Endpoint, Application, Data**                                                       | 保护 **CIA + AN**：Confidentiality, Integrity, Availability, **Authenticity**, **Non-repudiation**；**DLM**（Data LifeCycle Management）是新增长领域 |
+| **BCP** 业务连续性计划        | 任何导致业务中断的事件：自然灾害、运营事故、网络攻击                                                                          | **Prevent, Prepare, Respond, Recover**                                                                                                   |
+
+**CIA + 2（五性）**：Confidentiality 只有授权的人能看 · Integrity 未被篡改 · Availability 需要时能用 · Authenticity 身份 / 信息真实 · Non-repudiation 发送方不能否认（如电子签名）。
+
+**类比**：CyberSecurity 是「防小偷」，InfoSec 是「保护信息资产本身」（更宽，含物理和管理），BCP 是「出事后公司怎么继续活」。W7 的 Cyber strategy vs InfoSec strategy 是同一组区分（见第 9 节）。
+
+🔎 搜索词：cyber security vs information security, InfoSec, BCP, CIA triad, authenticity, non-repudiation, DLM, 信息安全, 网络安全, 业务连续性, 三者区别
+
+### 🟡 安全组织架构与 Organizational Security Policy（p.30–31）
+
+**汇报线**：Enterprise **CSO** 下辖 CISO、physical security、business continuity；**CISO** 下辖 cyber strategy standards、security architecture、**SOC**、**3rd-party governance**、awareness & training；**CIO** 下辖 IT/OT architecture、operations-incident response、IT security。CSO 通常向 **COO / CRO** 汇报而不是向 CIO——**保持独立性，能对 IT 做独立挑战**。
+
+**安全策略的驱动链**：
+
+```
+Governance —Executive Directives—┐
+                                  ├→ Organizational Security Policy —Approach to Risk Management→ Risk Management
+Compliance —Regulatory Requirements┘        └—Objectives→ Procurement / Technical Controls / Incident Response / Cybersecurity Awareness Training
+```
+
+**用法**：题目问「监管要求怎么落到员工日常行为上」，就答这条链：监管 / 治理 → 组织安全策略 → 采购、技术控制、事件响应、意识培训。
+
+🔎 搜索词：organization structure, CSO, CISO, CIO, reporting line, independence, security policy, executive directives, regulatory requirements, 组织架构, 汇报线, 安全策略
+
+### 🟡 Cyber Risk ERM Integration（网络风险纳入企业风险管理）
+
+**核心论点**：*Cyber security risk is not only an IT issue but an integral part of the **enterprise risk portfolio**.*
+
+| ERM 组件                      | 网络安全怎么整合                                                  |
+| --------------------------- | --------------------------------------------------------- |
+| **Strategy and objectives** | 定义关键业务服务、数字依赖、转型目标、**不可接受的网络后果**                          |
+| **Risk appetite**           | 对中断、数据丢失、欺诈、监管、第三方集中度、重大财务损失设**可衡量的容忍度**                  |
+| **Risk taxonomy**           | 网络风险作为企业级类别，链接到运营、行为、法律、隐私、第三方、韧性、财务风险                    |
+| **Risk identification**     | 业务服务映射、威胁建模、事件、控制测试、漏洞、威胁情报、供应商评估                         |
+| **Risk measurement**        | 统一影响标准；重大情景用 **FAIR** 做财务损失和尾部分析                          |
+| **Risk response**           | Mitigate / Accept / Transfer / Avoid，明确资金、owner、期限、剩余风险审批 |
+| **Risk reporting**          | 汇总进企业组合；报告趋势、集中度、例外、决策——**not just tool metrics**         |
+| **Assurance**               | 测试控制设计和有效性、韧性、IR、恢复、第三方；独立挑战 / 审计                         |
+
+**治理与问责**：
+
+| 角色                             | 职责                            |
+| ------------------------------ | ----------------------------- |
+| **Board / Risk Committee**     | 批准风险胃口；挑战重大网络风险敞口；监督韧性和重大事件响应 |
+| **Executive management**       | 把网络风险纳入战略规划、资源分配、风险决策         |
+| **CRO / ERM**                  | 方法论一致、汇总、报告、**独立挑战**、企业级优先排序  |
+| **CISO**                       | 网络风险识别、评估证据、控制策略、报告、处置执行      |
+| **Business-service owner**     | 服务影响、恢复优先级、资金、**剩余风险**        |
+| **Technology / control owner** | 实施并证明控制                       |
+| **Internal audit**             | 独立保证                          |
+
+**这就是「三道防线」的思路**：业务 / 技术 owner（第一道）→ CRO / CISO 风险职能（第二道）→ 内审（第三道）。课件没写「三道防线」这个词，可以作为补充。
+
+🔎 搜索词：ERM, enterprise risk management, risk appetite, risk taxonomy, risk register, board, CRO, CISO, business owner, internal audit, accountability, governance, three lines of defence, 企业风险管理, 风险胃口, 问责, 董事会
+
+---
+
+## W2 · 治理、框架与 AI 影响
+
+### 🔴 Why Cyber Security Frameworks（为什么要用框架）
+
+**课件三层价值**：
+
+1. **Best practices / roadmap**——a **systematic, prioritized methodology** for risk management decisions（系统化方法论、成熟度路线图）
+2. **Compliance requirement**——regulated industries (financial services, healthcare) are **mandated** to meet recognized standards（合规强制）
+3. **Audit trail + reporting to stakeholders**——demonstrates good governance, **reassures investors / board**（留痕、证明治理良好）
+
+**英文模范句**：*"Organizations adopt cybersecurity frameworks not simply to be 'more secure', but because frameworks provide (1) a systematic, prioritized methodology for risk management decisions, (2) a way to meet mandatory compliance requirements in regulated industries such as financial services and healthcare, and (3) an audit trail that demonstrates good governance to investors, regulators and the board."*
+
+**易混**：只答「更安全」= 没答到点。
+
+🔎 搜索词：why framework, benefits of framework, best practice, roadmap, compliance, audit trail, stakeholder, 为什么用框架, 框架的作用
+
+### 🔴 三类框架 General 3 Types of Frameworks
+
+| 类型                                                              | 回答的问题                  | 代表                                                             |
+| --------------------------------------------------------------- | ---------------------- | -------------------------------------------------------------- |
+| **① Core Risk Management Framework** 核心风险管理                     | 该管理哪些风险方向、要什么 outcome？ | NIST CSF、ISO 27001/27002、CIS、COBIT、FAIR                        |
+| **② Controls and Regulatory Framework** 控制与监管                   | 具体落实哪些控制、满足哪个监管？       | NIST SP 800-53、HIPAA/HITRUST、GLBA、DORA、PCI DSS、SOC 2、FFIEC CAT |
+| **③ Threat, Detection and Architecture Framework** 威胁 / 检测 / 架构 | 攻击者怎么进来、怎么检测和防守？       | MITRE ATT\&CK & D3FEND、Kill Chain、Pyramid of Pain、Zero Trust   |
+
+**记忆**：① 战略层，② 合规层，③ 战术层。三类**叠加使用，不互斥**。
+
+🔎 搜索词：types of framework, core risk management framework, controls and regulatory framework, threat detection architecture framework, PCI DSS, SOC 2, kill chain, zero trust, 框架分类
+
+### 🟡 Control / Objective / Safeguard（粒度区别）
+
+| 词                  | 意思                                | 例子                       |
+| ------------------ | --------------------------------- | ------------------------ |
+| **Objective** 目标   | 最抽象的管理责任域，需要多个控制才能实现              | COBIT APO12 Managed Risk |
+| **Control** 控制     | 可审计、能打勾「做了没」的具体防护动作               | 开启 MFA、日志保留 90 天、季度访问复核  |
+| **Safeguard** 防护措施 | CIS 的说法，是 18 个大类 control 下面的具体执行项 | 「为所有账户强制唯一密码」            |
+
+**易混**：ISO 27001 的 93 个 control ≈ CIS 的 safeguard 粒度；CIS 的 18 个 control ≈ COBIT objective 粒度。**不能跨框架直接比数字**。
+
+🔎 搜索词：control, objective, safeguard, granularity, 控制措施, 控制目标
+
+### 🔴 NIST CSF 2.0（Cybersecurity Framework，6 Functions）
+
+**定位**：**outcomes-based** framework，2024 年 2 月发布 2.0，**most comprehensive** and widely adopted。
+
+| Function                | 一句话                            |
+| ----------------------- | ------------------------------ |
+| **Govern (GV)**（2.0 新增） | 定战略、风险胃口、政策、角色、**供应链期望**——谁说了算 |
+| **Identify (ID)**       | 资产、系统、数据、业务背景、依赖和风险——我有什么、风险在哪 |
+| **Protect (PR)**        | 身份管理、访问控制、培训、数据安全——怎么防         |
+| **Detect (DE)**         | 持续监控、日志、分析，发现异常——怎么发现          |
+| **Respond (RS)**        | 遏制、分析、沟通、补救已确认的事件——出事怎么处理      |
+| **Recover (RC)**        | 恢复运营、提升韧性——怎么恢复                |
+
+**三个组成部分**：
+
+- **CSF Core**：taxonomy——Functions → **Categories**（22 个）→ **Subcategories**（可衡量结果，如 `ID.AM-01`）
+- **Organizational Profiles**：**Current Profile** vs **Target Profile**，找 gap、排优先级
+- **Tiers**：治理的严谨 / 整合程度，**不是合规认证，也不是打分**
+
+**Tiers 1–4**：**1 Partial**（临时、被动、各自为政）→ **2 Risk Informed**（管理层意识到但没全企业规范化）→ **3 Repeatable**（正式、管理层批准、一致执行、定期复审）→ **4 Adaptive**（用经验、指标、威胁情报持续改进，融入企业规划）。评估维度：risk-management process / integrated program / external participation。
+
+**Profile 五步**：① Scope the Profile → ② Gather inputs（政策、风险胃口、BIA、威胁情报、监管、资产清单）→ ③ Create Current & Target Profiles（选 subcategories，记录现状、owner、证据、目标）→ ④ Analyze gaps（residual risk、依赖、成本、可行性）→ ⑤ Implement and refresh。
+
+**金融业例子（PR.AA 身份与访问）**：Current：MFA 只覆盖 VPN 和大部分 SaaS，遗留系统纯密码；Target：所有特权 / 远程 / 外部可访问系统 **phishing-resistant MFA**，每个服务账号有 owner；Gap → 有 owner、deadline、资金的具体项目。
+
+**易混**：
+
+- Profile 问「**有没有做到**」，Tier 问「**是怎么做到的**（流程多正式）」——两者独立。用 Excel 记资产但流程严格 = Profile 未达标 + Tier 3；上了 CMDB 没人维护 = Profile 看似达标 + Tier 低。
+- 第三方风险属于 **Govern 下的 GV.SC（Supply Chain）**，不是 Identify（→ W5）。
+
+🔎 搜索词：NIST CSF 2.0, cybersecurity framework, Govern, Identify, Protect, Detect, Respond, Recover, GV ID PR DE RS RC, core, profile, current profile, target profile, gap analysis, tier, partial, risk informed, repeatable, adaptive, GV.SC, 六大功能, 现状目标, 成熟度
+
+### 🔴 Inherent Risk vs Residual Risk（固有风险 vs 剩余风险）
+
+**课件原文（W3 p.11）**：*Inherent risk is the level of risk **before considering existing controls**. It helps distinguish intrinsically high-risk activities from lower-risk activities with weak implementation.*  
+**Residual risk** = 实施控制**之后**仍存在的风险。
+
+**关系**：Residual Risk = Inherent Risk − 控制措施降低的部分。FAIR 里控制主要降 **Vulnerability → LEF**，residual risk 就是控制生效后剩下的 `LEF × LM`。
+
+**例子**：员工被钓鱼骗走凭证——完全没有邮件过滤、MFA、培训时的风险 = inherent；上了邮件过滤 + 反钓鱼培训 + MFA + 异常登录告警之后，攻击者仍可能用 deepfake 骗取 MFA 验证码或绕过未受管设备 = residual，**不会降到 0**。
+
+**目标**：把 residual risk 压到 **risk appetite** 以内，而不是降到零。
+
+🔎 搜索词：inherent risk, residual risk, gross risk, net risk, before controls, after controls, risk appetite, 固有风险, 剩余风险, 残余风险
+
+### 🔴 ISO 27001 / ISO 27002
+
+|      | ISO 27001                                                  | ISO 27002                        |
+| ---- | ---------------------------------------------------------- | -------------------------------- |
+| 性质   | 国际**可认证**标准                                                | 实施指南，**不可认证**                    |
+| 回答   | 有没有可审计的 **ISMS**（Information Security Management System）？  | 控制具体怎么设计、怎么运作？                   |
+| 核心产出 | **Statement of Applicability (SoA)**：哪些控制适用、为什么、是否落实、为什么排除 | MFA、日志、供应商认证、SDLC、DevOps、数据脱敏怎么做 |
+
+**93 个控制 / 4 个主题**：Organizational (A.5) **37** · People (A.6) **8** · Physical (A.7) **14** · Technological (A.8) **34**。
+
+**CIA Triad（课件版）**：
+
+| 原则              | 含义                  | 失败例子                | 典型控制                          |
+| --------------- | ------------------- | ------------------- | ----------------------------- |
+| Confidentiality | 只能被授权的人 / 流程 / 设备访问 | 云配置错误导致个人数据泄露       | 数据分类、最小权限、MFA、加密、DLP          |
+| Integrity       | 准确、完整、真实，不被未授权篡改    | 攻击者篡改支付收款方          | 强授权、maker-checker、数字签名、不可篡改日志 |
+| Availability    | 授权用户能及时可靠访问         | 勒索 / DDoS 导致交易平台不可用 | 容灾架构、备份、DR、BCP                |
+
+🔎 搜索词：ISO 27001, ISO 27002, ISMS, certification, certifiable, SoA, statement of applicability, 93 controls, Annex A, CIA triad, confidentiality, integrity, availability, maker-checker, 可认证, 信息安全管理体系
+
+### 🟡 CIS Critical Security Controls
+
+**18 Controls + 153 Safeguards**，带 benchmarks、评估工具、加固镜像。
+
+| Implementation Group | 范围            | 适用                               |
+| -------------------- | ------------- | -------------------------------- |
+| **IG1**              | 56 safeguards | 基础防护（basic cyber hygiene），应对常见攻击 |
+| **IG2**              | 130（累加）       | 有专职 IT / 安全团队、系统较敏感              |
+| **IG3**              | 全部 153        | 高风险、资源充足、常被盯上                    |
+
+18 个大类顺序：资产清点 → 配置与数据保护 → 身份与访问 → 漏洞管理 → 日志 → 邮件 / 浏览器 → 恶意软件 → 备份 → 网络 → 培训 → 供应商 / 软件安全 → 事件响应 → 渗透测试。
+
+🔎 搜索词：CIS controls, CIS critical security controls, 18 controls, 153 safeguards, IG1 IG2 IG3, implementation group, cyber hygiene
+
+### 🔴 COBIT 2019（Governance vs Management）
+
+**目的**：帮助董事会和高管确保技术**创造价值、在风险胃口内运作、资源被负责任地使用**。
+
+**最重要的区分**：
+
+- **Governance 治理**：evaluate stakeholder needs, **set direction**, prioritize, **monitor performance**——**董事会 / 高管**
+- **Management 管理**：**plan, build, run, monitor** activities to execute the direction——**执行层**
+
+**5 domains / 40 objectives**：**EDM** Evaluate, Direct, Monitor（5，治理）· **APO** Align, Plan, Organize（14）· **BAI** Build, Acquire, Implement（11）· **DSS** Deliver, Service, Support（6）· **MEA** Monitor, Evaluate, Assess（4）。  
+重点：**APO12 Managed Risk**（在批准容忍度内持续识别 / 评估 / 降低 I\&T 风险）、**APO13 Managed Security**（定义、运行、监控 ISMS）。
+
+🔎 搜索词：COBIT, COBIT 2019, governance vs management, EDM, APO, BAI, DSS, MEA, APO12, APO13, 40 objectives, 治理与管理
+
+### 🔴 Framework Comparison（框架怎么组合）
+
+| Framework    | 回答的问题                  |
+| ------------ | ---------------------- |
+| NIST CSF 2.0 | 安全项目该达成什么 **outcome**？ |
+| ISO 27001    | 有没有可审计的 **ISMS**？      |
+| ISO 27002    | 选定的控制怎么设计和运作？          |
+| CIS Controls | 该**优先**落实哪些具体防护？       |
+| COBIT 2019   | 技术治理是否有效、**问责**是否清晰？   |
+
+**典型运营模型（可以直接照抄）**：*Use **COBIT** to assign accountability across board, executives, risk, technology, security and audit → use **ISO 27001** to run the ISMS → use **ISO 27002 + CIS Controls** to design and implement the control environment → use **NIST CSF Profiles** to communicate current and target security posture.*
+
+**FAIR 不在这张分工表里**：它是独立的定量工具，可以套在任何框架识别出来的风险上算钱。
+
+🔎 搜索词：framework comparison, operating model, combine frameworks, mapping, 框架对比, 框架组合
+
+### 🔴 FAIR 入门（Factor Analysis of Information Risk）
+
+**公式**：**Risk = Loss Event Frequency (LEF) × Loss Magnitude (LM)**；LEF = **TEF × Vulnerability**；LM = **Primary + Secondary loss**。（完整版见 W3「FAIR 深挖」和第 8 节）
+
+| 组件                             | 大白话                                            | 例子                                                      |
+| ------------------------------ | ---------------------------------------------- | ------------------------------------------------------- |
+| **TEF** Threat Event Frequency | 黑客一年来「敲门」几次（不管成不成功）                            | 一年被尝试攻击 20 次                                            |
+| **Vulnerability**              | 每次敲门有多大概率真的破门                                  | 没打补丁 30%；分段 + 补丁后 2%                                    |
+| **LEF**                        | 一年真的出几次事 = TEF × Vuln                          | 20 × 30% = 6 次 / 年                                      |
+| **Primary loss**               | 公司自己直接掏的钱：IR、取证、修复、停机、赎金、换设备                   | HK$5M                                                   |
+| **Secondary loss**             | 因为**别人反应**（监管、客户、媒体、股东）多花 / 多亏的钱：罚款、诉讼、客户流失、声誉 | HK$15M                                                  |
+| **LM**                         | 一次总共亏多少 = Primary + Secondary                  | HK$20M                                                  |
+| **Risk**                       | 平均一年预期亏多少 = LEF × LM                           | 6 × 20M = **HK$120M / 年**；加固后 0.4 × 20M = **HK$8M / 年** |
+
+**判断 Primary vs Secondary**：Primary = 直接处理事件的钱；Secondary = 别人反应导致的钱。
+
+*（网页版此处可以自己调 TEF / Vulnerability / Primary / Secondary；下表是预设场景的结果）*
+
+| 场景                    | LEF = TEF × Vulnerability | LM      | Risk（年化预期损失） |
+| --------------------- | ------------------------- | ------- | ------------ |
+| Ransomware（Week 3 案例） | 1 × 25% = 0.250           | US$9.3M | **US$2.33M** |
+| 数据泄露 · 未加固（Week 2 案例） | 20 × 30% = 6.000          | HK$20M  | **HK$120M**  |
+| 数据泄露 · 已加固（Week 2 案例） | 20 × 2% = 0.400           | HK$20M  | **HK$8M**    |
+| 自定义                   | 2 × 20% = 0.400           | US$3M   | **US$1.2M**  |
+
+🔎 搜索词：FAIR, factor analysis of information risk, LEF, LM, TEF, vulnerability, primary loss, secondary loss, loss magnitude, loss event frequency, quantitative risk, 定量风险
+
+### 🔴 MITRE ATT\&CK
+
+**全称**：**Adversarial Tactics, Techniques, and Common Knowledge**——开放的、基于真实攻击者行为的知识库。
+
+| 层              | 含义                                 |
+| -------------- | ---------------------------------- |
+| **Tactics**    | **The Why**——攻击者的高层目标（获取初始访问、窃取数据） |
+| **Techniques** | **The How**——达成目标的方法（钓鱼邮件、凭证转储）    |
+| **Procedures** | **The How Exactly**——具体步骤、命令、工具    |
+
+规模：**14 tactics、222 techniques、475 sub-techniques**。Enterprise matrix 顺序：Reconnaissance → Resource Development → Initial Access → Execution → Persistence → Privilege Escalation → Defense Evasion → Credential Access → Discovery → Lateral Movement → Collection → Command and Control → Exfiltration → Impact。工具：ATT\&CK Navigator、CISA Decider、MITRE-Engenuity、Mandiant。
+
+🔎 搜索词：MITRE ATT\&CK, TTP, tactics techniques procedures, adversary behavior, kill chain, lateral movement, exfiltration, 攻击者行为, 战术技术
+
+### 🔴 MITRE D3FEND
+
+**全称**：**Detection, Denial, and Disruption Framework Empowering Network Defense**——防御技术知识图谱，把防御措施和 ATT\&CK 的攻击行为**关联起来**。  
+四类关系：defensive techniques · digital artifacts（账号、凭证、文件、进程、流量、配置）· defensive properties（**detects / hardens / isolates / restricts / validates**）· offensive techniques。
+
+| 攻击顾虑      | D3FEND 防御方向           |
+| --------- | --------------------- |
+| 凭证钓鱼 / 窃取 | MFA、凭证加固、消息过滤、抗钓鱼认证   |
+| 使用被盗凭证    | 访问策略、条件访问、账号使用监控、会话限制 |
+| 横向移动      | 网络分段、隔离、远程服务限制、账号隔离   |
+| 数据窃取      | 数据访问限制、文件监控、DLP、出站监控  |
+
+用例：安全架构设计、控制差距分析、检测工程、**采购（技术中立的需求）**、purple teaming。  
+**一句话**：ATT\&CK 讲攻击者怎么打，D3FEND 讲该用什么类型的防御去应对——攻防对照表。
+
+🔎 搜索词：D3FEND, defensive techniques, detects hardens isolates restricts validates, ATT\&CK vs D3FEND, 防御知识图谱
+
+### 🟡 Red / Blue / Purple Team
+
+|    | Red                         | Blue             | Purple          |
+| -- | --------------------------- | ---------------- | --------------- |
+| 角色 | 攻方，模拟真实攻击                   | 守方，保护和防御         | 促进红蓝协作，整合攻防     |
+| 工具 | Metasploit、Kali Linux、自定义脚本 | 防火墙、SIEM、EDR、IDS | 两边都用            |
+| 产出 | 漏洞和攻击路径报告                   | 实时检测和响应能力        | 打通攻防 gap，整体提升态势 |
+
+**易混**：Purple 是**协作机制**，不是第三支打仗的队伍——让 Red 的发现快速变成 Blue 的检测规则（用 ATT\&CK 模拟，用 D3FEND 验证）。
+
+🔎 搜索词：red team, blue team, purple team, penetration test, adversary emulation, 红队, 蓝队, 紫队
+
+### 🔴 案例：HK$200M Deepfake 视频会议诈骗
+
+**事件**：香港某跨国公司（Arup）财务员工在一场**多人 deepfake 视频会议**里被「CFO 和同事」指示转账，分多笔转出 **HK$200 million**。说明 AI 能**同时击穿人的信任和薄弱的交易控制**。
+
+**课件的分析框架**：**What controls were broken down?（诊断）→ What can be improved?（开药）**——先诊断后开药。
+
+**五个 Root Causes**：
+
+1. **Identity verification relied on appearance**——视频 / 语音被当作高管身份的证明
+2. **Insufficient control path for high-risk actions**——社工请求无需独立验证就能推进付款
+3. **Authority overrode verification**——「老板发话 + 紧急」压制了质疑
+4. **Weak beneficiary controls**——新增收款人、异常付款模式没有触发「停下核实」
+5. **Detection too late**——缺少实时行为 / 交易监控
+
+**Attack chain**：Targeting（锁定有付款权限的财务员工；组织信息暴露过多）→ Pretext（冒充高管发消息）→ Impersonation（deepfake 图像和声音的多人视频会议）→ Social Engineering（权威 + 紧迫，缺乏带外验证）→ Execution（多笔转账；双重审批、收款人验证、限额不足）→ Discovery（事后才发现，检测是追溯型）。
+
+**控制改进三类**：
+
+- **身份与沟通**：抗钓鱼 MFA + 强交易签名；反冒充流程（涉及钱 / 凭证 / 敏感数据 / 绕过安控的请求都要被质疑）；用 AI 钓鱼和 deepfake 场景做培训
+- **治理与应急**：把 deepfake 冒充纳入威胁模型和欺诈风险登记册；高管身份被冒充的演练；与银行建立快速撤回 / 冻结机制
+- **操作控制**：超阈值付款**双重独立审批**；收款方变更要验证；**"Email, chat, voice or video call alone is not sufficient to verify a material payment instruction"**；收款人白名单、冷静期、maker-checker、多风险信号叠加时自动暂停
+
+**Root cause vs symptom**：症状是「员工批准了假转账」；root cause 是「制度默认视频通话 = 身份证明，没有独立验证渠道」。用 **5 Whys** 一直追问到制度 / 流程漏洞。
+
+**W7 对应**：InfoSec 金融业重点「Fraud and impersonation → 付款回拨 + 双人审批」；W7 案例「AI 冒充触发虚假付款变更」情景。
+
+🔎 搜索词：deepfake, Arup, HK$200 million, video conference fraud, impersonation, CEO fraud, BEC, social engineering, root cause, attack chain, callback, dual approval, out-of-band verification, 深度伪造, 视频会议诈骗, 冒充, 根本原因
+
+### 🔴 AI Impacts on Cyber Security（AI 对攻防的双重影响）
+
+**Better offenses**（集中在攻击链**早期**）：侦察（更快聚合公开信息、员工角色、暴露资产）· 钓鱼 / 社工（流畅定制邮件、多语言、**克隆语音、合成视频**）· 恶意软件和脚本（更快生成 / 修改 / 混淆）· 凭证与身份攻击（更逼真的 BEC）· 入侵后数据分析 · 攻击规模（自动化、变化内容绕过静态检测）。
+
+**Better defenses**：检测与分流（异常行为、告警聚合、降噪）· 钓鱼与欺诈防御 · 漏洞管理（按资产关键性和活跃威胁排优先级）· 事件响应（信息富化、playbook、证据收集）· 安全工程（AI 审代码、生成测试、IaC）。
+
+**一句话**：*AI does not change the basic logic of attack and defence, but it greatly increases the speed and scale on both sides — especially the early stages (reconnaissance, phishing, impersonation).*
+
+（第二讲见 W5「AI 六类新风险」，第三讲见 W7 Mythos）
+
+🔎 搜索词：AI impact, AI offense, AI defense, generative AI, LLM, voice cloning, AI phishing, AI-enabled attack, AI 攻击, AI 防御, 双刃剑
+
+---
+
+## W3 · 风险管理方法论与威胁建模
+
+### 🔴 Cyber Security Risk Management 七步法
+
+```
+① Establish context and governance
+ → ② Identify assets, processes, data, and dependencies
+  → ③ Identify threat scenarios and vulnerabilities (Threat Modeling)
+   → ④ Assess inherent risk
+    → ⑤ Select and implement risk treatment
+     → ⑥ Assess residual risk and obtain acceptance
+      → ⑦ Monitor, report, test, and reassess  ↺（有变化就回到 ①）
+```
+
+**一句话**：前六步把一个风险从发现到处理走完，第七步保证判断不过期；FAIR 是把第 ④⑥ 步的「风险多大」从高 / 中 / 低换成美元数字。
+
+🔎 搜索词：seven steps, 7-step methodology, risk management process, risk management lifecycle, 七步法, 风险管理流程
+
+### 🔴 Step ①：Establish Context and Governance（建立上下文与治理）
+
+| 要素                      | 课件原文                                                                                                                                  |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Scope**               | Business unit, platform, process, legal entity, cloud tenant, third party, or critical service                                        |
+| **Business objectives** | Revenue protection, client confidentiality, service availability, regulatory compliance, financial resilience, operational continuity |
+| **Risk appetite**       | The level of cyber risk the **board and senior management is prepared to tolerate**                                                   |
+| **Assessment criteria** | Likelihood, impact, risk-rating scale, evidence requirements, review cadence, escalation thresholds                                   |
+
+**Governance 要指定四类角色**：**business risk owner**、**technology / control owner**、**security owner**、**formal risk-acceptance authority**（没有它，第 ⑥ 步没人能签字接受风险）。
+
+**金融机构的影响面（p.7）**：Financial（损失、修复、欺诈、合同责任）· Client（资产、PII、交易数据、机密持仓）· Regulatory（可报告事件、违规、审计发现、执法）· Operational（交易、开户、支付、保证金、结算、客服中断多久）· Reputation（机构客户 / 交易对手信心）· Safety / systemic（市场诚信、金融稳定、关键基础设施）。
+
+🔎 搜索词：establish context, scope, business objectives, risk appetite, assessment criteria, risk owner, risk acceptance authority, impact areas, 建立上下文, 范围, 风险胃口, 风险负责人
+
+### 🟡 Step ②：Identify what to protect（盘点资产）
+
+六类：**Core services**（交易平台、客户门户、支付、行情、结算、资金、身份平台）· **Information assets**（客户 PII、KYC、交易持仓、源代码、模型、凭证、密钥）· **Technology assets**（应用、API、云账号、终端、数据存储、网络分段、SaaS、OT/IoT）· **Dependencies**（托管商、云、经纪商、交易所、行情、软件供应商、外包）· **Data flows**（产生、流向、处理、存储、离开组织）· **Ownership**（**named owner** 能说清「这东西没了业务会怎样」，并**文档化**）。
+
+🔎 搜索词：identify assets, crown jewels, information assets, dependencies, data flows, asset owner, asset inventory, 资产盘点, 资产清单
+
+### 🔴 Step ③：Threat Modeling 威胁建模五要素
+
+| # | 要素                                       |
+| - | ---------------------------------------- |
+| 1 | **An actor** 威胁行为者                       |
+| 2 | **An attack path** 攻击路径                  |
+| 3 | **A weakness (vulnerability)** 弱点        |
+| 4 | **Targeted assets / services** 目标资产 / 服务 |
+| 5 | **Business impacts** 业务影响                |
+
+**课件例句（模板，可以直接改写）**：*"A **financially motivated hacker group** compromises a privileged administrator account through **phishing and MFA fatigue**, uses **excessive cloud permissions** to exfiltrate **client onboarding data**, and disrupts the **client portal**, resulting in **client privacy exposure, regulatory notification, client remediation costs, and loss of service availability**."*
+
+**构造场景的素材（p.10）**：MITRE ATT\&CK techniques 与已观察到的攻击路径 · threat intelligence · incident and near-miss history · BIA 与 DR 测试 · 渗透测试、红队、漏洞管理 · 供应商评估 · 架构 / 云配置 / 身份访问审查 · 监管发现与内审观察。**威胁场景要有证据支撑，不是拍脑袋**。
+
+🔎 搜索词：threat modeling, threat model, threat scenario, actor, attack path, weakness, vulnerability, targeted asset, business impact, MFA fatigue, scenario sources, 威胁建模, 威胁场景, 攻击路径
+
+### 🔴 Step ④：Assess Inherent Risk + 风险矩阵（Heat map）
+
+**公式**：**Inherent Risk = Likelihood × Impact**；**ALE (Annualized Loss Expectancy) = Event Frequency × Loss Magnitude**。三个版本由粗到细：Inherent Risk（定性）→ ALE（半定量）→ FAIR（定量，带概率分布）。
+
+**5×5 风险矩阵**：分数 = Probability 等级 × Impact 等级。
+
+| 颜色     | 分数    | 含义                 |
+| ------ | ----- | ------------------ |
+| 深绿     | 1–3   | 很低，通常 Accept       |
+| 黄      | 4–9   | 中等，看是否在 appetite 内 |
+| 橙      | 10–12 | 偏高，通常 Mitigate     |
+| 红 / 深红 | 14–25 | 高到严重，立即处理或上报董事会    |
+
+**例子**：Likely (4) × Major (4) = **16**（红）。
+
+**局限**（写分析题时可加）：热力图把太多风险都标成 High，区分不出优先级；不反映 velocity / connectivity；不能直接比较投资——这正是 W3 p.34 说「何时用 FAIR」的理由之一。
+
+🔎 搜索词：inherent risk, likelihood x impact, heat map, risk matrix, 5x5, risk score, ALE, annualized loss expectancy, qualitative, 风险矩阵, 热力图, 定性评估
+
+### 🔴 Step ⑤：Evaluate Controls & Select Treatment（评估控制与选择处置）
+
+**评估控制的四个标准（p.12）**：
+
+- **Design effectiveness**：设计上能否实质降低该场景的可能性或影响？（有没有用）
+- **Operating effectiveness**：是否持续部署、被监控、有证据、被测试？（有没有真的在跑）
+- **Coverage**：是否覆盖所有相关用户、系统、地区、账号、数据流、第三方？（有没有漏）
+- **Resilience**：能否扛住真实对手、控制失效和运营中断？（扛不扛得住）
+
+**四种处置**：见 W1「四种风险应对」（Mitigate / Avoid / Transfer / Accept 的使用条件和例子）。答题时要说出**为什么不是另外三个**。
+
+🔎 搜索词：control effectiveness, design effectiveness, operating effectiveness, coverage, resilience, evaluate controls, treatment selection, 控制有效性, 设计有效性, 运行有效性
+
+### 🔴 Step ⑥–⑦：Monitor, Report, Test, Reassess
+
+| 动作           | 目的                                       |
+| ------------ | ---------------------------------------- |
+| **Monitor**  | 确保控制**存在**并产生预期告警（在不在）                   |
+| **Test**     | 确保控制**扛得住**真实失效或攻击（扛不扛得住）                |
+| **Report**   | 把技术细节**翻译成决策**，给不同受众（该让谁知道）              |
+| **Reassess** | 原来的场景、可能性、影响、控制假设、剩余风险和决策**是否还成立**（还准不准） |
+
+**NIST Continuous Monitoring 定义**：*Maintaining ongoing awareness of information security, vulnerabilities, and threats to support risk-management decisions.* **踩坑**：监控应**围绕业务服务和最高优先级风险场景**设计，而不是工具产出什么就看什么。
+
+**监控四个领域**：Threat environment（被利用的 CVE、新钓鱼手法、供应商泄露）· Exposure and vulnerability（资产清点比例、SLA 内修复率、云错配）· Control effectiveness（EDR / MFA 覆盖率、特权复核完成率、备份恢复成功率）· Business and technology change（新云区域、并购、新 API、外包、GenAI 上线）。
+
+**监控频率与风险成正比**：安全事件 / 身份异常 / EDR 告警——近实时或每日；关键漏洞 / 外部攻击面——每日到每周；修复和配置合规——每周或每月；特权访问 / 日志 / 备份——每月；第三方——每季度 + 事件触发；控制设计和运行有效性——每季度到每年；董事会报告——每月或每季度；全面评估——**至少每年**。
+
+**有效测试的五步**：① 定义场景和期望控制结果 → ② 测试有代表性的群体（含例外、高风险用户、远程站点、云账号、遗留系统）→ ③ 记录方法、样本、证据、结果、严重度、owner → ④ **修复后重测**（关闭发现要靠证据，不能只靠一句「做了」）→ ⑤ 反复失败要转化为风险登记更新、控制重设计、政策或投资决策。端到端例子：攻击检测 → 隔离 → IR → 客户沟通 → 从干净备份恢复 → 完整性验证 → 在 RTO 内恢复。
+
+**报告受众**：SOC（每日 / 周：告警、事件、检测缺口）· 技术与控制 owner（每周 / 月：控制失效、逾期修复）· 业务风险 owner（每月：剩余风险、服务影响、处置里程碑）· 执行风险委员会（每月 / 季：最高风险、胃口突破、投资决策）· **董事会**（**每季度或事件驱动**：重大暴露、韧性、重大事件、第三方集中度、战略决策）。
+
+**仪表盘内容**：Top 10–15 场景化风险（按剩余风险排序）· inherent vs residual、趋势、是否在胃口内 · 处置状态（on track / at risk / overdue / blocked / completed）· 控制有效性指标 · 关键漏洞（数量、账龄、SLA 违反）· 身份态势（抗钓鱼 MFA、特权、休眠账号、PAM）· 韧性（恢复测试成功率）· 第三方暴露 · 事件与未遂事件 · **需要的决策**（资金、风险接受、政策例外、风险转移）。
+
+**Reassess 的十个触发条件**：① 固定周期 ② 重大事件 / 未遂 / 欺诈 / 控制失效 ③ 相关漏洞被主动利用或可信威胁情报 ④ 关键漏洞超 SLA 或要例外 ⑤ 系统 / 架构 / 云 / 数据流 / 身份 / 网络重大变化 ⑥ 新产品、市场、法人、支付流程或 **AI 部署** ⑦ 关键供应商入职、续约、违约、财务恶化、集中度 ⑧ 审计、监管检查、渗透测试、红队发现 ⑨ 风险接受 / 补偿控制 / 修复承诺**到期** ⑩ 法律法规、合同义务或**风险胃口**变化。
+
+**完整例子（p.20，特权云账号被攻破）**：Monitor 特权账号清单、MFA 覆盖、异常登录、云审计日志 → Test 季度访问复核抽样、条件访问拦截、紫队模拟 token 盗用、从干净备份恢复门户 → Report 剩余风险、PAM 覆盖、MFA 例外、未解决缺口 → Reassess 身份提供商漏洞被利用就**调高**可能性；只有 PAM + 抗钓鱼 MFA 部署完、证据审查、独立测试确认后才**调低**剩余风险。
+
+**最低标准（p.21，可以照抄）**：按风险分级的节奏监控 · 关键控制**至少每年测试**（身份、漏洞、云、检测、备份、关键服务更频繁）· 剩余风险**每月报管理层、每季度报董事会** · **每年**全面刷新 · 事件驱动的重评估 · **修复只有在验证确认风险降低后才算完成**。
+
+🔎 搜索词：monitor, test, report, reassess, continuous monitoring, monitoring frequency, testing, board reporting, dashboard, reassessment triggers, minimum standard, 监控, 测试, 报告, 重评估, 触发条件, 董事会报告, 仪表盘
+
+### 🔴 Related Artifacts（风险管理要落到的文档）
+
+| Artifact                                 | 是什么                                                                   |
+| ---------------------------------------- | --------------------------------------------------------------------- |
+| **Risk taxonomy**                        | 身份、云、应用安全、数据保护、韧性、第三方、欺诈、内部人、AI、监管合规等领域                               |
+| **Scenario-based risk register**         | 所有重大风险的**唯一真相来源**                                                     |
+| **Control library**                      | 映射到 NIST CSF、ISO 27001、CIS、内部政策、监管                                    |
+| **Risk heat map & executive dashboard**  | 最高风险、趋势、剩余暴露、逾期处置、胃口突破                                                |
+| **Treatment plan**                       | 补救行动、预算、责任高管、里程碑、可衡量完成标准                                              |
+| **Exception / risk-acceptance register** | 含**到期日**和批准权限                                                         |
+| **KRI (Key Risk Indicators)**            | MFA 覆盖率、特权账号卫生、关键漏洞 SLA 合规、备份恢复测试成功率、**MTTD / MTTR**、第三方评估状态、抗钓鱼认证采用率 |
+
+🔎 搜索词：artifacts, risk register, risk taxonomy, control library, treatment plan, exception register, risk acceptance register, KRI, key risk indicator, MTTD, MTTR, 风险登记册, 控制库, 处置计划
+
+### 🔴 FAIR 深挖（W3 p.23–36）
+
+**定义**：*FAIR is a quantitative model for analyzing cyber and operational risk in financial terms; it defines risk as the **probable frequency and probable magnitude of future loss**.*
+
+**FAIR 因子树**：Risk ← LEF（← TEF ← Contact Frequency × Probability of Action；← Vulnerability ← Threat Capability vs Resistance Strength）× LM（← Primary Loss；← Secondary Loss ← Secondary LEF × Secondary LM）。
+
+**七步 workflow（p.25）**：① 定义损失场景（资产、威胁群体、威胁行为、影响、损失形式）→ ② 估计 TEF（内部遥测、行业事件、红队、专家校准）→ ③ 估计 Vulnerability（威胁能力 vs 控制抵抗强度）→ ④ 建模 LM（直接 + 次生）→ ⑤ 跑概率分析（**Monte Carlo**，得到年化损失分布和**超越概率曲线 loss-exceedance curve**）→ ⑥ 比较处置方案（只改该控制影响的输入）→ ⑦ 记录不确定性和敏感性。
+
+**案例一：Water Plant（定性拆解）**：外部行为者攻破可从互联网访问的远程管理接口 → 人工操作、紧急承包商、水质检测、监管介入、服务中断。Frequency：远程访问暴露面、扫描数据、威胁群体活动；Vulnerability：MFA、IT/OT 分段、安全远程访问、特权限制、补丁、监控、能否切人工；Magnitude：停产时长、修复、加班、公众沟通、罚款、索赔、监管。选项：移除公开暴露、带 MFA 的分段跳板机、OT 监控、冗余 / 人工运营。
+
+**案例二：MFA + PAM 投资（p.27–29）**：
+
+| 指标               | Baseline | MFA + PAM 后                   |
+| ---------------- | -------- | ----------------------------- |
+| 年化损失暴露           | US$6.0M  | US$2.2M（降约 **US$3.8M**）       |
+| 单年损失超 US$10M 的概率 | **14%**  | **4%**（尾部风险明显下降）              |
+| 成本               | —        | **US$1.8M 一次性 + US$0.4M / 年** |
+| 剩余风险             | 可能超出胃口   | 可能在胃口内                        |
+
+**案例三：勒索软件详细案例（p.30–32，最可能出计算）**：资产 = 客户门户、身份服务、应用服务器、客户数据仓库；威胁群体 = 财务动机勒索运营者及附属；时间 = 未来 12 个月；决策 = 是否为分段、抗钓鱼 MFA、不可篡改备份和恢复拨款。
+
+| Factor        | Low  | Most likely | High |
+| ------------- | ---- | ----------- | ---- |
+| TEF（次 / 年）    | 0.4  | 1.0         | 2.0  |
+| Vulnerability | 10%  | 25%         | 45%  |
+| LEF（次 / 年）    | 0.04 | **0.25**    | 0.90 |
+
+| Loss component                | Low     | Most likely | High     |
+| ----------------------------- | ------- | ----------- | -------- |
+| Incident response & forensics | 0.3     | 0.8         | 2.0      |
+| Technology recovery           | 0.5     | 1.5         | 4.0      |
+| Business interruption         | 0.8     | 3.0         | 10.0     |
+| Client remediation            | 0.2     | 1.0         | 5.0      |
+| Regulatory / legal            | 0.0     | 1.0         | 8.0      |
+| Reputational / customer loss  | 0.0     | 2.0         | 15.0     |
+| **Total LM（US$m）**            | **1.8** | **9.3**     | **44.0** |
+
+**算法**：LEF = 1.0 × 25% = **0.25**（约每 4 年一次）；LM = **US$9.3M**；Risk = 0.25 × 9.3 = **US$2.325M / 年**。  
+**Primary** = IR + recovery + business interruption = 0.8 + 1.5 + 3.0 = **US$5.3M**；**Secondary** = client remediation + regulatory / legal + reputational = 1.0 + 1.0 + 2.0 = **US$4.0M**。
+
+*（网页版此处可以自己调 TEF / Vulnerability / Primary / Secondary；下表是预设场景的结果）*
+
+| 场景                    | LEF = TEF × Vulnerability | LM      | Risk（年化预期损失） |
+| --------------------- | ------------------------- | ------- | ------------ |
+| Ransomware（Week 3 案例） | 1 × 25% = 0.250           | US$9.3M | **US$2.33M** |
+| 数据泄露 · 未加固（Week 2 案例） | 20 × 30% = 6.000          | HK$20M  | **HK$120M**  |
+| 数据泄露 · 已加固（Week 2 案例） | 20 × 2% = 0.400           | HK$20M  | **HK$8M**    |
+| 自定义                   | 2 × 20% = 0.400           | US$3M   | **US$1.2M**  |
+
+**Monte Carlo**：每个输入是一条分布（Low / Most likely / High 就是三角分布的三个点），跑成千上万次，得到年化损失分布，能回答「**P95 损失是多少**」，而不只是平均数。
+
+**何时用 FAIR（p.34）**：补救或安全项目要**大笔资金** · 两个以上控制能解决同一风险，需要经济比较 · 热力图把太多风险标成 High · 要定**网络保险 retention 和 limit** · 董事会要财务暴露或尾部信息 · 新供应商、并购、云架构、AI 用例可能有重大下行 · 业务想接受一笔很大的剩余风险。  
+**何时不用（p.35）**：风险明显很低、在胃口内 · 行动是**强制性的**（有约束力的监管控制，如 Kill Switch）· 决策**运营上紧急** · 证据太弱，区分不出方案 · 损失或成本 **immaterial**。  
+**目的**：不是完美预测，而是**让假设显性化、量化不确定性、改善投资权衡**。对每个低风险漏洞都跑 FAIR 是过度使用。
+
+**向管理层展示什么（p.36）**：场景与范围 · 因子与假设图 · 每个输入的证据来源 / 区间 / 置信度 / 责任 SME · baseline vs 处置后的**损失分布** · 敏感性分析找出的关键驱动因素 · **P50 / P90 / P95** 财务暴露 · 年损失超过风险胃口阈值的概率 · **每投入一美元的风险降低量**、时间线、剩余风险 · 明确的决策请求：拨款 / 推迟 / 调整范围 / 用保险转移 / 正式接受。
+
+🔎 搜索词：FAIR, Monte Carlo, simulation, loss exceedance curve, ransomware case, LEF 0.25, 9.3 million, 2.325, MFA PAM case, 1.8 million, when to use FAIR, when not to use FAIR, quantitative, P95, tail risk, water plant, 蒙特卡洛, 定量模型, 勒索案例
+
+---
+
+## W4 · 财务建模与高管汇报
+
+### 🔴 Financial Modeling of Cyber Risk（为什么做财务建模）
+
+**课件原文**：*Financial modeling translates **technical exposures** — ransomware, cloud compromise, payment fraud, third-party outage — into **decision-grade financial loss estimates**. The goal is not to predict a precise number, but to estimate a **defensible loss distribution**, the probability of exceeding key loss thresholds, and the economic value of controls, insurance and resilience investments.*
+
+**NIST vs FAIR**：NIST 帮助围绕威胁事件、漏洞、可能性、不利影响和不确定性做风险评估；**FAIR 提供把这些组件转成财务场景的定量结构**——互补，不是二选一。
+
+**核心**：**Annual Loss = LEF × LM**。好的模型产出**损失分布**，而不是红 / 黄 / 绿分数，这样管理层才能问：「预期年损失是多少？」「**P95** 要备多少资本？」「一个 1200 万的韧性项目能不能把损失降到足以证明它划算？」
+
+**五个步骤**：① 定义业务场景（通常 **3–5 个**，具体到能估计、重要到能影响决策）→ ② 估计 LEF = TEF × Vulnerability → ③ **分组件**建 LM（可审计，能看出控制作用在哪个组件）→ ④ 建模控制措施的财务价值 → ⑤ 建模保险。
+
+**场景例子（p.6）**：
+
+| Scenario            | 资产 / 流程      | 风险驱动          | 损失机制               |
+| ------------------- | ------------ | ------------- | ------------------ |
+| 勒索中断核心交易或客户服务       | 交易、运营、客户门户   | 加密、勒索、恢复失败    | 收入损失、加班、IR、修复、客户补偿 |
+| **BEC** 导致欺诈付款      | 财务、资金、开户     | 社工、付款验证弱      | 直接现金损失、调查、法律       |
+| 第三方行情 / 云 / SaaS 中断 | 交易工作流、组合运营   | 供应商韧性失效       | 生产力损失、错过交易、声誉      |
+| 客户或员工数据泄露           | CRM、HR、投资者记录 | 错配、凭证盗窃、供应商访问 | 取证、通知、法律、监管、索赔     |
+| 特权访问被攻破             | 生产、源代码、支付    | 身份弱、权限过大      | 中断、欺诈、恢复、诉讼        |
+
+**LEF 例子（p.7）**：每年相关钓鱼 / 凭证攻击 100 / **300** / 800 次 × 单次造成重大攻陷的概率 0.2% / **0.7%** / 2.0% → 年化损失事件 0.2 / **2.1** / 16.0 次。证据：邮件遥测、SOC 工单、威胁情报、紫队测试、历史事件。
+
+🔎 搜索词：financial modeling, cyber risk quantification, CRQ, loss distribution, decision-grade, annual loss, scenarios, P95 capital, 财务建模, 风险量化, 损失分布
+
+### 🔴 Loss Magnitude 分组件（p.8）
+
+| 损失组件                                      | 典型计算                   | 例子               |
+| ----------------------------------------- | ---------------------- | ---------------- |
+| **Incident response and forensics**       | 外部日薪 / 时薪 × 时长 + 内部投入  | 取证公司、违约律师、危机公关   |
+| **Restoration and replacement**           | 系统重建、数据恢复、软硬件、加班       | 身份、终端、服务器、应用恢复   |
+| **Business interruption**                 | 损失的边际贡献 + 生产力损失 + 合同罚款 | 交易停摆、无法处理申购 / 赎回 |
+| **Fraud or theft**                        | 总损失 − 追回 − 保险自留        | 欺诈电汇、勒索相关成本      |
+| **Regulatory and legal**                  | 按司法辖区、记录数、事实和律师意见给区间   | 调查、通知、抗辩、和解      |
+| **Customer and counterparty remediation** | 服务信用、补偿、监控、账户补救        | 客户影响成本           |
+| **Reputation and secondary effects**      | 保守、有证据支撑的区间            | 客户流失、融资延迟、获客成本上升 |
+
+**为什么分组件**：结果**可审计**，而且能看清楚控制措施作用在哪个组件（例如不可篡改备份主要降 business interruption 和 restoration）。这是 FAIR Primary / Secondary 的更细拆解。
+
+🔎 搜索词：loss magnitude components, incident response cost, business interruption, fraud, regulatory legal, customer remediation, reputation, 损失组件, 营业中断, 声誉损失
+
+### 🔴 Financial Value of Controls 控制措施的财务价值 / ROI（p.9）
+
+**课件原文**：*A control investment is economically justified when its **expected loss reduction plus other measurable benefits exceeds its lifecycle cost**.*
+
+**控制降低风险的三种方式**：
+
+1. **Reduce frequency**：抗钓鱼 MFA、PAM、EDR、缩小攻击面
+2. **Reduce severity**：不可篡改备份、分段、IR retainer、测试过的 DR
+3. **Transfer / recovery improvement**：保险、合同赔偿、欺诈追回流程
+
+**三个公式**：
+
+- **Expected Benefit = Baseline Expected Loss − Residual Expected Loss**
+- **Net Benefit = Expected Benefit − Control Lifecycle Cost**
+- **ROI = (Expected Benefit − Control Cost) / Control Cost**
+
+**例子（W3 MFA + PAM）**：Baseline 6.0 − Residual 2.2 = Expected Benefit **US$3.8M**；Cost 2.2（1.8 一次性 + 0.4 第一年运行）→ Net Benefit **US$1.6M**；ROI = 1.6 / 2.2 ≈ **73%** → 值得投。  
+若 Cost = 3.0：Net Benefit = 0.8，ROI ≈ **27%**，仍为正。
+
+**易混**：ROI 只看钱；W7 的 Priority score 还看把握、战略相关度、见效时间、尾部风险、交付风险。基础控制（备份、MFA）的价值主要在尾部，**ROI 会低估它们**（W7 原则 4）。
+
+*（网页版此处可以自己调 Baseline / Residual / Cost；下表是预设场景的结果）*
+
+| 场景                        | Expected Benefit | Net Benefit | ROI      |
+| ------------------------- | ---------------- | ----------- | -------- |
+| MFA + PAM 投资（Week 3/4 案例） | US$3.8M          | US$1.6M     | **73%**  |
+| 自定义                       | US$2M            | US$1M       | **100%** |
+
+🔎 搜索词：ROI, return on investment, return on security investment, ROSI, expected benefit, net benefit, baseline expected loss, residual expected loss, lifecycle cost, cost-benefit, 投资回报, 净收益, 成本收益
+
+### 🔴 Cyber Insurance 保险建模（p.10）
+
+**课件原文**：*Insurance should be modeled as a **financial layer**, not as a substitute for risk analysis.*
+
+**公式**：  
+**Net Retained Loss = Gross Covered Loss − min(max(Gross Covered Loss − Retention, 0), Limit) + Uncovered Loss + Premium**  
+其中 `min(max(Gross − Retention, 0), Limit)` = **Insurance Recovery**（保险公司实际赔付）。
+
+**例子**：Gross Covered Loss 8M，Retention 1M，Limit 4M，Uncovered 0.5M，Premium 0.2M → Recovery = min(7, 4) = **4M**；Net Retained = 8 − 4 + 0.5 + 0.2 = **US$4.7M**。公司仍然要自己扛超出 Limit 的部分、除外损失和保费。
+
+**保单要考虑的条款**：per-claim **retention / deductible** · **policy limit 和 aggregate limit** · 勒索、营业中断、付款欺诈、监管抗辩、IR 的 **sub-limits** · 营业中断的**等待期（waiting period）** · **除外责任**：战争、系统性事件、未加密数据、控制不足 · 交易对手和保险公司的**信用质量** · **潜在相关性**：一次大范围云或身份提供商中断可能同时影响很多被保险人（保险公司赔付能力被摊薄）。
+
+**易混**：保险是 **Transfer**，但只转移**部分**财务损失，不转移声誉、监管责任、运营中断本身。
+
+*（网页版此处可以自己调 Loss / Retention / Limit / Uncovered / Premium；下表是预设场景的结果）*
+
+| 场景                  | Insurance Recovery | Net Retained Loss |
+| ------------------- | ------------------ | ----------------- |
+| Ransomware 损失投保（示例） | US$5M              | **US$5.6M**       |
+| 自定义                 | US$3M              | **US$1.45M**      |
+
+🔎 搜索词：cyber insurance, retention, deductible, limit, sub-limit, aggregate limit, waiting period, exclusions, war exclusion, premium, net retained loss, insurance recovery, systemic correlation, 网络保险, 免赔额, 自留额, 保额上限, 除外责任
+
+### 🟡 Data Quality 数据质量（p.11）
+
+**课件原文**：*A good cyber financial model documents the **source, confidence, owner and refresh date** for every material input.*  
+区分：**Known data**（内部记录）· **External benchmarks**（外部代理）· **Expert judgments**（附置信度）· **Assumptions**（需验证）· **Correlations**（可能显著推高尾部损失）。
+
+| 输入        | 证据来源                      |
+| --------- | ------------------------- |
+| 资产与流程关键性  | BIA、RTO / RPO、流程图、收入成本数据  |
+| 事件频率      | SOC 案例、钓鱼遥测、既往事件、同业情报、红队  |
+| 控制有效性     | 审计证据、渗透测试、桌面演练、恢复测试、覆盖率   |
+| 停机成本      | 财务模型、交易 / 运营数据、工资、SLA     |
+| 响应 / 恢复成本 | 既往发票、供应商价目、IR retainer 条款 |
+| 法律与监管成本   | 隐私律师、合规、监管映射、索赔历史         |
+| 保险追回      | 保单条款、经纪人分析、理赔经验           |
+
+🔎 搜索词：data quality, inputs, source, confidence, owner, refresh date, known data, benchmarks, expert judgment, assumptions, correlations, evidence, 数据来源, 置信度, 假设
+
+### 🔴 Executive Presentation 高管汇报（p.12–15）
+
+**一页仪表盘（p.12）**：最高风险场景、**预期年损失**、**P95 损失**、风险胃口阈值、保险追回、最大损失驱动因素、排名前 1–3 的投资建议的降险经济性。
+
+**投资原则（p.12）**：
+
+| 原则                                        | 意思                                          |
+| ----------------------------------------- | ------------------------------------------- |
+| **Protect critical business services**    | 从交易、支付、客户报告、投资者门户出发，不是泛泛的 IT 资产             |
+| **Reduce tail risk**                      | 关注可能造成严重 **P95 / P99** 损失的事件，不只是频繁的低价值告警    |
+| **Measure risk reduction**                | 每项投资挂钩 LEF 或 LM 的降低；重大支出要有量化 baseline 和剩余风险 |
+| **Build resilience, not just prevention** | 假设控制有时会失效；为备份隔离、恢复测试、IR retainer、人工替代出钱     |
+| **Avoid control sprawl**                  | 整合差的工具堆栈造成成本、告警过载和盲区；整合重叠工具                 |
+
+**汇报技巧（p.13）**：
+
+- **开场就给一句话的建议和要求的决策**：
+  - ❌ 弱开场：*"Over the past year, the security team completed an assessment across 12 domains and identified 57 findings."*（只讲过程）
+  - ✅ 好开场：*"Approve a **US$10M, 18-month resilience program**. It addresses the two scenarios — identity compromise and third-party outage — that drive **70%** of modeled severe-loss exposure, and is expected to reduce annualized loss exposure by **US$25–40M**."*（建议 + 金额 + 场景 + 量化收益）
+- **让业务影响明确**：**Growth / Cost / Risk / Strategy / Execution / Return**（ROI、NPV、避免的损失）
+- **每页标题就是结论**（action titles）
+
+**八段结构（p.14）**：*A good executive presentation is **not a report but a decision tool**: lead with the answer, support with a few facts, make trade-offs visible, end with a precise action executives can approve, reject or modify.*
+
+1. **Decision and recommendation**（诉求、建议、资源、预期结果）
+2. **Why**（触发事件、风险变化、监管、战略紧迫性）
+3. **Current position and material gap**（少量关键事实，量化暴露）
+4. **Options and trade-offs**（**do nothing**、**minimum-compliance**、**recommended**、**accelerated**）
+5. **Recommended path and economics**（成本、收益、避免的损失、关键假设）
+6. **Execution, risks, and governance**（里程碑、依赖、owner、剩余风险）
+7. **The specific ask and next steps**（要什么批准、什么时候、谁行动）
+8. **Appendix**（支撑材料，以防追问）
+
+**自查清单（p.15）**：30 秒内能否复述建议？决策是否明确（金额、范围、owner、截止日期）？是否展示了**不作为的代价**？假设和不确定性是否承认？选项和权衡是否可见？只看标题能否拼出故事？细节是否移到附录？最可能的追问是否准备好？最后一页下一步是否清楚？
+
+🔎 搜索词：executive presentation, board presentation, communicate to board, decision tool, recommendation, the ask, weak opening, strong opening, options and trade-offs, do nothing, action titles, one-page dashboard, tail risk, control sprawl, 高管汇报, 董事会汇报, 开场, 决策
+
+---
+
+## W5 · 第三方供应商风险与 AI 风险
+
+### 🔴 为什么要管第三方风险（Third-Party / Vendor Risk Management, VRM）
+
+**课件原文**：NIST CSF 2.0 places this under the **Govern function, GV.SC (Cybersecurity Supply Chain Risk Management)**: prioritize suppliers by criticality, **include security requirements in contracts**, perform **due diligence before entering relationships**, **monitor** supplier risk over the relationship, **include relevant suppliers in incident response**, and **plan for termination**.
+
+**Cyber VRM 项目的目的**：① 识别哪些外部方会影响你的**机密性、完整性、可用性、韧性或监管义务** ② 施加**成比例的（proportionate）**技术和合同控制 ③ 持续监控重大变化。
+
+**为什么重要**：CrowdStrike 2024（W1）、供应商被攻陷、云中断——别人的系统会连累你，但**责任和监管后果在你自己身上**（*you can outsource the service, not the accountability*——这句是补充）。
+
+🔎 搜索词：third-party risk, vendor risk management, VRM, TPRM, supply chain risk, C-SCRM, GV.SC, outsourcing, fourth party, 第三方风险, 供应商风险, 供应链
+
+### 🔴 VRM 生命周期（8 个阶段，p.4）
+
+| Stage                          | Objective   | 关键活动                                               |
+| ------------------------------ | ----------- | -------------------------------------------------- |
+| **Intake and classification**  | 接触前先搞清暴露面   | 服务关键性、数据类型、连接方式、访问级别、托管、地理位置、分包商、可替代性              |
+| **Inherent-risk assessment**   | 决定尽调做多深     | 给数据、访问、关键性、监管、集中度、第四方、可恢复性打分（Tiering 公式）           |
+| **Pre-contract due diligence** | 验证供应商的控制环境  | SOC 报告、ISO 27001 证书、渗透测试摘要、漏洞管理证据、IR 计划、BCP/DR 证据  |
+| **Risk treatment**             | 降低超出胃口的风险   | 要求整改、收窄访问、补偿控制、隔离数据、加密 / 密钥控制、改集成设计，或拒绝 / 更换供应商    |
+| **Contracting and onboarding** | 把要求变成可执行的保障 | 安全附录、事件通知、访问控制、数据处理、审计权、分包商承诺、集成审查                 |
+| **Continuous monitoring**      | 发现态势下滑或新暴露  | 安全评级、威胁情报、泄露监控、证明刷新、补丁报告、SLA 与事件回顾                 |
+| **Incident and resilience**    | 供应商出事时限制损失  | 联合 playbook、桌面演练、证据保全、升级路径、BCP/DR 测试、替代方案          |
+| **Offboarding**                | 消除剩余暴露      | 禁用账号 / token、吊销证书和 API key、移除路由、验证数据归还 / 销毁、保留日志证据 |
+
+**和 W3 七步法对应**：Intake + Inherent-risk = 建上下文 / 评固有风险；Due diligence + Treatment = 评控制 / 选处置；Contracting = 落地；Monitoring + Incident = 监控 / 测试 / 重评估；**Offboarding 是供应商场景特有的「退出」**。
+
+🔎 搜索词：vendor lifecycle, intake, due diligence, contracting, onboarding, continuous monitoring, offboarding, exit, 供应商生命周期, 尽职调查, 下线
+
+### 🔴 Onboarding 七步（p.5）
+
+1. **登记供应商和服务**：owner、合同价值、支持的业务服务、数据类别、访问类型、托管地点、集成方式、重要分包商
+2. **判断关键性和固有风险**——**先分级，再收集证据**（支付处理商、云、MSP、身份提供商、OMS、有生产管理员权限的供应商通常要更高审查）
+3. **走相应的尽调路径**：低层级基础筛查；**Tier 1 完整评估**（必要时架构、隐私、财务韧性、第四方）
+4. **记录剩余风险、选处置**：批准 / 有条件批准 / 补偿控制 / 由指定权限人接受 / 推迟上线 / 换供应商
+5. **落实合同条款**：条款到位前**不允许**生产使用、共享敏感数据、给特权访问或做关键集成
+6. **持续监控**：定期 + 事件驱动（泄露、重大中断、所有权变更、服务扩张、新数据用途、新分包商、评级恶化）
+7. **为事件和退出做规划**：联系人、通知与取证配合、恢复义务、替代方案、数据导出、下线流程
+
+🔎 搜索词：vendor onboarding, seven steps, register vendor, tier first, proportionate due diligence, conditional approval, 供应商准入
+
+### 🔴 Vendor Tiering 公式（p.6）
+
+**Vendor Inherent Cyber Risk Rating = 0.25D + 0.25A + 0.20C + 0.15B + 0.10F + 0.05R**（每个因子打 1 / 3 / 5 分）
+
+| 因子                          | 权重   | 1 Low    | 3 Moderate  | 5 High / Critical                |
+| --------------------------- | ---- | -------- | ----------- | -------------------------------- |
+| **D** Data exposure         | 0.25 | 公开或无公司数据 | 内部 / 机密     | 客户 PII、凭证、支付、**MNPI**、监管数据、密钥    |
+| **A** Access & connectivity | 0.25 | 无访问      | SSO 或有限用户访问 | 特权 / admin、API 写权限、生产网络、终端 agent |
+| **C** Criticality           | 0.20 | 易替换非核心   | 重要支撑流程      | 交易、身份、云、支付、安全运营                  |
+| **B** Blast radius          | 0.15 | 用户少、隔离   | 部门级         | 全企业或面向客户、系统性                     |
+| **F** Fourth-party          | 0.10 | 无实质分包    | 已知、范围有限     | 依赖云、MSP、离岸、不透明分包                 |
+| **R** Regulatory            | 0.05 | 影响很小     | 合同 / 审计要求   | 金融外包、隐私、市场行为、监管报告                |
+
+**门槛**：rating **> 3.5 → Tier 1**。例子：带 SSO、员工数据有限的 SaaS 报销工具 ≈ Tier 3；云端订单管理系统（OMS）或做 MDR 的 MSP ≈ Tier 1。
+
+**算例**：D=5, A=3, C=5, B=3, F=1, R=3 → 1.25 + 0.75 + 1.00 + 0.45 + 0.10 + 0.15 = **3.70 > 3.5 → Tier 1**。
+
+**为什么 D 和 A 权重最高、R 最低**：数据多敏感、访问权多大是供应商风险的两个主驱动；监管影响往往是前面风险实现后的**下游后果**。**权重和 3.5 门槛是该机构自己的校准**，不是行业标准。
+
+**MNPI** = Material Non-Public Information，重大非公开信息（未发布财报、并购计划），泄露或据此交易构成**内幕交易**。
+
+*（网页版此处可以自己给 6 个因子打分 1/3/5；下表是预设场景的结果）*
+
+| 场景                                 | 因子打分                    | Rating   | 结论         |
+| ---------------------------------- | ----------------------- | -------- | ---------- |
+| SaaS 报销工具（Week 5 案例，非 Tier 1）      | D=3 A=3 C=1 B=1 F=3 R=1 | **2.20** | 非 Tier 1   |
+| 云端 OMS / MSP MDR（Week 5 案例，Tier 1） | D=5 A=5 C=5 B=5 F=3 R=5 | **4.80** | **Tier 1** |
+| 自定义                                | D=3 A=3 C=3 B=3 F=3 R=3 | **3.00** | 非 Tier 1   |
+
+🔎 搜索词：vendor tiering, tier 1, inherent cyber risk rating, weighted score, data exposure, access connectivity, criticality, blast radius, fourth party, regulatory impact, 3.5 threshold, MNPI, 供应商分级, 加权评分
+
+### 🟡 Due Diligence 尽职调查的 11 个领域（p.7）
+
+每个领域都是「**该问的问题 + 该要的证据**」：
+
+| Domain                   | 问                        | 要的证据                                  |
+| ------------------------ | ------------------------ | ------------------------------------- |
+| Governance               | 安全是否对高管负责？有无 ISMS？       | 政策集、治理架构、风险登记摘录、**ISO 27001 证书和 SoA** |
+| Identity and access      | 是否强制 MFA？特权怎么管？          | IAM 标准、MFA 覆盖率、PAM 架构、季度访问复核证据        |
+| Data security            | 数据在哪、谁处理、是否加密、谁管密钥？      | 数据流图、数据清单、加密标准、密钥管理、留存 / 删除           |
+| Cloud and infrastructure | 租户、生产、网络、密钥、配置怎么保护？      | 架构图、云安全基线、分段设计、配置合规报告                 |
+| Application security     | 代码、依赖、API、发布怎么保护？        | Secure-SDLC、SAST/DAST、**SBOM**、代码审查   |
+| Vulnerability management | 关键漏洞多快发现和修复？             | 扫描覆盖、补丁 SLA、修复账龄、外部测试                 |
+| Logging and detection    | 能否检测、调查、留存证据？            | SIEM/SOC、日志范围、留存周期、升级流程               |
+| Incident response        | 出事怎么通知和支持你？              | IR 计划、桌面演练证据、联系人、取证支持                 |
+| Resilience               | 勒索 / 云故障后能否恢复？           | BCP/DR、**RTO/RPO 承诺**、恢复测试、不可篡改备份     |
+| Personnel security       | 背调、培训、按角色限权？（刑事、信用、药物筛查） | 背调政策、培训指标、入转离流程                       |
+| Subprocessors            | 重要第四方是谁、怎么治理？            | 分包商清单、地点、条款下沉、第四方评估                   |
+
+另有 **Privacy and compliance**（DPA、隐私影响评估、跨境传输机制）和 **Secure exit**（退出手册、数据可携带、销毁证明）。
+
+🔎 搜索词：due diligence domains, security questionnaire, SOC 2 report, ISO certificate, SBOM, penetration test summary, evidence, subprocessors, fourth party, 尽职调查, 安全问卷
+
+### 🔴 控制基线 Baseline vs Higher-Tier（p.8–9）
+
+**Data Security Baseline（所有能接触公司数据的供应商）**：所有管理和远程访问强制 **MFA** · 传输用现代 **TLS**、静态也加密 · 有文档的漏洞管理和修复时限 · 有升级联系人的 IR 流程 · **合同时限内通知**影响你的安全事件 · 安全下线流程 · 披露重要分包商并取得承诺 · 备份和测试过的连续性流程。
+
+**Higher-tier（Tier 1 额外要求）**：特权账号**抗钓鱼 MFA + PAM** · 隔离生产环境、最小权限、强密钥管理、管理访问日志 · 集中日志、7×24 检测 · **至少每年**独立渗透测试 · 关键对外漏洞**短且合同明确的期限**内修复 · 测试过的勒索恢复、**不可篡改备份** · 每年按 RTO/RPO 做 **BCP/DR 测试** · 分包商清单和变更批准权 · 测试过的 IR 演练 · 强健退出策略（数据导出、过渡协助、凭证吊销、销毁证明、备用服务）。
+
+**规律**：同一主题的「基础版 → 强化版」：MFA → 抗钓鱼 MFA + PAM；漏洞管理 → 年度渗透 + 短期修复；备份 → 不可篡改 + 年度 DR 测试。
+
+🔎 搜索词：baseline controls, higher tier controls, tier 1 requirements, minimum security requirements, phishing-resistant MFA, PAM, immutable backup, annual penetration test, 控制基线, 最低要求
+
+### 🔴 合同条款 Contract clauses（p.10）
+
+| 条款                                          | 要点                                                         |
+| ------------------------------------------- | ---------------------------------------------------------- |
+| **Security standard**                       | 维持与风险相称的控制，参照你的政策、ISO 27001、SOC、NIST CSF                   |
+| **Incident notification**                   | 明确**触发条件、渠道、首次通知截止时间、更新频率、所需信息、事后报告**——**不能只写 "promptly"** |
+| **Audit and evidence rights**               | 获取 SOC 报告、认证、测试摘要、修复状态；关键供应商可审计                            |
+| **Sub-contractor governance**               | 披露、尽调、条款下沉（flow-down）、重大新分包商通知或同意                          |
+| **Vulnerability & remediation obligations** | 严重度方法、修复期望、例外处理、补偿控制                                       |
+| **Data ownership and handling**             | 允许的处理、访问限制、加密、留存、存放地、传输、归还、**认证销毁**                        |
+| **Resilience commitments**                  | 合同化 **RTO**、可用性目标、DR 测试、重大中断报告                             |
+| **Secure development**                      | SDLC、依赖管理、安全测试、漏洞披露、更新                                     |
+| **Exit assistance**                         | 配合、数据可携带、迁移支持、终止后移除访问                                      |
+| **Liability and insurance**                 | 责任上限、赔偿、网络保险要求与潜在损失相匹配                                     |
+
+**常考**：「这份合同的通知条款有什么问题？」→ 只写 promptly，**没有触发条件、时限和所需信息** = 出事时没有可执行的时间线。
+
+🔎 搜索词：contract clauses, incident notification, promptly, right to audit, audit rights, flow-down, data handling, data destruction, exit assistance, liability, indemnity, SLA, 合同条款, 事件通知, 审计权, 退出协助
+
+### 🔴 持续监控四种节奏 + Reassess 触发（p.11）
+
+| 类型                                        | 频率       | 内容                                     |
+| ----------------------------------------- | -------- | -------------------------------------- |
+| **Operational Oversight**                 | 每季度      | SLA、中断、安全事件、未结整改、访问变更、投诉               |
+| **Control Assurance**                     | 每半年或每年   | 更新的 SOC 报告、ISO 证书、渗透测试、BCP/DR 测试、分包商变更 |
+| **External Threat Monitoring & Response** | 持续       | 暴露服务、泄露凭证、域名仿冒、勒索报告、安全评级、披露漏洞          |
+| **Reassess**                              | 每年或重大变化时 | 见下                                     |
+
+**Reassess 触发**：供应商开始处理更敏感数据或获得特权访问 · 服务变得对客户、受监管、支付、交易、身份或安全运营至关重要 · 重大事件、长时间中断、勒索、控制失效 · **所有权、托管商、运营地域、关键分包商或技术栈变更** · 重大不利财务事件 · 续约、大幅扩展、新部署模式。
+
+🔎 搜索词：vendor monitoring, operational oversight, control assurance, external threat monitoring, security ratings, vendor reassessment triggers, 供应商监控, 重评估
+
+### 🔴 VRM 治理分工（p.12）
+
+| 角色                               | 负责                              |
+| -------------------------------- | ------------------------------- |
+| **Board / risk committee**       | 网络风险胃口、重大风险例外、关键集中度、项目有效性       |
+| **Executive sponsor / CISO**     | C-SCRM 政策、安全要求、风险方法论、监控标准、报告    |
+| **Business / vendor owner**      | 业务需求、服务关键性、准入信息准确性、运营表现、整改责任    |
+| **Procurement**                  | 强制流程把关、供应商清单完整性、合同生命周期、续约控制     |
+| **Information security**         | 固有风险挑战、控制评估、架构审查、修复验证、事件协调      |
+| **Enterprise risk**              | 汇总剩余风险、集中度 / 单点故障分析、风险胃口、KRI、上报 |
+| **Legal / privacy / compliance** | 合同条款、数据处理义务、监管、违规通知、审计权         |
+| **Operational resilience**       | 关键服务映射、BCP/DR 期望、场景测试、可替代性、退出就绪 |
+| **Internal audit**               | 独立测试遵从性、清单完整性、评估质量、问题闭环         |
+
+**常考**：谁批准接受一个超出胃口的供应商风险？→ **指定的风险接受权限人**（按风险等级沿 business owner → InfoSec → enterprise risk → board 上升），**不是采购或业务 owner 自己拍板**。
+
+🔎 搜索词：vendor governance, roles and responsibilities, RACI, procurement, vendor owner, risk acceptance, concentration risk, 供应商治理, 分工
+
+### 🔴 VRM 报告 / KRI（p.13）
+
+被纳入清单并分级的供应商 % · 上线 / 续约前完成评估的关键供应商 % · 高严重度发现的数量和账龄 · 拥有最新 SOC / ISO / 渗透 / BCP-DR 证据的关键供应商 % · 有测试过的事件通知和退出安排的 % · 超出容忍度的例外数量和账龄（含责任高管、到期日）· 供应商导致的事件、中断、SLA 失败 · **按云、MSP、司法辖区、关键服务划分的依赖集中度**。
+
+🔎 搜索词：vendor KRI, vendor metrics, third party reporting, concentration, 供应商指标
+
+### 🔴 NIST AI RMF：可信度特征 Trustworthiness（p.14）
+
+**课件原文**：*The NIST AI Risk Management Framework provides a **common operating model** to identify, assess, prioritize and treat AI risks affecting individuals, organizations, society and the environment. It evaluates AI system risk mainly around **trustworthiness**.*
+
+| 特征                                  | 要问的问题                                              |
+| ----------------------------------- | -------------------------------------------------- |
+| **Valid and reliable**              | 对预期用途和人群是否准确、一致？                                   |
+| **Safe**                            | 误用、失效会不会造成物理、财务、运营或人身伤害？                           |
+| **Secure and resilient**            | 能否抵御攻击、操纵、模型窃取、**数据投毒**、**prompt injection**、性能退化？ |
+| **Accountable and transparent**     | 归属、决策权、文档、可追溯、升级路径是否清晰？                            |
+| **Explainable and interpretable**   | 干系人能否理解输出到足以验证、质疑、恰当使用？                            |
+| **Privacy-enhanced**                | 个人和敏感数据是否最小化、受保护、合规？                               |
+| **Fair, with harmful bias managed** | 是否测试过跨人群 / 场景的差异或有害结果？                             |
+
+🔎 搜索词：NIST AI RMF, AI risk management framework, trustworthy AI, trustworthiness, valid reliable, safe, secure resilient, accountable transparent, explainable, privacy, fairness, bias, 可信 AI
+
+### 🔴 NIST AI RMF 四个功能（Govern / Map / Measure / Manage，p.15）
+
+① **Govern** the program → ② **Map** what could go wrong and for whom → ③ **Measure** the exposure with evidence → ④ **Manage** residual risk through decisions, controls, monitoring, remediation.
+
+| Function    | Objective                | 金融业证据                                                             |
+| ----------- | ------------------------ | ----------------------------------------------------------------- |
+| **Govern**  | 建立文化、政策、问责、角色、监督         | AI 政策、风险胃口、**模型清单**、业务 / 技术 / 风险 / 法务 owner、审批委员会、培训、事件流程         |
+| **Map**     | 定义系统、上下文、用途、干系人、影响、假设、风险 | 用例评估、数据流图、客户影响分析、供应商 / 模型依赖、禁止用途、**model card**、human-in-the-loop |
+| **Measure** | 定性定量分析和监控                | 准确度 / 校准、公平性、**红队**、对抗性和安全测试、幻觉 / 依据性评估、隐私测试、漂移、独立验证              |
+| **Manage**  | 对剩余风险排优先级、响应、记录、监控       | 控制计划、接受标准、部署门槛、人工复核阈值、**回滚 / kill switch**、KRI、IR、定期再验证           |
+
+**和 W3 七步法对应**：Govern ↔ ① 建治理；Map ↔ ② 资产 + ③ 威胁建模；Measure ↔ ④ 评估风险；Manage ↔ ⑤⑥⑦ 处置、剩余风险、监控。
+
+**落地七步（p.16）**：① 建完整 AI 清单（**含嵌在 SaaS 里、外采的 AI 功能**）② 按影响分级（生产力辅助 vs 面向客户决策、金融犯罪、信贷、招聘、交易）③ 中高影响用例**部署前**做 AI 风险评估 ④ 按级别定最低证据要求 ⑤ 接入现有企业风险分类和问题管理（**不另起一套**）⑥ 可衡量的部署与监控阈值（准确度、幻觉率、差异影响、override 率、漂移）⑦ 对模型 / 供应商 / prompt / 工作流变更持续治理。
+
+**资源（p.17）**：AI RMF 1.0（基础框架）· AI RMF Playbook（每个子类别的建议行动）· **NIST AI 600-1 Generative AI Profile**（LLM、RAG、copilot、agent）· crosswalks（和 ISO、隐私、网络安全、模型风险整合）。
+
+🔎 搜索词：AI RMF functions, Govern Map Measure Manage, AI governance, model inventory, model card, red teaming, kill switch, human in the loop, AI 600-1, generative AI profile, AI 治理, 模型清单
+
+### 🔴 AI Impacts：采用 AI 新增的六类风险（p.18）
+
+**课件原文**：*Deploying AI **expands the organization's own attack surface**, because it requires integrating enterprise data, models, applications and infrastructure.*
+
+| # | 风险                                    | 说明                                                             |
+| - | ------------------------------------- | -------------------------------------------------------------- |
+| 1 | **Data leakage**                      | 敏感 prompt、文档、源代码、客户数据、凭证通过未批准工具或权限过大的集成暴露                      |
+| 2 | **Prompt injection**                  | 不可信内容操纵 AI 泄露信息、绕过指令、执行不安全动作                                   |
+| 3 | **Model and supply-chain compromise** | 投毒训练数据、被攻陷的模型或软件包、恶意插件、不安全 API、依赖漏洞                            |
+| 4 | **Excessive agent privileges**        | 连接邮件、云存储、代码库、工单、生产系统的 agent，把一次模型错误或 prompt injection 变成实质安全事件 |
+| 5 | **Shadow AI**                         | 员工用未批准工具，造成可见性、数据治理、隐私、留存缺口                                    |
+| 6 | **Overreliance and automation bias**  | 看起来可信的输出让人接受错误结论、忽略操纵、采取有害行动                                   |
+
+**对应关系**：Prompt injection ↔ 可信度的 *Secure and resilient* ↔ 用 **Measure**（对抗测试）发现、**Manage**（人工复核、kill switch）兜底。**Excessive agent privileges 本质是最小权限（least privilege）没落实**——和 W3 威胁建模例句里的 *excessive cloud permissions* 是同一问题，只是执行体换成 AI agent。
+
+**对策（综合 W5 + W7）**：批准工具清单和企业租户（W7 p.34：研究、交易策略、投资者信息、MNPI、凭证**不得输入消费级 AI 工具**）、AI 清单与使用政策、DLP / prompt 防泄露、agent 最小权限与人工审批、红队测试、模型 / 供应商尽调。
+
+🔎 搜索词：AI risks, six AI risks, data leakage, prompt injection, model poisoning, supply chain compromise, agent privileges, agentic AI, shadow AI, overreliance, automation bias, least privilege, AI 新风险, 影子 AI, 提示词注入, 过度依赖
+
+---
+
+## W6 · 事件响应、危机管理与 BCP
+
+**一句话**：同一个勒索攻击，公司里有四套能力同时在跑——**IR 管威胁，Crisis 管决策，BC 管业务，DR 管技术**。所有 checklist 都在重复四件事：**决策权事前授予、证据先保全、沟通有节奏且唯一口径、计划不演练就只是文件**。
+
+### 🔴 Security Incident 的定义（p.4）
+
+**课件原文**：*Not every alert qualifies as an incident. A security incident is an event that **actually or imminently threatens the confidentiality, integrity, or availability** of systems or data.*  
+**Success criteria**：*Respond **decisively**, but **do not destroy evidence** or **create more operational harm than the incident itself**.*
+
+**IR 定义（p.5）**：*Cybersecurity incident response is the **organized process** of detecting, investigating, containing, eradicating, recovering from and learning from cyber incidents.* 目的不只是修好一条告警，而是：**降低业务伤害、保全证据、恢复可信运营、履行通知义务、防止复发**。
+
+**易混**：Alert / event ≠ incident。被拦截的钓鱼邮件、一波登录失败通常是 security event（Level 1）。「即将（imminently）」也算——攻击者已在内网还没动手，就是 incident。
+
+🔎 搜索词：incident definition, alert vs incident, security event, CIA, success criteria, decisively, destroy evidence, operational harm, 事件定义, 告警, 成功标准
+
+### 🔴 IR 六阶段（PICERL，p.5）
+
+| # | Stage                 | 做什么                                                  |
+| - | --------------------- | ---------------------------------------------------- |
+| 1 | **Preparation** 准备    | 角色、on-call、playbook、日志、备份、法务 / 公关流程；**演练**           |
+| 2 | **Identification** 识别 | 研判告警（triage）、验证遥测、确定**范围和严重度**、受影响资产 / 账号 / 数据、攻击者活动 |
+| 3 | **Containment** 遏制    | 隔离终端、吊销会话 / token、封锁 IoC、网络分段、禁用被盗账号                 |
+| 4 | **Eradication** 根除    | 清除恶意软件和持久化、打补丁、**轮换凭证 / 密钥**、重建系统、关闭暴露路径             |
+| 5 | **Recovery** 恢复       | 从 **known-good 备份**恢复、验证、**加强监控**、分批回到生产             |
+| 6 | **Post Mortem** 事后复盘  | 取证、时间线、**根因分析**、控制改进、指标、监管报告、更新 playbook             |
+
+**口诀**：Containment **止血**（临时、可逆，切断攻击者当下控制）；Eradication **拔根**（永久去掉原因，确保回不来——*eradicates the cause rather than merely deleting visible files*）；Recovery **回血**（干净地恢复）。  
+**和 NIST SP 800-61 四阶段对照**：Preparation / Detection & Analysis / Containment, Eradication & Recovery / Post-Incident Activity——考 5070 用六阶段名称。
+
+*（网页版此处是「这一步属于 IR 哪个阶段」的点选练习；下表是全部题目和答案）*
+
+| 动作                                                                          | 阶段                 | 理由                                                                                                                                                    |
+| --------------------------------------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 事发前：公司每季度针对「勒索软件加密共享盘」跑一次桌面演练（tabletop exercise），并把离线、不可篡改的备份做了恢复测试。        | **Preparation**    | 演练、备份、日志、playbook 都是在事故发生之前备好的「工具和肌肉记忆」——属于 Preparation（p.5 第 1 条：run exercises、backups）。                                                             |
+| 事发前：董事会书面授权 incident commander 可以直接隔离服务器、禁用账号、封锁供应商访问，不需要层层审批。              | **Preparation**    | p.15「Speed comes from decisions made before the incident」——决策权要在事前授予，这是 Preparation 里的 decision rights，不是事中才去争取。                                      |
+| 09:15 SOC 收到「财务共享盘被快速加密」的告警，先确认这是真实事件而不是误报，开一张高严重度工单并指定 incident commander。 | **Identification** | Triage alerts、validate telemetry、定 severity——这是 Identification。「Not every alert qualifies as an incident」，先确认是不是事件，才谈得上后面的动作。                         |
+| 09:20 分析员列出受影响的终端、账号、共享盘、IP 和可疑进程，同时保全日志、EDR 数据和内存 / 磁盘镜像。                  | **Identification** | Establish scope（影响范围）是 Identification 的核心；同步保全证据是 p.8 checklist 的「Preserve evidence」，要在改动系统之前做。                                                       |
+| 09:25 IT 把中毒的终端从网络隔离，禁用被盗账号和会话，封锁攻击者的域名 / IP，必要时把受影响网段断开。                   | **Containment**    | 目的是「止血」：阻止继续加密和横向移动（lateral movement）。隔离、禁用、封锁都是临时性的、可逆的动作——Containment。                                                                              |
+| 一名员工账号出现异常登录，SOC 立刻吊销该用户的 OAuth token、强制下线所有会话，并限制该网段的出站流量。                 | **Containment**    | p.8「Contain proportionately」的例子原话：revoking OAuth tokens、restricting egress。先切断攻击者的控制通道，还没到清除根源那一步。                                                    |
+| 11:30 团队清除恶意软件和持久化机制，修补被利用的漏洞，重置受影响的凭证和密钥，用可信的 gold image 重装被攻陷的设备。         | **Eradication**    | Eradication = 把原因彻底去掉（remove persistence、patch、rotate credentials、rebuild）。p.11 的解释：「Eradicates the cause rather than merely deleting visible files」。 |
+| Day 1–2 从经过验证的离线备份，把文件服务器恢复到一个干净、隔离的恢复环境，校验数据完整性和应用依赖之后再接回生产网络。             | **Recovery**       | Restore from known-good backups、validate、progressively return to production——Recovery。重点是「干净地」恢复，避免把中毒的系统或数据重新带回来。                                    |
+| Day 2–7 恢复上线后，对相关系统做加强监控（heightened monitoring），确认运营恢复正常。                   | **Recovery**       | p.5 把 heightened monitoring 写在 Recovery 阶段：系统刚回到生产，要盯紧有没有复发，这仍是恢复的一部分，还不是复盘。                                                                          |
+| 事件结束后，团队重建完整时间线，做根因分析（root-cause analysis），并把整改项分配给具体负责人，定截止日期和预算。          | **Post Mortem**    | Forensics、timeline、root-cause analysis、control improvements——Post Mortem。p.7 强调整改要有 owner、due date、funding，否则复盘只是走过场。                                 |
+| 根据这次事件评估监管通知义务、写高管报告，并更新下一次桌面演练的剧本。                                         | **Post Mortem**    | Regulatory reporting、metrics、tabletop updates 都列在 p.5 的 Post Mortem 里。更新演练剧本会反过来喂给下一轮 Preparation，IR 是一个循环。                                           |
+| 告警显示管理员账号在凌晨从两个国家同时登录，分析员需要先判断：是否涉及特权访问？攻击者是否仍在控制？                          | **Identification** | p.8「Validate the alert」：判断是否为真实事件、涉及哪些资产和身份、特权访问是否被牵连、攻击者是否仍在活动——还在搞清楚状况，属于 Identification。                                                           |
+
+🔎 搜索词：incident response phases, PICERL, SANS, preparation, identification, detection, containment, eradication, recovery, post mortem, lessons learned, NIST 800-61, 事件响应阶段, 遏制, 根除, 复盘
+
+### 🟡 IR Plan 要提前准备什么（p.6–7）
+
+**课件原文**：*A usable IR plan should be **short enough to execute under pressure**, supported by detailed playbooks for common scenarios: ransomware, BEC, cloud credential theft, data exfiltration, DDoS, third-party compromise, insider.*
+
+| 类别                                   | 内容                                                                                                                                            |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Governance and people**            | 有紧急决策权的 **incident commander**；SOC、IT、云、身份、法务、隐私、公关、HR、风险、高管的角色；**7×24 call tree**（主备联系人）；**破坏性动作的决策权**（隔离系统、禁账号、**暂停交易或支付**、启动灾备、请外部律师 / 取证） |
+| **Technical readiness**              | 集中、**时间同步**、防篡改的日志；EDR、SIEM/SOAR、资产清单、**离线或不可篡改备份**；取证流程和 **chain of custody**；**预先批准的遏制选项（区分可逆和会中断业务的动作）**                                   |
+| **Business, legal, comms readiness** | 业务影响评估方法；预先写好、法务公关审过的对内 / 客户 / 监管 / 保险 / 媒体模板；**重建前保全证据**的流程；事后复盘的整改项有 **owner、due date、funding**                                             |
+
+**为什么时间同步**：要把各系统日志拼成时间线；**chain of custody** 证明证据没被篡改，否则法律上可能不被采信。
+
+🔎 搜索词：IR plan, playbook, incident commander, call tree, escalation, decision rights, chain of custody, time synchronization, logging, pre-approved containment, communication templates, 应急预案, 证据保管链
+
+### 🔴 IR 现场 Checklist（事件一来先做什么，p.8）
+
+1. **Open an incident record**：指定 IC、动作打时间戳、开**决策日志**、建立**不依赖可能已被攻陷的公司系统的安全沟通渠道**
+2. **Validate the alert**：是不是真事件？涉及哪些资产 / 身份？**特权访问**是否牵连？攻击者是否**仍在控制**？
+3. **Preserve evidence**：适当时采集易失数据（内存）；改动系统前保全日志、终端镜像、云审计记录、邮件、身份事件
+4. **Scope before broadly disrupting**：先找出受影响的业务服务、数据、账号、终端、云租户、横向移动路径
+5. **Contain proportionately**：隔离一台主机、禁一个用户、吊销 OAuth token、封锁域名 / IP、限制出站、分段
+6. **Protect crown jewels**：特权身份、域控、身份提供商、**支付通道、交易和行情平台**、客户数据库、**备份基础设施**、管理平面
+7. **Engage required stakeholders**：法务 / 隐私、业务 owner、高管危机小组、**网络保险公司**、外部取证，必要时监管或执法
+8. **Set an update cadence**：汇报**已确认事实、工作假设、需要的决策**、业务影响、下一步；**避免没有根据的归因或过早保证**
+
+**反直觉考点**：沟通渠道要独立（攻击者可能在读公司邮件）；先保全证据再改系统；按比例遏制，不是一上来全网断开；备份是 crown jewel（勒索专门找备份）；不要过早说「是某国黑客」或「客户数据没泄露」。
+
+🔎 搜索词：incident checklist, first steps, decision log, out-of-band communication, preserve evidence, volatile data, memory, scope, proportionate containment, crown jewels, backup infrastructure, insurer notification, attribution, 事件处置清单, 保全证据, 按比例遏制
+
+### 🔴 案例：金融服务公司勒索软件（FS-02，p.10–12）
+
+**场景**：09:15 SOC 收到终端告警，财务共享盘被快速加密，用户看到勒索信。员工打开恶意附件 → 凭证被盗 → **横向移动**到文件服务器。
+
+| 时间      | 动作                                             | 为什么                 | 阶段                     |
+| ------- | ---------------------------------------------- | ------------------- | ---------------------- |
+| 09:15   | 验证告警，开高严重度工单，**任命 IC**                         | 明确责任、审计轨迹           | Identification         |
+| 09:20   | 找受影响终端、账号、共享盘、IP、进程；**保全日志、遥测、内存 / 磁盘镜像**      | 定范围 + 保全证据          | Identification         |
+| 09:25   | **隔离**终端，禁账号和会话，封锁攻击者基础设施；严重时断开共享盘 / 子网        | 阻止继续加密和横向移动         | Containment            |
+| 09:40   | IC 通报 CIO/CISO、法务、风险、公关、BCP、业务 owner；开**决策日志** | 技术和法律 / 客户 / 监管后果对齐 | 升级协调                   |
+| 10:00   | 取证确定入侵路径，找持久化，**检查备份库和特权账号**                   | **防止恢复到攻击者仍在控制的环境** | → Eradication 准备       |
+| 11:30   | 清除恶意软件、吊销 token、重置凭证、打补丁、用 **gold image** 重装   | 根除原因，而不只是删可见文件      | Eradication            |
+| Day 1–2 | 从**验证过的离线备份**在**干净隔离**环境恢复，校验完整性后接回            | 优先关键 / 创收服务，不带回感染   | Recovery               |
+| Day 2–7 | 加强监控、评估通知义务、高管报告、**lessons-learned 会议**        | 转化为长期降险             | Recovery → Post Mortem |
+
+**Incident Status Report 六要素（p.12）**：Incident description（FS-02 和 14 台终端被加密）· Business impact（财务文档不可用，**支付不受影响**）· Containment status · Evidence preserved（EDR 遥测、防火墙日志、IdP 登录日志、服务器镜像、勒索信哈希）· Recovery decision（干净镜像重建，恢复 02:00 已验证备份）· Next update（12:00 向高管危机小组汇报）。  
+**定级**：多系统受影响但支付不受影响、无确认外泄 → **Level 3**。
+
+🔎 搜索词：ransomware case, FS-02, timeline, lateral movement, gold image, clean recovery, incident status report, sitrep, 勒索软件案例, 时间线, 状态报告
+
+### 🔴 好的响应八要素 + IR 指标（p.13、p.9）
+
+**八要素**：**Clear authority**（IC 有权隔离和升级）· **Rapid triage**（按功能影响、信息影响、可恢复性排优先级）· **Evidence discipline** · **Containment before convenience**（暂时中断一个系统好过让攻击者扩散）· **Root-cause remediation** · **Clean recovery**（只从 known-good、测试过的备份）· **Governance**（按义务拉上法务、合规、保险、监管、执法）· **Lessons learned**（具体 owner、截止日期）。
+
+**IR 指标（速度、影响、质量、韧性）**：**MTTD / MTTA / MTTC / MTTR**（mean time to detect / acknowledge / contain / recover）· 目标时间内遏制的高严重度事件 % · 停机、受影响客户、暴露数据、财务影响 · **备份恢复成功率**、关键服务恢复耗时 · 证据完整、及时复盘、整改关闭的 % · **重复事件率** · 演练频率、playbook 端到端测试比例。
+
+**课件总结**：*Tested plans, clear authority, clean telemetry, resilient identity controls and rehearsed communications are key to success.*
+
+🔎 搜索词：good response elements, clear authority, containment before convenience, IR metrics, MTTD, MTTA, MTTC, MTTR, mean time to detect, mean time to contain, recurrence rate, 响应要素, 事件指标
+
+### 🔴 危机管理：别让事件变成危机（p.14）
+
+**课件原文**：*Best Crisis Management is to **PREVENT or STOP an incident to become a CRISIS**.*
+
+| 失败模式                          | 怎么制造危机                | 预防控制                           |
+| ----------------------------- | --------------------- | ------------------------------ |
+| **Delayed detection**         | 攻击者有时间横向移动、窃取、欺诈、部署勒索 | 集中监控、EDR、身份监控、测试过的告警研判         |
+| **Large blast radius**        | 一个账号或服务器波及关键运营或大量系统   | **分段、最小权限、PAM、不可篡改备份**         |
+| **Slow or unclear decisions** | 团队争论谁有权决定，事态恶化        | **预先批准的严重度等级、明确决策权、7×24 升级矩阵** |
+| **Poor communications**       | 矛盾或迟到的信息侵蚀信任，带来监管风险   | 沟通 playbook、法务审核、预定义利益相关方和通知流程 |
+
+四个失败 = 四个对策：发现晚 → p.18 早发现早决策；半径大 → p.19 控制半径；决策慢 → p.15–16 预授权 + 分级；沟通差 → p.20。
+
+🔎 搜索词：crisis management, incident becomes crisis, escalation, delayed detection, blast radius, unclear decisions, poor communications, 危机管理, 升级为危机, 影响半径
+
+### 🔴 预授权决策（p.15）
+
+**课件原文**：*Speed comes from **decisions made before the incident, not during it**.*  
+CISA 建议分开三个角色：**incident management、technical management、communications management**。
+
+**书面授权 IC**：① 隔离设备、服务器、工作负载、应用或网段 ② 禁用可疑账号、token、会话、API key 和**供应商访问** ③ 封锁域名、IP、发件人、恶意文件哈希 ④ 启动**紧急变更流程**、引入外部 IR 专家 ⑤ 在**预设阈值**下升级到 CISO、COO、CEO、总法律顾问和危机小组。
+
+**为什么**：正常隔离交易服务器要走 change management，可能几小时到几天；勒索几分钟就加密完。
+
+🔎 搜索词：pre-authorized decisions, pre-approved authority, decision rights, delegation of authority, emergency change, incident manager, technical manager, communications manager, 预授权, 决策权
+
+### 🔴 事件分级 Level 1–4（Severity，p.16）
+
+| Level                    | 例子                                                                   | 谁领导                          | 必须做什么                         |
+| ------------------------ | -------------------------------------------------------------------- | ---------------------------- | ----------------------------- |
+| **1 Security event**     | 钓鱼邮件被拦、一波登录失败、恶意软件被阻止                                                | **SOC**                      | 调查、记录、关闭或升级                   |
+| **2 Contained incident** | 一个账号被盗、少量终端感染，**无**重大数据丢失或关键中断证据                                     | **Incident commander**       | 遏制、调查、根除，通知指定内部 owner         |
+| **3 Major incident**     | 多系统受影响、**很可能**数据暴露、中断**逼近 RTO**、**关键供应商被攻陷**                         | **CISO / IC + 高管监督**         | 动员法务、合规、BCP、公关、高管             |
+| **4 Crisis**             | **确认**重大泄露、关键服务**长时间**中断、**交易或支付受影响**、大范围勒索、**媒体 / 公众**风险、重大**监管**暴露 | **Crisis director / 高管危机小组** | **正式宣布危机、上报董事会**、利益相关方沟通、恢复治理 |
+
+**3 → 4 的关键词**：likely → **confirmed**；逼近 RTO → **长时间**中断；外部性（媒体、监管、交易 / 支付）。**定级看业务影响，不看攻击类型**：FS-02 = Level 3，投资公司案例 = Level 4。p.25 写「Level 1 cyber crisis」是另一把**危机等级**尺子（1 = 最严重），答题按 p.16。
+
+**早发现 SLO（p.18）**：高严重度告警 **15 分钟内确认、60 分钟内定范围并初步遏制**；盯住 impossible travel、**MFA fatigue**、特权角色变更、**邮箱规则被创建**（BEC）、批量下载、大规模加密、付款指令变更；IC 要**在明显失控之前**上报高管。
+
+*（网页版此处可交互：按五个维度点选事件特征，取最严重的一维定级；下表是预设场景的结果）*
+
+| 场景                            | 触发升级的特征                                                                                             | 级别                               | 谁来领导                                               |
+| ----------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------- |
+| 钓鱼邮件被拦截                       | 全部最低一档                                                                                              | **Level 1 · Security event**     | SOC / security operations                          |
+| 一个账号被盗，已禁用                    | 一个账号或少量终端中招（L2）                                                                                     | **Level 2 · Contained incident** | Incident commander                                 |
+| p.10 勒索：FS-02 + 14 台终端，支付不受影响 | 多个系统受影响（L3）                                                                                         | **Level 3 · Major incident**     | CISO / incident commander with executive oversight |
+| 关键供应商（MSP）被攻陷                 | 一个账号或少量终端中招（L2）；关键供应商被攻陷（L3）                                                                        | **Level 3 · Major incident**     | CISO / incident commander with executive oversight |
+| p.25 投资公司勒索 + 数据外泄            | 大范围勒索软件（broad ransomware）（L4）；很可能有数据暴露（likely exposure）（L3）；中断时长逼近 RTO（L3）；可信的媒体 / 公众风险，或重大监管暴露（L4） | **Level 4 · Crisis**             | Crisis director / executive crisis-management team |
+
+🔎 搜索词：severity levels, incident classification, level 1 2 3 4, security event, contained incident, major incident, crisis, escalation matrix, triage SLO, 15 minutes, 60 minutes, impossible travel, MFA fatigue, 事件分级, 严重度
+
+### 🟡 危机管理的四个动作（p.17–20）
+
+- **Rehearse the hardest scenarios（p.17）**：**至少每季度一次 tabletop exercise** + 技术模拟；场景：勒索影响共享服务 / 投资者报告、**BEC 篡改银行或结算指令**、云 / SaaS 中断、数据外泄（含 MNPI）、基金管理人 / 托管行 / 主经纪商 / MSP 被攻陷、内部人员。测的不只是检测和遏制，还有**高管决策权、替代流程、对监管 / 客户沟通、第三方协调、备份恢复、事后文档**。
+- **Detect and decide early（p.18）**：见上（15 / 60 分钟 SLO）。
+- **Contain the blast radius（p.19）**：远程 / 特权 / 管理员 / **第三方访问**用**抗钓鱼 MFA**（如 FIDO2）· 最小权限 + **JIT 特权访问** · 分段：用户网络、生产、**备份**、敏感数据库、管理平面 · 有隔离能力的 EDR/XDR · 限制管理工具和出站流量 · 加密、**不可篡改或离线**备份，**独立凭证**和独立基础设施 · **测试恢复，而不只是测试备份完成**（对照 RTO / RPO）。
+- **Communicate timely and effectively（p.20）**：只有获批职能能对外发声 · **唯一一份 situation report**（已确认、不确定、业务影响、决策、行动、owner、风险、下次更新）· **遏制期每 30 分钟、恢复期每 2–4 小时** · 对内运营更新和对外声明分开 · 预写 **holding statement**（事实未明时的临时声明：已发现事件、已启动响应、会更新——不承认也不否认细节）· 尽早让法务评估通知义务 · 准确的**决策日志**。
+
+**Checklist 总原则（p.21）**：*Contain quickly, recover from clean and tested assets, decide with pre-agreed authority, and communicate with evidence rather than speculation.* 自检：几分钟内能隔离？关键服务有 owner / 依赖 / RTO / 手工替代？备份隔离、不可篡改、**成功恢复过**？知道哪些事件要通知谁？有**一名** IC 和一名 crisis director？法务公关等能 **1 小时内**集合？**过去 12 个月**演练过勒索、泄露、第三方场景？整改追踪到关闭？
+
+🔎 搜索词：tabletop exercise, quarterly, rehearse, blast radius, JIT, just-in-time, FIDO2, immutable backup, separate credentials, test restore, situation report, holding statement, communication cadence, 30 minutes, decision log, 桌面演练, 临时声明, 沟通节奏
+
+### 🔴 Crisis Management Framework 六阶段（p.22–23）
+
+**课件原文**：*A crisis management framework is the organizational structure to lead through events that threaten **people, operations, reputation, financial stability or legal / regulatory standing**. Unlike IR, which **solves the technical incident**, crisis management makes **strategic decisions**: who has authority, what to protect first, whom to notify, how to restore confidence and normal operations.*
+
+**Anticipate → Prepare → Activate → Stabilize → Recover → Learn**
+
+| Phase          | 领导层的问题       | 核心活动                                 | 产出                                            |
+| -------------- | ------------ | ------------------------------------ | --------------------------------------------- |
+| **Anticipate** | 什么可能变成危机？    | 趋势扫描、情景分析、利益相关方映射、预警指标               | 危机风险登记册、触发阈值、情景库                              |
+| **Prepare**    | 准备好在压力下领导了吗？ | 治理、任命团队、计划和 playbook、沟通渠道、培训演练       | 危机管理计划、联系人目录、决策日志、holding statement           |
+| **Activate**   | 需要高管危机领导吗？   | 评估严重度、**宣布危机**、召集团队、定目标和节奏           | 危机声明、初始态势报告、利益相关方地图                           |
+| **Stabilize**  | 怎么保护人员、防止升级？ | **保护生命安全**、控制业务伤害、协调技术 / 运营、发布核实过的沟通 | 行动计划、更新、决策记录                                  |
+| **Recover**    | 怎么恢复运营和信任？   | 业务恢复、客户补救、监管沟通、财务评估、声誉修复             | 恢复计划、里程碑、通知记录                                 |
+| **Learn**      | 下次之前要改什么？    | **独立复盘**、根因、整改、测试                    | after-action report、有 owner 的整改计划、修订 playbook |
+
+**和 IR 对照**：两套都是「准备 → 发现 → 控制 → 恢复 → 复盘」，危机管理多了 **Anticipate** 和 **Activate**——「要不要启动」本身就是决策（对应 Level 4）。
+
+🔎 搜索词：crisis management framework, anticipate, prepare, activate, stabilize, recover, learn, declare crisis, after-action report, strategic decisions, IR vs crisis management, 危机管理框架, 宣布危机
+
+### 🟡 危机团队与案例（p.24–25）
+
+**课件原文**：*A **small core team** usually works better than a large committee.* Incident manager 负责**协调和信息流，而不是亲自做技术工作**。
+
+| 角色                       | 职责                                          |
+| ------------------------ | ------------------------------------------- |
+| **Crisis director**      | 整体战略指挥、排优先级、高管决策、**上报董事会**                  |
+| **Incident commander**   | 技术 / 运营响应、范围、遏制、恢复                          |
+| CIO / CISO               | 网络风险建议、威胁情报、取证策略、控制决策                       |
+| **General counsel**      | **legal privilege（律师-客户特权）**、监管分析、通知策略、外部律师 |
+| Communications lead      | 员工、客户、媒体、社媒；信息审批、口径一致                       |
+| Business-continuity lead | 关键服务排序、替代方案、恢复协调                            |
+| Risk and compliance lead | 影响评估、监管联络、风险接受和决策记录                         |
+| HR lead                  | 员工沟通、福利、内部人风险和纪律                            |
+| Finance lead             | 流动性、损失、**保险**、付款影响、成本追踪                     |
+| Third-party lead         | 联络供应商、合同权利、证据、协同遏制                          |
+
+**Crisis director vs IC**：**战略 vs 战术**。
+
+**投资公司案例（p.25）**：共享基础设施被加密 + **可疑数据外泄**，报告系统可能 **48 小时**不可用 → CEO / crisis director **宣布网络危机**（客户数据 + 运营中断 + 可能监管通知 + 声誉）→ 战略目标：保护客户数据、阻止攻击者移动、**维持交易和现金关键流程**、保全证据、履行监管义务、准确沟通 → **并行工作流**：Cybersecurity（IC/CISO 隔离、调查、重建）· Business continuity（投资者报告切到**手工或替代流程**）· Legal（通知要求、沟通受特权保护）· Communications（员工信息、客户 holding statement、媒体 Q\&A、监管简报）· Finance（损失、恢复费用、**保险通知**）→ 恢复后董事会复盘，整改：抗钓鱼 MFA、不可篡改备份测试、收紧供应商访问、改进分段、更新演练。
+
+**必备文档（p.26）**：危机管理政策（董事会批准）、**危机升级矩阵**、7×24 联系人目录、分场景 playbook、利益相关方地图、预批沟通模板、态势报告模板、决策和行动日志、演练项目。
+
+**运营原则（p.27）**：事实为先但说出不确定性 · 先保护人员、关键服务和证据 · 区分 **what we know / what we believe / what we are doing to verify** · **one source of truth**，急性期每 30–60 分钟汇报 · **沟通是运营控制，不是公关补救** · 实时记录决策（含考虑过的替代和接受的风险）· ***An untested plan is only a document, not a capability*** · 经验教训变成有预算、owner、截止日期的整改。
+
+🔎 搜索词：crisis team, crisis director, incident commander, general counsel, legal privilege, communications lead, investment firm case, parallel workstreams, 48 hours, escalation matrix, operating principles, know believe verify, one source of truth, untested plan, 危机团队, 律师特权, 并行工作流
+
+### 🔴 BCP 与 IR / Crisis / DR 的分工（p.28–29）
+
+**课件原文**：*A Business Continuity Plan (BCP) framework is the management system that enables an organization to **continue delivering its most important services during disruption** and to **restore normal operations in a controlled sequence**. It covers cyber attacks, technology outages, site loss, supplier failure, people disruption and market events — **not only disaster recovery**. **ISO 22301** is the leading management-system model.*
+
+| 能力                      | 核心问题                    | 负责人                           | 产出              |
+| ----------------------- | ----------------------- | ----------------------------- | --------------- |
+| **Incident response**   | 发生了什么？怎么遏制和根除？          | **CISO / IC**                 | 威胁被遏制，系统被调查和加固  |
+| **Crisis management**   | 高管怎么保护人员、利益相关方、声誉和战略选项？ | **CEO、COO、crisis director**   | 企业级决策和利益相关方治理   |
+| **Business continuity** | 关键业务怎么**在可接受水平上继续运转**？  | **COO / BCP 经理 / 业务服务 owner** | 靠替代方案**维持**优先服务 |
+| **Disaster recovery**   | 应用、基础设施、数据怎么**恢复**？     | **CIO / CTO / IT 恢复负责人**      | 技术恢复到约定服务水平     |
+
+**最易混 BC vs DR**：BC 问「系统没恢复之前业务怎么继续」（常靠**手工流程**，业务方负责）；DR 问「系统怎么修回来」（备份、灾备站点、failover，IT 负责）。「BCP 就是灾备」是**错的**。
+
+🔎 搜索词：BCP, business continuity plan, business continuity management, BCM, disaster recovery, DR, ISO 22301, IR vs crisis vs BCP vs DR, manual workaround, failover, 业务连续性, 灾难恢复, 灾备
+
+### 🔴 BCP Framework 周期（p.30–31）
+
+**Govern → Assess → Design → (Plan) → Respond → Recover → Test → Improve**
+
+| Stage       | 活动                        | 交付物                                          |
+| ----------- | ------------------------- | -------------------------------------------- |
+| **Govern**  | 范围、政策、角色、风险胃口、预算、董事会报告    | BCP 政策、治理章程、**RACI**、路线图                     |
+| **Assess**  | 关键服务、依赖、中断情景、**影响容忍度**、义务 | **BIA**、依赖图、风险评估                             |
+| **Design**  | 选连续性策略、定恢复目标              | 连续性策略、**RTO / RPO**、备用站点和供应商安排               |
+| **Plan**    | 启动、沟通、替代方案、恢复任务、升级        | BCP、call tree、playbook、沟通模板                  |
+| **Respond** | 启动连续性流程、维持关键服务            | 态势报告、行动日志、服务优先级决策                            |
+| **Recover** | 从临时安排回到正常                 | 恢复计划、**对账清单（reconciliation checklist）**、退出标准 |
+| **Test**    | 桌面、技术测试、call tree、模拟、完整恢复 | 演练报告、测试证据、整改项                                |
+| **Improve** | 演练、变更、事件、审计后更新            | 整改追踪、年度评审、管理评审记录                             |
+
+p.30 写 7 步（无 Plan），p.31 表格 8 步，默写建议写 8 个。  
+**NIST SP 800-34 应急规划七步**：① 政策 ② BIA ③ 预防性控制 ④ 恢复策略 ⑤ 编写计划 ⑥ 测试、培训、演练 ⑦ 维护计划。
+
+🔎 搜索词：BCP cycle, BCP framework, govern assess design plan respond recover test improve, NIST 800-34, contingency planning, reconciliation, impact tolerance, BCP 周期, 应急规划
+
+### 🔴 BIA 与 MTPD / RTO / RPO / MBCO（p.32–33）
+
+**课件原文**：*Business Impact Analysis (BIA) is the **core of BCP**. It converts general resilience goals into **prioritized, measurable recovery requirements**. The BIA should be **led by business service owners, not only by technology**.*
+
+| 指标                                              | 定义                                      |
+| ----------------------------------------------- | --------------------------------------- |
+| **MTPD** Maximum Tolerable Period of Disruption | 组织能承受的**最长中断**，超过后伤害不可接受（红线）            |
+| **RTO** Recovery Time Objective                 | 把服务恢复到约定最低水平的**目标时间**；**RTO < MTPD**   |
+| **RPO** Recovery Point Objective                | **以时间衡量的最大可容忍数据丢失**——决定**备份频率**，不决定恢复多快 |
+| **MBCO** Minimum Business Continuity Objective  | 中断期间可接受的**最低服务水平**                      |
+
+每个关键服务还要记录：目的和负责高管、中断后果、所需资源（人员、场所、技术、数据、供应商、**手工替代方案**）、依赖（含关键外包商）。
+
+**投资管理公司示例（p.33）**：
+
+| 服务            | MTPD     | RTO      | RPO          | 最低持续安排                     |
+| ------------- | -------- | -------- | ------------ | -------------------------- |
+| **交易执行和订单管理** | 2–4 小时   | 1 小时     | 接近 0 到 15 分钟 | 人工下单 + **双人审批** + 电话录音确认   |
+| 组合估值和风险监控     | 1 个工作日   | 4 小时     | 1 小时         | 备用风险环境 + 受控 spreadsheet    |
+| **资金划转和支付控制** | 4–8 小时   | 2 小时     | 15 分钟        | 网银后备 + **职责分离** + 电话回拨     |
+| 投资者报告         | 2–5 个工作日 | 1–2 个工作日 | 24 小时        | 用上期数据 + 人工制作 + 通知客户        |
+| 企业邮件和协作       | 1 个工作日   | 4–8 小时   | 4 小时         | 应急协作渠道 + 电话 / 短信 call tree |
+
+**规律**：越接近钱和交易，三个数字越小。
+
+**算例**：交易系统 MTPD 2–4h、RTO 1h、RPO ≤15min；若恢复要 3 小时、备份每 1 小时一次 → 恢复时间超 RTO 且超 MTPD 下限（中间要靠人工下单撑住）；最坏丢 1 小时数据，远超 RPO 15 分钟 → 要更频繁备份 / 实时复制 + 恢复后逐笔**对账**。
+
+**为什么 BIA 由业务主导**：「停多久、丢多少能接受」是业务判断；IT 定 RTO 容易按「现有能力」而不是「业务需要」来定。  
+**和 ISOM 5280 对照**：5280 用 MTD（≈ MTPD）+ WRT（Work Recovery Time），要求 RTO + WRT ≤ MTD。
+
+*（网页版此处可交互：自己调备份间隔、RPO、RTO、MTPD，时间轴实时变化；下表是 p.33 各项服务和两个反例的结果）*
+
+| 服务                | RTO vs MTPD             | 停机          | 数据丢失                    | RPO     | 最低持续安排                                                       |
+| ----------------- | ----------------------- | ----------- | ----------------------- | ------- | ------------------------------------------------------------ |
+| 交易执行 / 订单管理       | RTO 1 小时 vs MTPD 2 小时   | 达标          | 备份间隔 15 分钟 vs RPO 15 分钟 | 达标      | 人工下单流程 + 双人审批 + 电话录音确认                                       |
+| 组合估值 / 风险监控       | RTO 4 小时 vs MTPD 24 小时  | 达标          | 备份间隔 1 小时 vs RPO 1 小时   | 达标      | 备用风险环境 + 受控的 spreadsheet 敞口报告                                |
+| 资金划转 / 支付控制       | RTO 2 小时 vs MTPD 4 小时   | 达标          | 备份间隔 15 分钟 vs RPO 15 分钟 | 达标      | 银行网银后备 + 职责分离核验 + 电话回拨确认                                     |
+| 投资者报告             | RTO 24 小时 vs MTPD 48 小时 | 达标          | 备份间隔 24 小时 vs RPO 24 小时 | 达标      | 用上一期数据 + 受控的人工制作 + 通知客户                                      |
+| 企业邮件 / 协作         | RTO 4 小时 vs MTPD 24 小时  | 达标          | 备份间隔 4 小时 vs RPO 4 小时   | 达标      | 应急协作渠道 + 预先建好的电话 / 短信 call tree                              |
+| ✗ 交易系统，但恢复要 3 小时  | RTO 3 小时 vs MTPD 2 小时   | **超出 1 小时** | 备份间隔 15 分钟 vs RPO 15 分钟 | 达标      | RTO 超过 MTPD：人工下单流程必须撑过这个缺口，否则伤害不可接受                          |
+| ✗ 支付系统，但每 4 小时才备份 | RTO 2 小时 vs MTPD 4 小时   | 达标          | 备份间隔 4 小时 vs RPO 15 分钟  | **不达标** | RPO 不达标：最坏会丢 4 小时的支付指令，要逐笔对账补录（p.35 reconciliation controls） |
+
+🔎 搜索词：BIA, business impact analysis, MTPD, maximum tolerable period of disruption, MTD, RTO, recovery time objective, RPO, recovery point objective, MBCO, minimum business continuity objective, backup frequency, impact tolerance, 业务影响分析, 恢复时间目标, 恢复点目标, 最长可容忍中断
+
+### 🟡 连续性策略、BCP 最低内容与实施顺序（p.34–37）
+
+**按依赖失效准备方案（p.34）**——*BCP needs realistic, funded options, not just "work from home"*：
+
+| 依赖失效                         | 策略                              | 验证证据                    |
+| ---------------------------- | ------------------------------- | ----------------------- |
+| Office unavailable           | 远程办公、备用场所、预配置设备                 | 远程模拟、容量测试               |
+| Core application unavailable | **Warm standby**、替代应用、手工处理、只读报表 | Failover 测试、手工流程测试、对账证据 |
+| Data corruption / ransomware | **不可篡改备份**、干净恢复环境、离线流程          | 恢复测试、恶意软件扫描、恢复时间证据      |
+| Key supplier unavailable     | **双供应商**、合同恢复承诺、内部后备            | 第三方演练、SLA 复核、**退出计划测试** |
+| Key personnel unavailable    | 副手、交叉培训、runbook、委托授权            | Call tree、角色覆盖演练        |
+| Primary comms unavailable    | **带外消息**、应急网站、电话 / 短信 call tree | 通信演练、联系人准确性             |
+
+**每个业务单元 BCP 至少包含（p.35）**：启动触发和**有权启动的人** · 范围、假设、服务优先级 · 角色、副手、联系方式、升级 · **最初 30–60 分钟的即时行动** · 连续性流程和手工替代 · 技术和数据依赖、恢复优先级 · 对内外沟通责任 · **对账控制（reconciliation controls）**——中断期间的手工交易必须恢复后逐笔补录核对 · 恢复正常的标准和复盘 · 版本控制、owner、年度评审、测试证据。
+
+**董事会仪表盘（p.36）**：有当前 BIA、owner、RTO、RPO、测试过计划的关键服务 % · 恢复测试成功率 · 未解决缺口 · 关键第三方连续性承诺 · **单点故障 / 依赖集中度** · 启动连续性的事件数 · 达不到影响容忍度的例外。
+
+**实施顺序（p.37）**：① 高管支持、批准政策 ② 识别关键服务、指定业务 owner ③ **做 BIA**、映射端到端依赖 ④ 批准影响容忍度、RTO、RPO、最低服务水平 ⑤ **出资**落实连续性策略 ⑥ 编写简明计划、call tree、模板 ⑦ **逐步测试**：联系人核对 → 桌面 → 技术恢复 → failover → 供应商演练 → 端到端模拟 ⑧ 整改追踪到关闭，变化时刷新。
+
+**BCP 有效的标志（p.37）**：*"If this critical service failed now, how would we **maintain** an acceptable level of operation, **recover** within agreed tolerance, **reconcile** what happened, and **prove** that we did?"*——四个动词 maintain → recover → reconcile → prove。
+
+🔎 搜索词：continuity strategies, warm standby, dual supplier, out-of-band, BCP minimum content, first 30-60 minutes, reconciliation controls, single point of failure, BCP implementation, maintain recover reconcile prove, 连续性策略, 对账, 单点故障
+
+---
+
+## W7 · 安全战略与投资计划
+
+**一句话**：战略和投资计划都要**从业务服务和损失情景出发，不从安全工具出发**。每一块钱都要回答 p.17 红字：**Which scenario, how much, by when, what evidence**。这一周是全课的总装：用到 W2 框架、W3 情景和风险胃口、W4 ROI 和尾部、W5 供应商分层、W6 RTO / RPO。
+
+### 🔴 Cyber Security Strategy 的定义（p.4）
+
+**课件原文**：*A cybersecurity strategy is the **business-led** plan for managing cyber risk. It defines the outcomes the organization must **protect**, the threats and failure scenarios it will **prioritize**, the controls and capabilities it will **fund**, and how leadership will **measure** accountability and resilience. It is **not a tool list or a compliance exercise**; it connects security investment to **operational continuity, customer trust, financial exposure and regulatory obligations**.*
+
+**金融服务公司战略目标示例**：保护关键服务、客户资产和敏感信息，抵御网络中断、欺诈、数据泄露和第三方失败——**while enabling secure digital growth** 并展示**监管级别的韧性**。
+
+**答题骨架**：Protect → Prioritize → Fund → Measure。
+
+🔎 搜索词：cyber security strategy, cybersecurity strategy definition, business-led, protect prioritize fund measure, not a tool list, not a compliance exercise, 网络安全战略, 战略定义
+
+### 🔴 战略的五个 Outcomes（p.5）
+
+| Outcome                          | 做得好的样子                         | 示例指标                               |
+| -------------------------------- | ------------------------------ | ---------------------------------- |
+| **Service resilience**           | 关键客户和交易服务在攻击后**继续运转或快速恢复**     | 恢复时间、恢复点达成、韧性测试                    |
+| **Data and identity protection** | 敏感数据和特权访问**受控、被监控、可恢复**        | MFA 覆盖、特权复核完成、数据分类覆盖               |
+| **Loss prevention**              | 勒索、BEC、支付欺诈、数据窃取**造成有限损失**     | 欺诈损失率、高风险控制覆盖、抗钓鱼 MFA              |
+| **Regulatory assurance**         | 能**拿出证据**证明治理、测试、事件报告、第三方监督    | 未关闭审计发现、控制测试通过率、报告及时性              |
+| **Secure enablement**            | 上云、AI、软件交付、第三方采用在**明确风险决策**下推进 | Secure-by-design 采用、关键漏洞修复、供应商评估完成 |
+
+**注意**：Loss prevention 是 *limited* losses，不是零损失；每个 outcome 都配**可量化指标**（呼应 measure）。
+
+🔎 搜索词：strategy outcomes, five outcomes, service resilience, data and identity protection, loss prevention, regulatory assurance, secure enablement, 战略目标, 五个结果
+
+### 🔴 战略架构：六大支柱（p.6）
+
+| 支柱                                       | 战略目标             | 典型举措                                                    |
+| ---------------------------------------- | ---------------- | ------------------------------------------------------- |
+| **1 Governance and risk**                | 把网络风险放进**企业决策**  | 董事会报告、cyber risk appetite、风险分类、情景分析、控制 owner、例外管理       |
+| **2 Identity and access**                | **身份成为主要的安全边界**  | 抗钓鱼 MFA、PAM、最小权限、**joiner / mover / leaver** 自动化、服务账号治理 |
+| **3 Resilient technology**               | 缩小攻击面、**限制影响半径** | 零信任、安全配置基线、EDR、分段、CSPM                                  |
+| **4 Data, application, and AI security** | 保护**创造业务价值**的资产  | 数据分类、加密、DLP、secure SDLC、软件供应链、AI 模型 / 数据治理              |
+| **5 Detection and response**             | **早发现、快遏制**      | SOC 现代化、用例工程、威胁情报、playbook、桌面演练、取证 retainer             |
+| **6 Ecosystem resilience**               | 管理**集中度和第三方**风险  | 关键供应商映射、合同安全条款、持续保证、外包测试、退出和应急                          |
+
+**美国国家网络安全战略的类似优先**：零信任架构、上云、**后量子密码**、关键基础设施和供应链保护、AI 赋能防御、人才培养。  
+**记忆**：G-I-R-D-D-E；对应前几周：Governance ↔ W1–2，Identity ↔ W2 deepfake，Detection ↔ W6，Ecosystem ↔ W5。
+
+**术语**：*Identity as the primary perimeter*（远程办公 + 上云后，「谁在登录」才是真正的边界）· **JML**（入职 / 转岗 / 离职自动开通、调整、回收权限；转岗不收回旧权限是权限膨胀最常见来源）· **Blast radius** · **Forensics retainer**（事先签好的取证服务协议）。
+
+🔎 搜索词：six pillars, strategy architecture, governance and risk, identity and access, resilient technology, data application AI security, detection and response, ecosystem resilience, zero trust, identity perimeter, joiner mover leaver, JML, CSPM, post-quantum, 六大支柱, 战略架构, 零信任
+
+### 🔴 怎么制定战略：四步 + Priority Score（p.7–8）
+
+1. **Establish the business context**——从**业务服务**出发，不从安全技术栈出发；找出中断会造成重大财务、监管、客户、市场影响的服务
+2. **Quantify material cyber scenarios**——用**基于情景的风险分析**把技术弱点变成决策有用的敞口（→ FAIR）
+3. **Set a risk appetite**——哪些风险**不可接受**、哪些**严格限制**、哪些**经管理层批准可容忍**
+4. **Prioritize by risk reduction**——用**透明的组合模型**给举措打分
+
+**Priority score = (Expected loss reduction × Control confidence × Strategic relevance) ÷ (Cost × Time to value)**
+
+- **Control confidence**：控制真能起作用的把握（有测试证据 vs 厂商宣传）
+- **Strategic relevance**：和五个 outcomes、公司战略的关系
+- **Time to value**：越晚见效分越低（这段时间风险一直敞着）
+- 乘法：任一项为 0，整个分数就是 0
+
+**业务服务视角（p.8）**：关键服务（交易、执行、清算、结算、保证金、行情、组合管理、支付、资金、投资者门户、监管报告、通讯监控，以及支撑它们的身份、终端、云、网络）；每个服务列：业务 owner 和技术 owner · 系统 / 数据 / 身份 / 供应商 / 云依赖 · **最长可容忍停机和数据丢失** · 可信情景（勒索、破坏性攻击、云错配、凭证被盗、内部人、供应商被攻陷、**AI 赋能欺诈**）· 手工替代和恢复依赖。
+
+**经典考点**：业务服务视角能防止一种常见失败——汇报「**补丁完成率 95%**」，却回答不了「**一次攻击会不会让交易停下、泄露客户数据**」。技术指标 ≠ 业务结果；剩下 5% 如果是交易系统，95% 毫无意义。
+
+*（网页版此处可交互：切换 p.7 / p.20 公式、改每项举措的输入和前提条件；下表是默认数值的结果。数值为示意，成本参考 p.30–34 案例）*
+
+| Initiative                                                           | p.20 分数   | p.7 分数    | 决定                   | 理由                                            |
+| -------------------------------------------------------------------- | --------- | --------- | -------------------- | --------------------------------------------- |
+| Phishing-resistant MFA + PAM（Credential theft / privileged takeover） | 65.5（第 1） | 87.3（第 1） | **Fund immediately** | 基础性控制（p.18 ④）：即使 ROI 看起来一般也要先投                |
+| Immutable backup + clean recovery（Ransomware / destructive attack）   | 50.0（第 2） | 40.0（第 2） | **Fund immediately** | 基础性控制（p.18 ④）：即使 ROI 看起来一般也要先投                |
+| MDR / SOC use-case engineering（Undetected intrusion）                 | 14.4（第 3） | 18.5（第 3） | **Fund**             | 前提条件已满足，分数排在可投范围内                             |
+| DLP platform expansion（Investor-data leakage）                        | 3.00（第 4） | 3.00（第 4） | **Pilot first**      | 先小范围试点（pilot），数据分类成熟后再扩大（p.21 / p.24）         |
+| Advanced AI security platform（AI data leakage / model abuse）         | 1.50（第 5） | 0.45（第 6） | **Go slow**          | 先建 AI 清单和政策基线，再有选择地投（p.21 / p.24）             |
+| Large SIEM migration（Undetected intrusion）                           | 0.50（第 6） | 0.50（第 5） | **Go slow**          | Go slow：先把 telemetry、ownership 和优先用例做出来（p.24） |
+
+🔎 搜索词：how to build strategy, business context, quantify scenarios, risk appetite, prioritize by risk reduction, priority score, control confidence, strategic relevance, time to value, patch compliance 95%, business service view, 战略制定, 优先级打分
+
+### 🟡 三年路线图（p.9）
+
+| 时间                | 目标                  | 交付物                                                               |
+| ----------------- | ------------------- | ----------------------------------------------------------------- |
+| **First 90 days** | **建立可见性**，堵后果最严重的暴露 | Crown-jewel 服务地图、董事会风险仪表盘、关键漏洞计划、特权访问复核、勒索恢复评估、事件升级矩阵、第三方关键度清单    |
+| **Months 3–12**   | **基础控制的一致性**        | MFA / PAM、EDR 和 SOC 用例、**不可篡改备份 + 恢复测试**、云护栏、高风险岗位意识、供应商尽调标准、演练项目 |
+| **Year 2**        | 提升韧性和工程纪律           | 分段或零信任、secure SDLC、持续控制监控、威胁导向测试、恢复演练、数据保护现代化、第三方持续监控             |
+| **Year 3**        | 优化，让安全成为**业务能力**    | 量化网络风险组合、自动化保证、resilience by design、AI 安全治理、**后量子迁移规划**、对手仿真      |
+
+**递进**：visibility → consistency → resilience → capability（看得见 → 做得齐 → 做得硬 → 做成业务能力）。
+
+🔎 搜索词：roadmap, three-year roadmap, first 90 days, short-term long-term plan, quick wins, visibility, foundational controls, 路线图, 短期长期计划
+
+### 🟡 KPI / KRI（p.10）
+
+| 领域            | 指标                                      |
+| ------------- | --------------------------------------- |
+| Identity      | 特权账号抗钓鱼 MFA %、陈旧特权账号、**回收权限所需时间**       |
+| Vulnerability | 目标时间内修复的关键漏洞 %、可利用的对外暴露                 |
+| Detection     | MTTD、MTTC、SLA 内调查的高置信告警 %               |
+| Recovery      | 恢复能力**已验证**的关键服务 %、恢复测试成功率、实际 vs 目标恢复时间 |
+| Third parties | 已评估关键供应商 %、**没测试通知承诺**的供应商、集中度          |
+| Data          | 已分类敏感存储库 %、高严重度数据暴露、加密覆盖                |
+| Human risk    | 高风险岗位模拟表现、员工上报、**付款控制例外**               |
+| Governance    | 未关闭风险接受、逾期审计发现、控制测试完成率                  |
+
+**KPI vs KRI**（补充）：**KPI** 衡量安全项目**执行得怎么样**（回头看，例如 MFA 覆盖 98%）；**KRI** 衡量**风险是否在变大**（往前看的预警，触线要升级，例如陈旧特权账号在增加）。同一个数可以两用。
+
+🔎 搜索词：KPI, KRI, key performance indicator, key risk indicator, metrics, security metrics, board metrics, 指标, 绩效指标, 风险指标
+
+### 🔴 Information Security Strategy 与 Cyber Strategy 的区别（p.11–12）
+
+**课件原文**：*An information security strategy is the management plan for protecting the **confidentiality, integrity and availability of information across its full lifecycle** — whether it resides in applications, cloud services, **paper records**, endpoints, vendor platforms or AI systems. It is **broader than a technical cyber-defence plan** because it combines governance, data ownership, people, **physical protection**, third-party controls, compliance and continuous assurance.* Position it as an **enterprise risk and trust program**, with an **ISMS aligned to ISO 27001**, organizing risk outcomes by **NIST CSF 2.0's six functions**.
+
+**InfoSec 使命示例**：保护客户、员工、市场、财务和专有信息，防止**未授权的 disclosure, alteration, loss or unavailability**（= C, I, A）；支持合法可信地使用数据；在内部和第三方生态保持可证明的韧性。
+
+**InfoSec outcomes**：Confidentiality · Integrity（完整、准确、真实、**可追溯**）· Availability（在约定恢复目标内）· **Compliance and trust**（使用、保留、共享、销毁合规）· **Accountability**（每个关键数据集有**业务 owner**、分类、风险决策、可审计控制）。
+
+|      | Cyber Security Strategy | Information Security Strategy           |
+| ---- | ----------------------- | --------------------------------------- |
+| 保护对象 | 网络空间里的系统、服务、数据          | **一切形态的信息**（含纸质）                        |
+| 范围   | 偏技术 + 业务服务韧性            | 更宽：治理、数据 ownership、人员、**物理**、第三方、合规     |
+| 组织方式 | 六大支柱                    | **ISMS (ISO 27001) + NIST CSF 2.0 六功能** |
+| 核心问题 | 攻击会不会让关键服务停下、造成损失？      | 信息全生命周期的 CIA 有没有保住？                     |
+
+**InfoSec 路线图（p.13–14）**：**First 90 days**（高管支持、ISMS 范围、政策和风险胃口、关键信息资产和数据流、分类、缺口评估、风险登记册、事件分级和通知流程）→ **Months 3–6**（**data owner 和 custodian**、MFA / 特权 / 访问复核、加密和密钥、高风险外发渠道 DLP、配置标准、供应商分层、按角色培训）→ **Months 6–12**（测试勒索恢复、高管 IR / 泄露桌面演练、secure SDLC、渗透测试、监控用例、**ISMS 内审和管理评审**、更新处置计划）。
+
+**Data owner vs custodian**：owner 是**业务方**，决定分类、谁能看、风险能否接受；custodian 是**技术方**，按 owner 要求实施备份、加密、权限。
+
+**复审（p.15）**：**至少每年**，并在**重大收购、上云迁移、监管变化、重大事件、新 AI 部署、商业模式变化**时复审。董事会记分卡要显示**信息风险是否真的在下降**（含部署前已评估的 AI 用例）。
+
+**金融业重点（p.16）**：
+
+| 重点                           | 为什么                   | 应对                                           |
+| ---------------------------- | --------------------- | -------------------------------------------- |
+| Client and personal data     | 泄露、隐私、信任              | 分类、加密、DLP、访问再认证                              |
+| Market-sensitive information | 市场滥用、操守、监管            | **information barriers（信息隔离墙）**、实名访问、监控、审计轨迹 |
+| **Data integrity**           | 定价、风险、交易、报告**出错**直接亏钱 | 源头校验、**对账**、变更控制、**职责分离**、不可篡改日志             |
+| **Fraud and impersonation**  | BEC 和 **AI 冒充**迅速造成损失 | 抗钓鱼 MFA、**付款回拨 + 双人审批**、行为监控                 |
+| Third-party concentration    | 外包变成共同故障点             | 关键供应商映射、韧性测试、退出计划、审计权、通知 SLA                 |
+| Generative AI                | 敏感输入被暴露或**留存在公司控制之外** | 批准工具清单、数据使用限制、企业租户、prompt 防泄露、人工审核           |
+
+🔎 搜索词：information security strategy, InfoSec strategy, cyber vs infosec strategy, full lifecycle, paper records, physical protection, ISMS, ISO 27001, data owner, data custodian, annual review, information barriers, data integrity, segregation of duties, 信息安全战略, 区别, 数据所有者
+
+### 🔴 Cyber Security Investment Plan 定义与五原则（p.17–18）
+
+**课件原文**：*A cybersecurity investment plan is a **funded portfolio of risk-reduction and resilience initiatives**, **not a shopping list of security products**. For a financial services firm or hedge fund, it should direct money to the **few cyber scenarios** most likely to cause financial loss, trading or operational disruption, investor-data exposure, fraud or regulatory harm. The most defensible plan links **every dollar** to a **material risk scenario**, a **measurable reduction in likelihood or impact**, an **accountable owner**, and **evidence that the investment works**.*
+
+**课件唯一的红字（p.17）**：***Which material business-loss scenario does it reduce, by how much, by when, and what evidence will prove the reduction?***（Which / How much / By when / What evidence）
+
+**五原则（p.18）**：
+
+| # | 原则                                                  | 要点                                                    |
+| - | --------------------------------------------------- | ----------------------------------------------------- |
+| 1 | **Start with business services and loss scenarios** | 保护交易、组合管理、投资者报告、支付、资金、行情、特权管理、关键第三方连接——**不是孤立地买工具**   |
+| 2 | **Prioritize risk reduction per dollar**            | 比较年损失降幅、**尾部损失**降幅、监管 / 韧性必要性、成本、见效时间、依赖风险            |
+| 3 | **Fund the whole control lifecycle**                | 新工具没有运营人员、集成、检测工程、测试、维护和高管 owner，就是 **shelfware**     |
+| 4 | **Separate mandatory resilience from optimization** | 安全备份、关键访问 MFA、IR、漏洞修复是**基础要求——即使狭义 ROI 一般也要投**        |
+| 5 | **Treat cyber as an ERM portfolio**                 | 汇总进企业风险登记册，用和操作、法律、流动性、声誉风险**相同的语言**；**NIST IR 8286** |
+
+**原则 2 vs 4 的张力**：两层决策——先投「入场券」（价值在尾部，用预期年损失算会低估），再在优化型投资里按降险效率排序。
+
+🔎 搜索词：investment plan, cybersecurity investment plan, funded portfolio, not a shopping list, red text, which scenario how much by when what evidence, five principles, risk reduction per dollar, shelfware, whole control lifecycle, mandatory resilience, ERM portfolio, NIST IR 8286, 投资计划, 五原则, 购物清单
+
+### 🔴 Investment Priority 公式与举措决定（p.20–21）
+
+**Investment priority = (Annual loss reduction + Tail-risk reduction + Compliance / resilience value) ÷ (Total cost of ownership × Time to benefit × Delivery risk)**
+
+**用区间，不用精确数字**，量化以下的**变化**：Loss-event frequency · Loss magnitude · Expected annual loss · **P95 or P99 loss**（严重但合理的结果）· **Probability of exceeding approved risk appetite** · Operational resilience（在恢复容忍度内恢复的能力）。
+
+**p.7 vs p.20**：p.20 多了**尾部风险、合规 / 韧性价值、TCO、交付风险**，分子是加法（任一项有价值都能加分），让备份、MFA 这类基础控制不会因预期年损失小而排到后面。
+
+**举措示例（p.21）**：
+
+| 举措                                | 降低的情景          | 效果                      | 证据                              | 决定                                                          |
+| --------------------------------- | -------------- | ----------------------- | ------------------------------- | ----------------------------------------------------------- |
+| Phishing-resistant MFA + PAM      | 凭证被盗 / 特权被接管   | 降初始入侵和特权滥用可能性           | 注册率、认证遥测、特权会话复核、攻击模拟            | **Fund immediately**                                        |
+| Immutable backup + clean recovery | 勒索 / 破坏性攻击     | 缩短停机、削弱勒索筹码             | 按 RTO / RPO 的恢复测试、clean-room 演练 | **Fund immediately**                                        |
+| MDR / SOC use-case engineering    | 未被发现的入侵        | 缩短 **dwell time** 和遏制延迟 | 检测覆盖、MTTD / MTTC                | **Fund if telemetry and response ownership exist**          |
+| DLP platform expansion            | 投资者数据泄露        | 减少未授权外发                 | 策略覆盖、真阳性率                       | **Pilot first**，按数据分类成熟度扩大                                  |
+| Advanced AI security platform     | AI 数据泄露 / 模型滥用 | **Potentially** 降低新兴风险  | 批准用例清单、红队结果                     | **Fund selectively after AI inventory and policy baseline** |
+
+**阶梯**：立即投 → 有前提才投 → 先试点 → 打好基础再挑着投。**前提没满足，买了也是 shelfware**。
+
+🔎 搜索词：investment priority formula, tail-risk reduction, compliance value, total cost of ownership, TCO, time to benefit, delivery risk, fund immediately, pilot first, dwell time, MDR, DLP, AI security platform, 投资优先级, 总拥有成本, 尾部风险
+
+### 🔴 预算百分比区间（p.19）
+
+**课件原文**：*When the budget or maturity baseline is unknown, use **percentage allocations** rather than invented amounts. The mix should vary with maturity: **a firm with unreliable recovery capability should first fund identity, recovery and incident readiness before expanding advanced analytics or AI security tooling**.*
+
+| 类别                                             | 占比         | 投什么                                   |
+| ---------------------------------------------- | ---------- | ------------------------------------- |
+| Identity, access, and fraud prevention         | **20–25%** | MFA、PAM、身份治理、邮件安全、付款欺诈控制、条件访问         |
+| Resilience and recovery                        | **20–25%** | 不可篡改备份、clean-room 恢复、灾备、分段、IR、演练      |
+| Detection and response                         | **15–20%** | EDR / XDR、SOC 或 MDR、SIEM 用例、威胁狩猎、取证准备 |
+| Vulnerability, cloud, and application security | **15–20%** | 资产发现、暴露管理、补丁、CSPM、secure SDLC、渗透测试    |
+| Data security and privacy                      | **10–15%** | 分类、加密、DLP、数据访问监控、记录控制                 |
+| Third-party, governance, and assurance         | **10–15%** | 供应商风险、风险量化、GRC、审计、桌面演练、培训、保险优化        |
+| Strategic innovation and AI security           | **0–10%**  | AI 治理、红队、安全自动化、后量子准备、试点               |
+
+**规律**：两个 20–25、两个 15–20、两个 10–15、一个 0–10；身份 + 恢复 + 检测合计 **55–70%**。
+
+🔎 搜索词：budget allocation, percentage ranges, security budget, budget split, identity 20-25%, resilience 20-25%, detection 15-20%, AI 0-10%, maturity, 预算分配, 百分比
+
+### 🔴 一页纸 Business Case 与决策指标（p.22–23）
+
+| 字段                     | 必须回答                                             |
+| ---------------------- | ------------------------------------------------ |
+| **Business problem**   | 哪个关键业务服务、数据资产、法规或运营目标面临风险？                       |
+| **Scenario**           | 具体会发生什么（例：特权账号被盗导致勒索中断）                          |
+| **Baseline exposure**  | 当前可能性、预期损失、尾部敞口、控制缺口和证据                          |
+| **Proposed treatment** | 技术、流程、人员、托管服务、韧性能力或控制重设计                         |
+| **Benefit mechanism**  | 降低攻击可能性？缩短检测时间？限制影响半径？缩短恢复时间？降低财务损失？             |
+| **Cost**               | 一次性实施、订阅、内部人力、集成、托管服务、测试、**退役（decommissioning）** |
+| **Delivery risk**      | 依赖、owner、时间表、运营变更负担、失败模式                         |
+| **Success measures**   | 覆盖、质量、测试结果、损失敞口变化、恢复结果、审计证据                      |
+| **Residual risk**      | 实施后还剩什么，**谁有权接受**？                               |
+
+**对应红字四问**：Scenario + Baseline = Which；Benefit mechanism = How much；Delivery risk = By when；Success measures = What evidence。
+
+**管理层决策指标（p.23）**：头部情景的 **gross 和 residual** 敞口及趋势 · 预期年损失和**严重损失分位数**（相对风险胃口）· 关键系统和特权用户抗钓鱼 MFA 覆盖 · 勒索恢复实际 vs 目标 · 超出修复目标的关键漏洞 · 优先攻击路径的检测和遏制表现 · 第三方集中度和未测试依赖 · **投资实际交付 vs 计划** · 未关闭高风险例外和责任高管。
+
+🔎 搜索词：business case, one-page business case, business problem, baseline exposure, benefit mechanism, decommissioning, delivery risk, success measures, residual risk, investment proposal, decision metrics, 商业论证, 投资提案
+
+### 🔴 Go Slow：别把这些当起点（p.24）
+
+| Go-slow 项目      | 缺的前提                            |
+| --------------- | ------------------------------- |
+| **大规模 SIEM 迁移** | 有用的遥测、响应 ownership、优先检测用例       |
+| **大范围 DLP 铺开**  | 知道敏感数据在哪、owner 是谁、业务流程和可接受的共享模式 |
+| **高级 AI 安全产品**  | AI 清单、使用政策、风险分类、批准的平台模型         |
+| **年度合规评估**      | 只产出发现，却**没有整改资金和负责 owner**      |
+| **多个重叠的点工具**    | 只加告警，不改善遏制、恢复或控制有效性证据           |
+
+**共同点**：买了东西，却没有让它产生价值的地基（数据、流程、owner、整改资金）→ shelfware 或告警噪音。和 p.21 的条件决定是同一件事。  
+**DLP 例子**：没有数据分类时规则只能写宽（误报满天、业务被卡、员工绕过）或写松（什么都拦不住）。
+
+🔎 搜索词：go slow, what not to start with, SIEM migration, DLP rollout, AI security product, compliance assessment, overlapping point tools, tool sprawl, prerequisites, 慢下来, 不要先做
+
+### 🔴 案例：香港中型另类投资管理人 12 个月投资计划（p.25–37）
+
+**背景**：总部在香港的多策略对冲基金，约 **220 人**（香港、伦敦、纽约），AUM **US$5–15B**；基金行政和部分 IT / 安全外包；重度依赖云和 SaaS；机构投资者；电子交易；**没有自建 7×24 SOC**。技术：Microsoft 365、云数据平台、SaaS 组合 / 风险工具、**OMS / EMS**、行情终端、投资者门户。敏感信息：投资者 PII、银行 / 付款、持仓、交易和研究、**MNPI**、风险和估值模型。关键暴露：邮件和身份被盗、付款欺诈、勒索、云 / SaaS 错配、投资者数据泄露、供应商中断、**交易或风险数据被篡改**。
+
+**SFC 网上交易指引的要求（p.27）**：**双因素认证**、监控未授权访问、need-to-know、**至少每年访问复核**、安全补丁（**测试后一个月内**实施）、防恶意软件、**每日离线备份**、网络风险治理、事件升级、应急计划、**每年意识培训**。
+
+**六个投资目标（p.27）** ≈ 六大支柱：① 预防或迅速遏制账号接管和提权 ② 勒索后**恢复**关键服务 ③ 检测特权滥用、数据外泄、高风险云活动 ④ 保护投资者和市场敏感数据 ⑤ 证明对**外包服务**的有效监督 ⑥ 执行**演练过的**网络危机响应。
+
+**六个风险情景（p.28）**：
+
+| 情景                  | 业务影响                     | 基线缺口                    | 投资应对                        |
+| ------------------- | ------------------------ | ----------------------- | --------------------------- |
+| 被钓鱼的员工账号变成管理员       | 数据被窃、付款欺诈、勒索、交易支持中断      | 传统 MFA、**常驻特权过多**、复核不完整 | 抗钓鱼 MFA、条件访问、PAM、身份监控       |
+| 勒索攻击文件服务或组合运营       | 交易 / 运营中断、恢复成本、数据勒索      | **备份有，但恢复没有端到端测过**      | 不可篡改备份、隔离恢复、EDR/MDR、恢复演练    |
+| **AI 冒充触发虚假付款变更**   | 直接现金损失、声誉                | 依赖**邮件审批或非正式核实**        | **双人审批、可信回拨**、付款流程控制、财务专项培训 |
+| 投资者数据外发或上传到未批准 AI   | 隐私、法律、监管、信任              | 数据发现弱、外部共享控制不一致         | 分类、DLP、批准 AI 政策、受限数据流程      |
+| 云 / SaaS 或基金行政管理人故障 | 无法访问记录、处理 **NAV**、向投资者报告 | 关键供应商依赖**没有映射或测试**      | 供应商分层、韧性证据、应急程序、退出 / 可移植计划  |
+| 风险、估值、交易数据被篡改       | 错误决策、损失、监管               | 变更审批和异常检测不足             | **职责分离**、审计轨迹、对账、特权会话监控     |
+
+**预算 US$1.2M（第一年增量，不含基线 IT，p.29）**：
+
+| 领域                   | 金额      | 占比        | p.19 区间               |
+| -------------------- | ------- | --------- | --------------------- |
+| 身份、特权访问与反欺诈          | US$270k | **22.5%** | 20–25 ✅               |
+| 检测、响应与托管安全           | US$230k | 19.2%     | 15–20 ✅               |
+| 韧性、备份与恢复测试           | US$240k | 20.0%     | 20–25 ✅               |
+| 云、漏洞与应用安全            | US$155k | **12.9%** | 15–20 ⬇️ 偏低           |
+| 数据保护与 AI 控制          | US$120k | 10.0%     | 数据 10–15 + AI 0–10，低端 |
+| 第三方、治理、测试与培训         | US$135k | 11.3%     | 10–15 ✅               |
+| **应急储备 Contingency** | US$50k  | 4.1%      | p.19 无此项              |
+
+*（网页版此处可交互：拖动每一类的预算占比、改总预算、切换「恢复能力不可靠」，并展开 p.30–35 的举措明细；下面是三个预设的结果）*
+
+**p.29 案例：US$1.2M（合计 100%）**
+
+| 类别                                             | p.19 建议   | 占比    | 金额      | 判断       |
+| ---------------------------------------------- | --------- | ----- | ------- | -------- |
+| Identity, access, and fraud prevention         | 20–25%    | 22.5% | US$270k | 区间内      |
+| Resilience and recovery                        | 20–25%    | 20%   | US$240k | 区间内      |
+| Detection and response                         | 15–20%    | 19.2% | US$230k | 区间内      |
+| Vulnerability, cloud, and application security | 15–20%    | 12.9% | US$155k | **低于区间** |
+| Data security and privacy                      | 10–15%    | 7.5%  | US$90k  | **低于区间** |
+| Third-party, governance, and assurance         | 10–15%    | 11.3% | US$135k | 区间内      |
+| Strategic innovation and AI security           | 0–10%     | 2.5%  | US$30k  | 区间内      |
+| Contingency reserve                            | —（p.19 无） | 4.2%  | US$50k  | —        |
+
+**p.19 区间中点（合计 110%）**
+
+| 类别                                             | p.19 建议   | 占比    | 金额      | 判断  |
+| ---------------------------------------------- | --------- | ----- | ------- | --- |
+| Identity, access, and fraud prevention         | 20–25%    | 22.5% | US$270k | 区间内 |
+| Resilience and recovery                        | 20–25%    | 22.5% | US$270k | 区间内 |
+| Detection and response                         | 15–20%    | 17.5% | US$210k | 区间内 |
+| Vulnerability, cloud, and application security | 15–20%    | 17.5% | US$210k | 区间内 |
+| Data security and privacy                      | 10–15%    | 12.5% | US$150k | 区间内 |
+| Third-party, governance, and assurance         | 10–15%    | 12.5% | US$150k | 区间内 |
+| Strategic innovation and AI security           | 0–10%     | 5%    | US$60k  | 区间内 |
+| Contingency reserve                            | —（p.19 无） | 0%    | US$0k   | —   |
+
+**反例：工具堆砌型（合计 100%）**
+
+| 类别                                             | p.19 建议   | 占比  | 金额      | 判断       |
+| ---------------------------------------------- | --------- | --- | ------- | -------- |
+| Identity, access, and fraud prevention         | 20–25%    | 12% | US$144k | **低于区间** |
+| Resilience and recovery                        | 20–25%    | 10% | US$120k | **低于区间** |
+| Detection and response                         | 15–20%    | 35% | US$420k | **高于区间** |
+| Vulnerability, cloud, and application security | 15–20%    | 15% | US$180k | 区间内      |
+| Data security and privacy                      | 10–15%    | 10% | US$120k | 区间内      |
+| Third-party, governance, and assurance         | 10–15%    | 3%  | US$36k  | **低于区间** |
+| Strategic innovation and AI security           | 0–10%     | 15% | US$180k | **高于区间** |
+| Contingency reserve                            | —（p.19 无） | 0%  | US$0k   | —        |
+
+**偏离理由**：只算**增量**、假设已有终端 / 防火墙 / 云（云和漏洞部分在基线支出里）；拿出 4.1% 储备给 IR retainer 和紧急整改。**p.19 区间是不知道预算时的起点，不是硬规定**。公司更小就**保持比例、把平台换成托管服务**。
+
+**各领域明细（p.30–35）**：每项都写 **Initiative · Investment · Owner · Target outcome**。
+
+- 身份（270k）：**PAM US$95k**；抗钓鱼 MFA **特权 100%、员工 98%+**；付款欺诈控制由 **CFO / COO** 负责（独立回拨 + 双人授权）
+- 检测（230k）：**MDR 7×24 US$95k**；不能只看告警量或 MTTD，要测 MDR 能否**在约定服务水平内**隔离终端、禁用恶意会话、保全证据、**上报正确的业务决策者**；IR retainer 由 General Counsel / CISO 负责
+- 韧性（240k）：**不可篡改加密备份 US$85k**、**独立备份凭证**、clean room（不重接被攻陷生产环境就能恢复）、**至少两次**关键服务按 RTO / RPO 恢复测试
+- 云与应用（155k）：CSPM US$40k；SFC 补丁测试后一个月内实施；关键系统分段
+- 数据与 AI（120k）：研究、交易策略、投资者信息、MNPI、凭证**不得输入消费级 AI 工具**；批准的企业工具**也不能消除风险**，只是受控环境；AI 测试看 prompt injection、过度权限、数据留存、输出完整性
+- 第三方与人员（135k）：关键供应商映射 US$35k；**HKMA CFI**（网络防卫计划）和 **C-RAF**（比较**固有风险**和**实际成熟度**，差距就是路线图——类似 CSF Current → Target Profile）
+
+**季度里程碑（p.36）**：**Q1 Establish & protect**（董事会批准 cyber risk appetite、关键服务和供应商地图、MFA/PAM 设计、情景风险登记册、备份评估、IR retainer）→ **Q2 Implement controls**（MFA、MDR/EDR、不可篡改备份、付款欺诈流程、供应商分层）→ **Q3 Test recovery & data controls**（**两个关键服务的恢复测试**、勒索和欺诈桌面演练、DLP / 分类、渗透测试；决定恢复是否满足业务容忍度）→ **Q4 Assurance & optimize**（供应商连续性演练、独立验证、量化分析、董事会评审；根据已证明的降损决定 **renew, scale, stop, or replace**）。每季度都有 **Executive decision**——这才是组合管理。
+
+**成功标准（p.37）**：特权账号抗钓鱼 MFA **100%**、员工 **98%+**、无未受管共享管理员账号 · 特权访问 100% 经批准、**限时**、有日志、每季度再认证 · EDR **98%+** · 无超 SLA 的对外关键漏洞 · **两次**关键服务恢复在目标内 · 100% 关键数据存储有 owner 和分类 · 100% 关键供应商分层 · 100% 年度培训，财务和高管完成 **BEC / deepfake** 演练 · 至少**两次**跨职能演练 · 每季度向董事会汇报。
+
+🔎 搜索词：case study, hedge fund, alternative investment manager, Hong Kong, 220 employees, 1.2 million, US$1.2M, budget allocation case, SFC, daily offline backup, two-factor, HKMA, CFI, C-RAF, quarterly milestones, success criteria, renew scale stop replace, 对冲基金案例, 香港, 证监会, 金管局, 里程碑, 成功标准
+
+### 🟡 More AI：Anthropic Mythos（p.38–39）
+
+**是什么**：Anthropic 的**受限访问** Claude 模型层级，面向**经过审核的防御者和研究者**，因为它的编程和自主推理能力既能大幅帮助漏洞发现，也能帮助进攻性利用。课件说 Mythos 5.1 仍低于 Responsible Scaling Policy 的下一个风险等级，但保留了访问限制。  
+**意味着**：AI 可能**大幅压缩整个漏洞研究周期**（理解代码库 → bug 假设 → 测试 → 验证影响 → 甚至 exploit PoC）。  
+**数据点**：Mythos Preview 在 **410 次**基准尝试中自主构建 **56 次**端到端 exploit；Z.ai 的 GLM-5.3 成功 **50 次**——先进网络能力正在扩散到受控系统之外。**Project Glasswing**：给可信安全组织使用，在关键软件里找到 **10,000+** 漏洞。
+
+| 方向                         | 内容                                               |
+| -------------------------- | ------------------------------------------------ |
+| **Defensive upside**       | 更快发现 web 缺陷、不安全代码、错配、身份弱点、有漏洞的依赖                 |
+| **Offensive downside**     | 更快 exploit 开发、**更低的技能门槛**，可针对 API、支付、第三方、终端、遗留应用 |
+| **Governance requirement** | 当作**高风险 AI 系统 + 特权安全能力**，**不是普通员工生产力工具**         |
+
+**控制模型**：指定批准用户 · **允许目标清单** · 与生产隔离 · 强制日志 · **主动测试双人审批** · 不直连敏感环境 · 法务审查 · 负责任披露和整改流程（= PAM 的管法用在 AI 能力上）。
+
+🔎 搜索词：Mythos, Anthropic, frontier AI, AI vulnerability discovery, exploit, Project Glasswing, Responsible Scaling Policy, defensive upside, offensive downside, high-risk AI, privileged security capability, AI 漏洞挖掘, 前沿模型
+
+---
+
+## 8. 公式与计算总表
+
+所有能算的东西都在这里。答题格式：**公式 → 代入 → 结果 → 一句英文解释**。
+
+| #  | 公式                                                                                                                                                | 出处             | 算好的例子                                                       |
+| -- | ------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ----------------------------------------------------------- |
+| 1  | **Inherent Risk = Likelihood × Impact**                                                                                                           | W3 p.11        | Likely (4) × Major (4) = **16**（红）                          |
+| 2  | **ALE = Event Frequency × Loss Magnitude**（Annual Loss = LEF × LM）                                                                                | W3 p.11、W4 p.4 | 0.25 次 / 年 × US$9.3M = **US$2.325M / 年**                    |
+| 3  | **Risk = LEF × LM**；**LEF = TEF × Vulnerability**；**LM = Primary + Secondary**                                                                    | W2、W3          | TEF 1.0 × 25% = 0.25；LM = 5.3 + 4.0 = 9.3；Risk = **2.325M** |
+| 4  | **Expected Benefit = Baseline − Residual expected loss**                                                                                          | W4 p.9         | 6.0 − 2.2 = **3.8M**                                        |
+| 5  | **Net Benefit = Expected Benefit − Control lifecycle cost**                                                                                       | W4 p.9         | 3.8 − 2.2 = **1.6M**                                        |
+| 6  | **ROI = (Expected Benefit − Cost) / Cost**                                                                                                        | W4 p.9         | 1.6 / 2.2 ≈ **73%**；Cost = 3.0 时 0.8 / 3.0 ≈ **27%**        |
+| 7  | **Insurance Recovery = min(max(Gross − Retention, 0), Limit)**                                                                                    | W4 p.10        | min(max(8 − 1, 0), 4) = **4M**                              |
+| 8  | **Net Retained Loss = Gross − Recovery + Uncovered + Premium**                                                                                    | W4 p.10        | 8 − 4 + 0.5 + 0.2 = **4.7M**                                |
+| 9  | **Vendor Rating = 0.25D + 0.25A + 0.20C + 0.15B + 0.10F + 0.05R**（> 3.5 → Tier 1）                                                                 | W5 p.6         | D5 A3 C5 B3 F1 R3 → **3.70 → Tier 1**                       |
+| 10 | **RTO < MTPD**；RPO 决定备份频率                                                                                                                        | W6 p.33        | 交易：MTPD 2–4h、RTO 1h、RPO ≤15min；备份每小时一次 → **不满足 RPO**        |
+| 11 | **Priority score = (Loss reduction × Control confidence × Strategic relevance) ÷ (Cost × Time to value)**                                         | W7 p.7         | 见下例                                                         |
+| 12 | **Investment priority = (Annual loss reduction + Tail-risk reduction + Compliance / resilience value) ÷ (TCO × Time to benefit × Delivery risk)** | W7 p.20        | 用区间，不用精确数字                                                  |
+| 13 | **预算百分比**：身份 20–25 · 恢复 20–25 · 检测 15–20 · 漏洞 / 云 / 应用 15–20 · 数据 10–15 · 第三方 / 治理 10–15 · AI 0–10                                                | W7 p.19        | US$1.2M × 22.5% = **US$270k**                               |
+
+**Priority score 示意算例（数字是假设的，课件没给）**：
+
+- 方案 A（抗钓鱼 MFA）：降损 US$800k × 把握 0.9 × 相关度 1.0 ÷ (成本 US$150k × 见效 0.5 年) = 720 ÷ 75 = **9.6**
+- 方案 B（高级 AI 安全平台）：降损 US$300k × 把握 0.4 × 相关度 0.6 ÷ (成本 US$200k × 见效 1.5 年) = 72 ÷ 300 = **0.24**  
+  → A 远优先于 B；B 还缺 AI 清单这个前提（go slow）。
+
+**FAIR 的 Low / High 情景**（如果题目问区间）：LEF Low = 0.4 × 10% = **0.04**，High = 2.0 × 45% = **0.90**；LM Low = **1.8M**，High = **44.0M**。注意不能简单用 Low × Low 或 High × High 当「最好 / 最坏」，那是极端组合；正规做法是 Monte Carlo 得到分布。
+
+**W4 p.7 的 LEF 例子**：300 次 × 0.7% = **2.1** 次 / 年（Low 100 × 0.2% = 0.2；High 800 × 2% = 16）。
+
+**常用英文结论句**：
+
+- *"Since the expected benefit (US$3.8M) exceeds the lifecycle cost (US$2.2M), the net benefit is US$1.6M and the ROI is about 73%, so the investment is economically justified, subject to delivery risk and evidence of control effectiveness."*
+- *"Insurance recovers only US$4M because of the US$1M retention and US$4M limit; the firm still retains US$4.7M including uncovered losses and the premium, so insurance is a financial layer, not a substitute for controls."*
+- *"With a weighted rating of 3.70, above the 3.5 threshold, the vendor is Tier 1 and requires full due diligence, higher-tier controls and contractual safeguards before onboarding."*
+- *"The recovery time of 3 hours exceeds both the RTO (1 hour) and the lower bound of the MTPD (2 hours), so the firm needs a manual workaround and faster recovery capability."*
+
+🔎 搜索词：formula, calculation, compute, calculate, worked example, ALE, FAIR, ROI, net benefit, insurance, net retained loss, vendor rating, priority score, investment priority, budget percentage, 公式, 计算, 算例
+
+---
+
+## 9. 跨周易混对比
+
+| 对比                                                 | 区别                                                                                                                | 出处    |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- | ----- |
+| **Risk vs Cyber risk**                             | Risk：不确定事件在一定时间内对业务 / 运营 / 财务 / 法律 / 声誉的负面影响的可能性；Cyber risk：**数字系统、数据、网络或联网服务**被攻破导致数据丢失、中断、欺诈，进而造成财务 / 法律 / 声誉损失 | W1    |
+| **Prevention / Mitigation / Remediation**          | 事前消除 / 降低概率或影响 / 事后根治                                                                                             | W1    |
+| **Avoid / Mitigate / Transfer / Accept**           | 不做 / 用控制降 / 合同或保险转移部分损失 / 在胃口内正式批准接受                                                                              | W1、W3 |
+| **CyberSecurity / InfoSec / BCP**                  | 防外部（和内部）攻击 / 保护信息 CIA+AN（网络、终端、应用、数据）/ 中断时业务继续（PPRR）                                                              | W1    |
+| **Cyber strategy vs InfoSec strategy**             | 业务主导的网络风险计划（六支柱）/ 全生命周期所有形态信息的 CIA，更宽，含物理和纸质（ISMS + CSF 六功能）                                                      | W7    |
+| **Inherent vs Residual risk**                      | 控制之前 / 控制之后；目标是 residual 在 appetite 内                                                                             | W2、W3 |
+| **Risk appetite vs tolerance**                     | Appetite：董事会愿意承受的风险水平（总体）；Tolerance：对具体指标的可接受偏离（课件 ERM 里说「可衡量的容忍度」）                                               | W1、W3 |
+| **Governance vs Management**（COBIT）                | 评估、定方向、监督（董事会）/ 计划、建设、运行、监控（执行层）                                                                                  | W2    |
+| **ISO 27001 vs 27002**                             | 可认证的 ISMS 标准，产出 SoA / 不可认证的控制实施指南                                                                                 | W2    |
+| **NIST CSF Profile vs Tier**                       | 做到了没有（current vs target）/ 流程多正式（Partial → Adaptive），两者独立                                                          | W2    |
+| **ATT\&CK vs D3FEND**                              | 攻击者怎么打（TTP）/ 用什么防御类型应对                                                                                            | W2    |
+| **Red / Blue / Purple**                            | 攻 / 守 / 协作机制                                                                                                      | W2    |
+| **Primary vs Secondary loss**                      | 直接处理事件的钱 / 因别人反应多花的钱                                                                                              | W2、W3 |
+| **TEF vs LEF**                                     | 威胁行动次数（不管成败）/ 真正造成损失的次数 = TEF × Vulnerability                                                                     | W2、W3 |
+| **Monitor / Test / Report / Reassess**             | 在不在 / 扛不扛得住 / 该让谁知道 / 还准不准                                                                                        | W3    |
+| **Design vs Operating effectiveness**              | 设计上有没有用 / 有没有真的在跑、有证据                                                                                             | W3    |
+| **KPI vs KRI**                                     | 执行绩效（回头看）/ 风险预警（往前看）                                                                                              | W3、W7 |
+| **Baseline vs Higher-tier controls**               | 所有接触数据的供应商 / Tier 1 额外加强                                                                                          | W5    |
+| **Third party vs Fourth party**                    | 你的供应商 / 你供应商的供应商（分包商）                                                                                             | W5    |
+| **AI RMF Govern / Map / Measure / Manage**         | 文化和问责 / 画风险地图 / 用证据量化 / 处理剩余风险                                                                                    | W5    |
+| **Event vs Incident vs Crisis**                    | Level 1 被拦截的尝试 / 已经或即将威胁 CIA（L2–3）/ 确认重大泄露、长时间中断、交易支付受影响、媒体监管暴露（L4）                                               | W6    |
+| **Containment / Eradication / Recovery**           | 止血（临时可逆）/ 拔根（攻击者回不来）/ 干净地回血                                                                                       | W6    |
+| **IR vs Crisis management vs BC vs DR**            | 管威胁（CISO/IC）/ 管战略决策（CEO/COO/crisis director）/ 管业务继续（COO/业务 owner）/ 管技术恢复（CIO/CTO）                                 | W6    |
+| **Incident commander vs Crisis director**          | 战术、技术协调 / 战略、上报董事会                                                                                                | W6    |
+| **MTPD vs RTO vs RPO**                             | 最多能停多久（红线）/ 多久恢复（目标，< MTPD）/ 最多丢多久的数据（决定备份频率）                                                                    | W6    |
+| **Data owner vs custodian**                        | 业务方定分类和访问 / 技术方实施备份加密权限                                                                                           | W7    |
+| **p.7 Priority score vs p.20 Investment priority** | 乘法（损失降 × 把握 × 相关度）÷ (成本 × 时间) / 加法（年损失 + 尾部 + 合规价值）÷ (TCO × 时间 × 交付风险)                                            | W7    |
+| **ROI vs Priority score**                          | 只看钱 / 还看把握、战略、时间、尾部、交付风险                                                                                          | W4、W7 |
+
+🔎 搜索词：difference between, compare, comparison, versus, vs, distinguish, contrast, 区别, 对比, 易混
+
+---
+
+## 10. 答题模板（英文句式）
+
+### 10.1 定义题（Define / What is …）
+
+**结构**：课件原文定义 → 一句话解释关键词 → 一个例子 → （可选）和易混概念的区别。  
+*"X is … (slide definition). In other words, … For example, … Unlike Y, X …"*
+
+### 10.2 列举题（List / Identify / Name）
+
+**结构**：用课件的名字编号列出，每条后面加 5–10 词的解释。不要只写名字。  
+*"The six functions of NIST CSF 2.0 are: (1) Govern – sets strategy, risk appetite and roles; (2) Identify – …"*
+
+### 10.3 案例诊断题（What went wrong / What controls failed / How to improve）
+
+**结构**：**诊断 → 开药**，每一个失效点对应一个改进。
+
+1. **Diagnose**：*"The root cause was not the employee's mistake but the absence of \[control], which allowed …"*
+2. **Map to framework**：用 W2 attack chain / W3 威胁建模五要素（actor, attack path, weakness, target, impact）
+3. **Prescribe**：分三类——**identity & communication / governance & preparedness / operational controls**
+4. **Close**：*"These controls reduce the likelihood (prevent) and the impact (detect and contain early), bringing residual risk within the firm's risk appetite."*
+
+### 10.4 事件响应情景题（A ransomware attack happens — what should the firm do?）
+
+1. **Classify**：*"This is a Level 3 major incident / Level 4 crisis because …"*（看是否确认外泄、交易支付受影响、媒体监管）
+2. **Immediate actions (p.8)**：open incident record and appoint an IC, validate, **preserve evidence**, scope before disrupting, **contain proportionately**, protect crown jewels (identity, payments, backups), engage legal / insurer / regulator, set update cadence
+3. **PICERL**：Containment → Eradication（找到入口和持久化，确认备份干净）→ Recovery（从 known-good 备份在干净环境恢复）→ Post Mortem
+4. **Crisis & BCP**：如果是 Level 4，宣布危机，crisis director 领导，并行工作流（cyber / BC 手工流程 / legal / comms holding statement / finance insurance）
+5. **Close**：*"Speed comes from decisions made before the incident, and an untested plan is only a document."*
+
+### 10.5 计算题（FAIR / ROI / insurance / vendor tiering）
+
+公式 → 代入 → 结果 → 一句英文解释（第 8 节的结论句）→ 提一句局限：*"These are point estimates; a Monte Carlo simulation would give the loss distribution and P95 exposure."*
+
+### 10.6 投资 / 预算 / 战略题（Propose a cyber strategy or investment plan）
+
+1. **Business context**：哪些关键业务服务、损失情景（选 3–5 个）
+2. **Risk appetite**：什么不可接受
+3. **Prioritize**：用 p.20 公式 / 每块钱降多少风险；**基础控制先投**（MFA + PAM、不可篡改备份 + 恢复测试、IR）
+4. **Budget**：按 p.19 区间分配（身份和恢复各 20–25%……AI 0–10%），说明偏离理由
+5. **Roadmap**：90 天（可见性）→ 3–12 个月（基础控制）→ 第 2–3 年（韧性、能力）；短期 + 长期
+6. **Go slow**：说明哪些先不做以及缺什么前提
+7. **Measure**：KPI / KRI、成功标准（特权 MFA 100%、恢复测试 2 次）
+8. **Governance**：每季度向董事会汇报，Q4 决定 renew / scale / stop / replace
+9. **红字检验**：*"Each initiative states which loss scenario it reduces, by how much, by when and what evidence will prove it."*
+
+### 10.7 向董事会汇报题（How would you present this to the board?）
+
+开场一句话建议 + 金额 + 场景 + 量化收益（W4 好开场）→ Why → Current gap（量化）→ Options（do nothing / minimum compliance / recommended / accelerated）→ Economics（expected loss reduction、P95、ROI）→ Execution and governance → **The specific ask**。用业务语言（Growth / Cost / Risk / Strategy / Execution / Return），不用技术指标（「补丁率 95%」）。
+
+### 10.8 供应商题（Should we onboard this vendor / what controls?）
+
+Tiering 公式打分 → Tier 1 或否 → 尽调领域（要哪些证据：SOC 2、ISO 27001、渗透测试、BCP/DR）→ Baseline + higher-tier 控制 → 合同条款（**incident notification 有具体时限，不写 promptly**、审计权、分包商、数据销毁、退出协助）→ 持续监控（季度 / 年度 / 持续）→ 退出计划 → 谁批准剩余风险。
+
+### 10.9 AI 风险题（A firm wants to deploy an AI tool / agent）
+
+用 W5 六类风险识别（数据泄露、prompt injection、模型 / 供应链、agent 权限过大、shadow AI、过度依赖）→ NIST AI RMF 四功能（Govern 清单和政策 / Map 用例和影响 / Measure 红队和测试 / Manage 人工复核、kill switch）→ W7 控制（批准工具、企业租户、MNPI 不进消费级工具、最小权限、日志）→ 预算放在 0–10% 且先建清单（go slow）。
+
+🔎 搜索词：answer template, how to answer, structure, model answer, essay, long question, short question, scenario question, 答题模板, 答题结构, 怎么答
+
+---
+
+## 11. 缩写 A–Z 总表
+
+| 缩写                               | 全称                                                                                                                       | 一句话 / 出处                             |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------ |
+| AI RMF                           | NIST AI Risk Management Framework                                                                                        | Govern / Map / Measure / Manage（W5）  |
+| ALE                              | Annualized Loss Expectancy                                                                                               | Event Frequency × Loss Magnitude（W3） |
+| APO12 / APO13                    | COBIT Managed Risk / Managed Security                                                                                    | W2                                   |
+| ATT\&CK                          | Adversarial Tactics, Techniques, and Common Knowledge                                                                    | 攻击者 TTP 知识库（W2）                      |
+| AUM                              | Assets Under Management                                                                                                  | 资产管理规模（W7 案例 US$5–15B）               |
+| BCP / BCM                        | Business Continuity Plan / Management                                                                                    | 中断期间业务继续（W1、W6）                      |
+| BEC                              | Business Email Compromise                                                                                                | 商业邮件诈骗（W4、W6、W7）                     |
+| BIA                              | Business Impact Analysis                                                                                                 | BCP 的核心，业务主导（W6）                     |
+| C-RAF                            | Cyber Resilience Assessment Framework（HKMA）                                                                              | 固有风险 vs 实际成熟度（W7）                    |
+| CFAA                             | Computer Fraud and Abuse Act                                                                                             | 美国（W1）                               |
+| CFI                              | Cybersecurity Fortification Initiative（HKMA）                                                                             | 网络防卫计划（W7）                           |
+| CIA (+AN)                        | Confidentiality, Integrity, Availability (+ Authenticity, Non-repudiation)                                               | W1、W2                                |
+| CIRCIA                           | Cyber Incident Reporting for Critical Infrastructure Act                                                                 | 72 小时报告（W1）                          |
+| CIS                              | Center for Internet Security Critical Security Controls                                                                  | 18 controls / 153 safeguards（W2）     |
+| CISA                             | Cybersecurity and Infrastructure Security Agency（机构）/ Cyber Security Information Sharing Act（法）                          | W1、W6                                |
+| CISO / CSO / CIO / CRO           | Chief Information Security / Security / Information / Risk Officer                                                       | W1                                   |
+| COBIT                            | Control Objectives for Information and Related Technologies                                                              | 治理 vs 管理（W2）                         |
+| CSF                              | NIST Cybersecurity Framework 2.0                                                                                         | GV ID PR DE RS RC（W2）                |
+| CSL / DSL / PIPL                 | Cybersecurity Law / Data Security Law / Personal Information Protection Law                                              | 中国（W1）                               |
+| CSPM                             | Cloud Security Posture Management                                                                                        | 云安全态势管理（W7）                          |
+| D3FEND                           | Detection, Denial, and Disruption Framework Empowering Network Defense                                                   | 防御知识图谱（W2）                           |
+| DLM                              | Data LifeCycle Management                                                                                                | W1                                   |
+| DLP                              | Data Loss Prevention                                                                                                     | 数据防泄露（W7 go slow）                    |
+| DORA                             | Digital Operational Resilience Act                                                                                       | 欧盟金融（W1）                             |
+| DPO                              | Data Protection Officer                                                                                                  | GDPR（W1）                             |
+| DR                               | Disaster Recovery                                                                                                        | IT 恢复（W6）                            |
+| EDR / XDR                        | Endpoint / Extended Detection and Response                                                                               | W6、W7                                |
+| ERM                              | Enterprise Risk Management                                                                                               | W1                                   |
+| FAIR                             | Factor Analysis of Information Risk                                                                                      | Risk = LEF × LM（W2–4）                |
+| GDPR                             | General Data Protection Regulation                                                                                       | 欧盟，72 小时、4%（W1）                      |
+| GLBA                             | Gramm-Leach-Bliley Act                                                                                                   | 美国金融（W1）                             |
+| GRC                              | Governance, Risk and Compliance                                                                                          | W7 预算类别                              |
+| GV.SC                            | NIST CSF Govern – Cybersecurity Supply Chain Risk Management                                                             | 第三方风险（W5）                            |
+| HIPAA / HITECH                   | Health Insurance Portability and Accountability Act / Health Information Technology for Economic and Clinical Health Act | 美国医疗（W1）                             |
+| HKMA                             | Hong Kong Monetary Authority                                                                                             | 金管局（W1、W7）                           |
+| IC                               | Incident Commander                                                                                                       | 事件指挥官（W6）                            |
+| IG1/2/3                          | CIS Implementation Groups                                                                                                | W2                                   |
+| IoC                              | Indicator of Compromise                                                                                                  | 入侵指标（W6）                             |
+| IR                               | Incident Response                                                                                                        | 六阶段 PICERL（W6）                       |
+| ISMS                             | Information Security Management System                                                                                   | ISO 27001（W2、W7）                     |
+| ISO 22301                        | 业务连续性管理体系标准                                                                                                              | W6                                   |
+| JIT                              | Just-in-Time privileged access                                                                                           | W6                                   |
+| JML                              | Joiner / Mover / Leaver                                                                                                  | 权限生命周期（W7）                           |
+| KPI / KRI                        | Key Performance / Risk Indicator                                                                                         | W3、W7                                |
+| LEF / TEF / LM                   | Loss Event Frequency / Threat Event Frequency / Loss Magnitude                                                           | FAIR（W2–3）                           |
+| MBCO                             | Minimum Business Continuity Objective                                                                                    | 最低服务水平（W6）                           |
+| MDR                              | Managed Detection and Response                                                                                           | 托管检测响应（W7）                           |
+| MFA                              | Multi-Factor Authentication（phishing-resistant MFA 如 FIDO2）                                                              | W2、W5–7                              |
+| MNPI                             | Material Non-Public Information                                                                                          | 重大非公开信息（W5、W7）                       |
+| MSP / MSSP                       | Managed (Security) Service Provider                                                                                      | W1、W5                                |
+| MTPD / MTD                       | Maximum Tolerable Period of Disruption / Downtime                                                                        | W6                                   |
+| MTTD / MTTA / MTTC / MTTR        | Mean Time to Detect / Acknowledge / Contain / Recover                                                                    | W3、W6                                |
+| NAV                              | Net Asset Value                                                                                                          | 基金资产净值（W7）                           |
+| NIS2                             | Network and Information System Security Directive v2                                                                     | 欧盟（W1）                               |
+| NIST IR 8286                     | Integrating Cybersecurity and ERM                                                                                        | 风险登记册汇总到 ERM（W7）                     |
+| NIST SP 800-34 / 800-53 / 800-61 | Contingency Planning / Security Controls / Incident Handling                                                             | W2、W6                                |
+| OMS / EMS                        | Order / Execution Management System                                                                                      | W5、W7                                |
+| P95 / P99                        | 第 95 / 99 百分位损失                                                                                                          | 尾部风险（W3、W4、W7）                       |
+| PAM                              | Privileged Access Management                                                                                             | 特权访问管理                               |
+| PCICSO                           | Protection of Critical Infrastructures (Computer Systems) Ordinance                                                      | 香港，2026-01-01（W1）                    |
+| PDPO                             | Personal Data (Privacy) Ordinance                                                                                        | 香港（W1）                               |
+| PICERL                           | Preparation, Identification, Containment, Eradication, Recovery, Lessons learned                                         | IR 六阶段（W6）                           |
+| ROI                              | Return on Investment                                                                                                     | (Benefit − Cost) / Cost（W4）          |
+| RPO / RTO                        | Recovery Point / Time Objective                                                                                          | W6                                   |
+| SBOM                             | Software Bill of Materials                                                                                               | W5                                   |
+| SDLC                             | (Secure) Software Development Life Cycle                                                                                 | W5、W7                                |
+| SFC                              | Securities and Futures Commission                                                                                        | 证监会（W7）                              |
+| SIEM / SOAR                      | Security Information and Event Management / Security Orchestration, Automation and Response                              | W6、W7                                |
+| SME                              | Subject Matter Expert                                                                                                    | W3                                   |
+| SOC                              | Security Operations Center；（另）SOC 2 = Service Organization Control 2 审计报告                                                | W1、W5                                |
+| SoA                              | Statement of Applicability                                                                                               | ISO 27001（W2）                        |
+| TCO                              | Total Cost of Ownership                                                                                                  | W7                                   |
+| TTP                              | Tactics, Techniques, Procedures                                                                                          | W2                                   |
+| VRM / TPRM                       | Vendor / Third-Party Risk Management                                                                                     | W5                                   |
+
+🔎 搜索词：abbreviation, acronym, glossary, full name, stands for, 缩写, 全称, 术语表
