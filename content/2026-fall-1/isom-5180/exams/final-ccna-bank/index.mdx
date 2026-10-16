@@ -1,0 +1,574 @@
+---
+title:
+  en: "CCNA-Style MCQ Bank · Final"
+  zh: "期末选择题题库（CCNA 风格）"
+summary:
+  en: "Sixty original multiple-choice questions written in the style of the Cisco CCNA 1 chapter exams that the Final Review deck draws on, covering Modules 1–4: devices and frames, OSI and encapsulation, IP addressing, DHCP / DNS / ARP / NAT, routing tables and metrics, TCP / UDP, SEQ / ACK and windowing, and subnetting including Class B carry-over. Every question has the answer and a bilingual explanation; exhibit questions come with a topology."
+  zh: "60 道原创选择题，仿照 Final Review 所用的 Cisco CCNA 1 章节考试的出题风格，覆盖 Module 1–4：设备与帧、OSI 与封装、IP 地址、DHCP / DNS / ARP / NAT、路由表与 metric、TCP / UDP、SEQ / ACK 与窗口、子网（含 Class B 进位）。每题都有答案和中英文解析，看图题配了拓扑图。"
+date: 2026-10-16
+tags: [FinalReview, MCQ, CCNA, OSI, Switch, ARP, DHCP, Routing, TCP, Subnetting]
+---
+
+# 期末选择题题库 · CCNA-Style MCQ Bank（Module 1–4）
+
+**怎么用**：每题先自己选，再看解析（多选题要勾够数量再点「提交」）。题干是英文（和考试一样），括号里附中文；解析先给一句英文要点，再用中文展开。
+**更多**：[Final Review 19 题解析](../final-review-mc/) · [期末预测卷](../final-mock/) · 各模块复习页 [M1](../final-m1/) · [M2](../final-m2/) · [M3](../final-m3/) · [M4](../final-m4/)
+
+<Callout type="note" title="关于题目来源">
+
+老师 Final Review 里的 19 道题，风格和 **Cisco Networking Academy CCNA 1（Network Fundamentals / Introduction to Networks）章节考试**的题库一致。那套题库是 Cisco 课程的版权材料，真实 CCNA 认证考试的「题库 / dumps」还违反 Cisco 的考试协议，所以这里**不转载原题**，而是按同样的考法、只围绕本课 Final-guide 列的 Module 1–4 **重新出的 60 道题**。想做官方题，可以登录 NetAcad（netacad.com）的课程里做章节测验。
+
+难度和题型按 Final Review 的分布配：M2（地址、网关、路由）最多，看图题和 Choose two / three 都有。
+
+</Callout>
+
+## 本页大纲
+
+{/* OUTLINE */}
+
+- **[1. Module 1 · 网络组成、OSI、封装（Q1–Q8）](#1-module-1--网络组成osi封装q1q8)**
+- **[2. Module 1 · Hub、Switch、Router（Q9–Q16）](#2-module-1--hubswitchrouterq9q16)**
+- **[3. Module 2 · IP 地址、Class、NAT（Q17–Q23）](#3-module-2--ip-地址classnatq17q23)**
+- **[4. Module 2 · 获取 IP、DHCP、DNS、ARP（Q24–Q31）](#4-module-2--获取-ipdhcpdnsarpq24q31)**
+- **[5. Module 2 · 网关、跨 router 的地址、路由（Q32–Q42）](#5-module-2--网关跨-router-的地址路由q32q42)**
+- **[6. Module 3 · 传输层（Q44–Q53）](#6-module-3--传输层q44q53)**
+- **[7. Module 4 · 子网（Q54–Q60）](#7-module-4--子网q54q60)**
+- **[8. 答案速查](#8-答案速查)**
+
+---
+
+## 1. Module 1 · 网络组成、OSI、封装（Q1–Q8）
+
+<MCQ q="1. Which category of network component does a wireless access point belong to?（无线 AP 属于哪一类网络组件？）" a="End device" b="Network service" c="Network media" d="Intermediary device" answer="D">
+
+**EN**: An AP interconnects end devices, so it is an intermediary device.
+
+**中文**：中间设备（intermediary device）的定义就是 *interconnect end devices*。AP 把手机、笔记本这些终端连进网络，所以是中间设备；它发出的无线电波才是 media。End device 是消息的起点 / 终点（PC、server）。
+
+</MCQ>
+
+<MCQ q="2. Which network medium uses pulses of light and is not affected by electromagnetic interference?（哪种介质用光脉冲传输、不受电磁干扰？）" a="UTP cable" b="Coaxial cable" c="Fiber-optic cable" d="Wireless" answer="C">
+
+**EN**: Fiber carries pulses of light, so EMI does not affect it.
+
+**中文**：课件：copper 用 electrical impulses、fiber 用 **pulses of light**、wireless 用 electromagnetic waves。光信号不受电磁干扰，这也是光纤能跑最远、带宽最高的原因。
+
+</MCQ>
+
+<MCQ q="3. Which OSI layer establishes, manages, and terminates sessions between two communicating hosts?（哪一层负责建立、管理、终止两台主机之间的会话？）" a="Application" b="Presentation" c="Transport" d="Session" answer="D">
+
+**EN**: That is the definition of the Session layer (Layer 5).
+
+**中文**：Session（L5）= establish / manage / terminate sessions。别和 Transport 混：Transport 是 end-to-end 的可靠传输（TCP / UDP、端口、分段）；Presentation 是格式、压缩、加密。
+
+</MCQ>
+
+<MCQ q="4. Which list shows the PDU names from Layer 4 down to Layer 1 in the correct order?（从第 4 层到第 1 层，PDU 名称的正确顺序是？）" a="Segment, packet, frame, bits" b="Packet, segment, frame, bits" c="Frame, packet, segment, bits" d="Data, frame, packet, bits" answer="A">
+
+**EN**: L4 segment → L3 packet → L2 frame → L1 bits.
+
+**中文**：Transport = **Segment**，Network = **Packet**，Data Link = **Frame**，Physical = **Bits**（上面三层都叫 Data）。
+
+</MCQ>
+
+<MCQ q="5. Which TWO statements describe de-encapsulation at the receiving host? (Choose two.)（关于接收方解封装，哪两项正确？）" a="Each layer adds a header that its peer layer will read." b="Each layer reads the control information added by its peer layer and strips it." c="The data link layer reads the physical address in the frame before passing the data up." d="The network layer adds a trailer containing the FCS." e="The transport layer converts the bits into a frame." answer="BC">
+
+**EN**: On the way up, each layer reads and removes its peer's header; Layer 2 checks the MAC address first.
+
+**中文**：解封装是**从下往上**：每层读**对方同一层**加的信息，用完 strip 掉再交给上层（B）；Data Link 先读 frame 里的 physical（MAC）地址看是不是给自己的（C）。A 是封装（发送方）；D 错，FCS 是 **L2** 的 trailer；E 错，bits 组成 frame 是 L2 / L1 的事，不是 transport。
+
+</MCQ>
+
+<MCQ q="6. Where in an Ethernet frame is the FCS located, and what does the receiver do if its own calculation gives a different value?（FCS 在 frame 的哪里？接收方算出来不一样会怎样？）" a="In the trailer; the receiver discards the frame." b="In the header; the receiver asks the sender to retransmit." c="In the trailer; the receiver corrects the bad bits." d="In the IP header; the router drops the packet." answer="A">
+
+**EN**: The FCS is in the frame trailer; a mismatch means the frame is discarded.
+
+**中文**：FCS 是 L2 加在 frame **末尾（trailer）**的校验值。接收方重算一遍，不一样 → **discard**。L2 只负责 detection，不纠错、也不请求重传；数据最后靠 TCP 的超时重传补回来。
+
+</MCQ>
+
+<MCQ q="7. A university network can be reached only by its students and staff after they log in. What type of network is this?（只有学生和员工登录后才能访问的大学网络是哪种？）" a="Internet" b="Extranet" c="Intranet" d="WAN" answer="C">
+
+**EN**: A private network for an organisation's own members is an intranet.
+
+**中文**：**Intranet** = 组织内部、只给成员或获授权者。如果是给**外部组织**的人（供应商、合作学校）安全访问，才是 **extranet**。
+
+</MCQ>
+
+<MCQ q="8. Which TWO characteristics describe a WAN? (Choose two.)（哪两项是 WAN 的特点？）" a="It interconnects end devices in a limited area." b="It interconnects LANs over wide geographical areas." c="It is usually administered by one or more service providers." d="It provides the highest-speed bandwidth to internal devices." e="It is administered by a single individual." answer="BC">
+
+**EN**: A WAN connects LANs across large areas and is run by service providers.
+
+**中文**：WAN：连接的是 **LANs**、范围大、由 **service provider** 管理、通常比 LAN 慢。A、D、E 都是 LAN 的特点。
+
+</MCQ>
+
+## 2. Module 1 · Hub、Switch、Router（Q9–Q16）
+
+<Figure src="images/ex1.svg" caption="Exhibit 1（Q9）：A、B 接在 switch 上，C、D、E 接在 hub 上，hub 接 switch 的 Fa0/3" />
+
+<MCQ q="9. Refer to Exhibit 1. The switch has built a complete MAC address table. Host A sends a unicast frame to host D. Which hosts receive the frame?（看图 1：switch 的 MAC 表已经学满。A 发单播给 D，哪些主机会收到？）" a="Only host D" b="Hosts C, D, and E" c="Hosts B, C, D, and E" d="Hosts B and D" answer="B">
+
+**EN**: The switch forwards only out Fa0/3, and the hub repeats the frame to every host behind it.
+
+**中文**：① Switch 查表：D 在 Fa0/3（hub 那个口）→ **只从 Fa0/3 发**，B 收不到。② Hub 是 L1，收到什么都发给除来路外所有口 → C、D、E 都收到；C、E 的 NIC 发现目的 MAC 不是自己再丢掉。所以「收到」的是 C、D、E。
+
+</MCQ>
+
+<MCQ q="10. A switch has just been powered on. PC-A on port Fa0/1 sends a frame to PC-C. What does the switch do?（switch 刚开机，Fa0/1 上的 PC-A 发帧给 PC-C，switch 怎么做？）" a="It adds PC-C's MAC address to Fa0/1 and drops the frame." b="It adds PC-A's MAC address with Fa0/1 to its table and floods the frame out all other ports." c="It sends an ARP request to find PC-C." d="It forwards the frame to the default gateway." answer="B">
+
+**EN**: Learn the source, then flood because the destination is unknown.
+
+**中文**：刚开机 MAC 表是空的。先**学源**：记下 PC-A 的 MAC ↔ Fa0/1；再**看目的**：PC-C 不在表里（unknown unicast）→ **flood** 到除 Fa0/1 外所有口。Switch 不发 ARP（ARP 是 L3 主机 / router 的事），也不认识 gateway。
+
+</MCQ>
+
+<MCQ q="11. A switch receives a frame on Fa0/2. The destination MAC address is in the MAC table, mapped to Fa0/2. What does the switch do?（switch 从 Fa0/2 收到帧，目的 MAC 在表里也对应 Fa0/2，怎么做？）" a="Floods the frame out all ports except Fa0/2" b="Forwards the frame out Fa0/2" c="Filters (drops) the frame" d="Sends the frame to the router" answer="C">
+
+**EN**: Destination on the incoming port → filter.
+
+**中文**：目的和来路是同一个口，说明对方和发送者在同一个共享段上，已经直接收到了 → **filter**，不转发。这就是板书 F → L 那一帧。
+
+</MCQ>
+
+<MCQ q="12. Why does every entry in a switch's MAC address table have a time stamp?（MAC 表每一条为什么要有 time stamp？）" a="To measure the delay of each frame" b="To calculate the FCS" c="To order frames in the buffer" d="So that entries for devices that stop sending can be aged out and removed" answer="D">
+
+**EN**: The time stamp lets old entries age out.
+
+**中文**：同一个 MAC 再出现就刷新时间；太久没出现（板书写 5 分钟）就删掉。这样设备换了端口或下线后，表不会一直留着错的记录。
+
+</MCQ>
+
+<Figure src="images/ex2.svg" caption="Exhibit 2（Q13）：Router 的 E0 接一台 switch（4 台 PC），E1 接一台 hub（3 台 PC）" />
+
+<MCQ q="13. Refer to Exhibit 2. How many collision domains and how many broadcast domains are there?（看图 2：有几个冲突域、几个广播域？）" a="2 collision domains, 2 broadcast domains" b="5 collision domains, 1 broadcast domain" c="8 collision domains, 2 broadcast domains" d="6 collision domains, 2 broadcast domains" answer="D">
+
+**EN**: Switch: 4 PC ports + 1 router link = 5; hub: 1 → 6 collision domains. Router interfaces: 2 broadcast domains.
+
+**中文**：Collision domain：switch **每个口**一个 → 4 台 PC + 连 router 那条 = 5；hub 连同 3 台 PC 只算 1 → 共 **6**。Broadcast domain：只有 router 能分 → E0 一侧、E1 一侧 = **2**。
+
+</MCQ>
+
+<MCQ q="14. Several PCs send frames to the same server at the same moment. Which switch feature prevents these frames from colliding?（几台 PC 同时发帧给同一台 server，switch 用什么避免冲突？）" a="Flooding" b="Buffering" c="Filtering" d="Path determination" answer="B">
+
+**EN**: The switch holds the frames in memory and forwards them one at a time.
+
+**中文**：课件 slide 61：**buffering**——switch 把同时到的帧先存进内存，再**一个一个**转发给 server。另外两招是 full duplex 和 dedicated paths（microsegmentation）。
+
+</MCQ>
+
+<MCQ q="15. A router receives a broadcast frame on its Fa0/0 interface. What does it do?（router 的 Fa0/0 收到一个广播帧，会怎样？）" a="Forwards it out all other interfaces" b="Forwards it only out the interface toward the Internet" c="Processes it if needed but does not forward it to other networks" d="Returns it to the sender" answer="C">
+
+**EN**: Routers do not forward broadcasts; each interface is a broadcast-domain boundary.
+
+**中文**：广播的意思是「本网络所有人」，router 的每个接口就是一个网络的边界，所以 router 自己可以处理（比如 ARP 问的就是它），但**不会转发到别的网络**。这也是「广播太多 → 加 router 分隔」的原因。
+
+</MCQ>
+
+<MCQ q="16. Which TWO devices make forwarding decisions based on the destination MAC address? (Choose two.)（哪两种设备按目的 MAC 地址做转发决定？）" a="Hub" b="Repeater" c="Switch" d="Bridge" e="Router" answer="CD">
+
+**EN**: Switches and bridges are Layer 2 devices.
+
+**中文**：Switch、bridge 是 L2 → 看 MAC。Hub、repeater 是 L1，不看任何地址；router 是 L3，看 IP。
+
+</MCQ>
+
+## 3. Module 2 · IP 地址、Class、NAT（Q17–Q23）
+
+<MCQ q="17. Which address can be assigned to a host in the classful Class B network 150.10.0.0?（在有类 Class B 网络 150.10.0.0 里，哪个地址能分给主机？）" a="150.10.0.0" b="150.10.255.255" c="150.10.0.255" d="150.11.0.1" answer="C">
+
+**EN**: Host part 0.255 is neither all 0s nor all 1s, so it is a valid host.
+
+**中文**：Class B 的 host 部分是后两段。150.10.0.0 = host 全 0（network）；150.10.255.255 = host 全 1（broadcast）；150.11.0.1 是另一个网络。**150.10.0.255** 的 host 部分是「0.255」，不是全 0 也不是全 1 → 合法。很多人看到末尾 255 就以为是广播——要看**整个 host 部分**。
+
+</MCQ>
+
+<MCQ q="18. What is the classful network address of host 200.15.7.99?（主机 200.15.7.99 的有类网络地址是？）" a="200.0.0.0" b="200.15.0.0" c="200.15.7.0" d="200.15.7.255" answer="C">
+
+**EN**: 200 is Class C (N.N.N.H), so set the last octet to 0.
+
+**中文**：第一段 200 在 192–223 → Class C → N.N.N.H → host 段改 0 = **200.15.7.0**。D 是这个网络的 broadcast。
+
+</MCQ>
+
+<MCQ q="19. What is the classful broadcast address for host 10.200.3.4?（主机 10.200.3.4 的有类广播地址？）" a="10.255.255.255" b="10.200.255.255" c="10.200.3.255" d="255.255.255.255" answer="A">
+
+**EN**: 10 is Class A (N.H.H.H), so all three host octets become 255.
+
+**中文**：Class A 只有第一段是 network → 后三段全改 255 = **10.255.255.255**。D 是「本网络所有人」的受限广播，不是这个网络的 broadcast address。
+
+</MCQ>
+
+<MCQ q="20. Which TWO addresses are private IPv4 addresses? (Choose two.)（哪两个是私有地址？）" a="172.20.5.5" b="172.32.1.1" c="192.169.1.1" d="192.168.100.1" e="11.0.0.1" answer="AD">
+
+**EN**: Private ranges are 10.0.0.0/8, 172.16.0.0–172.31.255.255 and 192.168.0.0/16.
+
+**中文**：私有范围：**10.x**、**172.16 – 172.31**、**192.168.x**。172.20 在范围内（A）；172.32 超出了（B）；192.169 不是 192.168（C）；11.0.0.1 不是 10（E）。
+
+</MCQ>
+
+<MCQ q="21. Inside host 10.0.0.5 sends a packet to web server 203.0.113.9 through a NAT router whose public address is 198.51.100.2. What is the source IP address of the packet on the Internet side?（内网 10.0.0.5 经 NAT router（公网 198.51.100.2）访问 203.0.113.9，在 Internet 那一侧包的源 IP 是？）" a="10.0.0.5" b="0.0.0.0" c="203.0.113.9" d="198.51.100.2" answer="D">
+
+**EN**: NAT replaces the private source with the router's public address.
+
+**中文**：出去时 NAT 把 **private 源地址换成 public**（198.51.100.2），并在 NAT table 记一条；回来的包目的是 198.51.100.2，NAT 再查表换回 10.0.0.5。Internet router 会直接丢弃 private 地址，所以不能带着 10.0.0.5 出去。
+
+</MCQ>
+
+<MCQ q="22. What allows hundreds of inside hosts to share a single public IPv4 address at the same time?（什么技术让几百台内网主机同时共用一个公网 IP？）" a="DHCP" b="ARP" c="PAT (NAT overload) using different port numbers" d="Static routing" answer="C">
+
+**EN**: PAT tracks each connection by port number.
+
+**中文**：**PAT**（Port Address Translation，也叫 NAT overload）用**不同的源端口号**区分每一条连接，所以一个 public IP 可以对应很多 private IP（板书：约 4,000 个）。
+
+</MCQ>
+
+<MCQ q="23. Which statement about public IPv4 addresses is true?（关于公网地址哪项正确？）" a="They must be unique across the entire Internet." b="They only need to be unique inside a company." c="Administrators can pick any public address they like." d="Internet routers drop them." answer="A">
+
+**EN**: Public addresses are globally unique and assigned by registries / ISPs.
+
+**中文**：Public 地址**全 Internet 唯一**，由 ARIN 等机构 / ISP 分配，不能随便挑。被 Internet router 丢掉的是 private 地址。
+
+</MCQ>
+
+## 4. Module 2 · 获取 IP、DHCP、DNS、ARP（Q24–Q31）
+
+<MCQ q="24. Which device should normally be configured with a static IP address?（哪种设备通常应该用静态 IP？）" a="A student's laptop" b="A smartphone on guest Wi-Fi" c="A tablet that moves between buildings" d="A network printer that everyone sends jobs to" answer="D">
+
+**EN**: Devices that others must find (servers, printers, routers) get static addresses.
+
+**中文**：要被别人找到的设备，地址必须固定，就像建筑物的门牌：**server、network printer、router**。会移动、经常换网络的终端用 DHCP。
+
+</MCQ>
+
+<MCQ q="25. A PC has just been connected and has no IP address. What are the source and destination IP addresses of its DHCP Discover message?（刚接上网、还没有 IP 的 PC 发 DHCP Discover，源 / 目的 IP 是？）" a="Source 0.0.0.0, destination 255.255.255.255" b="Source 255.255.255.255, destination 0.0.0.0" c="Source 169.254.0.1, destination the DHCP server" d="Source 0.0.0.0, destination the default gateway" answer="A">
+
+**EN**: With no address and no known server, the client sends from 0.0.0.0 to the broadcast address.
+
+**中文**：Client 还没有 IP → 源只能写 **0.0.0.0**；不知道 DHCP server 在哪 → 目的只能**广播 255.255.255.255**（MAC 目的 FFFF.FFFF.FFFF）。Request 那一条也一样，因为 Ack 之前它还没正式拿到地址。
+
+</MCQ>
+
+<MCQ q="26. Which transport protocol and port numbers does DHCP use?（DHCP 用哪个传输协议和端口？）" a="TCP 67 (server) and 68 (client)" b="TCP 80" c="UDP 53" d="UDP 67 (server) and 68 (client)" answer="D">
+
+**EN**: DHCP runs over UDP; the server listens on 67 and the client on 68.
+
+**中文**：DHCP 是 **UDP**：server **67**、client **68**（Assignment 3 Q6）。UDP 53 是 DNS。
+
+</MCQ>
+
+<MCQ q="27. Which THREE settings does a host need, besides its own IP address, to browse www.cisco.com from a different network? (Choose three.)（除了自己的 IP，主机要访问别的网络里的 www.cisco.com 还需要哪三样？）" a="Subnet mask" b="Default gateway" c="DNS server address" d="MAC address of the web server" e="MAC address of the switch" f="Routing table of the ISP" answer="ABC">
+
+**EN**: IP, mask, gateway and DNS are the four host settings.
+
+**中文**：一台设备要配的就是 4 样：**IP、subnet mask、default gateway、DNS server**。Mask 判断同不同网段，gateway 负责出网，DNS 把名字解析成 IP。别人的 MAC 不用配，ARP 会自动问；switch 根本没有要配给主机的 MAC。
+
+</MCQ>
+
+<Figure src="images/ex3.svg" caption="Exhibit 3（Q28–Q30）：PC1、PC2 在 192.168.1.0/24，PC3 在 192.168.2.0/24，中间是 router R" />
+
+<MCQ q="28. Refer to Exhibit 3. PC1 pings PC2 (192.168.1.20). Whose MAC address does PC1 ask for in its ARP request?（看图 3：PC1 ping PC2，ARP request 问的是谁的 MAC？）" a="PC2 (192.168.1.20)" b="The router's Fa0/0 (192.168.1.1)" c="SW1" d="PC3" answer="A">
+
+**EN**: Same network → ARP for the destination host itself.
+
+**中文**：PC1 用 mask 比较：192.168.1.10 和 192.168.1.20 都在 192.168.1.0/24 → **同一网络** → 直接 ARP **PC2**，不经过 router。
+
+</MCQ>
+
+<MCQ q="29. Refer to Exhibit 3. PC1 now pings PC3 (192.168.2.20). In the frame that leaves PC1, what are the destination IP and the destination MAC addresses?（看图 3：PC1 ping PC3，从 PC1 发出的 frame 里目的 IP 和目的 MAC 是？）" a="192.168.2.20 and MAC-3" b="192.168.1.1 and MAC-R0" c="192.168.2.20 and MAC-R0" d="192.168.2.1 and MAC-R1" answer="C">
+
+**EN**: The destination IP stays PC3; the destination MAC is the gateway's interface on PC1's network.
+
+**中文**：不同网络 → PC1 把包交给 gateway：**目的 IP 仍是最终主机 192.168.2.20**（IP 端到端不变），**目的 MAC 是 gateway 本网段接口 MAC-R0**（PC1 ARP 的是 192.168.1.1）。
+
+</MCQ>
+
+<MCQ q="30. Refer to Exhibit 3. After PC1's ping reaches PC3, which entry has been added to PC1's ARP table?（看图 3：PC1 ping 到 PC3 之后，PC1 的 ARP 表里多了哪一条？）" a="192.168.2.20 – MAC-3" b="192.168.1.1 – MAC-R0" c="192.168.2.1 – MAC-R1" d="No entry; routers answer ARP for remote hosts automatically" answer="B">
+
+**EN**: PC1 only ever ARPs for its gateway; the router does the ARP on the other side.
+
+**中文**：ARP 过不了 router：PC1 只问过 **gateway 192.168.1.1** → 学到 192.168.1.1 – MAC-R0。PC3 的 MAC 是 **router** 在 Fa0/1 那一侧自己 ARP 学到的，记在 router 的 ARP 表里，不在 PC1 的表里。
+
+</MCQ>
+
+<MCQ q="31. Why is an ARP reply sent as a unicast frame?（为什么 ARP reply 是单播？）" a="Because the ARP request already told the replying host the requester's MAC address" b="Because switches block broadcast replies" c="Because ARP runs over TCP" d="Because the router converts it to unicast" answer="A">
+
+**EN**: The request carries the requester's MAC, so the reply can go straight back.
+
+**中文**：ARP request 是广播，里面带着请求者的 IP 和 MAC；被问的主机已经知道对方的 MAC，就直接**单播**回复（顺便把对方记进自己的 ARP 表）。Assignment 3 Q5。
+
+</MCQ>
+
+## 5. Module 2 · 网关、跨 router 的地址、路由（Q32–Q42）
+
+<Figure src="images/ex4.svg" caption="Exhibit 4（Q32–Q33）：PC1 — R1 — R2 — PC3，所有 mask 都是 /24" />
+
+<MCQ q="32. Refer to Exhibit 4. PC1 pings PC3. Which TWO statements describe the frame on the link between R1 and R2? (Choose two.)（看图 4：PC1 ping PC3，R1 和 R2 之间那段 frame，哪两项正确？）" a="Source MAC is MAC-PC1." b="Source MAC is MAC-R1b." c="Destination MAC is MAC-PC3." d="Destination IP is 10.1.3.10." e="Source IP is 10.1.2.1." answer="BD">
+
+**EN**: On each hop the MACs are rewritten (R1b → R2a); the IP addresses stay PC1 → PC3.
+
+**中文**：MAC 每一跳 = (本跳发出接口, 下一跳接收接口) → 这段是 (**MAC-R1b**, MAC-R2a)。IP 端到端不变 → (10.1.1.10, **10.1.3.10**)。A、C 是第一段 / 最后一段的 MAC；E 是 R1 接口地址，不会出现在 PC1 的包里。
+
+</MCQ>
+
+<MCQ q="33. Refer to Exhibit 4. R2's routing table shows 10.1.3.0 as directly connected on Fa0/1 (next hop N/A). Which IP address does R2 resolve with ARP before sending the packet on?（看图 4：R2 表里 10.1.3.0 是直连 Fa0/1（next hop N/A），R2 转发前要 ARP 哪个 IP？）" a="10.1.2.1" b="10.1.3.1" c="10.1.3.10" d="10.1.1.10" answer="C">
+
+**EN**: Next hop N/A means the destination is on that network, so R2 ARPs the destination host.
+
+**中文**：slide 48 的规则：next hop **有值** → ARP 下一跳 router；next hop **N/A**（直连）→ ARP **目的主机本身** 10.1.3.10，拿到 MAC-PC3 再封装。
+
+</MCQ>
+
+<MCQ q="34. A host is configured with IP 10.1.1.5/24 and default gateway 10.1.2.1. It can reach hosts on its own LAN but not remote networks. What is the most likely problem?（主机 10.1.1.5/24、gateway 10.1.2.1，本网段能通、外网不通，最可能的问题？）" a="The subnet mask is wrong." b="The switch MAC table is full." c="The DNS server is missing." d="The default gateway is not on the host's own network." answer="D">
+
+**EN**: The gateway must be on the same network as the host.
+
+**中文**：10.1.1.5/24 的网络是 10.1.1.0，gateway 10.1.2.1 在别的网络，主机根本到不了它 → 应该是本网段 router 接口（例如 10.1.1.1）。Final Review Q19 同类。
+
+</MCQ>
+
+<MCQ q="35. When a router forwards a packet from one Ethernet network to another, which header fields does it rewrite (no NAT)?（router 从一个以太网转发到另一个以太网（无 NAT），会改哪些字段？）" a="Source and destination IP addresses" b="Source and destination MAC addresses" c="Only the destination IP address" d="TCP port numbers" answer="B">
+
+**EN**: The router de-encapsulates and builds a new Layer 2 header; the IP header is unchanged.
+
+**中文**：每到一个 router：拆掉旧 frame → 查 routing table → 按出接口**重新封装新的 L2 header**（新的源 / 目的 MAC）。IP 和端口都不变。
+
+</MCQ>
+
+<MCQ q="36. Router R1 has these routes: C 172.16.1.0/24 Fa0/0; C 172.16.2.0/24 Fa0/1; R 172.16.3.0/24 via 172.16.2.252, Fa0/1. A packet arrives for 172.16.3.40. What does R1 do?（R1 有这三条路由，收到去 172.16.3.40 的包，怎么做？）" a="Sends it out Fa0/0" b="Drops it because 172.16.3.0 is not directly connected" c="Floods it out all interfaces" d="Sends it out Fa0/1 to next hop 172.16.2.252" answer="D">
+
+**EN**: The destination matches 172.16.3.0/24, learned via 172.16.2.252 on Fa0/1.
+
+**中文**：172.16.3.40 AND 255.255.255.0 = 172.16.3.0 → 匹配第三行 → 从 **Fa0/1** 发给 next hop **172.16.2.252**（先 ARP 172.16.2.252 拿它的 MAC）。Router 不 flood；不是直连也能转，只要表里有路由。
+
+</MCQ>
+
+<MCQ q="37. How does a router running RIP learn the next-hop address for a remote network?（运行 RIP 的 router 怎么知道远程网络的 next hop？）" a="The administrator must type it for every network." b="From a routing update sent by a neighbor router; the next hop is the address of the neighbor interface that sent the update." c="By sending an ARP broadcast for the remote network." d="From the DHCP server." answer="B">
+
+**EN**: Neighbors advertise their routes; the advertiser's interface address becomes the next hop.
+
+**中文**：RIP 每 30 秒把自己知道的网络告诉邻居（像传话，也叫 routing by rumor）。收到「我能到 4.0」的 router 记下：网络 4.0、从哪个口听到的（outbound interface）、**谁说的（next hop = 对方接口 IP）**、hop = 对方的数 + 1。手动输入的是 static route。
+
+</MCQ>
+
+<MCQ q="38. Immediately after interfaces are configured with IP addresses and enabled, which routes appear in a router's routing table?（接口配好 IP 并启用之后，routing table 里马上有哪些路由？）" a="Routes to every network in the company" b="Only the directly connected networks" c="Only a default route to the Internet" d="No routes until RIP is enabled" answer="B">
+
+**EN**: Connected routes appear automatically; everything else must be learned or configured.
+
+**中文**：Initial routing table 只有 **connected routes**（type C）——每个启用的接口所在的网络一条。其他网络要靠 static route 或 routing protocol 学。
+
+</MCQ>
+
+<MCQ q="39. R1 can reach 172.16.3.0 either through R2 (one hop, 64 Kbps link) or through R3 (two hops, 1.5 Mbps links). Which route does RIP choose, and which does EIGRP choose?（R1 到 172.16.3.0：经 R2 一跳 64 Kbps，或经 R3 两跳 1.5 Mbps。RIP 和 EIGRP 各选哪条？）" a="Both choose R2" b="Both choose R3" c="RIP chooses R2; EIGRP chooses R3" d="RIP chooses R3; EIGRP chooses R2" answer="C">
+
+**EN**: RIP counts hops; EIGRP uses bandwidth and delay.
+
+**中文**：**RIP = hop count** → 一跳的 R2；**EIGRP = bandwidth（+ delay）** → 带宽大的 R3（slide 60 / 62）。同一个拓扑两种协议选的路可能不一样，这是常考点。
+
+</MCQ>
+
+<MCQ q="40. Which statement describes a disadvantage of static routes?（static route 的缺点是？）" a="They use a lot of router CPU for updates." b="They choose paths by bandwidth." c="They can only be used on serial links." d="They must be updated manually by the administrator when the topology changes." answer="D">
+
+**EN**: Static routes don't adapt; an administrator must change them after a link failure.
+
+**中文**：Static route 是管理员手动写的，拓扑变了（例如链路断了）也要**手动改**。Dynamic route 由 routing protocol 自动学、自动更新。
+
+</MCQ>
+
+<MCQ q="41. Which of the following is a routed protocol rather than a routing protocol?（下面哪个是 routed protocol 而不是 routing protocol？）" a="RIP" b="OSPF" c="IP" d="EIGRP" answer="C">
+
+**EN**: IP carries user data across routers; RIP, OSPF and EIGRP exchange routes.
+
+**中文**：**Routed protocol** = 被路由、载数据（IP、IPX、AppleTalk）。**Routing protocol** = router 之间交换路由信息（RIP、IGRP、EIGRP、OSPF），决定 routed protocol 走哪条路。
+
+</MCQ>
+
+<MCQ q="42. Which TWO statements compare routers and switches correctly? (Choose two.)（比较 router 和 switch，哪两项正确？）" a="A router separates broadcast domains; a switch does not." b="A switch makes forwarding decisions using IP addresses." c="A switch is generally faster than a router." d="Only routers separate collision domains." e="A switch offers stronger security than a router." answer="AC">
+
+**EN**: Routers split broadcast domains and are slower but more secure; switches are faster.
+
+**中文**：slide 51：router——慢、L3 / IP、分 broadcast domain、安全性强；switch——快、L2 / MAC、不分 broadcast domain。两者**都**分 collision domain（D 错）。
+
+</MCQ>
+
+<Callout type="note" title="Q43 · 看 ipconfig 的题">
+
+```
+C:\> ipconfig /all
+   Physical Address. . . . . . : 00-1A-2B-3C-4D-5E
+   DHCP Enabled. . . . . . . . : Yes
+   IPv4 Address. . . . . . . . : 10.10.5.37
+   Subnet Mask . . . . . . . . : 255.255.255.0
+   Default Gateway . . . . . . : 10.10.5.1
+   DHCP Server . . . . . . . . : 10.10.5.1
+   DNS Servers . . . . . . . . : 10.10.1.53
+```
+
+</Callout>
+
+<MCQ q="43. Refer to the ipconfig output above. Which TWO statements are true? (Choose two.)（看上面的 ipconfig 输出，哪两项正确？）" a="The host obtained its IP address automatically." b="The DNS server is on the same network as the host." c="The DHCP service is provided by the host's default gateway." d="The administrator assigned the physical address 00-1A-2B-3C-4D-5E." e="The network is subnetted into 254 subnets." answer="AC">
+
+**EN**: DHCP Enabled = Yes, and the DHCP server address equals the gateway address.
+
+**中文**：DHCP Enabled = Yes → 自动获得（A）；DHCP Server 10.10.5.1 = Default Gateway → 由本 LAN 的 router 提供（C）。DNS 10.10.1.53 在 10.10.1.0，不同网络（B 错）；MAC 是出厂烧录的（D 错）；/24 是一个网络 254 台主机，不是 254 个子网（E 错）。和 Final Review Q15 同类。
+
+</MCQ>
+
+## 6. Module 3 · 传输层（Q44–Q53）
+
+<MCQ q="44. Which TWO functions are provided by the transport layer? (Choose two.)（哪两项是传输层的功能？）" a="Segmenting upper-layer data" b="Flow control with sliding windows" c="Path determination" d="Physical addressing" e="Encryption of data" answer="AB">
+
+**EN**: Transport segments data and provides flow control; routing is Layer 3, MAC is Layer 2, encryption is Layer 6.
+
+**中文**：五个功能里的两个：segmenting、flow control（sliding windows）；另外还有 end-to-end、可靠性（seq / ack）。Path determination 是 L3，physical addressing 是 L2，encryption 是 L6。
+
+</MCQ>
+
+<MCQ q="45. A TCP segment is lost in transit. How does TCP detect and recover from the loss?（一个 TCP 段在路上丢了，TCP 怎么发现、怎么补？）" a="The receiving NIC sees a bad FCS and asks for the segment again." b="The receiver notices the missing sequence number and does not acknowledge past it; the sender's timer expires and it retransmits the segment." c="The router that dropped the segment resends it." d="UDP retransmits it." answer="B">
+
+**EN**: Detection at the receiver by sequence numbers; correction at the sender by timer-based retransmission.
+
+**中文**：**Receiver 检测**：按 SEQ 发现缺了一段 → ACK 停在缺的那个号，不确认后面的。**Sender 纠正**：每段都在 retransmission queue 里计时，超时没等到确认 → **重传**（板书 100 sec 倒数到 0 → 重发）。L2 不重传，router 也不会帮你重发。
+
+</MCQ>
+
+<MCQ q="46. A client's SYN has sequence number 1250. What acknowledgment number does the server put in its SYN-ACK?（client 的 SYN 序号是 1250，server 的 SYN-ACK 里 ACK 是多少？）" a="1250" b="1251" c="1252" d="The server's own ISN plus 1" answer="B">
+
+**EN**: ACK = received SEQ + 1 because the SYN consumes one sequence number.
+
+**中文**：TCP 的 ACK 是「下一个想要的号」，SYN 占 1 个号 → **1251**。D 是 client 第 3 条回给 server 的 ACK 的算法。
+
+</MCQ>
+
+<MCQ q="47. Client ISN = 4000, server ISN = 7000. What are the SEQ and ACK numbers in the third segment of the handshake?（client ISN 4000、server ISN 7000，三次握手第 3 条的 SEQ 和 ACK？）" a="SEQ 4001, ACK 7001" b="SEQ 4000, ACK 7000" c="SEQ 7001, ACK 4001" d="SEQ 4001, ACK 7000" answer="A">
+
+**EN**: Third segment: SEQ = x + 1, ACK = y + 1.
+
+**中文**：① SYN 4000 → ② SYN, ACK：SEQ 7000、ACK 4001 → ③ ACK：**SEQ 4001**（用 server 给它的号）、**ACK 7001**。
+
+</MCQ>
+
+<MCQ q="48. After the handshake, a sender with ISN 100 sends a full window of 4 segments, 200 bytes each, and all arrive. What ACK number does the receiver send?（握手后 ISN 100 的发送方发满一窗：4 段、每段 200 bytes，全部到达。接收方回的 ACK 是？）" a="104" b="501" c="801" d="901" answer="D">
+
+**EN**: First data SEQ = 101; window length 4 × 200 = 800 bytes; ACK = 101 + 800 = 901.
+
+**中文**：第一段数据 SEQ = ISN + 1 = **101**；四段 SEQ = 101、301、501、701；一窗总长度 = 800 bytes；ACK = 起始 SEQ + 窗口长度 = **901**（下一个想要的字节）。A 是按段编号的错法。
+
+</MCQ>
+
+<MCQ q="49. Segments with SEQ 101, 301 and 501 (200 bytes each) are sent in one window. The segment with SEQ 301 is lost; the other two arrive. What ACK number does the receiver send?（一窗发 SEQ 101、301、501 三段（各 200 B），301 丢了，其他到了，ACK 是？）" a="301" b="501" c="701" d="102" answer="A">
+
+**EN**: Expectational ACK points to the first missing byte: 301.
+
+**中文**：ACK 永远是「**最前面缺的那个号**」→ 301。501 那段先存在 buffer 里；等 sender 超时重传 301 之后，receiver 一次 ACK 到 701。
+
+</MCQ>
+
+<MCQ q="50. What is the purpose of the window advertisement carried in each TCP acknowledgment?（每个 ACK 里带的 window advertisement 有什么用？）" a="It tells the sender how many bytes the receiver can accept, so the sender does not overflow the receiver's buffer." b="It lists the routers on the path." c="It identifies the application." d="It contains the FCS." answer="A">
+
+**EN**: Flow control: the receiver advertises how much it can take.
+
+**中文**：这就是 **flow control**：接收方 buffer 有限，在每个 ACK 里告诉发送方「我还能收多少」，发送方就按这个数发（*uses window sizes to protect buffer space*）。窗口会随情况变大变小 → sliding window。
+
+</MCQ>
+
+<MCQ q="51. A PC has two browser tabs open to the same web server (port 80). How does TCP keep the two conversations separate?（同一台 PC 开两个分页连同一台 web server 的 80 端口，TCP 怎么区分两条会话？）" a="Each tab uses a different source port number." b="Each tab uses a different destination IP address." c="The server uses a different port for each tab." d="The switch assigns a VLAN to each tab." answer="A">
+
+**EN**: The client picks a different dynamic source port for each connection.
+
+**中文**：Server 对所有连接都用同一个 well-known 端口 80；**client 每条连接用不同的动态源端口**（例如 50000、50001）。回包的目的端口不同，PC 就知道交给哪个分页（multiplexing）。
+
+</MCQ>
+
+<MCQ q="52. A client application uses source port 49200. Which port range does this number belong to?（client 用源端口 49200，属于哪个范围？）" a="Well-known (0–1023)" b="Registered (1024–49151)" c="Dynamic or private (49152–65535)" d="Reserved for routers" answer="C">
+
+**EN**: 49152–65535 are dynamic / private ports assigned to clients.
+
+**中文**：49200 ≥ 49152 → **dynamic / private**，动态分配给 client。Well-known 给 server（HTTP 80、DNS 53…），registered 给用户安装的应用。
+
+</MCQ>
+
+<MCQ q="53. Which TWO features does UDP NOT provide? (Choose two.)（UDP 没有哪两项功能？）" a="Port numbers to identify applications" b="Acknowledgments and retransmission" c="Flow control with windowing" d="Delivery of data to the transport layer of the destination" e="Low overhead" answer="BC">
+
+**EN**: UDP has ports but no acknowledgments, retransmission or windowing.
+
+**中文**：slide 25：TCP 和 UDP **都**用 port 识别应用；只有 TCP 有 error recovery（ACK + 重传）和 flow control（window）。UDP 开销小，所以 VoIP、DNS 查询、DHCP 用它。
+
+</MCQ>
+
+## 7. Module 4 · 子网（Q54–Q60）
+
+<MCQ q="54. A Class C network borrows 5 bits for subnetting. What are the subnet mask, the number of subnets, and the usable hosts per subnet?（Class C 借 5 位：mask、子网数、每子网可用主机数？）" a="255.255.255.248, 32 subnets, 6 hosts" b="255.255.255.240, 16 subnets, 14 hosts" c="255.255.255.248, 30 subnets, 8 hosts" d="255.255.255.252, 64 subnets, 2 hosts" answer="A">
+
+**EN**: Mask octet = 128+64+32+16+8 = 248; 2^5 = 32 subnets; 2^3 − 2 = 6 hosts.
+
+**中文**：借 5 位 → 最后一段 11111000 = **248**（/29）；子网 2^5 = **32**（本课不减 2）；剩 3 位 host → 2^3 − 2 = **6**。
+
+</MCQ>
+
+<MCQ q="55. To which subnet does host 172.16.45.200/20 belong, and what is that subnet's broadcast address?（172.16.45.200/20 属于哪个子网？广播地址？）" a="172.16.32.0 and 172.16.47.255" b="172.16.45.0 and 172.16.45.255" c="172.16.40.0 and 172.16.55.255" d="172.16.0.0 and 172.16.255.255" answer="A">
+
+**EN**: /20 = 255.255.240.0, block 16 in the third octet; 45 falls in the 32 block.
+
+**中文**：/20 → 第 3 段 mask 240 → **block 16**（在第 3 段）。45 ÷ 16 = 2.8 → 2 × 16 = **32** → 子网 172.16.**32**.0；broadcast = 下一个子网 172.16.48.0 − 1 = **172.16.47.255**（第 4 段跑满 255，这就是 Class B 跨段）。
+
+</MCQ>
+
+<MCQ q="56. What is the broadcast address of the subnet that contains host 192.168.4.77/28?（192.168.4.77/28 所在子网的广播地址？）" a="192.168.4.63" b="192.168.4.255" c="192.168.4.80" d="192.168.4.79" answer="D">
+
+**EN**: /28 → block 16; 77 is in 64–79.
+
+**中文**：/28 → mask 240 → block 16 → 子网 0、16、32、48、**64**、80 … → 77 属于 64 那一块 → network .64，broadcast = 80 − 1 = **.79**。
+
+</MCQ>
+
+<MCQ q="57. Which TWO addresses can be assigned to hosts in subnet 192.168.10.64/26? (Choose two.)（子网 192.168.10.64/26 里，哪两个能给主机？）" a="192.168.10.64" b="192.168.10.65" c="192.168.10.126" d="192.168.10.127" e="192.168.10.128" answer="BC">
+
+**EN**: Block 64: .64 is the network, .127 the broadcast, .128 the next subnet.
+
+**中文**：/26 → block 64 → 这个子网是 .64 – .127：.64 = network，.127 = broadcast，都不能给主机；.128 已经是下一个子网。可用的是 .65 – .126 → **B、C**。
+
+</MCQ>
+
+<MCQ q="58. Network 130.12.0.0 is subnetted by borrowing 10 bits. What is the network address of subnet number 5 (counting from subnet 0)?（130.12.0.0 借 10 位，从 0 开始数的第 5 号子网地址？）" a="130.12.0.5" b="130.12.0.160" c="130.12.1.64" d="130.12.5.0" answer="C">
+
+**EN**: /26, block 64 in the fourth octet, 4 subnets per third-octet value: 5 = 1 × 4 + 1 → 130.12.1.64.
+
+**中文**：借 10 位 → 255.255.255.192，**block 64 在第 4 段**，每个第 3 段的值放 256 ÷ 64 = 4 个子网。第 5 号：5 ÷ 4 = 1 余 1 → 第 3 段 **1**，第 4 段 1 × 64 = **64** → **130.12.1.64**。中间 .0.192 之后进位到 .1.0，这就是 Class B 的进位。
+
+</MCQ>
+
+<MCQ q="59. A Class C network must provide 6 subnets with up to 25 hosts each (plus one router interface per subnet), using the same mask everywhere. Which mask meets the requirement?（Class C 要 6 个子网、每个最多 25 台主机（再加一个 router 接口），同一个 mask，选哪个？）" a="255.255.255.192" b="255.255.255.224" c="255.255.255.240" d="255.255.255.248" answer="B">
+
+**EN**: 6 subnets → borrow 3 (8 subnets); 26 addresses → keep 5 host bits (30) → /27.
+
+**中文**：子网：2^3 = 8 ≥ 6 → 至少借 3 位；地址：25 + 1 = 26 → 2^5 − 2 = 30 ≥ 26 → 至少留 5 位 → 最多借 3 位 → 只能借 3 → **/27 = 255.255.255.224**。/26 只有 4 个子网不够；/28 每个只有 14 台放不下。
+
+</MCQ>
+
+<Figure src="images/ex5.svg" caption="Exhibit 5（Q60）：R1 — R2 — R3 用 serial 线串起来，每台 router 有一个 LAN" />
+
+<MCQ q="60. Refer to Exhibit 5. How many subnets are needed, and what is the minimum number of bits to borrow from 192.168.50.0?（看图 5：需要几个子网？192.168.50.0 最少借几位？）" a="3 subnets, borrow 2 bits" b="5 subnets, borrow 3 bits" c="5 subnets, borrow 2 bits" d="3 subnets, borrow 3 bits" answer="B">
+
+**EN**: 3 LANs + 2 serial links = 5 networks; 2^3 = 8 ≥ 5.
+
+**中文**：数子网：每个 LAN 一个（3）+ **每条 router 之间的线一个（2）** = **5** → 2^2 = 4 不够，2^3 = 8 够 → 最少借 **3** 位。再检查主机：最大 LAN 28 + 1 = 29 ≤ 2^5 − 2 = 30 ✔，所以 /27 可行。最常见的错是漏数 router 之间的线（A、C）。
+
+</MCQ>
+
+---
+
+## 8. 答案速查
+
+| 题 | 答 | 题 | 答 | 题 | 答 | 题 | 答 | 题 | 答 | 题 | 答 |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | D | 11 | C | 21 | D | 31 | A | 41 | C | 51 | A |
+| 2 | C | 12 | D | 22 | C | 32 | B, D | 42 | A, C | 52 | C |
+| 3 | D | 13 | D | 23 | A | 33 | C | 43 | A, C | 53 | B, C |
+| 4 | A | 14 | B | 24 | D | 34 | D | 44 | A, B | 54 | A |
+| 5 | B, C | 15 | C | 25 | A | 35 | B | 45 | B | 55 | A |
+| 6 | A | 16 | C, D | 26 | D | 36 | D | 46 | B | 56 | D |
+| 7 | C | 17 | C | 27 | A, B, C | 37 | B | 47 | A | 57 | B, C |
+| 8 | B, C | 18 | C | 28 | A | 38 | B | 48 | D | 58 | C |
+| 9 | B | 19 | A | 29 | C | 39 | C | 49 | A | 59 | B |
+| 10 | B | 20 | A, D | 30 | B | 40 | D | 50 | A | 60 | B |
