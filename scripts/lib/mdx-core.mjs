@@ -52,6 +52,7 @@ import { vigenere, transposition, CIPHER_PRESETS, keyCount, KEY_COUNT_PRESETS, k
 import { avalanche, HASH_PRESETS, chainCheck, sealChain, CHAIN_DATA } from "../../src/components/mdx/hash-logic.mjs";
 import { costBalance, COST_PRESETS, fmtK as fmtCostK } from "../../src/components/mdx/cost-balance-logic.mjs";
 import { TLS_STEPS } from "../../src/components/mdx/tls-logic.mjs";
+import { FLOW_PRESETS as OTIS_PRESETS, whoKnows as otisWhoKnows, flowSvg as otisFlowSvg, toStaticSvg as otisStatic, STAKEHOLDERS as OTIS_ROLES, ATTITUDE as OTIS_ATT } from "../../src/components/mdx/otis-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
@@ -73,6 +74,7 @@ const l3Quiz = readJson("src/components/mdx/data/l3-quiz.json");
 const l4Quiz = readJson("src/components/mdx/data/l4-quiz.json");
 const l5Quiz = readJson("src/components/mdx/data/l5-quiz.json");
 const l6Quiz = readJson("src/components/mdx/data/l6-quiz.json");
+const caseQuiz = readJson("src/components/mdx/data/case-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -862,6 +864,35 @@ const components = {
       note("（网页版此处是「这条语句属于哪一类」的点选练习；下表是全部题目和答案）"),
       table(["语句", "类别", "理由"], COMMAND_ITEMS.map((it) => [{ type: "inlineCode", value: it.sql }, strong(it.a), it.why])),
     ];
+  },
+  OtisFlowLab(_node, _a, ctx) {
+    ctx.generated.push({ path: "images/OTIS_FLOW_PRE.svg", data: otisStatic(otisFlowSvg("pre")) });
+    ctx.generated.push({ path: "images/OTIS_FLOW_POST.svg", data: otisStatic(otisFlowSvg("post")) });
+    const mark = (r) => (r.knows ? "✓" : r.fooled ? "✗（被蒙在鼓里）" : "✗");
+    return [
+      note("（网页版此处可交互：切换 Pre / Post、调 callback 次数、勾选「branch 掩盖」，看每一层知不知道；下面是两张信息流图和四个预设场景）"),
+      para({ type: "image", url: "images/OTIS_FLOW_PRE.svg", alt: "Pre-OTISLINE 信息流" }),
+      para({ type: "image", url: "images/OTIS_FLOW_POST.svg", alt: "Post-OTISLINE 信息流" }),
+      ...OTIS_PRESETS.flatMap((p) => {
+        const pre = otisWhoKnows("pre", p.s);
+        const post = otisWhoKnows("post", p.s);
+        return [
+          para(strong(`${p.label}（30 天 ${p.s.m30} 次 · 90 天 ${p.s.d90} 次${p.s.critical ? " · 危急" : ""}${p.s.hide ? " · branch 掩盖" : ""}${p.s.requested ? " · 上级来要数据" : ""}）`)),
+          table(["层级", "Pre", "Pre：原因", "Post", "Post：原因"], pre.map((r, i) => [r.label, mark(r), r.how, mark(post[i]), post[i].how])),
+        ];
+      }),
+    ];
+  },
+  OtisStakeholderLab() {
+    return [
+      note("（网页版此处可以点每个角色看前后对比；下表是全部角色）"),
+      table(["角色", "态度", "以前", "以后", "原因", "类别", "管理层怎么应对"], OTIS_ROLES.map((r) => [r.label, strong(OTIS_ATT[r.attitude].label), r.before, r.after, r.why, r.cat, r.fix])),
+    ];
+  },
+  CaseSortQuiz(_node, a) {
+    const set = caseQuiz[a.set] ?? caseQuiz.otis;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["挑战", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
   },
   L6SortQuiz(_node, a) {
     const set = l6Quiz[a.set] ?? l6Quiz.plan;
