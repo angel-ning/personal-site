@@ -263,6 +263,10 @@ body {
 .otis-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: .4em 1em; margin-top: .7em; font-size: 13px; color: var(--fg-2); }
 .otis-inputs input[type=range] { display: block; width: 100%; accent-color: var(--accent); }
 .otis-check { display: flex; align-items: center; gap: .4em; }
+.crm-path { list-style: decimal; padding-left: 1.4em; margin-top: .7em; display: grid; gap: .3em; font-size: 13.5px; }
+.crm-path .crm-q { color: var(--fg-2); font-style: italic; }
+.crm-yes { color: var(--c-tip); font-style: normal; }
+.crm-no { color: var(--c-warn); font-style: normal; }
 .ip-octets { display: grid; grid-template-columns: repeat(4, 1fr); gap: .5em; margin-top: .9em; }
 .ip-octet { border: 1px solid var(--line); border-radius: 8px; padding: .45em .5em; display: flex; flex-direction: column; align-items: center; gap: .1em; }
 .ip-dec { font-family: var(--font-mono); font-weight: 600; font-size: 1.1em; }

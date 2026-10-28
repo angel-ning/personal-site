@@ -53,6 +53,8 @@ import { avalanche, HASH_PRESETS, chainCheck, sealChain, CHAIN_DATA } from "../.
 import { costBalance, COST_PRESETS, fmtK as fmtCostK } from "../../src/components/mdx/cost-balance-logic.mjs";
 import { TLS_STEPS } from "../../src/components/mdx/tls-logic.mjs";
 import { LOOKUP_PRESETS, LOOKUP_ROUTERS, buildTable, lookup as routeLookup, staticCommand, prefixToMask, dvRun, LS_PRESETS, LS_LINKS, linkCost, spf, lsSvg, toStaticSvg as routingStatic } from "../../src/components/mdx/routing-logic.mjs";
+import { upgradeCost as zaraCost, networkTradeoff as zaraNet, UPGRADE_PRESETS as ZARA_PRESETS, fmtEur } from "../../src/components/mdx/zara-logic.mjs";
+import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute, routeNote as crmRouteNote } from "../../src/components/mdx/crm-logic.mjs";
 import { FLOW_PRESETS as OTIS_PRESETS, whoKnows as otisWhoKnows, flowSvg as otisFlowSvg, toStaticSvg as otisStatic, STAKEHOLDERS as OTIS_ROLES, ATTITUDE as OTIS_ATT } from "../../src/components/mdx/otis-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
@@ -891,54 +893,25 @@ const components = {
       table(["角色", "态度", "以前", "以后", "原因", "类别", "管理层怎么应对"], OTIS_ROLES.map((r) => [r.label, strong(OTIS_ATT[r.attitude].label), r.before, r.after, r.why, r.cat, r.fix])),
     ];
   },
-  RouteLookupLab() {
+  ZaraCostLab() {
+    const net = zaraNet({ stores: 550, minutes: 15, wage: 10, support: 2000 });
     return [
-      note("（网页版此处可交互：选路由器、开关静态 / 默认路由、断开接口、输入任意目的 IP 看匹配哪一行；下面是六个预设的结果）"),
-      ...LOOKUP_PRESETS.flatMap((p) => {
-        const { rows, skipped } = buildTable(p.router, p.on, p.down);
-        const r = routeLookup(rows, p.dest);
-        const cmds = LOOKUP_ROUTERS[p.router].statics.filter((s) => p.on.includes(s.id)).map(staticCommand);
+      note("（网页版此处可以改门店数、新 OS、升级范围、是否装无线网络、每店 IT 支持，看一次性和每年成本；下面是三个预设和店内网络的默认测算）"),
+      ...ZARA_PRESETS.flatMap((p) => {
+        const r = zaraCost(p.x);
         return [
-          para(strong(`${p.label}：${LOOKUP_ROUTERS[p.router].label} 收到去 ${p.dest} 的包`), text(cmds.length ? `（配置 ${cmds.join("；")}${p.down.length ? `；${p.down.join("、")} down` : ""}）` : p.down.length ? `（${p.down.join("、")} down）` : "")),
-          table(["Source", "Subnet", "Mask", "Out Int.", "Next-Hop", "匹配"], rows.map((x, i) => [x.src, x.net, prefixToMask(x.prefix), x.out, x.hop ?? "N/A", i === r.index ? strong("✅ 选这条") : r.matches[i].hit ? "✓" : "—"])),
-          para(strong(r.action === "forward" ? "转发" : "丢弃"), text(`：${r.why}${skipped.length ? `（${skipped.map(staticCommand).join("、")} 没装进路由表：出接口 down）` : ""}`)),
+          para(strong(p.label), text(`：${p.note}`)),
+          table(["项目", "怎么算", "一次性", "每年"], [...r.lines.map((l) => [l.label, l.calc, l.once ? fmtEur(l.once) : "—", l.annual ? fmtEur(l.annual) : "—"]), [strong("合计"), "", strong(fmtEur(r.once)), strong(fmtEur(r.annual))]]),
         ];
       }),
+      para(strong("店内网络（Slide 12）"), text(`：550 店 × 15 分钟 × €10 × 360 天 ≈ ${fmtEur(net.benefit)} / 年；如果每店每年要 €2,000 IT 支持，成本 ${fmtEur(net.cost)} / 年，净值 ${fmtEur(net.net)}（时薪和支持成本都是假设）。`)),
     ];
   },
-  DistanceVectorLab() {
-    const fmt = (t) => Object.entries(t).map(([n, e]) => `${n}: ${e.metric}${e.hop ? ` via ${e.hop}` : " 直连"}`).join(" · ");
-    const runTable = (run) => table(["轮次", ...run.topo.routers], run.rounds.map((rd) => [rd.label, ...run.topo.routers.map((r) => fmt(rd.tables[r]))]));
-    const a = dvRun("slide21");
-    const b = dvRun("slide21", { failNet: "Z" });
-    const c = dvRun("board");
+  CrmRouteLab() {
     return [
-      note("（网页版此处可交互：一轮一轮看路由表怎么变、收敛后断开某个网络、开关 split horizon；下面是三个场景）"),
-      para(strong("Slide 21 拓扑从开机到收敛")), runTable(a),
-      para(strong("收敛后网络 Z 断开（有 split horizon）")), runTable({ ...b, rounds: b.rounds.slice(b.failAt) }),
-      para(strong("板书 p.5 三角形 R1–R2–R3")), runTable(c),
+      note("（网页版此处可以选不同的来电客户，看在 slide 14 流程图里怎么走；下表是三种客户的路径）"),
+      table(["来电客户", "路径", "结果"], CRM_CALLERS.map((c) => [c.label, crmRoute(c).map((p) => CRM_STEPS[p.step].split("（")[0] + (p.answer ? ` → ${p.answer}` : "")).join(" ⇒ "), crmRouteNote(c)])),
     ];
-  },
-  LinkStateLab(_node, _a, ctx) {
-    return [
-      note("（网页版此处可交互：选 SPF 树的根、改每条链路的 cost 或断开链路；下面是三个预设）"),
-      ...LS_PRESETS.flatMap((p, k) => {
-        const r = spf(p.root, p.costs, p.down);
-        const file = `images/LS_SPF_${k + 1}.svg`;
-        ctx.generated.push({ path: file, data: routingStatic(lsSvg(p.root, p.costs, p.down)) });
-        return [
-          para(strong(p.label), text(`（链路 cost：${LS_LINKS.map((l) => `${l.a}–${l.b}=${p.down.includes(l.id) ? "断" : linkCost(l, p.costs)}`).join("，")}）`)),
-          para({ type: "image", url: file, alt: `SPF tree from ${p.root}` }),
-          table(["步", "确定", "当时的距离"], r.steps.map((s, i) => [String(i + 1), `${s.pick} = ${s.cost}`, Object.entries(s.tentative).map(([x, d]) => `${x}=${d === Infinity ? "∞" : d}`).join(" ")])),
-          table(["Network", "是什么", "Cost", "Next hop"], r.table.map((t) => [`${t.net}/24`, t.label, String(t.cost), t.hop ?? "直连"])),
-        ];
-      }),
-    ];
-  },
-  RoutingSortQuiz(_node, a) {
-    const set = routingQuiz[a.set] ?? routingQuiz.route;
-    const label = (id) => set.options.find((o) => o.id === id).label;
-    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
   },
   CaseSortQuiz(_node, a) {
     const set = caseQuiz[a.set] ?? caseQuiz.otis;
