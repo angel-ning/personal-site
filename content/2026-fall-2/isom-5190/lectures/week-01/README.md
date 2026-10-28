@@ -1,0 +1,950 @@
+---
+title:
+  en: "Week 1 · Routing Fundamentals: Static, Default & Dynamic Routes"
+  zh: "第 1 周 · 路由基础：静态、默认与动态路由"
+summary:
+  en: "How a router fills and reads its routing table: connected routes, static routes (exit interface vs next-hop), default routes, then dynamic routing — distance vector (RIP), link-state (OSPF, LSA, SPF), balanced hybrid (EIGRP), autonomous systems and IGP vs EGP."
+  zh: "路由器怎么填、怎么查路由表：直连路由、静态路由（出接口 vs 下一跳）、默认路由；再到动态路由——距离矢量 (RIP)、链路状态 (OSPF、LSA、SPF)、平衡混合 (EIGRP)、自治系统与 IGP / EGP。"
+week: 1
+date: 2026-10-28
+tags: [Routing, Static Route, Default Route, RIP, OSPF, Link-State, IGP, BGP]
+---
+# ISOM 5190 Network Security Management — Week 1 复习笔记
+
+**主题：Module 1 Introduction to Network Security Management — Route Types · 路由表四个字段 · 直连路由 · 三种学路方式（Static / Default / Dynamic）· `ip route` 两种写法 · 默认路由 · `show ip route` · 距离矢量 (RIP) · 链路状态 (OSPF：LSA → 拓扑数据库 → SPF 树) · Balanced Hybrid · Autonomous System · IGP / EGP**
+
+> 优先级标注说明（按考试重要性）：  
+> 🔴 **必考核心** — 概念名称、定义、结构必须能背出来  
+> 🟡 **需要理解** — 需要懂逻辑关系，能举例说明  
+> 🟢 **了解即可** — 背景知识，考试大概率不会细抠
+>
+> **优先级依据**：  
+> ① **老师的手写补充（5190M01 supp）**：7 页里有 4 页在画「路由表怎么填」——两台路由器的初始路由表、RIP 每 30 秒更新的 R1–R2–R3、ARP 与 IP / MAC (S, D)、五边形拓扑的 LSA 和拓扑数据库。这些是本周最可能的考法：**给拓扑 → 填路由表 / 写 LSA / 写 IP、MAC (S, D)**；  
+> ② **篇幅**：动态路由（距离矢量 + 链路状态 + 混合）占 p.17–35 共 19 页，是课件的一半以上；  
+> ③ 课件 p.35 的 **Distance-Vector vs Link-State 对照表** 和 p.34 的 **协议 → 类型** 清单，是最典型的选择题素材；  
+> ④ 授课老师和 ISOM 5180 是同一位（Dr. Percy Dias），手写补充 p.2–4、p.6 是 5180 第 1–2 周内容的复习（IP 分类、二进制、ARP），标 🟡。
+
+> **📌 本笔记里的几种标记**
+>
+> - **✍️ 老师板书** — 来自 *5190M01 supp*（老师上课手写的讲解图），放在对应课件内容旁边。这份是**空白版**（表格没填），下面的答案全部是 **「我的解答」**；拿到课堂照片或 Completed 版后再对照改成「课堂答案」。
+> - **➕ 课外补充** — 课件没写、但理解或答题会用到的背景知识，考试优先级按 🟢 处理。
+> - 网页版有三个可以点的小实验（路由表查表、距离矢量一轮轮更新、链路状态 SPF）和三组点选练习，打印版会变成等价的表格。
+
+---
+
+## 0. 核心地图（先建立整体框架）
+
+这节课只回答一个问题：**路由器的路由表从哪来、怎么用？**
+
+```
+路由器收到包 → 拿「目的 IP」去查路由表 → 找到就转发 (forward)，找不到就丢弃 (discard)
+                                     │
+路由表每一行 = 目的网段 (Subnet / Mask) + 怎么走 (Out Int. / Next-Hop)
+                                     │
+路由从哪来？
+   ① Connected 直连：接口配了 IP 且 up → 自动加（Source = C）
+   ② Static 静态：管理员用 ip route 手写（Source = S）
+        ├─ 写出接口：ip route 172.16.1.0 255.255.255.0 s1
+        └─ 写下一跳：ip route 172.16.1.0 255.255.255.0 172.16.2.1
+   ③ Default 默认：ip route 0.0.0.0 0.0.0.0 …  查不到时的最后一招 (gateway of last resort)
+   ④ Dynamic 动态：路由器之间跑路由协议，自动学、自动更新          ★ 本周重点
+        ├─ Distance Vector（RIP、IGRP）：每 30 秒把整张表发给邻居，只知道「方向 + 距离」
+        ├─ Link-State（OSPF）：发 LSA → 人人一份拓扑数据库 → 以自己为根跑 SPF → 最优路径进路由表
+        └─ Balanced Hybrid（EIGRP、IS-IS）：DV 的框架 + 更准的 metric + 触发更新
+                                     │
+范围：一个管理机构 = 一个 Autonomous System (AS)
+   AS 内部用 IGP（RIP / OSPF / EIGRP），AS 之间用 EGP（BGP）
+```
+
+**一句话抓住本周**：静态路由 = 人告诉路由器怎么走；动态路由 = 路由器之间互相告诉。距离矢量是「听邻居说」，链路状态是「自己看地图算」。
+
+> **💼 为什么一门「安全管理」课从路由讲起**
+>
+> 路由表决定了流量**能不能到**、**走哪条路**。安全上常见的几件事都建立在它上面：静态路由「安全、省流量」（Slide 8：不会被别人发来的假路由更新带偏）；动态路由协议本身也会被攻击（伪造 RIP / OSPF 更新把流量引走）；防火墙、VPN 放在哪里，也取决于流量走哪条路。
+
+---
+
+## 1. 🟡 复习：网络层的底子（板书 p.2–4、p.6）
+
+这四页板书是 ISOM 5180 第 1–2 周的复习，路由表的「网段」就是从这里来的。
+
+### 1.1 Hub / Switch / Router 隔开了什么
+
+![Hub（H）— 24 口 Switch — 24 接口 Router A；N.H = Network.Host](images/BOARD_DOMAINS.png)
+
+*✍️ Hub（H）— 24 口 Switch — 24 接口 Router A；N.H = Network.Host（5190M01 supp p.2）*
+
+> **✍️ 我的解答：每种设备隔开了什么**
+>
+> | 设备            | 层  | 冲突域 (collision domain) | 广播域 (broadcast domain) |
+> | ------------- | -- | ---------------------- | ---------------------- |
+> | Hub           | L1 | 所有口共用 **1 个**          | 1 个                    |
+> | Switch（24 口）  | L2 | **每个口 1 个**，共 24 个     | 默认 1 个（广播会 flood 到所有口） |
+> | Router（24 接口） | L3 | 每个接口 1 个               | **每个接口 1 个**——路由器不转发广播 |
+>
+> 所以图里 Router A 的**每个接口就是一个网络 (N)**，接口下面挂的设备共享同一个网络号、主机号 (H) 各不相同。这就是为什么路由表按「网络」而不是按「主机」记。
+
+### 1.2 IP 分类、网络地址和广播地址
+
+![Class A / B / C 的 N.H 划分 + 三个地址求 network / broadcast](images/BOARD_CLASSES.png)
+
+*✍️ Class A / B / C 的 N.H 划分 + 三个地址求 network / broadcast（5190M01 supp p.3）*
+
+> **✍️ 我的解答**
+>
+> | 地址           | Class        | N.H 划分  | Network address | Broadcast address  |
+> | ------------ | ------------ | ------- | --------------- | ------------------ |
+> | ① 10.3.4.6   | A（第一段 1–126） | N.H.H.H | **10.0.0.0**    | **10.255.255.255** |
+> | ② 130.6.8.9  | B（128–191）   | N.N.H.H | **130.6.0.0**   | **130.6.255.255**  |
+> | ③ 200.3.9.11 | C（192–223）   | N.N.N.H | **200.3.9.0**   | **200.3.9.255**    |
+>
+> 做法：保留 N 部分，H 部分**全 0 = 网络地址**，**全 1（255）= 广播地址**。
+
+![一个 octet 的位权 128 64 32 16 8 4 2 1；Class A 首位 0、B 首位 10、C 首位 110](images/BOARD_BINARY.png)
+
+*✍️ 一个 octet 的位权 128 64 32 16 8 4 2 1；Class A 首位 0、B 首位 10、C 首位 110（5190M01 supp p.4）*
+
+> **🧠 首位决定 Class**
+>
+> - Class A：`0xxxxxxx` → 0–127
+> - Class B：`10xxxxxx` → 128–191
+> - Class C：`110xxxxx` → 192–223
+>
+> 位权 2⁷…2⁰ = 128 64 32 16 8 4 2 1，加起来 255。
+
+### 1.3 ARP 与 IP / MAC (S, D)
+
+![从 192.168.10.0 开始编址；PC1 / PC2 / PC3 的 ARP 表、R 的 ARP 表；PC1 → PC3 经过 R 时 IP 和 MAC 的 (S, D)](images/BOARD_ARP.png)
+
+*✍️ 从 192.168.10.0 开始编址；PC1 / PC2 / PC3 的 ARP 表、R 的 ARP 表；PC1 → PC3 经过 R 时 IP 和 MAC 的 (S, D)（5190M01 supp p.6）*
+
+> **✍️ 我的解答（地址是我按「从 192.168.10.0 开始」设的）**
+>
+> 设定：PC1、PC2 和 R 的左接口在 **192.168.10.0/24**（R = .1，PC1 = .2，PC2 = .3）；PC3 和 R 的右接口在 **192.168.11.0/24**（R = .1，PC3 = .2）。R 左、右接口的 MAC 记作 MAC-R1、MAC-R2。
+>
+> **PC1 → PC2（同一网络）**：PC1 发 ARP 问「192.168.10.3 是谁」，PC2 回 MAC-2。PC1 的 ARP 表：192.168.10.3 → MAC-2。路由器不参与。
+>
+> **PC1 → PC3（不同网络）**：PC1 发现目的不在自己网络，ARP 问的是**默认网关** 192.168.10.1，不是 PC3。
+>
+> | 段       | IP (S, D)                    | MAC (S, D)      |
+> | ------- | ---------------------------- | --------------- |
+> | PC1 → R | (192.168.10.2, 192.168.11.2) | (MAC-1, MAC-R1) |
+> | R → PC3 | (192.168.10.2, 192.168.11.2) | (MAC-R2, MAC-3) |
+>
+> - PC1 的 ARP 表：192.168.10.1 → MAC-R1
+> - R 的 ARP 表：192.168.10.2 → MAC-1（从 PC1 的 ARP 请求里学到）、192.168.11.2 → MAC-3（R 自己去问的）
+
+> **🎯 考点：IP 端到端不变，MAC 每一跳都换**
+>
+> 板书底下 PC1 — A — B — C — D —（E）— PC2 这条链就是在问这件事：中间有 4（或 5）台路由器，**IP (S, D) 从头到尾都是 (PC1, PC2)**；MAC (S, D) 每经过一台路由器就换一次，有几段链路就有几对不同的 MAC。
+
+---
+
+## 2. 🔴 Route Types 与路由表（Slides 2、4–7）
+
+![R1、R2 只有直连路由时的路由表](images/page_06.png)
+
+*R1、R2 只有直连路由时的路由表（Slide 6）*
+
+| 课件原文                                                                                                             | 中文 / 小白解释                                        |
+| ---------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| **Static Routes**                                                                                                | 管理员**手工**写进去的路由。拓扑一变（比如链路断了），管理员必须**手工**改        |
+| **Dynamic Routes**                                                                                               | 管理员只要开启一个**路由协议**，路由器之间互相交换信息、**自动**学到、自动更新      |
+| The router decides where to forward the packet **based on the routing table**                                    | 转发决定只看路由表                                        |
+| Each entry: ① **destination subnet**（subnet number + mask）② **directions**（outgoing interface + next-hop router） | 每条路由 = 「去哪」+「怎么走」                                |
+| **Connected subnets** / **directly connected routes**                                                            | 路由器接口所在的网段；接口**配了 IP 且 up and working** 就自动加进路由表 |
+
+**路由表四个字段（Slide 7）**：
+
+| 字段                | 含义                                                                                        |
+| ----------------- | ----------------------------------------------------------------------------------------- |
+| **Source**        | 这条路由是怎么学来的：**C** = connected，**S** = static，**R** = RIP，**O** = OSPF…（见 Slide 16 的 Codes） |
+| **Subnet / Mask** | 一起定义一组地址（一个网络或子网）。路由器拿包的**目的 IP**和这里逐条比较，找匹配的那条                                           |
+| **Out Int.**      | outgoing interface：匹配的包从哪个接口发出去                                                           |
+| **Next-Hop**      | 下一台路由器的 IP。**对直连路由没有意义**（写 N/A），因为目的主机就在这个接口下面                                            |
+
+![两台路由器 A、B，四个 LAN：画初始路由表；PC1 → PC3、PC1 → PC5 的 IP (S, D)](images/BOARD_TWO_ROUTERS.png)
+
+*✍️ 两台路由器 A、B，四个 LAN：画初始路由表；PC1 → PC3、PC1 → PC5 的 IP (S, D)（5190M01 supp p.1）*
+
+> **✍️ 我的解答：两台路由器的路由表**
+>
+> 先数网络：A 下面两个 LAN（PC1·PC2、PC3·PC4），B 下面两个 LAN（PC5·PC6、PC7·PC8），再加上 **A–B 之间的那条线也是一个网络**，一共 **5 个网络**。记作 1.0、2.0、3.0（A–B）、4.0、5.0。
+>
+> **Initial R.T.（刚开机，只有直连）**
+>
+> | A：Network | Interface    |   | B：Network | Interface    |
+> | --------- | ------------ | - | --------- | ------------ |
+> | 1.0       | C（接 PC1、PC2） |   | 3.0       | C（接 A）       |
+> | 2.0       | C（接 PC3、PC4） |   | 4.0       | C（接 PC5、PC6） |
+> | 3.0       | C（接 B）       |   | 5.0       | C（接 PC7、PC8） |
+>
+> **学完以后**（静态配置或动态学到），每张表都是 5 行——这正是板书表格留了 5 行的原因：
+>
+> | A：Network | Next hop |   | B：Network | Next hop |
+> | --------- | -------- | - | --------- | -------- |
+> | 1.0       | 直连       |   | 1.0       | A        |
+> | 2.0       | 直连       |   | 2.0       | A        |
+> | 3.0       | 直连       |   | 3.0       | 直连       |
+> | 4.0       | B        |   | 4.0       | 直连       |
+> | 5.0       | B        |   | 5.0       | 直连       |
+>
+> **IP (S, D)**（Network layer）：
+>
+> - PC1 → PC3：**(PC1, PC3)**，只经过 A
+> - PC1 → PC5：**(PC1, PC5)**，经过 A、B 两台路由器也不变
+
+> **⚠️ 踩坑：路由器之间的那根线也是一个网络**
+>
+> 数网络时最容易漏掉路由器之间的链路（Slide 6 里 R1–R2 的 172.16.4.0 就是）。每台路由器的路由表行数 = 整张拓扑里的网络总数，不是 LAN 数。
+
+---
+
+## 3. 🔴 三种学路方式（3 Ways to Learn Paths，Slide 8）
+
+| 方式                                        | 谁写的                | 特点                                                                             |
+| ----------------------------------------- | ------------------ | ------------------------------------------------------------------------------ |
+| **Static Route**                          | 管理员手工指定到某个目的网络的下一跳 | **useful for security and traffic reduction**（不交换路由更新，省带宽，也不会被假更新带偏）；拓扑变了必须手工改 |
+| **Default Route**（gateway of last resort） | 管理员                | **特殊的静态路由**：查不到任何已知路由时走这条                                                      |
+| **Dynamic Route**                         | 路由器自己学             | 从其他路由器发来的 **updates** 里自动学到                                                    |
+
+> **🧠 一句话区分**
+>
+> Static = 一条一条手写具体网段；Default = 手写一条「其他所有」；Dynamic = 不写，让路由器互相告诉。
+
+*（网页版此处是点选练习：这条路由是怎么来的？Connected / Static / Default / Dynamic；下表是全部题目和答案）*
+
+| 情景                                           | 答案            | 理由                                                               |
+| -------------------------------------------- | ------------- | ---------------------------------------------------------------- |
+| 管理员给接口配了 IP 并 no shutdown，路由器自己就加上了这个网段      | **Connected** | 接口有 IP 且 up → 自动生成 directly connected route，Source 列是 C（Slide 5） |
+| ip route 172.16.1.0 255.255.255.0 172.16.2.1 | **Static**    | 管理员手工写的、目的是一个具体网段 → 静态路由（Slide 12）                               |
+| ip route 0.0.0.0 0.0.0.0 s1                  | **Default**   | 0.0.0.0/0 匹配所有地址 → 默认路由，是一种特殊的静态路由（Slide 15）                     |
+| R2 每 30 秒收到 R1 发来的整张路由表，从里面学到了 10.1.1.0      | **Dynamic**   | 从其他路由器的更新里自动学到 → 动态路由（RIP）                                       |
+| 公司内网所有路由器把找不到的目的地都交给连 ISP 的那台                | **Default**   | gateway of last resort：查不到具体路由时才用                                |
+| 链路断了以后，路由器自动换了一条备用路径                         | **Dynamic**   | 只有动态路由会自己根据拓扑变化更新（Slide 2、17）                                    |
+| 链路断了以后，管理员必须登录路由器手工改路由                       | **Static**    | 静态路由的缺点：拓扑变化要人工更新（Slide 2、8）                                     |
+| show ip route 里 Source 一列是 C 的条目             | **Connected** | C = connected（Slide 7、16）                                        |
+| stub network 只有一条出口，路由器上只写一条「其他所有地址都走这里」     | **Default**   | 只有一条路进出，用默认路由最省事（Slide 36）                                       |
+
+---
+
+## 4. 🔴 静态路由：`ip route` 两种写法（Slides 9–12）
+
+![Specifying Outgoing Interface：ip route 目的网络 掩码 出接口](images/page_11.png)
+
+*Specifying Outgoing Interface：ip route 目的网络 掩码 出接口（Slide 11）*
+
+![Specifying the Next-hop IP Address：ip route 目的网络 掩码 下一跳 IP](images/page_12.png)
+
+*Specifying the Next-hop IP Address：ip route 目的网络 掩码 下一跳 IP（Slide 12）*
+
+拓扑：Sterling (172.16.1.0) —\[172.16.2.0]— Hoboken (172.16.3.0) —\[172.16.4.0]— Waycross (172.16.5.0)。Hoboken 直连 2.0、3.0、4.0，**不认识** 1.0 和 5.0，所以要加两条静态路由：
+
+```
+! 写法一：指定出接口（Slide 11）
+Hoboken(config)#ip route 172.16.1.0 255.255.255.0 s1
+Hoboken(config)#ip route 172.16.5.0 255.255.255.0 s0
+
+! 写法二：指定下一跳 IP（Slide 12）
+Hoboken(config)#ip route 172.16.1.0 255.255.255.0 172.16.2.1
+Hoboken(config)#ip route 172.16.5.0 255.255.255.0 172.16.4.2
+```
+
+格式：**`ip route` + destination network + subnet mask + gateway（出接口或下一跳 IP）**。
+
+| 课件原文                                                                                             | 中文解释                            |
+| ------------------------------------------------------------------------------------------------ | ------------------------------- |
+| A static route is simply a route that is added using a **configuration command**                 | 静态路由就是一条配置命令                    |
+| IOS adds the route (subnet, mask, output interface, next-hop) into a new entry                   | 配好后变成路由表里的一行                    |
+| They could configure static routes for all routes … but typically **it is not worth the effort** | 理论上全网都能用静态路由，但网络一大就太费事          |
+| **If the router cannot reach the outgoing interface … the route will not be installed**          | 出接口 down 了，这条静态路由就**不会出现在路由表里** |
+| An administrator must use the **ip route** command                                               | 命令名要记住                          |
+
+> **⚠️ 踩坑：下一跳是「对面」那台路由器的 IP**
+>
+> Hoboken 去 172.16.1.0，下一跳写 **172.16.2.1**（Sterling 的 S0），不是 Hoboken 自己的 172.16.2.2。去 5.0 写 **172.16.4.2**（Waycross 的 S1）。
+
+*（网页版此处可交互：选路由器、开关静态 / 默认路由、断开接口、输入任意目的 IP 看匹配哪一行；下面是六个预设的结果）*
+
+**Hoboken 只有直连路由，去 5.0：Hoboken 收到去 172.16.5.10 的包**
+
+| Source | Subnet     | Mask          | Out Int. | Next-Hop | 匹配 |
+| ------ | ---------- | ------------- | -------- | -------- | -- |
+| C      | 172.16.2.0 | 255.255.255.0 | S1       | N/A      | —  |
+| C      | 172.16.3.0 | 255.255.255.0 | E0       | N/A      | —  |
+| C      | 172.16.4.0 | 255.255.255.0 | S0       | N/A      | —  |
+
+**丢弃**：路由表里没有任何一条能匹配 172.16.5.10，也没有默认路由 → 丢弃 (discard)
+
+**加上 Slide 11 的两条静态路由：Hoboken 收到去 172.16.5.10 的包**（配置 ip route 172.16.1.0 255.255.255.0 s1；ip route 172.16.5.0 255.255.255.0 s0）
+
+| Source | Subnet     | Mask          | Out Int. | Next-Hop | 匹配        |
+| ------ | ---------- | ------------- | -------- | -------- | --------- |
+| C      | 172.16.2.0 | 255.255.255.0 | S1       | N/A      | —         |
+| C      | 172.16.3.0 | 255.255.255.0 | E0       | N/A      | —         |
+| C      | 172.16.4.0 | 255.255.255.0 | S0       | N/A      | —         |
+| S      | 172.16.1.0 | 255.255.255.0 | S1       | N/A      | —         |
+| S      | 172.16.5.0 | 255.255.255.0 | S0       | N/A      | **✅ 选这条** |
+
+**转发**：匹配静态路由 172.16.5.0/24 → 从 S0 发出（只写了出接口，对端是谁由链路决定）
+
+**改用下一跳 IP（Slide 12）：Hoboken 收到去 172.16.1.20 的包**（配置 ip route 172.16.1.0 255.255.255.0 172.16.2.1；ip route 172.16.5.0 255.255.255.0 172.16.4.2）
+
+| Source | Subnet     | Mask          | Out Int. | Next-Hop   | 匹配        |
+| ------ | ---------- | ------------- | -------- | ---------- | --------- |
+| C      | 172.16.2.0 | 255.255.255.0 | S1       | N/A        | —         |
+| C      | 172.16.3.0 | 255.255.255.0 | E0       | N/A        | —         |
+| C      | 172.16.4.0 | 255.255.255.0 | S0       | N/A        | —         |
+| S      | 172.16.1.0 | 255.255.255.0 | S1       | 172.16.2.1 | **✅ 选这条** |
+| S      | 172.16.5.0 | 255.255.255.0 | S0       | 172.16.4.2 | —         |
+
+**转发**：匹配静态路由 172.16.1.0/24 → 从 S1 发出，交给下一跳 172.16.2.1
+
+**S0 断了：静态路由也被撤掉：Hoboken 收到去 172.16.5.10 的包**（配置 ip route 172.16.1.0 255.255.255.0 s1；ip route 172.16.5.0 255.255.255.0 s0；S0 down）
+
+| Source | Subnet     | Mask          | Out Int. | Next-Hop | 匹配 |
+| ------ | ---------- | ------------- | -------- | -------- | -- |
+| C      | 172.16.2.0 | 255.255.255.0 | S1       | N/A      | —  |
+| C      | 172.16.3.0 | 255.255.255.0 | E0       | N/A      | —  |
+| S      | 172.16.1.0 | 255.255.255.0 | S1       | N/A      | —  |
+
+**丢弃**：路由表里没有任何一条能匹配 172.16.5.10，也没有默认路由 → 丢弃 (discard)（ip route 172.16.5.0 255.255.255.0 s0 没装进路由表：出接口 down）
+
+**Waycross 没有默认路由：Waycross 收到去 172.16.1.20 的包**
+
+| Source | Subnet     | Mask          | Out Int. | Next-Hop | 匹配 |
+| ------ | ---------- | ------------- | -------- | -------- | -- |
+| C      | 172.16.4.0 | 255.255.255.0 | S1       | N/A      | —  |
+| C      | 172.16.5.0 | 255.255.255.0 | E0       | N/A      | —  |
+
+**丢弃**：路由表里没有任何一条能匹配 172.16.1.20，也没有默认路由 → 丢弃 (discard)
+
+**Waycross 加默认路由（Slide 15）：Waycross 收到去 172.16.1.20 的包**（配置 ip route 0.0.0.0 0.0.0.0 s1）
+
+| Source | Subnet     | Mask          | Out Int. | Next-Hop | 匹配        |
+| ------ | ---------- | ------------- | -------- | -------- | --------- |
+| C      | 172.16.4.0 | 255.255.255.0 | S1       | N/A      | —         |
+| C      | 172.16.5.0 | 255.255.255.0 | E0       | N/A      | —         |
+| S\*    | 0.0.0.0    | 0.0.0.0       | S1       | N/A      | **✅ 选这条** |
+
+**转发**：没有更具体的匹配，用默认路由 (gateway of last resort) → 从 S1 发出
+
+---
+
+## 5. 🔴 默认路由（Slides 13–16）
+
+![Company X 的路由器查不到目的网络 → 交给 Router B 的默认路由，出口到 Internet](images/page_14.png)
+
+*Company X 的路由器查不到目的网络 → 交给 Router B 的默认路由，出口到 Internet（Slide 14）*
+
+| 课件原文                                                                                                                                       | 中文解释             |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ---------------- |
+| destination address is not found in the routing table → the router **discards** the packet, **unless a default route has been configured** | 没有默认路由时，查不到 = 丢弃 |
+| Default route tells a router where to send packets that **do not match any of that router's other IP routes**                              | 只在其他路由都不匹配时才用    |
+| Use if next hop is not explicitly listed / **Keep routing table shorter**                                                                  | 好处：路由表短          |
+
+![Waycross(config)#ip route 0.0.0.0 0.0.0.0 S1 —— 指向所有非直连网络](images/page_15.png)
+
+*Waycross(config)#ip route 0.0.0.0 0.0.0.0 S1 —— 指向所有非直连网络（Slide 15）*
+
+**`0.0.0.0 0.0.0.0`** = 网络 0.0.0.0、掩码 0（/0），一个比特都不用比，**所有地址都匹配**。所以它是最不具体的一条，只有别的都不匹配时才会被选中。Waycross 只有一个出口 S1，一条默认路由就能到所有非直连网络。
+
+![Hoboken#show ip route：C = 直连，S = 静态](images/page_16.png)
+
+*Hoboken#show ip route：C = 直连，S = 静态（Slide 16）*
+
+> **🎯 读 show ip route**
+>
+> - 每行第一个字母是 **Source**：C = connected、S = static、R = RIP、O = OSPF、D = EIGRP、B = BGP、`*` = candidate default。
+> - `Gateway of last resort is not set` = 这台路由器**没有默认路由**。
+> - Hoboken 的静态路由（172.16.5.0、172.16.1.0）显示成 **"is directly connected, Serial0 / Serial1"**：因为它们是用**出接口**写法配置的，路由器把它们当作「从这个接口出去就到」。用下一跳写法的话会显示成 `via 172.16.4.2`。
+
+> **➕ 课外补充：多条都匹配时选谁（最长前缀匹配）**
+>
+> 一个目的 IP 可能同时匹配好几条路由（比如一条 172.16.5.0/24 和默认路由 0.0.0.0/0）。路由器选**掩码最长（最具体）**的那条，所以默认路由永远是最后才轮到。上面的实验里把 Waycross 的默认路由打开，再输入 172.16.5.x 就能看到：两条都匹配，选的是直连的 /24。
+
+---
+
+## 6. 🟡 为什么需要动态路由（Slides 3、17、18）
+
+![A–D 之间的链路断了：能不能自动换成 A → B → C → D 这条备用路径？](images/page_17.png)
+
+*A–D 之间的链路断了：能不能自动换成 A → B → C → D 这条备用路径？（Slide 17）*
+
+静态路由不会自己变：A–D 断了，A 还是傻傻往 D 发，直到管理员改配置。**动态路由**让路由器自己发现「这条断了，走另一条」。
+
+![C 告诉 B「我有 10.1.1.0 和 10.1.2.0」，B 再告诉 A](images/page_03.png)
+
+*C 告诉 B「我有 10.1.1.0 和 10.1.2.0」，B 再告诉 A（Slide 3）*
+
+> **✍️ Slide 3 读图**
+>
+> - B 从 C **动态**学到 10.1.1.0、10.1.2.0，下一跳 **192.168.1.2**（C 的接口）。
+> - A 从 B 学到同样两个网络，下一跳 **192.168.2.2**（B 的接口）。
+> - A 并不知道 C 的存在，只知道「往 B 走」——这正是距离矢量的特点。
+
+![Dynamic Routing Operations：路由协议在邻居之间传递路由信息，各自更新路由表](images/page_18.png)
+
+*Dynamic Routing Operations：路由协议在邻居之间传递路由信息，各自更新路由表（Slide 18）*
+
+![Classes of Routing Protocols：Distance Vector 与 Link State](images/page_19.png)
+
+*Classes of Routing Protocols：Distance Vector 与 Link State（Slide 19）*
+
+---
+
+## 7. 🔴 距离矢量 Distance Vector（Slides 20–23 + 板书 p.5）
+
+![W–A–X–B–Y–C–Z：每台路由器从邻居那里学到「方向（箭头）+ 距离」](images/page_21.png)
+
+*W–A–X–B–Y–C–Z：每台路由器从邻居那里学到「方向（箭头）+ 距离」（Slide 21）*
+
+| 课件原文                                                                                                               | 中文 / 小白解释                              |
+| ------------------------------------------------------------------------------------------------------------------ | -------------------------------------- |
+| Pass **periodic copies of a routing table** to neighbor routers and **accumulate distance vectors**                | 定期把整张表抄一份给邻居，邻居在每个距离上 +1               |
+| They send **full periodic routing updates**                                                                        | 每次发的是**完整**路由表，不管有没有变                  |
+| The updates include a list of subnets and their respective **distances (metrics)**                                 | 更新内容 = 网段 + 距离                         |
+| **No idea about topology**, only the next hop … (**distance and the direction**)                                   | 不知道整张图，只知道「往哪个方向、多远」——vector 就是方向 + 大小 |
+| **Failure to receive updates** from a neighbor results in the **removal** of the routes learned from that neighbor | 邻居不再报告某条路由，就把它删掉                       |
+
+> **✍️ 读 Slide 21 的表**
+>
+> A 的表：W 0、X 0（直连）；Y 1、Z 2（都往 B 的方向）。B：X 0、Y 0；Z 1（往 C）、W 1（往 A）。C：Y 0、Z 0；X 1、W 2（往 B）。**黑色 = 直连，红 / 蓝 = 学来的**，数字 = 跳数。
+
+![定期把路由表副本发给邻居，一路累加距离](images/page_20.png)
+
+*定期把路由表副本发给邻居，一路累加距离（Slide 20）*
+
+![拓扑变化 → A 更新自己的表 → 把整张表发给 B → B 再更新](images/page_23.png)
+
+*拓扑变化 → A 更新自己的表 → 把整张表发给 B → B 再更新（Slide 23）*
+
+![R1–R2–R3 三角形，R2 下面挂 3.0；RIP every 30 sec；R2 路由表四列：Source · Network address · Next Hop · Distance (Metric)](images/BOARD_RIP.png)
+
+*✍️ R1–R2–R3 三角形，R2 下面挂 3.0；RIP every 30 sec；R2 路由表四列：Source · Network address · Next Hop · Distance (Metric)（5190M01 supp p.5）*
+
+> **✍️ 我的解答（链路编号是我设的：R1–R2 = 12.0，R2–R3 = 23.0，R1–R3 = 13.0；R1、R3 的 LAN = 1.0、5.0）**
+>
+> **RIP 每 30 秒**把整张表发给邻居，metric = **hop count**。
+>
+> R2 收敛后的路由表：
+>
+> | Source | Network address | Next Hop      | Distance (Metric) |
+> | ------ | --------------- | ------------- | ----------------- |
+> | C      | 3.0             | —             | 0                 |
+> | C      | 12.0            | —             | 0                 |
+> | C      | 23.0            | —             | 0                 |
+> | R      | 1.0             | R1            | 1                 |
+> | R      | 5.0             | R3            | 1                 |
+> | R      | 13.0            | R1（或 R3，距离相同） | 1                 |
+>
+> R1 去 3.0 的 **Best Path**：直接走 R1 → R2，metric 1；绕 R3 是 2，不进路由表。
+>
+> **Topology change**：R1–R2 断了以后，R1、R2 发现接口 down，删掉经过对方的路由；下一次 R3 发更新（最多等 30 秒），R1 才学到「3.0 经 R3，metric 2」。R3 手里还有旧消息时，可能再错一轮才收敛——这就是课件说的 **slow convergence**。
+>
+> **Dynamic vs Static**：动态路由自己换了路；如果当初配的是静态路由，R1 会继续往断掉的 R2 发，直到管理员手改。
+
+*（网页版此处可交互：一轮一轮看路由表怎么变、收敛后断开某个网络、开关 split horizon；下面是三个场景）*
+
+**Slide 21 拓扑从开机到收敛**
+
+| 轮次           | A                                           | B                                           | C                                           |
+| ------------ | ------------------------------------------- | ------------------------------------------- | ------------------------------------------- |
+| 开机：只有直连      | W: 0 直连 · X: 0 直连                           | X: 0 直连 · Y: 0 直连                           | Y: 0 直连 · Z: 0 直连                           |
+| 第 1 次更新（30s） | W: 0 直连 · X: 0 直连 · Y: 1 via B              | W: 1 via A · X: 0 直连 · Y: 0 直连 · Z: 1 via C | X: 1 via B · Y: 0 直连 · Z: 0 直连              |
+| 第 2 次更新（60s） | W: 0 直连 · X: 0 直连 · Y: 1 via B · Z: 2 via B | W: 1 via A · X: 0 直连 · Y: 0 直连 · Z: 1 via C | W: 2 via B · X: 1 via B · Y: 0 直连 · Z: 0 直连 |
+
+**收敛后网络 Z 断开（有 split horizon）**
+
+| 轮次            | A                                           | B                                           | C                                 |
+| ------------- | ------------------------------------------- | ------------------------------------------- | --------------------------------- |
+| Z 断开          | W: 0 直连 · X: 0 直连 · Y: 1 via B · Z: 2 via B | W: 1 via A · X: 0 直连 · Y: 0 直连 · Z: 1 via C | W: 2 via B · X: 1 via B · Y: 0 直连 |
+| 第 4 次更新（120s） | W: 0 直连 · X: 0 直连 · Y: 1 via B · Z: 2 via B | W: 1 via A · X: 0 直连 · Y: 0 直连              | W: 2 via B · X: 1 via B · Y: 0 直连 |
+| 第 5 次更新（150s） | W: 0 直连 · X: 0 直连 · Y: 1 via B              | W: 1 via A · X: 0 直连 · Y: 0 直连              | W: 2 via B · X: 1 via B · Y: 0 直连 |
+
+**板书 p.5 三角形 R1–R2–R3**
+
+| 轮次           | R1                                                                                   | R2                                                                                   | R3                                                                                   |
+| ------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------ |
+| 开机：只有直连      | 1.0: 0 直连 · 12.0: 0 直连 · 13.0: 0 直连                                                  | 3.0: 0 直连 · 12.0: 0 直连 · 23.0: 0 直连                                                  | 5.0: 0 直连 · 23.0: 0 直连 · 13.0: 0 直连                                                  |
+| 第 1 次更新（30s） | 1.0: 0 直连 · 3.0: 1 via R2 · 5.0: 1 via R3 · 12.0: 0 直连 · 23.0: 1 via R2 · 13.0: 0 直连 | 1.0: 1 via R1 · 3.0: 0 直连 · 5.0: 1 via R3 · 12.0: 0 直连 · 23.0: 0 直连 · 13.0: 1 via R1 | 1.0: 1 via R1 · 3.0: 1 via R2 · 5.0: 0 直连 · 12.0: 1 via R2 · 23.0: 0 直连 · 13.0: 0 直连 |
+
+> **➕ 课外补充：RIP 的几个数字和 count to infinity**
+>
+> - RIP 每 **30 秒**发一次完整更新；最大 **15 跳**，**16 = 不可达**。
+> - 距离矢量的毛病：邻居把旧路由「转述」回来，两台路由器互相以为对方能到，metric 一轮 +1 一直数到 16——**count to infinity**。
+> - 常用的补救是 **split horizon**：从哪个邻居学来的路由，不再发回给那个邻居。上面的实验把 split horizon 勾掉、再断开 Z，就能看到数到 16 的过程。
+
+---
+
+## 8. 🔴 链路状态 Link-State（Slides 24–29 + 板书 p.7）
+
+![LSA 泛洪 → Topological Database → SPF Algorithm → SPF Tree → Routing Table](images/page_24.png)
+
+*LSA 泛洪 → Topological Database → SPF Algorithm → SPF Tree → Routing Table（Slide 24）*
+
+**四步流程**（Slides 24、27）：
+
+```
+① 发 LSA：每台路由器从自己的直连网络开始，把「我的链路」写成 LSA 发给所有路由器
+② 建数据库：每台路由器收齐所有 LSA，组成一份 topological database（人人一样）
+③ 跑 SPF：以自己为根 (root)，把到每个网络的所有路径排成一棵树，按 Shortest Path First 排序
+④ 写路由表：只把最优路径和对应的出接口放进路由表
+```
+
+| 课件原文                                                                                                                     | 中文 / 小白解释                       |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
+| Maintain **complex database of topology information**                                                                    | 有一份完整的拓扑数据库                     |
+| Maintain **full knowledge** of distant routers and how they interconnect                                                 | 知道远处的路由器、它们怎么连                  |
+| **State of a link** = description of that interface and its relationship to its neighboring routers（IP address, mask, …） | 「链路状态」= 这个接口的 IP、掩码、连着哪个邻居、cost |
+| Routers exchange **LSAs** (Link-State Advertisements)                                                                    | 交换的是链路描述，不是路由表                  |
+| constructs this logical topology as a **tree, with itself as root**                                                      | 每台路由器自己算一棵以自己为根的树               |
+| Each time an LSA causes a change to the database, **SPF recalculates**                                                   | 拓扑一变就重算                         |
+
+![每台路由器有自己的拓扑数据库，并在上面运行 SPF](images/page_26.png)
+
+*每台路由器有自己的拓扑数据库，并在上面运行 SPF（Slide 26）*
+
+![A–B–E–D–C 五边形，PC1 在 A、PC3 在 C、PC4 在 D、ISP 在 E；LSA-B：2.0 到 A、3.0 stub、4.0 到 E（S.N.M = subnet number + mask）；T.D. (A)、T.D. (B)](images/BOARD_LSA.png)
+
+*✍️ A–B–E–D–C 五边形，PC1 在 A、PC3 在 C、PC4 在 D、ISP 在 E；LSA-B：2.0 到 A、3.0 stub、4.0 到 E（S.N.M = subnet number + mask）；T.D. (A)、T.D. (B)（5190M01 supp p.7）*
+
+> **✍️ 我的解答（按板书 LSA-B 的编号往下排：A LAN = 1.0，A–B = 2.0，B stub = 3.0，B–E = 4.0，E–D = 5.0，D LAN = 6.0，D–C = 7.0，C LAN = 8.0，C–A = 9.0，E–ISP = 10.0）**
+>
+> **LSA-B**（板书已给）：B 连着 2.0（邻居 A）、4.0（邻居 E）、3.0（stub，下面没有路由器）。每项都带 **S.N.M**（subnet number + mask）。
+>
+> **LSA-A**：
+>
+> | 网络 (subnet / mask)  | 连着谁       |
+> | ------------------- | --------- |
+> | 1.0 / 255.255.255.0 | stub（PC1） |
+> | 2.0 / 255.255.255.0 | B         |
+> | 9.0 / 255.255.255.0 | C         |
+>
+> **T.D. (A) 和 T.D. (B)**：泛洪之后**两张一模一样**，都是 5 条 LSA：LSA-A、LSA-B、LSA-C、LSA-D、LSA-E。区别只在后面——A 以 A 为根跑 SPF，B 以 B 为根，所以**数据库相同、SPF 树不同、路由表不同**。
+>
+> **A 的 SPF 结果**（每条链路 cost = 1）：A → B = 1，A → C = 1，A → E = 2（经 B），A → D = 2（经 C）。所以 A 去 ISP（10.0）走 B，去 PC4（6.0）走 C。
+
+*（网页版此处可交互：选 SPF 树的根、改每条链路的 cost 或断开链路；下面是三个预设）*
+
+**板书：全部 cost = 1，从 A 看**（链路 cost：A–B=1，B–E=1，E–D=1，D–C=1，C–A=1）
+
+![SPF tree from A](images/LS_SPF_1.svg)
+
+| 步 | 确定    | 当时的距离               |
+| - | ----- | ------------------- |
+| 1 | A = 0 | A=0 B=1 C=1 D=∞ E=∞ |
+| 2 | B = 1 | A=0 B=1 C=1 D=∞ E=2 |
+| 3 | C = 1 | A=0 B=1 C=1 D=2 E=2 |
+| 4 | D = 2 | A=0 B=1 C=1 D=2 E=2 |
+| 5 | E = 2 | A=0 B=1 C=1 D=2 E=2 |
+
+| Network      | 是什么     | Cost | Next hop |
+| ------------ | ------- | ---- | -------- |
+| 10.0.1.0/24  | PC1 LAN | 1    | 直连       |
+| 10.0.2.0/24  | A–B 链路  | 1    | 直连       |
+| 10.0.3.0/24  | B 的 LAN | 2    | B        |
+| 10.0.4.0/24  | B–E 链路  | 2    | B        |
+| 10.0.5.0/24  | D–E 链路  | 3    | C        |
+| 10.0.6.0/24  | PC4 LAN | 3    | C        |
+| 10.0.7.0/24  | C–D 链路  | 2    | C        |
+| 10.0.8.0/24  | PC3 LAN | 2    | C        |
+| 10.0.9.0/24  | A–C 链路  | 1    | 直连       |
+| 10.0.10.0/24 | 去 ISP   | 3    | B        |
+
+**A–B 链路 cost 调成 10**（链路 cost：A–B=10，B–E=1，E–D=1，D–C=1，C–A=1）
+
+![SPF tree from A](images/LS_SPF_2.svg)
+
+| 步 | 确定    | 当时的距离                |
+| - | ----- | -------------------- |
+| 1 | A = 0 | A=0 B=10 C=1 D=∞ E=∞ |
+| 2 | C = 1 | A=0 B=10 C=1 D=2 E=∞ |
+| 3 | D = 2 | A=0 B=10 C=1 D=2 E=3 |
+| 4 | E = 3 | A=0 B=4 C=1 D=2 E=3  |
+| 5 | B = 4 | A=0 B=4 C=1 D=2 E=3  |
+
+| Network      | 是什么     | Cost | Next hop |
+| ------------ | ------- | ---- | -------- |
+| 10.0.1.0/24  | PC1 LAN | 1    | 直连       |
+| 10.0.2.0/24  | A–B 链路  | 10   | 直连       |
+| 10.0.3.0/24  | B 的 LAN | 5    | C        |
+| 10.0.4.0/24  | E–B 链路  | 4    | C        |
+| 10.0.5.0/24  | D–E 链路  | 3    | C        |
+| 10.0.6.0/24  | PC4 LAN | 3    | C        |
+| 10.0.7.0/24  | C–D 链路  | 2    | C        |
+| 10.0.8.0/24  | PC3 LAN | 2    | C        |
+| 10.0.9.0/24  | A–C 链路  | 1    | 直连       |
+| 10.0.10.0/24 | 去 ISP   | 4    | C        |
+
+**B–E 链路断了，从 B 看**（链路 cost：A–B=1，B–E=断，E–D=1，D–C=1，C–A=1）
+
+![SPF tree from B](images/LS_SPF_3.svg)
+
+| 步 | 确定    | 当时的距离               |
+| - | ----- | ------------------- |
+| 1 | B = 0 | A=1 B=0 C=∞ D=∞ E=∞ |
+| 2 | A = 1 | A=1 B=0 C=2 D=∞ E=∞ |
+| 3 | C = 2 | A=1 B=0 C=2 D=3 E=∞ |
+| 4 | D = 3 | A=1 B=0 C=2 D=3 E=4 |
+| 5 | E = 4 | A=1 B=0 C=2 D=3 E=4 |
+
+| Network      | 是什么     | Cost | Next hop |
+| ------------ | ------- | ---- | -------- |
+| 10.0.1.0/24  | PC1 LAN | 2    | A        |
+| 10.0.2.0/24  | B–A 链路  | 1    | 直连       |
+| 10.0.3.0/24  | B 的 LAN | 1    | 直连       |
+| 10.0.5.0/24  | D–E 链路  | 4    | A        |
+| 10.0.6.0/24  | PC4 LAN | 4    | A        |
+| 10.0.7.0/24  | C–D 链路  | 3    | A        |
+| 10.0.8.0/24  | PC3 LAN | 3    | A        |
+| 10.0.9.0/24  | A–C 链路  | 2    | A        |
+| 10.0.10.0/24 | 去 ISP   | 5    | A        |
+
+![拓扑变化 → 发 link-state update → 每台路由器更新数据库、重算路由表](images/page_28.png)
+
+*拓扑变化 → 发 link-state update → 每台路由器更新数据库、重算路由表（Slide 28）*
+
+![Link-State Concerns：更多 CPU / 内存；初次泛洪 LSA 占带宽](images/page_29.png)
+
+*Link-State Concerns：更多 CPU / 内存；初次泛洪 LSA 占带宽（Slide 29）*
+
+> **🎯 Link-State 的代价和好处（Slide 29）**
+>
+> - **代价**：Processing and memory requirements are **increased**（要存整张拓扑、跑 SPF）；**Bandwidth is consumed during the initial flooding** of LSAs（刚启动时大量泛洪）。
+> - **好处**：**Less network traffic** because routers are **not sending periodic updates**——稳定以后只在变化时发。
+
+> **➕ 课外补充：OSPF 的 cost**
+>
+> OSPF 的 metric 叫 **cost**，Cisco 默认 = 10⁸ ÷ 接口带宽 (bps)，带宽越大 cost 越小。所以 OSPF 会选「跳数多但带宽大」的路，RIP 只看跳数。实验里把 A–B 的 cost 调成 10，就能看到 A 宁可绕 C → D → E 去 B。
+
+---
+
+## 9. 🟡 Balanced Hybrid（Slide 30）
+
+| 课件原文                                                    | 中文解释                                   |
+| ------------------------------------------------------- | -------------------------------------- |
+| Combines aspects of both distance-vector and link-state | 两种都沾一点                                 |
+| Use distance vectors with **more accurate metrics**     | 骨架还是距离矢量，但 metric 不只是跳数（EIGRP 用带宽、延迟等） |
+| **Update triggered by topology change**                 | 像链路状态一样，变化才发                           |
+| E.g. **IS-IS**（OSI）和 **EIGRP**（Cisco）                   | 例子要记                                   |
+
+> **⚠️ 踩坑：EIGRP 有两种说法**
+>
+> Slide 30 把 EIGRP 叫 **balanced hybrid**，Slide 34 叫 **Cisco advanced distance vector**。两种说法指的是同一件事：本质是距离矢量，加了链路状态的优点。选择题里两个都可能是对的，看选项怎么给。
+
+---
+
+## 10. 🔴 Distance Vector vs Link-State（Slide 35）
+
+![Distance-Vector Versus Link-State](images/page_35.png)
+
+*Distance-Vector Versus Link-State（Slide 35）*
+
+|       | **Distance Vector**                                         | **Link-State**                                             |
+| ----- | ----------------------------------------------------------- | ---------------------------------------------------------- |
+| 怎么看网络 | View topology from **neighbor's perspective**               | Gets **common view of entire** topology                    |
+| 怎么算   | **Adds distance vectors** from router to router             | **Calculates the shortest path** to other routers          |
+| 何时更新  | **Frequent, periodic** updates                              | **Event-triggered** updates                                |
+| 收敛    | **Slow** convergence                                        | **Faster** convergence                                     |
+| 发什么   | Passes **copies of routing tables** to **neighbor** routers | Passes **link-state routing updates** to **other** routers |
+| 资源    | 省 CPU / 内存                                                  | 更多 CPU / 内存；初次泛洪占带宽                                        |
+| 例子    | RIP、IGRP（BGP 课件也归这一类）                                       | OSPF（IS-IS 也是链路状态，课件放在 hybrid）                             |
+
+> **🧠 小白类比**
+>
+> - **距离矢量 = 问路**：每个路口的人只告诉你「往东再走 3 个路口」，他自己也是听下一个路口的人说的。不知道全貌，消息一传一传，慢，还可能传错。
+> - **链路状态 = 发地图**：每个人只画自己门口的几条路（LSA），大家把碎片拼成同一张完整地图（数据库），然后各自用导航算最短路（SPF）。
+
+*（网页版此处是点选练习：这句话描述的是 Distance Vector、Link-State 还是 Balanced Hybrid？；下表是全部题目和答案）*
+
+| 情景                              | 答案                  | 理由                                                        |
+| ------------------------------- | ------------------- | --------------------------------------------------------- |
+| 定期把整张路由表发给邻居                    | **Distance Vector** | full periodic updates（Slide 22、35）                        |
+| 只知道去某个网络「往哪个方向、多远」，不知道整张拓扑      | **Distance Vector** | distance + direction = vector；从邻居视角看网络                    |
+| 每台路由器有一份完整的拓扑数据库，并以自己为根跑 SPF    | **Link-State**      | topological database + SPF tree（Slide 24、27）              |
+| 拓扑变化时才发 LSA，收敛快                 | **Link-State**      | event-triggered updates → faster convergence（Slide 28、35） |
+| 需要更多 CPU 和内存；刚启动泛洪 LSA 时占带宽     | **Link-State**      | Link-State Concerns（Slide 29）                             |
+| RIP、IGRP                        | **Distance Vector** | Slide 34                                                  |
+| OSPF                            | **Link-State**      | Slide 34：link-state interior routing protocol             |
+| EIGRP、IS-IS                     | **Balanced Hybrid** | Slide 30：结合 DV 和 LS 的特点                                   |
+| 用距离矢量，但 metric 更准确，且只在拓扑变化时触发更新 | **Balanced Hybrid** | Balanced Hybrid 的定义（Slide 30）                             |
+| 周期性更新，收敛慢                       | **Distance Vector** | Slide 35：Frequent, periodic updates: slow convergence     |
+
+---
+
+## 11. 🔴 Autonomous System、IGP / EGP、常见协议（Slides 31–34）
+
+![Autonomous System：同一管理机构下的一组路由器](images/page_31.png)
+
+*Autonomous System：同一管理机构下的一组路由器（Slide 31）*
+
+![AS 100 和 AS 200 内部用 Interior Routing Protocols（RIP、IGRP），之间用 Exterior Routing Protocols](images/page_32.png)
+
+*AS 100 和 AS 200 内部用 Interior Routing Protocols（RIP、IGRP），之间用 Exterior Routing Protocols（Slide 32）*
+
+| 课件原文                                                                 | 中文解释                           |
+| -------------------------------------------------------------------- | ------------------------------ |
+| **Autonomous System (AS)**：routers under a **common administration** | 同一个机构管的一组路由器（一家公司、一个 ISP、一所大学） |
+| **IANA** allocates a **16-bit** identification number to each AS     | AS 号由 IANA 分配，16 位（0–65535）    |
+| **IGP** – designed for use **inside a single AS**                    | AS 内部                          |
+| **EGP** – designed for use **between different AS**                  | AS 之间                          |
+
+**Routing Protocols（Slide 34）——必背**：
+
+| 协议        | 类型                                              | 内部 / 外部      | 备注                      |
+| --------- | ----------------------------------------------- | ------------ | ----------------------- |
+| **RIP**   | Distance vector                                 | Interior     | 开放标准，metric = hop count |
+| **IGRP**  | Distance vector                                 | Interior     | Cisco 私有                |
+| **OSPF**  | **Link-state**                                  | Interior     | 开放标准                    |
+| **EIGRP** | **Advanced** distance vector（= balanced hybrid） | Interior     | Cisco                   |
+| **BGP**   | Distance vector                                 | **Exterior** | Internet 上 AS 之间唯一在用的   |
+
+> **➕ 课外补充**
+>
+> - AS 号后来扩展到 **32 位**（16 位不够用了），课件写的是原始的 16 位。
+> - BGP 严格说是 **path vector**（更新里带着经过的 AS 列表），课件把它归到 distance vector；考试按课件答。
+> - IGRP 已经被 EIGRP 取代，现在的 IOS 里没有了。
+
+*（网页版此处是点选练习：这个协议 / 场景属于 IGP 还是 EGP？；下表是全部题目和答案）*
+
+| 情景                                     | 答案             | 理由                                                                    |
+| -------------------------------------- | -------------- | --------------------------------------------------------------------- |
+| OSPF                                   | **IGP（AS 内部）** | link-state interior routing protocol                                  |
+| BGP                                    | **EGP（AS 之间）** | Slide 34：distance vector exterior routing protocol，Internet 上 AS 之间用它 |
+| RIP                                    | **IGP（AS 内部）** | distance vector interior routing protocol                             |
+| EIGRP                                  | **IGP（AS 内部）** | Cisco 的 advanced distance vector interior routing protocol            |
+| 学校网络 (AS 100) 和 ISP 网络 (AS 200) 之间交换路由 | **EGP（AS 之间）** | 跨两个不同的 autonomous system（Slide 32、33）                                 |
+| 同一家公司内部各分部路由器之间交换路由                    | **IGP（AS 内部）** | 同一个管理机构 = 同一个 AS                                                      |
+
+---
+
+## 12. 🟡 什么时候用静态路由（Slide 36）
+
+![Stub network：只有一条进出的路，不需要路由更新](images/page_36.png)
+
+*Stub network：只有一条进出的路，不需要路由更新（Slide 36）*
+
+- **Stub network**：只有一条路进出（Only one way exists on to or off of a stub network），跑路由协议没意义，静态 / 默认路由就够。
+- 不跑路由协议时，**两个方向都要配**：A 要有去 stub 网络的静态路由，B 要有回来的默认路由。
+
+> **🎯 考点：静态 vs 动态怎么选**
+>
+> |      | 静态路由                  | 动态路由       |
+> | ---- | --------------------- | ---------- |
+> | 配置   | 手工，一条条写               | 开启协议即可     |
+> | 拓扑变化 | 手工改                   | 自动更新       |
+> | 资源   | 不占 CPU、不发更新           | 占 CPU / 带宽 |
+> | 安全   | 不接受别人的路由更新，更可控        | 路由更新可能被伪造  |
+> | 适合   | 小网络、stub network、默认出口 | 大网络、有冗余路径  |
+
+---
+
+## 🔴 综合缩写速查表
+
+| 缩写                    | 全称                                            | 一句话                                   |
+| --------------------- | --------------------------------------------- | ------------------------------------- |
+| R.T.                  | Routing Table                                 | 路由器转发时查的表                             |
+| C / S / R / O / D / B | Connected / Static / RIP / OSPF / EIGRP / BGP | `show ip route` 第一列的 Source           |
+| Out Int.              | Outgoing Interface                            | 匹配的包从哪个接口发出                           |
+| Next-Hop              | Next-hop router                               | 下一台路由器的 IP（直连路由为 N/A）                 |
+| IOS                   | Internetwork Operating System                 | Cisco 路由器的系统                          |
+| DV                    | Distance Vector                               | 听邻居说：方向 + 距离                          |
+| LS                    | Link-State                                    | 自己看地图算                                |
+| RIP                   | Routing Information Protocol                  | DV，30 秒，hop count，最大 15               |
+| IGRP                  | Interior Gateway Routing Protocol             | Cisco 的 DV（已淘汰）                       |
+| EIGRP                 | Enhanced IGRP                                 | Cisco 的 advanced DV / balanced hybrid |
+| OSPF                  | Open Shortest Path First                      | LS，cost                               |
+| IS-IS                 | Intermediate System-to-Intermediate System    | OSI 的协议，课件归 balanced hybrid           |
+| BGP                   | Border Gateway Protocol                       | AS 之间的 EGP                            |
+| LSA                   | Link-State Advertisement                      | 一台路由器对自己链路的描述                         |
+| T.D.                  | Topological Database                          | 所有 LSA 拼成的完整拓扑                        |
+| SPF                   | Shortest Path First                           | Dijkstra 最短路径算法                       |
+| AS                    | Autonomous System                             | 同一管理机构下的路由器                           |
+| IANA                  | Internet Assigned Numbers Authority           | 分配 AS 号（16 位）                         |
+| IGP / EGP             | Interior / Exterior Gateway Protocol          | AS 内部 / AS 之间                         |
+| ARP                   | Address Resolution Protocol                   | 已知 IP 问 MAC                           |
+
+---
+
+## 模拟自测题
+
+**路由器接口配了 IP 地址并且处于 up 状态，路由表里会自动出现什么？**
+
+- A. Static route
+- B. Default route
+- C. Directly connected route
+- D. Dynamic route
+
+> **答案：C**
+>
+> Slide 5：A router adds a **directly connected route** for each interface that has been configured with an IP address, and is up and working。Source 列显示 C。
+
+**路由表中，对直连路由没有意义的字段是哪个？**
+
+- A. Source
+- B. Subnet / Mask
+- C. Out Int.
+- D. Next-Hop
+
+> **答案：D**
+>
+> Slide 7：Next-Hop … is **meaningless for routes to connected subnets**——目的主机就在这个接口下面，不需要再交给别的路由器。
+
+**Hoboken 要配一条去 172.16.5.0/24 的静态路由，下一跳是 Waycross 的 172.16.4.2。正确的命令是？**
+
+- A. ip route 172.16.4.2 255.255.255.0 172.16.5.0
+- B. ip route 172.16.5.0 255.255.255.0 172.16.4.2
+- C. ip route 172.16.5.0 0.0.0.0 172.16.4.2
+- D. route add 172.16.5.0 172.16.4.2
+
+> **答案：B**
+>
+> 格式：ip route + **目的网络** + **掩码** + 下一跳 / 出接口（Slide 12）。A 把目的和下一跳写反了；C 的掩码错了。
+
+**一条静态路由的出接口处于 down 状态，会发生什么？**
+
+- A. 路由仍然在路由表里，包会被丢弃
+- B. 路由不会被装进路由表
+- C. 路由器自动改用默认路由并删除这条配置
+- D. 路由器自动通过 RIP 学一条替代路由
+
+> **答案：B**
+>
+> Slide 10：If the router cannot reach the outgoing interface that is being used in the route, **the route will not be installed** in the routing table。配置还在，接口恢复后路由会重新出现。
+
+**\`ip route 0.0.0.0 0.0.0.0 s1\` 配置的是什么？**
+
+- A. 去 0.0.0.0 这台主机的主机路由
+- B. 默认路由（gateway of last resort）
+- C. 关闭 S1 接口的路由
+- D. 一条动态路由
+
+> **答案：B**
+>
+> Slide 15：This command points to all non-directly-connected networks。0.0.0.0/0 匹配所有地址，是特殊的静态路由。
+
+**路由器收到一个包，目的地址在路由表里找不到，也没有配置默认路由。路由器会？**
+
+- A. 把包广播到所有接口
+- B. 把包发回给源主机
+- C. 丢弃这个包
+- D. 暂存这个包，等路由协议学到路由再发
+
+> **答案：C**
+>
+> Slide 13：the router **discards** the packet, unless a default route has been configured。
+
+**下列哪项是距离矢量路由协议的特点？**
+
+- A. 每台路由器有整个网络的拓扑数据库
+- B. 只在拓扑变化时发送更新
+- C. 定期把完整路由表发给邻居
+- D. 以自己为根计算 SPF 树
+
+> **答案：C**
+>
+> Slide 22：They send **full periodic routing updates**。A、D 是链路状态；B 是链路状态 / 混合。
+
+**链路状态路由协议中，路由器之间交换的是什么？**
+
+- A. 完整的路由表
+- B. LSA（Link-State Advertisement）
+- C. ARP 表
+- D. MAC 地址表
+
+> **答案：B**
+>
+> Slide 27：Routers exchange **LSAs** with each other。完整路由表是距离矢量交换的东西。
+
+**关于链路状态路由的 concerns，下列哪两项正确？**
+
+- A. 对处理器和内存的要求更高
+- B. 收敛比距离矢量慢
+- C. 初次泛洪 LSA 时消耗带宽
+- D. 必须每 30 秒发送完整路由表
+- E. 不知道网络拓扑
+
+> **答案：A、C**
+>
+> Slide 29：Processing and memory requirements are increased；Bandwidth is consumed during the initial link-state flooding of LSAs。B、D、E 都是距离矢量的特点。
+
+**下列哪个是 link-state interior routing protocol？**
+
+- A. RIP
+- B. IGRP
+- C. OSPF
+- D. BGP
+
+> **答案：C**
+>
+> Slide 34。RIP、IGRP 是 distance vector interior；BGP 是 exterior。
+
+**Slide 30 举的 Balanced Hybrid 协议例子是哪两个？**
+
+- A. RIP 和 OSPF
+- B. IS-IS 和 EIGRP
+- C. BGP 和 IGRP
+- D. OSPF 和 BGP
+
+> **答案：B**
+>
+> E.g. OSI's IS-IS and Cisco's EIGRP。
+
+**设计用于不同 Autonomous System 之间的路由协议叫什么？**
+
+- A. IGP
+- B. EGP
+- C. LSA
+- D. SPF
+
+> **答案：B**
+>
+> Slide 33：EGP – designed and intended for use **between different** autonomous systems。现在用的 EGP 是 BGP。
+
+**谁负责给每个 AS 分配 16 位的编号？**
+
+- A. IEEE
+- B. ICANN 下属的 DNS 根服务器
+- C. IANA
+- D. ISO
+
+> **答案：C**
+>
+> Slide 31：Internet Assigned Numbers Authority (IANA)。
+
+**什么情况最适合用静态 / 默认路由，而不跑路由协议？**
+
+- A. 有多条冗余路径的大型网络
+- B. 只有一条进出路径的 stub network
+- C. 拓扑经常变化的网络
+- D. 多个 AS 之间
+
+> **答案：B**
+>
+> Slide 36：Only one way exists on to or off of a stub network。
+
+**板书题：两台路由器 A、B，A 下面两个 LAN、B 下面两个 LAN。一共几个网络？A 的初始路由表有几行？**
+
+> **5 个网络**（4 个 LAN + A–B 之间的链路）。A 的初始路由表只有直连的 **3 行**：自己的两个 LAN 和 A–B 链路，Source 都是 C。学完以后变成 5 行，B 下面的两个 LAN 下一跳是 B。
+
+**PC1 经过 A、B、C、D 四台路由器发包给 PC2。IP (S, D) 和 MAC (S, D) 各变几次？**
+
+> IP (S, D) **一次都不变**，始终是 (PC1, PC2)。MAC (S, D) 在每一段链路上都不同：PC1–A、A–B、B–C、C–D、D–PC2 共 5 段，就有 5 对不同的 MAC，每经过一台路由器换一次。
+
+**链路状态：泛洪完成后，A 和 B 的拓扑数据库一样吗？路由表一样吗？为什么？**
+
+> **拓扑数据库一样**（都包含所有路由器的 LSA）；**路由表不一样**，因为每台路由器都以**自己为根**跑 SPF，同一张地图，起点不同，最短路径和下一跳自然不同（Slide 26：Each router has its own topological database on which the SPF algorithm is run）。
+
+**比较距离矢量和链路状态：怎么看拓扑、怎么更新、收敛速度、发给谁。**
+
+> |     | Distance Vector | Link-State             |
+> | --- | --------------- | ---------------------- |
+> | 拓扑  | 从邻居的视角看         | 整张拓扑的共同视图              |
+> | 更新  | 周期性、完整路由表       | 事件触发、link-state update |
+> | 收敛  | 慢               | 快                      |
+> | 发给谁 | 邻居路由器           | 所有其他路由器                |
+
+**为什么课件说静态路由 useful for security？**
+
+> 静态路由是管理员写死的，路由器**不接受也不发送路由更新**：一来不会被别人伪造的路由更新把流量引到错误的地方，二来不在链路上广播自己的网络结构，还省了更新流量（traffic reduction）。代价是拓扑变化要手工维护。

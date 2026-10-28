@@ -1,0 +1,57 @@
+{
+  "route": {
+    "title": "这条路由是怎么来的？Connected / Static / Default / Dynamic",
+    "options": [
+      { "id": "C", "label": "Connected" },
+      { "id": "S", "label": "Static" },
+      { "id": "D", "label": "Default" },
+      { "id": "R", "label": "Dynamic" }
+    ],
+    "items": [
+      { "q": "管理员给接口配了 IP 并 no shutdown，路由器自己就加上了这个网段", "a": "C", "why": "接口有 IP 且 up → 自动生成 directly connected route，Source 列是 C（Slide 5）" },
+      { "q": "ip route 172.16.1.0 255.255.255.0 172.16.2.1", "a": "S", "why": "管理员手工写的、目的是一个具体网段 → 静态路由（Slide 12）" },
+      { "q": "ip route 0.0.0.0 0.0.0.0 s1", "a": "D", "why": "0.0.0.0/0 匹配所有地址 → 默认路由，是一种特殊的静态路由（Slide 15）" },
+      { "q": "R2 每 30 秒收到 R1 发来的整张路由表，从里面学到了 10.1.1.0", "a": "R", "why": "从其他路由器的更新里自动学到 → 动态路由（RIP）" },
+      { "q": "公司内网所有路由器把找不到的目的地都交给连 ISP 的那台", "a": "D", "why": "gateway of last resort：查不到具体路由时才用" },
+      { "q": "链路断了以后，路由器自动换了一条备用路径", "a": "R", "why": "只有动态路由会自己根据拓扑变化更新（Slide 2、17）" },
+      { "q": "链路断了以后，管理员必须登录路由器手工改路由", "a": "S", "why": "静态路由的缺点：拓扑变化要人工更新（Slide 2、8）" },
+      { "q": "show ip route 里 Source 一列是 C 的条目", "a": "C", "why": "C = connected（Slide 7、16）" },
+      { "q": "stub network 只有一条出口，路由器上只写一条「其他所有地址都走这里」", "a": "D", "why": "只有一条路进出，用默认路由最省事（Slide 36）" }
+    ]
+  },
+  "proto": {
+    "title": "这句话描述的是 Distance Vector、Link-State 还是 Balanced Hybrid？",
+    "options": [
+      { "id": "DV", "label": "Distance Vector" },
+      { "id": "LS", "label": "Link-State" },
+      { "id": "HY", "label": "Balanced Hybrid" }
+    ],
+    "items": [
+      { "q": "定期把整张路由表发给邻居", "a": "DV", "why": "full periodic updates（Slide 22、35）" },
+      { "q": "只知道去某个网络「往哪个方向、多远」，不知道整张拓扑", "a": "DV", "why": "distance + direction = vector；从邻居视角看网络" },
+      { "q": "每台路由器有一份完整的拓扑数据库，并以自己为根跑 SPF", "a": "LS", "why": "topological database + SPF tree（Slide 24、27）" },
+      { "q": "拓扑变化时才发 LSA，收敛快", "a": "LS", "why": "event-triggered updates → faster convergence（Slide 28、35）" },
+      { "q": "需要更多 CPU 和内存；刚启动泛洪 LSA 时占带宽", "a": "LS", "why": "Link-State Concerns（Slide 29）" },
+      { "q": "RIP、IGRP", "a": "DV", "why": "Slide 34" },
+      { "q": "OSPF", "a": "LS", "why": "Slide 34：link-state interior routing protocol" },
+      { "q": "EIGRP、IS-IS", "a": "HY", "why": "Slide 30：结合 DV 和 LS 的特点" },
+      { "q": "用距离矢量，但 metric 更准确，且只在拓扑变化时触发更新", "a": "HY", "why": "Balanced Hybrid 的定义（Slide 30）" },
+      { "q": "周期性更新，收敛慢", "a": "DV", "why": "Slide 35：Frequent, periodic updates: slow convergence" }
+    ]
+  },
+  "gp": {
+    "title": "这个协议 / 场景属于 IGP 还是 EGP？",
+    "options": [
+      { "id": "I", "label": "IGP（AS 内部）" },
+      { "id": "E", "label": "EGP（AS 之间）" }
+    ],
+    "items": [
+      { "q": "OSPF", "a": "I", "why": "link-state interior routing protocol" },
+      { "q": "BGP", "a": "E", "why": "Slide 34：distance vector exterior routing protocol，Internet 上 AS 之间用它" },
+      { "q": "RIP", "a": "I", "why": "distance vector interior routing protocol" },
+      { "q": "EIGRP", "a": "I", "why": "Cisco 的 advanced distance vector interior routing protocol" },
+      { "q": "学校网络 (AS 100) 和 ISP 网络 (AS 200) 之间交换路由", "a": "E", "why": "跨两个不同的 autonomous system（Slide 32、33）" },
+      { "q": "同一家公司内部各分部路由器之间交换路由", "a": "I", "why": "同一个管理机构 = 同一个 AS" }
+    ]
+  }
+}

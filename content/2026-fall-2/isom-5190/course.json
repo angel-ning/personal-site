@@ -1,0 +1,9 @@
+{
+  "code": "ISOM 5190",
+  "title": { "en": "Network Security Management", "zh": "网络安全管理" },
+  "instructor": "Dr. Percy Dias",
+  "description": {
+    "en": "How routers learn and choose paths (static, default and dynamic routing; distance-vector and link-state protocols) as the foundation for securing and managing enterprise networks.",
+    "zh": "从路由器怎么学路、选路讲起（静态 / 默认 / 动态路由，距离矢量与链路状态协议），为企业网络的安全管理打底。"
+  }
+}
