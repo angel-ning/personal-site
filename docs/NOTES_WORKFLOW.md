@@ -130,6 +130,10 @@ tags: [IPv4, NAT, DHCP]
 | `<HeatMapLab />` | 课件 p.37 的 5×5 热力图：点格子看 Impact × Likelihood，移动风险胃口这条线看哪些要 Treat（`risk-logic.mjs`） |
 | `<L6SortQuiz set="plan\|metric\|test\|lead" />` | ISOM 5280 L6 点选练习：BIA / IR / DR / BC / 危机管理 / 哪个 BIA 指标 / 哪种测试方法 / 谁领导哪个团队（`data/l6-quiz.json`） |
 | `<CostBalanceLab />` | 课件 p.14 Cost balance point：输入每小时损失、ARO、MTD，比较五种恢复方案的年度总成本（恢复成本 + 预期中断成本），选满足 MTD 的最低者（`cost-balance-logic.mjs`，方案数字是示意） |
+| `<PyObjectLab />` | ISOM 5160 第 1 周：对一个 str 调用方法，显示 Python REPL 会输出什么、返回类型、s 本身不变；含「忘了括号」的坑（`py-object-logic.mjs`） |
+| `<TriageLab />` | Text in → Label out：同一批网安文本交给固定规则 / pretrained / finetuned（示意权重），看 TP / FP / FN / TN，拖阈值看「人工复核」区，可自己输入文字（`triage-logic.mjs`） |
+| `<OverfitLab />` | 过拟合：10 个带噪声的点拟合 0–9 次多项式，曲线 + 训练 / 测试误差柱状图（`overfit-logic.mjs`） |
+| `<PyIntroSortQuiz set="ai\|task\|oop\|dev" />` | ISOM 5160 第 1 周点选练习：AI / ML / DL / Transformer 哪一圈 / 学习任务类型 / property·method·内置函数 / 开发部署八步（`data/py-intro-quiz.json`，共用 `SortQuizView`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 

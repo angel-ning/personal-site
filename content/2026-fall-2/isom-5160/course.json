@@ -1,0 +1,9 @@
+{
+  "code": "ISOM 5160",
+  "title": { "en": "Python Programming for Business Applications", "zh": "Python 商业应用编程" },
+  "instructor": "Prof. James Kwok",
+  "description": {
+    "en": "Python for building and deploying AI-powered business and cybersecurity apps: Python essentials, vibe coding with GenAI, pretrained and finetuned NLP models, and shipping with GitHub and Streamlit Cloud.",
+    "zh": "用 Python 做并上线 AI 驱动的商业与网络安全应用：Python 基础、用生成式 AI 辅助编程 (vibe coding)、预训练与微调的 NLP 模型，以及用 GitHub + Streamlit Cloud 部署。"
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "ai": {
+    "title": "最准确地说，这属于哪一圈？（Slide 23）",
+    "options": [
+      { "id": "ai", "label": "AI（但不是 ML）" },
+      { "id": "ml", "label": "ML（但不是 DL）" },
+      { "id": "dl", "label": "DL（但不是 Transformer）" },
+      { "id": "tf", "label": "Transformer" }
+    ],
+    "items": [
+      { "q": "专家写好上百条 if-then 规则的病毒查杀系统，规则不会自己变", "a": "ai", "why": "能做需要人类智能的事 = AI；但规则是人写死的，不是从数据里学（not learn from data），所以不是 ML" },
+      { "q": "用过去一年的登录日志训练一棵决策树，判断某次登录是否可疑", "a": "ml", "why": "从数据里学规律 = ML；决策树不是多层神经网络，所以不算 DL" },
+      { "q": "多层卷积神经网络 (CNN) 把恶意软件的二进制画成图片再分类", "a": "dl", "why": "多层神经网络 = DL；CNN 是 DL 的一种模型家族，但不是 Transformer（Slide 24）" },
+      { "q": "BERT / GPT 这类模型读一封邮件，输出 phishing / ok", "a": "tf", "why": "BERT、GPT 都是 Transformer 架构，现代 NLP / GenAI 的主力（Slide 23 黄框：Transformer ⊂ DL）" },
+      { "q": "LSTM 逐字读入网址字符串，判断是不是恶意 URL", "a": "dl", "why": "LSTM 是 RNN 的改进版，属于 DL，但不是 Transformer" },
+      { "q": "ChatGPT、DeepSeek、Copilot 背后的大语言模型", "a": "tf", "why": "今天主流的大语言模型 (LLM) 都是 Transformer" },
+      { "q": "K-Means 把客户自动分成 4 群", "a": "ml", "why": "从数据学 = ML；K-Means 是传统算法，没有神经网络" }
+    ]
+  },
+  "task": {
+    "title": "这是哪种学习任务？（Slide 26）",
+    "options": [
+      { "id": "cls", "label": "Classification 分类" },
+      { "id": "reg", "label": "Regression 回归" },
+      { "id": "clu", "label": "Clustering 聚类" },
+      { "id": "dim", "label": "降维 / 异常检测" }
+    ],
+    "items": [
+      { "q": "邮件 → spam / not spam", "a": "cls", "why": "有标签、输出是类别 = supervised classification" },
+      { "q": "根据面积、楼层、地段预测房价（港币）", "a": "reg", "why": "有标签、输出是一个数字 = supervised regression" },
+      { "q": "没有标签，把新闻按话题自动分堆", "a": "clu", "why": "没有标签、找相似的分组 = unsupervised clustering（课件例子 News topic grouping）" },
+      { "q": "网址 → phishing / ok，再给一个风险分数", "a": "cls", "why": "分数只是「有多确定」，最后要选一个类别，所以还是 classification（Slide 28）" },
+      { "q": "预测下个季度的销售额", "a": "reg", "why": "输出是连续的数字 = regression（课件例子 sales forecast）" },
+      { "q": "把 200 个特征压缩成 2 个方便画图（PCA）", "a": "dim", "why": "unsupervised 的 dimensionality reduction，课件点名 PCA" },
+      { "q": "没有攻击标签，找出和平时流量差别特别大的那几条", "a": "dim", "why": "课件把 anomaly detection 和降维写在一起，都是 unsupervised" },
+      { "q": "按购买行为把客户分成几个群做营销", "a": "clu", "why": "customer segmentation，课件 clustering 的第一个例子" },
+      { "q": "贷款申请 → 会违约 / 不会违约", "a": "cls", "why": "Loan default，课件 classification 的例子" }
+    ]
+  },
+  "oop": {
+    "title": "这是 property、method，还是内置函数？（Slide 18）",
+    "options": [
+      { "id": "prop", "label": "object.property" },
+      { "id": "meth", "label": "object.method()" },
+      { "id": "func", "label": "内置函数 func(obj)" }
+    ],
+    "items": [
+      { "q": "s.upper()", "a": "meth", "why": "点后面带括号 = 让对象做一个动作" },
+      { "q": "len(s)", "a": "func", "why": "长度是 str 的状态，但 Python 用内置函数 len() 取，括号里放对象。不是 s.len，也不是 s.length" },
+      { "q": "df.shape（pandas 表格有几行几列）", "a": "prop", "why": "点后面没有括号 = 读一个属性（状态）。下周讲 packages 会用到" },
+      { "q": "df.head()（看表格前 5 行）", "a": "meth", "why": "带括号 = 执行一个动作" },
+      { "q": "response.status_code（requests 调 API 的返回码，例如 200）", "a": "prop", "why": "属性：这次请求的结果是什么状态" },
+      { "q": "text.split(\",\")", "a": "meth", "why": "方法可以带参数，参数写在括号里" },
+      { "q": "print(f\"Score: {score:.2f}\")", "a": "func", "why": "print 是内置函数，不是哪个对象的方法" },
+      { "q": "(3 + 4j).real", "a": "prop", "why": "复数的实部是属性，不用括号，结果 3.0" }
+    ]
+  },
+  "dev": {
+    "title": "这件事在开发流程的哪一步？（Slides 13–14）",
+    "options": [
+      { "id": "plan", "label": "1 Plan" },
+      { "id": "struct", "label": "2 Structure" },
+      { "id": "build", "label": "3 Build" },
+      { "id": "test", "label": "4 Test" },
+      { "id": "ui", "label": "5 Polish UI" },
+      { "id": "gh", "label": "6 GitHub" },
+      { "id": "st", "label": "7 Streamlit" },
+      { "id": "share", "label": "8 Share & Docs" }
+    ],
+    "items": [
+      { "q": "列出「钓鱼邮件分诊工具」真正需要的三个功能，画个界面草图", "a": "plan", "why": "Define the goal, sketch the interface, list the features you actually need" },
+      { "q": "建好 app.py、requirements.txt 和 data/ 文件夹", "a": "struct", "why": "App Structure：先把文件和文件夹的样子定下来" },
+      { "q": "让 AI 写调用 pretrained 模型的函数，自己逐行看懂逻辑", "a": "build", "why": "Core Functionality：先做核心，AI drafts, you review" },
+      { "q": "贴进 10 封真实邮件，看报错，用更具体的 prompt 修", "a": "test", "why": "Test Locally：真实输入 + 读错误 + targeted prompts" },
+      { "q": "把阈值改成滑块，结果加上「建议人工复核」提示", "a": "ui", "why": "Polish UI：clearer controls, sensible defaults, feedback the user can act on" },
+      { "q": "把 app.py 和 requirements.txt push 到 repo", "a": "gh", "why": "GitHub：Streamlit Cloud 要从 GitHub repo 读代码" },
+      { "q": "连上 GitHub repo，拿到一个公开的 app 网址", "a": "st", "why": "Streamlit Cloud：connect the repo and deploy a public URL" },
+      { "q": "写 README、补注释，把网址发给组员从头到尾跑一遍", "a": "share", "why": "Share & Docs：short README, comments, clean run end-to-end" }
+    ]
+  }
+}

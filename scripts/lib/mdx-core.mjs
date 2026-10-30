@@ -58,6 +58,9 @@ import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute,
 import { FLOW_PRESETS as OTIS_PRESETS, whoKnows as otisWhoKnows, flowSvg as otisFlowSvg, toStaticSvg as otisStatic, STAKEHOLDERS as OTIS_ROLES, ATTITUDE as OTIS_ATT } from "../../src/components/mdx/otis-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
+import { PY_DEFAULT_TEXT, PY_OPS, runPyOp } from "../../src/components/mdx/py-object-logic.mjs";
+import { TRIAGE_LABEL, TRIAGE_RULE_WORDS, evaluate as triageEvaluate } from "../../src/components/mdx/triage-logic.mjs";
+import { overfitTable } from "../../src/components/mdx/overfit-logic.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
 const osi = readJson("src/components/mdx/data/osi.json");
@@ -79,6 +82,7 @@ const l5Quiz = readJson("src/components/mdx/data/l5-quiz.json");
 const l6Quiz = readJson("src/components/mdx/data/l6-quiz.json");
 const caseQuiz = readJson("src/components/mdx/data/case-quiz.json");
 const routingQuiz = readJson("src/components/mdx/data/routing-quiz.json");
+const pyIntroQuiz = readJson("src/components/mdx/data/py-intro-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -1074,6 +1078,32 @@ const components = {
         ];
       }),
     ];
+  },
+  PyObjectLab() {
+    return [
+      note(`（网页版此处可以自己改字符串 s，点各种方法看 Python 会输出什么；下表是 s = ${JSON.stringify(PY_DEFAULT_TEXT)} 的结果）`),
+      table(["代码", "返回类型", "输出", "说明"], PY_OPS.map((o) => { const r = runPyOp(PY_DEFAULT_TEXT, o.id); return [{ type: "inlineCode", value: o.code }, r.type, { type: "inlineCode", value: r.out }, o.note]; })),
+    ];
+  },
+  TriageLab() {
+    const runs = [["rules", "固定规则"], ["pretrained", "Pretrained"], ["finetuned", "Finetuned"]].map(([id, name]) => [name, triageEvaluate(id)]);
+    const cell1 = (r) => `${r.label === r.y ? "✓" : "✗"} ${TRIAGE_LABEL[r.label]}${r.score === null ? "" : ` (${Math.round(r.score * 100)}%)`}${r.review ? " ·复核" : ""}`;
+    return [
+      note(`（网页版此处可以切换方法、拖动阈值、自己输入文字；规则 = 出现 ${TRIAGE_RULE_WORDS.join(" / ")} 就判 Threat，两个模型是示意权重，阈值 0.5，离阈值 0.2 以内标「复核」）`),
+      table(["方法", "TP", "FN 漏报", "FP 误报", "TN", "判对"], runs.map(([n, e]) => [n, String(e.tp), String(e.fn), String(e.fp), String(e.tn), `${e.correct} / ${e.total}`])),
+      table(["Text in", "真实", ...runs.map(([n]) => n)], runs[0][1].rows.map((r, i) => [{ type: "inlineCode", value: r.text }, TRIAGE_LABEL[r.y], ...runs.map(([, e]) => cell1(e.rows[i]))])),
+    ];
+  },
+  OverfitLab() {
+    return [
+      note("（网页版此处可以拖动多项式次数，看曲线怎么从「太简单」变成「背答案」；下表是 10 个训练点、10 个测试点的均方误差）"),
+      table(["degree", "训练误差", "测试误差", "判断"], overfitTable().map((f) => [String(f.degree), f.train.toFixed(3), f.test.toFixed(3), f.id === "good" ? strong(f.label) : f.label])),
+    ];
+  },
+  PyIntroSortQuiz(_node, a) {
+    const set = pyIntroQuiz[a.set] ?? pyIntroQuiz.task;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
   },
 };
 

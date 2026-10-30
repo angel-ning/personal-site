@@ -677,3 +677,29 @@ body {
 .mask-H { background: color-mix(in oklab, var(--c-tip) 14%, transparent); color: var(--c-tip); }
 .mask-legend { display: flex; flex-wrap: wrap; gap: .3em 1.2em; margin-top: .5em; font-size: 12.5px; color: var(--fg-2); }
 .mask-legend i { display: inline-block; width: .9em; height: .9em; border-radius: 3px; vertical-align: -.1em; margin-right: .3em; }
+
+/* ---------- ISOM 5160 labs ---------- */
+.pyo-repl { margin-top: .9em; padding: .7em .9em; border-radius: 8px; background: var(--subtle); font-family: var(--font-mono); font-size: 13px; line-height: 1.6; white-space: pre-wrap; word-break: break-all; }
+.pyo-prompt { color: var(--fg-3); }
+.pyo-out { color: var(--c-tip); }
+.pyo-bug { color: var(--c-exam); }
+.tri-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(6.5em, 1fr)); gap: .5em; margin-top: .9em; }
+.tri-stat { border: 1px solid var(--line); border-radius: 8px; padding: .4em .6em; display: flex; flex-direction: column; }
+.tri-stat b { font-family: var(--font-mono); font-size: 1.3em; }
+.tri-stat span { font-size: 12px; color: var(--fg-3); }
+.tri-bad b { color: var(--c-exam); }
+.tri-rev b, .tri-revtxt { color: var(--c-warn); }
+.tri-text { font-family: var(--font-mono); font-size: 12.5px; word-break: break-word; }
+.tri-ok { color: var(--c-tip); }
+.tri-no { color: var(--c-exam); }
+.ovf-wrap { margin-top: .9em; }
+.ovf-svg { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); }
+.ovf-bars { display: grid; grid-template-columns: repeat(10, 1fr); gap: .3em; margin-top: .9em; height: 90px; }
+.ovf-col { display: flex; flex-direction: column; align-items: stretch; gap: .2em; border-radius: 6px; padding: .2em; border: 1px solid transparent; }
+.ovf-on { border-color: var(--accent); background: var(--accent-wash); }
+.ovf-col small { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); text-align: center; }
+.ovf-pair { flex: 1; display: flex; align-items: flex-end; justify-content: center; gap: 2px; }
+.ovf-pair i { width: 40%; min-height: 2px; border-radius: 2px 2px 0 0; }
+.ovf-train { background: var(--fg-2); }
+.ovf-test { background: var(--c-warn); }
+.ovf-key { display: inline-block; width: .8em; height: .8em; border-radius: 2px; vertical-align: -.05em; margin-left: .6em; }
