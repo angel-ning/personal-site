@@ -1,0 +1,9 @@
+{
+  "code": "ISOM 6200C",
+  "title": { "en": "AI in Cybersecurity: Governance, Operations, and Auditing", "zh": "网络安全中的 AI：治理、运营与审计" },
+  "instructor": "Adj. Prof. Jason Lau",
+  "description": {
+    "en": "Governing, operating and auditing AI services, following the ISACA AAIA pathway: service boundaries, governance and risk; data governance and ethics; lifecycle, change, testing, threats and response; audit planning, sampling, evidence, analytics and reporting.",
+    "zh": "按 ISACA AAIA 的路线讲怎么治理、运营和审计 AI 服务：服务边界、治理与风险；数据治理与伦理；生命周期、变更、测试、威胁与响应；审计规划、抽样、证据、分析与报告。"
+  }
+}

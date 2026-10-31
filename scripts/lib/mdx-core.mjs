@@ -61,6 +61,9 @@ import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, pr
 import { PY_DEFAULT_TEXT, PY_OPS, runPyOp } from "../../src/components/mdx/py-object-logic.mjs";
 import { TRIAGE_LABEL, TRIAGE_RULE_WORDS, evaluate as triageEvaluate } from "../../src/components/mdx/triage-logic.mjs";
 import { overfitTable } from "../../src/components/mdx/overfit-logic.mjs";
+import { FLOW_STAGES } from "../../src/components/mdx/ai-flow-logic.mjs";
+import { LOOP_FACTORS, LOOP_PRESETS, decideLoop } from "../../src/components/mdx/loop-logic.mjs";
+import { PILOT_UNTESTED, pilotSummary, pct as pilotPct, zeroErrorBound } from "../../src/components/mdx/pilot-logic.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
 const osi = readJson("src/components/mdx/data/osi.json");
@@ -83,6 +86,7 @@ const l6Quiz = readJson("src/components/mdx/data/l6-quiz.json");
 const caseQuiz = readJson("src/components/mdx/data/case-quiz.json");
 const routingQuiz = readJson("src/components/mdx/data/routing-quiz.json");
 const pyIntroQuiz = readJson("src/components/mdx/data/py-intro-quiz.json");
+const govQuiz = readJson("src/components/mdx/data/gov-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -1102,6 +1106,37 @@ const components = {
   },
   PyIntroSortQuiz(_node, a) {
     const set = pyIntroQuiz[a.set] ?? pyIntroQuiz.task;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  AiFlowLab() {
+    return [
+      note("（网页版此处可以点 AI flow 的每一站，看审计问题和开场案例的记录；下表是全部五站）"),
+      table(["站", "审计问题", "案例记录说了", "还缺什么", "该要的记录"], FLOW_STAGES.map((s, i) => [`0${i + 1} ${s.name}`, `${s.q} ${s.zh}`, s.known, s.gap, s.record])),
+    ];
+  },
+  LoopLab() {
+    return [
+      note("（网页版此处可以按六个条件点选，看该用 HITL / HOTL / HOOTL；规则：最严格的一项决定模式。下表是 Slide 21 三个任务的结果）"),
+      table(["任务", ...LOOP_FACTORS.map((f) => f.label), "模式", "上线前先解决"], LOOP_PRESETS.map((p) => {
+        const r = decideLoop(p.picks);
+        return [p.label, ...LOOP_FACTORS.map((f) => f.options[p.picks[f.id] ?? 0]), strong(r.mode.en), r.blockers.join("；") || "—"];
+      })),
+    ];
+  },
+  PilotEvidenceLab() {
+    const s = pilotSummary();
+    return [
+      note("（网页版此处可以勾掉类别、自己输入测试数和正确数，看准确率和 95% 区间怎么变）"),
+      table(["类别（L1-A3）", "对 / 测", "准确率", "95% 区间（Wilson）"], [
+        ...s.rows.map((r) => [`${r.label}（${r.zh}）`, `${r.ok} / ${r.n}`, pilotPct(r.rate), `${pilotPct(r.ci.lo)}–${pilotPct(r.ci.hi)}`]),
+        [strong("合计"), `${s.ok} / ${s.n}`, pilotPct(s.rate), `${pilotPct(s.ci.lo)}–${pilotPct(s.ci.hi)}`],
+      ]),
+      para(text(`24 / 24 全对，错误率的 95% 上限仍约 ${pilotPct(zeroErrorBound(24))}。完全没测：${PILOT_UNTESTED.map((u) => u.zh).join("、")}。`)),
+    ];
+  },
+  GovSortQuiz(_node, a) {
+    const set = govQuiz[a.set] ?? govQuiz.response;
     const label = (id) => set.options.find((o) => o.id === id).label;
     return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
   },

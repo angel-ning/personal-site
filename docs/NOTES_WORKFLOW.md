@@ -134,6 +134,10 @@ tags: [IPv4, NAT, DHCP]
 | `<TriageLab />` | Text in → Label out：同一批网安文本交给固定规则 / pretrained / finetuned（示意权重），看 TP / FP / FN / TN，拖阈值看「人工复核」区，可自己输入文字（`triage-logic.mjs`） |
 | `<OverfitLab />` | 过拟合：10 个带噪声的点拟合 0–9 次多项式，曲线 + 训练 / 测试误差柱状图（`overfit-logic.mjs`） |
 | `<PyIntroSortQuiz set="ai\|task\|oop\|dev" />` | ISOM 5160 第 1 周点选练习：AI / ML / DL / Transformer 哪一圈 / 学习任务类型 / property·method·内置函数 / 开发部署八步（`data/py-intro-quiz.json`，共用 `SortQuizView`） |
+| `<AiFlowLab />` | ISOM 6200 第 1 讲：AI flow 五站（User → Prompt → Process → Output → User）点一站看审计问题 + 开场案例 L1-A1–A4 在这一站说了什么、缺什么、该要什么记录（`ai-flow-logic.mjs`） |
+| `<LoopLab />` | HITL / HOTL / HOOTL：按六个条件点选（输出性质、后果、可纠正、测试覆盖、授权、介入人手），最严格的一项决定模式，列出成立条件和上线前要解决的事；预设是 Slide 21 三个任务（`loop-logic.mjs`） |
+| `<PilotEvidenceLab />` | 试点准确率能说明什么：L1-A3 的 38/40 按类别拆开、勾掉类别看合计、Wilson 95% 区间、没测过的用途，以及自己输入测试数 / 正确数（`pilot-logic.mjs`） |
+| `<GovSortQuiz set="flow\|loop\|response\|role\|learn\|harm" />` | ISOM 6200 第 1 讲点选练习：AI flow 哪一站 / HITL·HOTL·HOOTL / 四种风险应对 / 谁负责 / 三种学习方式 / safeguard 在伤害路径哪一环（`data/gov-quiz.json`，共用 `SortQuizView`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 

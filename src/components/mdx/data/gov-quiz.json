@@ -1,0 +1,105 @@
+{
+  "flow": {
+    "title": "这个审计问题在 AI flow 的哪一站？（Slide 8）",
+    "options": [
+      { "id": "user", "label": "01 User（谁请求）" },
+      { "id": "prompt", "label": "02 Prompt（输入）" },
+      { "id": "process", "label": "03 Process（处理）" },
+      { "id": "output", "label": "04 Output（产出）" },
+      { "id": "recipient", "label": "05 User（谁接收）" }
+    ],
+    "items": [
+      { "q": "顾客把护照号码贴进聊天框，这些数据会不会被送进模型、留在日志里？", "a": "prompt", "why": "Prompt 站问 what enters the service：input permissions、context、sensitive data" },
+      { "q": "回答说「可以在旅行后申请」，和签字的政策是否一致？", "a": "output", "why": "Output 站问 policy consistency：产出的主张和授权的政策对不对得上" },
+      { "q": "一条准确的建议被发到了另一位乘客的邮箱", "a": "recipient", "why": "Slide 11 的情形：内容没错，错在 delivery / recipient——要查路由和投递记录" },
+      { "q": "这个助手除了检索政策，能不能调用改签或退款的接口？", "a": "process", "why": "Process 站问 tools 和 authorised actions：它能做什么动作" },
+      { "q": "使用者是顾客本人，还是代人查询的旅行社？身份怎么确认？", "a": "user", "why": "第一站 User：intended user、identity、access、purpose" },
+      { "q": "回答有没有说明「不确定，请联系客服」，还是一律很肯定？", "a": "output", "why": "Output 站也看 uncertainty：会不会把不确定说成确定" },
+      { "q": "顾客收到建议后据此买了票；发现错了，他能通过什么途径纠正？", "a": "recipient", "why": "最后一站问 reliance 和 correction routes" },
+      { "q": "检索到的是 v3 还是已经作废的旧版政策？", "a": "process", "why": "检索 (retrieval) 发生在 Process 站；政策库版本是这一站的关键记录" }
+    ]
+  },
+  "loop": {
+    "title": "这个任务适合 HITL、HOTL 还是 HOOTL？（Slide 21）",
+    "options": [
+      { "id": "hitl", "label": "HITL 人在环内" },
+      { "id": "hotl", "label": "HOTL 人在环上" },
+      { "id": "hootl", "label": "HOOTL 人在环外" }
+    ],
+    "items": [
+      { "q": "批准一张部分已使用机票的退款例外", "a": "hitl", "why": "政策 v3：partially used fares 和例外要由 trained agent 决定；AI 不能批例外——人先确认才生效" },
+      { "q": "把已批准的政策原文段落原样显示给顾客", "a": "hootl", "why": "只是查已批准的信息，边界清楚、错了影响小——可以在事先划定的边界内自动运行，但仍要监控" },
+      { "q": "常规的「七天内可申请」资格建议，系统直接回复，坐席每天抽查样本、超过错误上限就暂停", "a": "hotl", "why": "系统自动回复 + 有人监督且能介入 = on the loop；前提是监督人在服务运行时都在" },
+      { "q": "自动筛掉求职者简历，被拒的人没有任何人看过（ICO 报告）", "a": "hitl", "why": "有重大影响的决定（拒绝）应该有 meaningful human involvement；现在实际上是 HOOTL，这正是问题" },
+      { "q": "垃圾邮件过滤器把明显的广告邮件移到垃圾箱，用户可以自己捞回来", "a": "hootl", "why": "影响小、可逆、有纠正途径——典型的 routine autonomy within predefined boundaries" },
+      { "q": "门店人脸识别发出「疑似惯偷」警报，店员据此要求顾客离开", "a": "hitl", "why": "Rite Aid 案：误报直接变成对人的行动。行动前必须有受训的人核实，不能把警报当结论" }
+    ]
+  },
+  "response": {
+    "title": "这是哪一种风险应对？（Slide 38）",
+    "options": [
+      { "id": "avoid", "label": "Avoidance 规避" },
+      { "id": "reduce", "label": "Reduction 降低" },
+      { "id": "share", "label": "Sharing / transfer 分担" },
+      { "id": "accept", "label": "Acceptance 接受" }
+    ],
+    "items": [
+      { "q": "决定助手不回答任何例外申请，例外一律只走人工", "a": "avoid", "why": "不做产生这类风险的活动（对例外这一块）= avoidance。注意可以只对一部分用途规避" },
+      { "q": "上线前加一道：回答与政策冲突时先交给受训复核员", "a": "reduce", "why": "用控制改变 likelihood 或 impact = reduction" },
+      { "q": "和供应商签合同：模型错误导致的赔偿由供应商承担一部分", "a": "share", "why": "通过协议分配特定责任或损失 = sharing / transfer；但对顾客的责任仍在公司（Air Canada 案：不能说是聊天机器人的错）" },
+      { "q": "Service Owner 在授权范围内签字：剩下的「复核员偶尔漏看」风险可以接受，三个月后复审", "a": "accept", "why": "有授权的 owner 在限度内对 residual risk 做决定，并留下复审日期 = acceptance" },
+      { "q": "试点结果不理想，项目直接停掉，继续只用呼叫中心", "a": "avoid", "why": "不再继续这项活动 = avoidance" },
+      { "q": "把顾客的问题先脱敏再送进模型", "a": "reduce", "why": "降低隐私泄露的影响 / 可能性 = reduction" },
+      { "q": "内部审计说「这个风险我们接受了」", "a": "accept", "why": "陷阱题：这是接受，但内部审计无权接受——Slide 39：internal audit evaluates，does not accept risk for management" }
+    ]
+  },
+  "role": {
+    "title": "这件事该由谁负责？（Slides 19、27、39）",
+    "options": [
+      { "id": "policy", "label": "Business Policy Owner" },
+      { "id": "service", "label": "Service Owner" },
+      { "id": "supplier", "label": "Technical Supplier" },
+      { "id": "agent", "label": "Trained Agent" },
+      { "id": "audit", "label": "Internal audit / External assessor" }
+    ],
+    "items": [
+      { "q": "批准票价资格规则和例外的标准", "a": "policy", "why": "Business Policy Owner — authorises fare eligibility rules and exceptions" },
+      { "q": "决定这个顾客建议服务能不能上线", "a": "service", "why": "Service Owner — decides whether the service may be released（L1-A1：after evidence review）" },
+      { "q": "按批准的规则实现服务、做技术配置", "a": "supplier", "why": "Technical Supplier — implements the approved rules and service；不决定政策，也不决定上线" },
+      { "q": "顾客对资格判断有争议，需要有人在授权范围内裁定", "a": "agent", "why": "Trained Agent — resolves disputed or uncertain eligibility within delegated authority" },
+      { "q": "对控制是否有效给出独立结论", "a": "audit", "why": "Slide 19：独立结论属于 internal audit / external assessor；他们评估，不替管理层接受风险" },
+      { "q": "接受「复核员不在时可能漏掉例外」这个剩余风险", "a": "service", "why": "接受风险的是有授权的业务 / 服务风险 owner（Slide 39），不是审计" }
+    ]
+  },
+  "learn": {
+    "title": "哪种学习方式？该先问什么证据？（Slide 14）",
+    "options": [
+      { "id": "sup", "label": "Supervised 有标签" },
+      { "id": "unsup", "label": "Unsupervised 无标签" },
+      { "id": "rl", "label": "Reinforcement 奖励" }
+    ],
+    "items": [
+      { "q": "用过去 5 年「通过 / 拒绝」的贷款记录训练模型给新申请打分", "a": "sup", "why": "有目标标签 = supervised。要问：标签是谁定的？历史决定本身有没有偏见？这个目标是不是业务真想要的决定？" },
+      { "q": "把交易记录自动分成几个群，看哪群像洗钱", "a": "unsup", "why": "没有给标签、自己找结构 = unsupervised。要问：分出来的群在这个场景有意义吗？群 ≠ 已证明的结论" },
+      { "q": "客服机器人按「对话越短得分越高」来优化回复", "a": "rl", "why": "按奖励规则学习 = reinforcement。要问：奖励和组织想要的结果一致吗？（对话短可能是问题没解决就结束了——Klarna 的教训）" },
+      { "q": "用标好「phishing / ok」的邮件训练分类器", "a": "sup", "why": "有标签的分类 = supervised；要问标签质量和样本覆盖面" },
+      { "q": "从登录日志里找出和大多数人行为不同的账号", "a": "unsup", "why": "异常检测常用无监督：没有「这是攻击」的标签，只是找离群点；离群 ≠ 恶意" }
+    ]
+  },
+  "harm": {
+    "title": "这个 safeguard 在伤害之前拦住，还是只能事后发现？（Slide 33）",
+    "options": [
+      { "id": "condition", "label": "在 Condition 拦（减少误报）" },
+      { "id": "event", "label": "在 Event 拦（不让人照着误报行动）" },
+      { "id": "after", "label": "只能事后发现" }
+    ],
+    "items": [
+      { "q": "上线前用有代表性的人群测试误识率，过高就不部署", "a": "condition", "why": "让 false-match 本身少发生 → 在 Condition 这一环起作用" },
+      { "q": "店员看到警报后，必须由受训主管核对照片才能接近顾客", "a": "event", "why": "警报出了，但不让它直接变成行动 → 在 Event 这一环拦住" },
+      { "q": "每月统计顾客投诉里有多少涉及被误认", "a": "after", "why": "投诉是伤害已经发生后的信号 → detective，只能事后发现（仍然有用：能触发停用和复盘）" },
+      { "q": "规定警报只能让店员「留意」，不允许据此要求顾客离开", "a": "event", "why": "限制对警报能采取的行动，切断 Condition → Consequence 的路径" },
+      { "q": "图像质量低于阈值的匹配一律不发警报", "a": "condition", "why": "低质量图像是误报的主要来源；不发警报 = 减少错误条件" },
+      { "q": "事后审计抽查被拦顾客的记录，看有没有歧视模式", "a": "after", "why": "审计抽查发生在行动之后 → 发现型控制" }
+    ]
+  }
+}
