@@ -669,6 +669,10 @@ tags: [Cloud Computing, IaaS, SaaS, TCO, 37signals, Rexel, LearnSphere, CRM]
 
 ## 7. 🔴 37signals: Should the Company Leave the Cloud?
 
+> **📌 案例原文的逐段翻译**
+>
+> 案例讲义的逐段中文翻译和每段解析放在单独一页：[37signals 案例翻译与解析](../../readings/37signals/)。这一节是完整的分析：按 workload 拆开、成本测算、三方论点和建议。
+
 ### 7.1 🟡 背景（案例摘要）
 
 | 项目       | 内容                                                                                           |
