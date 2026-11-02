@@ -1,0 +1,1284 @@
+---
+title:
+  en: "Week 2 · Cloud Computing, 37signals & Rexel"
+  zh: "第 2 周 · 云计算、37signals 与 Rexel 案例"
+summary:
+  en: "Technology topic: cloud computing (why: elasticity, benefits, risks; what: IaaS / PaaS / SaaS and deployment models; how: vendor choice, pricing, TCO). Two cases analysed in depth: should 37signals leave the cloud, and should a Rexel country adopt the global SmartRecruiters platform. Plus a short recap of Assignment 1 (LearnSphere)."
+  zh: "技术专题：云计算（Why：弹性、好处、风险；What：IaaS / PaaS / SaaS 和部署模型；How：选供应商、定价、TCO）。两个案例重点分析：37signals 要不要离开云、Rexel 的国家公司要不要换成全球统一的 SmartRecruiters。附 Assignment 1（LearnSphere）的结论回顾。"
+week: 2
+date: 2026-11-02
+tags: [Cloud Computing, IaaS, SaaS, TCO, 37signals, Rexel, Standardization]
+---
+# ISOM 5100 Information Strategy & Management — Week 2 复习笔记
+
+**主题：第一部分 · 技术专题 Cloud Computing（Why / What / How）｜ 第二部分 · 37signals：要不要离开云 ｜ 第三部分 · Rexel：全球统一还是本地自主 ｜ 附：Assignment 1 LearnSphere 回顾**
+
+> 优先级标注说明（按考试重要性）：  
+> 🔴 **必考核心** — 考试会直接用到的分析方法和结论  
+> 🟡 **需要理解** — 能讲清逻辑、能举例  
+> 🟢 **了解即可** — 背景知识
+>
+> **优先级依据**：  
+> ① **期末题型**（第 1 周课件 p.24）：open notes，**new short cases / essay questions**。所以两个案例的**分析方法**比云的定义更重要，第 7、8 节是本周重点；  
+> ② **课件的提问**：Cloud Computing 课件几乎每页都留了一个讨论问题（电力类比合适吗？对大公司还是小公司更有利？从 No Cloud 到 SaaS 牺牲了什么？三家寡头对买家意味着什么？），这些问题在第 2–6 节都给了答案；  
+> ③ **课件开头和结尾都在讲 37signals**（p.2–3、p.35 workload），说明「出云 / 上云是按 workload 决定的」是这节课的中心句；  
+> ④ **你的要求**：LearnSphere 是 Assignment 1，只简单回顾你们已有的结论（第 9 节）；37signals 和 Rexel 着重分析。
+
+> **📌 本笔记里的几种标记**
+>
+> - **课件 / 案例事实** 直接来自 *Cloud Computing.pptx*、*37signals and Cloud Computing*、*Rexel* 三份材料。
+> - **我的解答** — 两个案例都是课堂角色扮演（37signals：Exit Supporters / Remainers / Senior Management；Rexel：HQ 代表 vs country manager），材料里没有标准答案，分析和建议都是我整理的。
+> - **➕ 课外补充** — 课件没写、但答题用得上的背景，优先级按 🟢。
+> - 网页版有几个可以点的小实验：每一层谁来管（IaaS / PaaS / SaaS）、按 workload 选买法、出云的累计成本，以及几组分类练习。打印版会变成等价的表格。
+
+> **📝 待补充：课堂讨论**
+>
+> 这一版是课前 / 课后根据材料整理的，还没有老师课上的结论。如果你记了课堂讨论（例如 37signals 最后 senior management 怎么决定、Rexel 角色扮演里老师强调了什么），发给我，我按「课堂答案」加进对应小节。
+
+---
+
+## 0. 核心地图
+
+| 部分                              | 内容                                                     | 本笔记     |
+| ------------------------------- | ------------------------------------------------------ | ------- |
+| **第一部分 · 技术专题 Cloud Computing** | Why（弹性、好处、风险）→ What（服务模型、部署模型、趋势）→ How（选供应商、定价、TCO、寡头） | 第 1–6 节 |
+| **第二部分 · 37signals**            | 一家成熟的软件公司要不要把 workload 从公有云搬回自己的服务器                    | 第 7 节   |
+| **第三部分 · Rexel**                | 一向分权的跨国公司，总部要求各国统一用一个 SaaS 招聘系统                        | 第 8 节   |
+| 附 · LearnSphere（Assignment 1）   | 结论回顾 + 和云的关系                                           | 第 9 节   |
+| 三个案例放在一起                        | 本周的决策模式 + 和第 1 周框架的联系                                  | 第 10 节  |
+
+```
+云 = 把计算当成水电一样「按需买服务」，而不是买产品
+   → WHY：弹性（容量跟着需求走）+ capex 变 opex；代价：失去控制、锁定、依赖网络和供应商
+   → WHAT：IaaS / PaaS / SaaS = 自己管几层（控制权 ↔ 速度）
+           Private / Public / Community / Hybrid = 放在哪、谁运营、跟谁共享
+   → HOW：选供应商看 TCO 和退出策略；定价 = 承诺越多越便宜、越不能改主意
+   → 中心句：上云 / 出云是按 workload 决定的，不是对云的整体判决
+
+案例 1 · 37signals：需求稳定 + 账单大 + 有运维能力 → 稳定的 workload 出云，保留弹性和难迁移的部分（hybrid、分阶段）
+案例 2 · Rexel：分权的公司要统一一个 SaaS → 「全球统一核心、本地配置细节」，用条件换 country 的同意
+案例 3 · LearnSphere：一个 SaaS CRM → 有限范围、分阶段、设关卡
+```
+
+**一句话抓住本周**：和第 1 周一样，**IT 决策是商业决策**。云不是「好」或「坏」，而是一种**买 IT 的方式**：看这个 workload 的需求有多可预测、对公司有多重要、你有没有能力自己管，再决定租、订、买，还是统一。
+
+---
+
+# 第一部分 · 技术专题：Cloud Computing
+
+## 1. 🔴 开场：37signals 离开了云，但大家都在离开吗？（Slides 2–3、35）
+
+![37signals：每年 US$3.2M 云账单 → 买 US$600K 服务器 → 账单降到 US$1.3M](images/cloud_page_02.png)
+
+*37signals：每年 US$3.2M 云账单 → 买 US$600K 服务器 → 账单降到 US$1.3M（Slide 2）*
+
+|                | 课件数字                                           | 注意                                |
+| -------------- | ---------------------------------------------- | --------------------------------- |
+| **The bill**   | 每年付给 AWS 和 Google Cloud **US$3.2M**，而且需求**稳定** | 「稳定」是关键前提                         |
+| **The bet**    | 买了 **US$600K** 自己的服务器，**6 个月**把 7 个应用搬出云       | 硬件是一次性的 capex                     |
+| **The result** | 账单降到 **US$1.3M**；声称 **5 年省 US$10M**            | **公司自己报告**的数字（课件注明 self-reported） |
+
+课件的问题：*Are they wrong?* 这正是第 7 节案例要讨论的。
+
+![So is everyone leaving? No. 回迁是 workload 层面的决定，不是对云的判决](images/cloud_page_03.png)
+
+*So is everyone leaving? No. 回迁是 workload 层面的决定，不是对云的判决（Slide 3）*
+
+| 数据                                                                         | 含义                    |
+| -------------------------------------------------------------------------- | --------------------- |
+| Barclays CIO Survey：**83%** 计划在 2024 年把**至少一个** workload 搬回本地（2020 年是 43%） | 几乎每个 CIO 都在搬回**一些东西** |
+| IDC：只有 **8–9%** 打算**完全**退出云                                                | 几乎没有人搬回**所有东西**       |
+| Gartner：2025 年公有云支出仍增长约 **21%**，到约 **US$723bn**                            | 云整体还在快速增长             |
+
+> **🎯 🎯 本周的中心句**
+>
+> *Repatriation is a **workload** decision, not a verdict on the cloud.*
+>
+> 回迁（repatriation，从云搬回自己的机房）是按 workload 一个一个决定的。答任何「要不要上云 / 出云」的题，都不要回答「云好」或「云不好」，而要说**哪些 workload 放在哪里、为什么**。
+
+### 🔴 什么是 workload？（Slide 35，附录）
+
+![Workload = 一个应用 + 它运行需要的数据和计算容量；一家公司有几十个 workload](images/cloud_page_35.png)
+
+*Workload = 一个应用 + 它运行需要的数据和计算容量；一家公司有几十个 workload（Slide 35）*
+
+| Workload              | 需求特点            | 适合放哪                    |
+| --------------------- | --------------- | ----------------------- |
+| **Payroll**           | 一个月跑两次，量从不变     | 需求可预测，弹性没什么用            |
+| **E-commerce site**   | 全年平稳，节日那周变三倍    | **租容量的教科书案例**           |
+| **Customer records**  | 受监管的数据          | 数据驻留规则可能决定它**只能**放在哪个国家 |
+| **Nightly backups**   | 量大、稳定、自己存很便宜    | 常见的**搬回本地**候选           |
+| **Analytics queries** | 财务跑数时暴涨，其余时间空闲  | **只在用的时候付钱**            |
+| **AI model training** | 短期、巨大、需要稀缺的 GPU | **几乎永远不值得自己买**          |
+
+判断一个 workload 放哪，问四个问题：**需求可预测吗？** 规模多大？数据有没有法规限制？我们有没有能力自己运维？
+
+---
+
+## 2. 🔴 WHY：云是什么，为什么用（Slides 4–13）
+
+![Things managers need to know：Why（商业价值）、What（服务模型、趋势）、How（定价、选供应商、安全、灾备）](images/cloud_page_05.png)
+
+*Things managers need to know：Why（商业价值）、What（服务模型、趋势）、How（定价、选供应商、安全、灾备）（Slide 5）*
+
+课件用 **Why / What / How** 三个问题组织整节课。带 \* 的 Security & Compliance、Business continuity & DR 放在选读里。
+
+### 2.1 🟡 定义与电力类比（Slides 7–8）
+
+![Cloud computing：把计算当作服务而不是产品来交付](images/cloud_page_07.png)
+
+*Cloud computing：把计算当作服务而不是产品来交付（Slide 7）*
+
+> *Cloud computing is the delivery of computing **as a service rather than a product**, whereby shared resources, software and information are provided to computers and other devices **as a utility** over a network.*
+
+| 关键词                             | 意思                     |
+| ------------------------------- | ---------------------- |
+| **as a service, not a product** | 不买服务器和软件，而是买「计算能力」这个服务 |
+| **shared resources**            | 很多客户共用供应商的同一批硬件（规模经济）  |
+| **as a utility**                | 像水电一样，用多少付多少           |
+| **over a network**              | 必须通过网络使用，所以网络是前提       |
+
+![Is the analogy between electricity and IT appropriate?](images/cloud_page_08.png)
+
+*Is the analogy between electricity and IT appropriate?（Slide 8）*
+
+> **📌 我的解答：电力类比合适吗？（Slide 8 的问题）**
+>
+> **相似的地方（所以类比有道理）**
+>
+> - 一百年前工厂自己发电，后来电网出现，大家改买电。现在公司自己建机房，云出现后改买计算。都是从**自给自足**变成**按需购买的公共服务**。
+> - 都有**规模经济**：大供应商的单位成本更低；都是**按用量计费**。
+>
+> **不同的地方（所以类比不完全对）**
+>
+> - **电是标准化的**：220V 就是 220V，换供应商不影响你的电器。**IT 不是**：每家云的服务和接口不一样，换供应商要改系统，这就是 **vendor lock-in**。
+> - **数据**：电用完就没了，IT 服务里存着你的**数据**，涉及隐私、安全、数据放在哪个国家（data residency）。
+> - **IT 可以是竞争优势**：电不会让公司与众不同，但有些 IT 能力（例如 Zara 的下单流程、Amazon 的推荐）是差异化来源，未必适合交给别人。
+> - **可靠性的含义不同**：停电大家都知道去找电力公司；云出故障，你的客户只会怪你（Slide 13 Availability）。
+>
+> 结论：**对通用的计算资源，类比基本成立；对核心系统和数据，类比会低估控制、锁定和安全的问题。**
+
+> **➕ 课外补充：Nicholas Carr《IT Doesn't Matter》**
+>
+> 这个类比最有名的出处是 Nicholas Carr 2003 年在 HBR 的文章和后来的书 *The Big Switch*（2008）：IT 会像电力一样变成人人都有的基础设施，所以**不再是竞争优势**，经理应该少花钱、避开风险。反方观点是：基础设施会变成商品，但**怎么用 IT 改业务**仍然能拉开差距（例如 Zara）。答题时提到这一点可以体现批判性思考。
+
+### 2.2 🔴 Elasticity：容量跟着需求走（Slides 9–10）
+
+![Traditional IT 按预测一阶一阶买容量，要么闲置、要么不够；Cloud 的容量贴着实际需求](images/cloud_page_09.png)
+
+*Traditional IT 按预测一阶一阶买容量，要么闲置、要么不够；Cloud 的容量贴着实际需求（Slide 9）*
+
+|        | Traditional IT                 | Cloud                   |
+| ------ | ------------------------------ | ----------------------- |
+| 容量怎么定  | 几个月前按**预测**买，一阶一阶加（阶梯线）        | 按**实际需求**随时加减           |
+| 需求低于容量 | **Over-capacity**：机器闲着，钱已经花了   | 释放容量，不再付钱               |
+| 需求高于容量 | **Under-capacity**：服务变慢或宕机，丢客户 | 几分钟加上去                  |
+| 成本性质   | **Fixed capital bet**（固定资本支出）  | **Variable cost**（变动成本） |
+
+课件的问题：**哪些公司会遇到这种短期需求高峰？**
+
+> **📌 我的解答：哪些公司有短期峰值**
+>
+> - **零售 / 电商**：双十一、黑五、圣诞（Slide 35 的 e-commerce site）。
+> - **票务**：演唱会开票、春运抢票（几分钟的极端峰值）。
+> - **报税 / 政府服务**：报税截止前、派钱登记的头几天。
+> - **媒体 / 直播**：世界杯、选举之夜。
+> - **新产品上线**：37signals 的 HEY，3 周来了预测 10 倍的用户（第 7 节）。
+> - **教育**：开学选课、考试放榜（LearnSphere 开课那几天也会有峰值）。
+>
+> 共同点：**峰值高、持续短、难预测**。为峰值买机器，一年大部分时间都在闲置。
+
+![Uber：用户三倍、trips 近四倍，2020 年骤降；Brooks Brothers：老牌零售商也要几周上线新数字项目](images/cloud_page_10.png)
+
+*Uber：用户三倍、trips 近四倍，2020 年骤降；Brooks Brothers：老牌零售商也要几周上线新数字项目（Slide 10）*
+
+| 例子                  | 体现什么                  | 要点                                                                      |
+| ------------------- | --------------------- | ----------------------------------------------------------------------- |
+| **Uber**            | **Scalability**（规模弹性） | 2017–2025 年 trips 3.7 → 13.6（十亿次），2020 年跌到 5.0。为峰值买的容量在疫情时会闲着，租的容量跟着曲线走 |
+| **Brooks Brothers** | **Agility**（敏捷）       | 两百年的老零售商，也要在几周内上线新数字项目。租容量把它变成一个**项目决策**，而不是**资本决策**（不用走买设备的审批）         |
+
+*（网页版此处可以选需求曲线、调自己买的容量和预留基线，比较三种买法；下面是四个预设的结果，按需单价 = 1）*
+
+**Basecamp：稳定**：成熟的订阅软件：需求可以预测，每年稳定增长。37signals 认为自己就是这种情况。（自己买 110% 峰值，预留 85% 峰值）
+
+| 买法                       | 总成本  | 闲置容量 | 没服务到的需求 |
+| ------------------------ | ---- | ---- | ------- |
+| **自己买硬件（按容量付钱） ✓**       | 689  | 239  | 0       |
+| 全部按需（Rent it）            | 1292 | 0    | 0       |
+| 预留基线 + 按需补峰（Book + Rent） | 819  | 0    | 0       |
+
+平均利用率 93%：需求稳定，买下来的机器几乎一直在用，自己买最便宜。这正是 37signals 的论点。
+
+**电商：节日峰值**：Slide 35：全年平稳，节日那一周变成三倍。买够峰值的容量，其余 11 周大部分闲着。（自己买 100% 峰值，预留 33% 峰值）
+
+| 买法                             | 总成本  | 闲置容量 | 没服务到的需求 |
+| ------------------------------ | ---- | ---- | ------- |
+| 自己买硬件（按容量付钱）                   | 1620 | 2180 | 0       |
+| 全部按需（Rent it）                  | 1420 | 0    | 0       |
+| **预留基线 + 按需补峰（Book + Rent） ✓** | 945  | 0    | 0       |
+
+平均利用率 39%：稳定的那部分用预留价，峰值按需补，比全部按需和自己买都便宜。大多数公司的做法。
+
+**HEY：按预测买机器**：案例：内部预测 6 个月 30,000 人试用，实际 3 周就有 300,000 人。按预测买机器，大约只够实际的十分之一。（自己买 10% 峰值，预留 0% 峰值）
+
+| 买法                       | 总成本  | 闲置容量 | 没服务到的需求 |
+| ------------------------ | ---- | ---- | ------- |
+| 自己买硬件（按容量付钱）             | 54   | 0    | 906     |
+| **全部按需（Rent it） ✓**      | 1026 | 0    | 0       |
+| 预留基线 + 按需补峰（Book + Rent） | 1026 | 0    | 0       |
+
+自己买的容量不够：有 88% 的需求没服务到（宕机或排队）。这就是 HEY 上线时云的价值：预测错了也能马上加机器。
+
+**月底分析**：Slide 35：财务跑数时用量暴涨，其余时间几乎空闲。只在用的时候付钱最划算。（自己买 100% 峰值，预留 15% 峰值）
+
+| 买法                             | 总成本 | 闲置容量 | 没服务到的需求 |
+| ------------------------------ | --- | ---- | ------- |
+| 自己买硬件（按容量付钱）                   | 540 | 765  | 0       |
+| 全部按需（Rent it）                  | 435 | 0    | 0       |
+| **预留基线 + 按需补峰（Book + Rent） ✓** | 363 | 0    | 0       |
+
+平均利用率 36%：稳定的那部分用预留价，峰值按需补，比全部按需和自己买都便宜。大多数公司的做法。
+
+> **💡 🧠 Scalability 和 agility 的区别**
+>
+> - **Scalability**：同一个业务，量变大变小时容量跟得上（Uber）。
+> - **Agility**：要做**新的事情**时，不用先买设备、等几个月（Brooks Brothers）。
+> - 两者都来自「不用事先买」，但 agility 更多是**决策速度**：小项目试错的成本变低了。
+
+### 2.3 🟡 好处：Cost · Customization · Computing Power（Slides 11–12）
+
+![Example benefit：Cost、Customization、Computing Power（还有环保）](images/cloud_page_11.png)
+
+*Example benefit：Cost、Customization、Computing Power（还有环保）（Slide 11）*
+
+| 好处（Slide 12）               | 意思                 |
+| -------------------------- | ------------------ |
+| **Scalability**            | 几分钟加减容量            |
+| **Flexibility**            | 任何地方、任何设备都能访问系统和数据 |
+| **Reliability**            | 供应商的冗余和备份超过大多数公司自建 |
+| **Rapid deployment**       | 新服务几天上线，而不是几个季度    |
+| **Improved collaboration** | 跨地点、跨时区共享文件和工具     |
+| **Security**               | 供应商级别的控制、补丁、认证作为底线 |
+| **Cost savings**           | 按用量付费，取代前期的硬件投资    |
+
+![Cloud computing 的七个好处](images/cloud_page_12.png)
+
+*Cloud computing 的七个好处（Slide 12）*
+
+课件的问题：**云对大公司更有利，还是对小公司更有利？**
+
+> **📌 我的解答：对小公司的好处更大，但大公司也有自己的理由**
+>
+> |          | 小公司 / 初创                    | 大公司                                 |
+> | -------- | --------------------------- | ----------------------------------- |
+> | 前期资金     | **最大的好处**：不用先花几十万买机器        | 有钱买，capex 不是瓶颈                      |
+> | IT 人才    | 请不起完整的运维团队，SaaS / PaaS 直接省掉 | 有自己的团队，可以自己运维                       |
+> | 需求不确定性   | 很高（不知道会不会火），弹性最有价值          | 核心业务需求稳定，弹性价值小                      |
+> | 规模经济     | 用上了原本得不到的供应商级别安全和可靠性        | 自己就有规模，单位成本可以接近甚至低于云                |
+> | 大公司用云的理由 | —                           | 新项目的 agility、全球覆盖、峰值、AI 训练、并购后的快速整合 |
+>
+> 结论：**云的相对优势随着规模变大、需求变稳定而减少**。这正是 37signals 的论点：它不是初创公司了，需求稳定、账单大，所以出云可能划算；但同一家公司的 HEY 刚上线时，云又是必需的。
+
+### 2.4 🔴 风险与挑战（Slide 13）
+
+![六个风险：Loss of control、Security、Data location、Availability、Connectivity、Vendor lock-in](images/cloud_page_13.png)
+
+*六个风险：Loss of control、Security、Data location、Availability、Connectivity、Vendor lock-in（Slide 13）*
+
+| 风险                  | 意思                                          | 例子（我的解答）                    |
+| ------------------- | ------------------------------------------- | --------------------------- |
+| **Loss of control** | 核心系统跑在不是你拥有、也不是你运营的设施上                      | 供应商改价格、改服务、停产某个功能，你只能接受     |
+| **Security**        | **Shared responsibility**：供应商保护平台，**你保护数据** | 大多数云上数据泄露是客户自己配置错误（例如存储桶公开） |
+| **Data location**   | 数据驻留和主权规则规定数据可以合法放在哪里                       | GDPR、内地数据出境规定、HKSAR 政府的敏感数据 |
+| **Availability**    | 供应商的宕机就是你的宕机                                | 一个云区域出故障，上面几千家公司一起停         |
+| **Connectivity**    | 云的价值依赖可靠、高带宽的网络                             | 门店、工厂网络差的地方效果打折             |
+| **Vendor lock-in**  | 专有服务越用越多，以后换的成本和风险越高                        | 用了某家专有的数据库和搜索服务，换家就要改应用     |
+
+> **⚠️ ⚠️ Security 既是好处也是风险**
+>
+> Slide 12 把 Security 列为好处（供应商级别的控制），Slide 13 又把它列为风险。不矛盾：**平台层**通常比自建安全；但**数据和权限配置**仍是你的责任，而且你看不到、也控制不了供应商内部。答题时写成「shared responsibility」最准确。
+
+---
+
+## 3. 🔴 WHAT：服务模型 IaaS / PaaS / SaaS（Slides 15–19）
+
+![IT 的三层：Infrastructure（硬件）、Platform（OS，例如 .NET）、Application（例如 CRM、ERP）](images/cloud_page_15.png)
+
+*IT 的三层：Infrastructure（硬件）、Platform（OS，例如 .NET）、Application（例如 CRM、ERP）（Slide 15）*
+
+和一台电脑一样，公司的 IT 分三层：**基础设施（硬件）→ 平台（OS、运行环境）→ 应用（CRM、ERP）**。服务模型就是「从哪一层开始交给供应商」。
+
+![SaaS：OneDrive、Salesforce、Google Docs；PaaS：Windows Azure；IaaS：Amazon S3、EC2、RDS](images/cloud_page_16.png)
+
+*SaaS：OneDrive、Salesforce、Google Docs；PaaS：Windows Azure；IaaS：Amazon S3、EC2、RDS（Slide 16）*
+
+| 模型       | 全称                          | 供应商提供               | 你自己管         | 课件例子                            |
+| -------- | --------------------------- | ------------------- | ------------ | ------------------------------- |
+| **IaaS** | Infrastructure as a Service | 远程服务器和存储            | OS、中间件、应用、数据 | Amazon EC2、S3、RDS               |
+| **PaaS** | Platform as a Service       | 托管平台，用来开发和部署 Web 应用 | 自己的应用和数据     | Windows Azure                   |
+| **SaaS** | Software as a Service       | 通过网络交付的完整应用         | 只有配置和使用      | Salesforce、OneDrive、Google Docs |
+
+![类比：请一大群人吃饭 —— 自己做、租厨房、租厨房和锅具、请外烩](images/cloud_page_17.png)
+
+*类比：请一大群人吃饭 —— 自己做、租厨房、租厨房和锅具、请外烩（Slide 17）*
+
+![四种模式里 Internal IT 和 CC Vendor 各管哪几层](images/cloud_page_18.png)
+
+*四种模式里 Internal IT 和 CC Vendor 各管哪几层（Slide 18）*
+
+![九层 stack：从 IaaS 到 SaaS，你管得越少，能改的也越少](images/cloud_page_19.png)
+
+*九层 stack：从 IaaS 到 SaaS，你管得越少，能改的也越少（Slide 19）*
+
+*（网页版此处可以切换 On-prem / IaaS / PaaS / SaaS，看每一层谁来管；下表是四种模式的对照）*
+
+| Layer          | On-premises | IaaS | PaaS | SaaS |
+| -------------- | ----------- | ---- | ---- | ---- |
+| Applications   | 你           | 你    | 你    | 供应商  |
+| Data           | 你           | 你    | 你    | 供应商  |
+| Runtime        | 你           | 你    | 供应商  | 供应商  |
+| Middleware     | 你           | 你    | 供应商  | 供应商  |
+| O/S            | 你           | 你    | 供应商  | 供应商  |
+| Virtualization | 你           | 供应商  | 供应商  | 供应商  |
+| Servers        | 你           | 供应商  | 供应商  | 供应商  |
+| Storage        | 你           | 供应商  | 供应商  | 供应商  |
+| Networking     | 你           | 供应商  | 供应商  | 供应商  |
+
+| Catering（Slide 17） | On-premises | IaaS | PaaS | SaaS |
+| ------------------ | ----------- | ---- | ---- | ---- |
+| Cook 厨师（应用）        | 你           | 你    | 你    | 供应商  |
+| Vessels 锅具（平台）     | 你           | 你    | 供应商  | 供应商  |
+| Kitchen 厨房（基础设施）   | 你           | 供应商  | 供应商  | 供应商  |
+
+|      | On-premises                        | IaaS                                     | PaaS                                           | SaaS                                                                                        |
+| ---- | ---------------------------------- | ---------------------------------------- | ---------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| 例子   | 自己机房里的 ERP；37signals 出云后的 Basecamp | AWS EC2 虚拟机、Amazon S3 存储；HEY 上线时跑在云上的服务器 | Windows Azure / Google App Engine：只上传代码，平台负责运行 | Salesforce、Microsoft 365、Google Docs；LearnSphere 考虑的 EduConnect 360；Rexel 的 SmartRecruiters |
+| 控制权  | 最高：每一层都能改                          | 高：OS 以上都自己管                              | 中：只管自己的应用和数据                                   | 最低：只能配置，不能改代码                                                                               |
+| 上线速度 | 最慢：先买硬件、装系统，才能上线                   | 快：几分钟开一台机器                               | 更快：开发者不用管服务器                                   | 最快：注册就能用                                                                                    |
+| 成本结构 | 前期大笔 capex；为峰值买的容量平时闲着             | 按用量付费（opex），可以随时加减                       | 按用量付费；但平台专有的服务越用越多，换平台越难                       | 订阅费（按用户 / 按月），长期累计不一定便宜                                                                     |
+| 适合   | 需求稳定、规模够大、有运维能力，或者法规要求自己控制         | 要控制软件环境，又不想买硬件；需求波动大                     | 自己开发应用，想把精力放在产品上                               | 通用的业务功能（邮件、CRM、招聘），不是公司的差异化来源                                                               |
+
+课件的两个问题：**从 No Cloud 到 SaaS 你牺牲了什么？公司为什么会选这个模型而不是那个？**
+
+> **📌 我的解答：从 No Cloud 走到 SaaS，牺牲了什么**
+>
+> 用外烩的类比：请外烩最省事，但**菜单是人家定的**，口味、时间、份量你只能在选项里挑。对应到 IT：
+>
+> 1. **控制权和定制能力**：SaaS 只能配置，不能改代码；流程要迁就软件（Rexel 的 country manager 担心的就是这个）。
+> 2. **差异化**：大家用同一套 Salesforce，流程也趋同，很难靠它和对手拉开距离。
+> 3. **数据和安全的直接控制**：数据在供应商那里，放在哪个国家、谁能看到，要靠合同保证。
+> 4. **对供应商的依赖**：价格、功能、停机都由对方决定；越往上锁定越深（换 SaaS 要迁移数据、重新培训全员）。
+> 5. **长期成本**：订阅是一直付下去的，规模大了累计不一定便宜（37signals 的论点）。
+>
+> 换来的是：**速度、少请 IT 人员、前期不花大钱、自动更新**。
+
+> **🎯 🎯 选哪个服务模型：一句话判断**
+>
+> **这个系统是不是我们的差异化来源？我们有没有能力自己管？**
+>
+> - 通用功能（邮件、办公、通用 CRM、招聘）→ **SaaS**：没必要自己造。
+> - 自己开发的、是产品核心的应用 → **PaaS**（想专注写代码）或 **IaaS**（要控制运行环境）。
+> - 需求稳定、规模大、有运维能力、或者法规要求 → 可以考虑 **自建 / private**。
+>
+> *Moving up the stack from IaaS to SaaS trades control for speed — you manage less, but you can also change less.*（Slide 19）
+
+*（网页版此处是点选练习：这是 IaaS、PaaS 还是 SaaS？；下表是全部题目和答案）*
+
+| 挑战                                                          | 答案       | 理由                                                                             |
+| ----------------------------------------------------------- | -------- | ------------------------------------------------------------------------------ |
+| 公司在 AWS EC2 上开虚拟机，自己装 OS、数据库和应用                             | **IaaS** | 只租服务器和存储（Slide 16 把 EC2 放在 Infrastructure 层），OS 以上都自己管                         |
+| 把客户上传的文件放在 Amazon S3                                        | **IaaS** | 租的是存储容量；37signals 的客户文件就放在 S3 这种 object storage 里                              |
+| 销售团队每人每月付费用 Salesforce 管理客户                                 | **SaaS** | 直接用供应商做好的应用，只做配置                                                               |
+| 员工用 Microsoft 365 / Google Docs 写文件、开会                      | **SaaS** | Apps delivered over the Web；Slide 36 的 subscription pricing 例子就是 Microsoft 365 |
+| 开发团队把写好的网站代码上传到 Windows Azure / Google App Engine，平台负责运行和扩容 | **PaaS** | 只管应用和数据，runtime、OS、服务器都是平台的（Slide 16 把 Azure 放在 Platform 层）                    |
+| LearnSphere 按活跃学员数订阅 EduConnect 360                         | **SaaS** | CRM 作为服务交付；按学员数订阅 = commit ahead 的定价                                           |
+| Rexel 全集团改用 SmartRecruiters 招聘                              | **SaaS** | 云上的 ATS 应用：各国只能配置，不能改代码，这正是 country manager 担心的「本地流程还能保留多少」                    |
+| AI 公司按小时向 CoreWeave 租 GPU 训练模型                              | **IaaS** | Neocloud 只租算力（GPU），其他都自己做（Slide 26）                                            |
+| 只写一个函数，按调用次数和运行时间付费（AWS Lambda）                             | **PaaS** | Serverless / FaaS：连服务器都看不到，只交代码，最接近 PaaS（Slide 25、36）                          |
+
+---
+
+## 4. 🔴 WHAT：部署模型 Private / Public / Community / Hybrid（Slides 20–24）
+
+![Private（组织内部）、Community（同类组织共享）、Public（所有人可用）、Hybrid（组合）](images/cloud_page_21.png)
+
+*Private（组织内部）、Community（同类组织共享）、Public（所有人可用）、Hybrid（组合）（Slide 21）*
+
+服务模型回答「**交出去几层**」；部署模型回答「**放在哪、谁运营、和谁共享**」。两个维度是独立的：一个 SaaS 也可以部署在 private cloud 上。
+
+![五种部署：谁运营、在哪里、是否共享](images/cloud_page_22.png)
+
+*五种部署：谁运营、在哪里、是否共享（Slide 22）*
+
+| 部署模型                         | 谁运营   | 放在哪 | 和别人共享？              |
+| ---------------------------- | ----- | --- | ------------------- |
+| **Internal private cloud**   | 内部 IT | 公司  | 否                   |
+| **Outsourced private cloud** | 供应商   | 公司  | 否                   |
+| **Hosted private cloud**     | 供应商   | 供应商 | 否 / 有限              |
+| **Public cloud**             | 供应商   | 供应商 | 是                   |
+| **Community cloud**          | 供应商   | 供应商 | 同一社群（例如几家医院、几个政府部门） |
+
+### 🟡 Private cloud 是什么、为什么选（Slide 20）
+
+> **📌 我的解答：Slide 20 的问题**
+>
+> **是什么**：只给一个组织用的云。仍然有云的特征（虚拟化、自助开机器、按部门计费、弹性），但硬件**不和别人共享**，可以在自己机房，也可以由供应商代管。
+>
+> **为什么选**：
+>
+> - **法规和数据主权**：银行、医疗、政府的数据必须放在指定地点、可审计。
+> - **安全和控制**：不想和陌生客户共用硬件；可以按自己的标准配置。
+> - **稳定的大规模需求**：利用率高时，自己的硬件单位成本更低（37signals 的逻辑）。
+> - **性能可预测**：没有「邻居」抢资源。
+>
+> **代价**：要自己投资和运维，弹性只到自己买的容量为止，规模经济也比公有云差。
+
+### 🔴 大多数组织用 Hybrid（Slides 23–24）
+
+![Flexera 2026：73% 用 hybrid cloud；单一公有云 9%、单一私有云 2%](images/cloud_page_23.png)
+
+*Flexera 2026：73% 用 hybrid cloud；单一公有云 9%、单一私有云 2%（Slide 23）*
+
+- Flexera 2026（n = 753）：**73%** 的组织用 hybrid cloud（公有 + 私有的各种组合），只用一家公有云的只有 9%，只用私有云的 2%。
+- 课件结论：*Few firms pick one model. The real decision is **per workload**: place each one where its sensitivity, cost and performance needs fit best.*
+
+![HKSAR 政府的 hybrid cloud：自建私有云、外包私有云、公有云](images/cloud_page_24.png)
+
+*HKSAR 政府的 hybrid cloud：自建私有云、外包私有云、公有云（Slide 24）*
+
+> **📌 我的解答：HKSAR 政府为什么用 hybrid（Slide 24 的问题）**
+>
+> | 部分                                    | 放什么（推断）                 | 为什么                        |
+> | ------------------------------------- | ----------------------- | -------------------------- |
+> | **In-house private cloud**（政府自己拥有和运营） | 最敏感的数据：执法、出入境、个人资料、核心政务 | 控制权和保密最重要；法规上必须由政府直接掌握     |
+> | **Outsourced private cloud**（承包商管理）   | 敏感度中等、但规模大的部门系统         | 仍是专用硬件，又不用政府自己养大量运维人员      |
+> | **Public cloud**（generic services）    | 公开网站、开放数据、一般性的电邮和协作工具   | 便宜、弹性好，应付突发访问（例如派钱登记、疫情资讯） |
+>
+> 本质上就是**按数据敏感度和需求特点分层放置**：越敏感越往自己手里放，越通用、越需要弹性越往公有云放。这和 Slide 23「per workload」的结论一样。
+
+*（网页版此处是点选练习：这是哪一种部署模型？；下表是全部题目和答案）*
+
+| 挑战                                          | 答案            | 理由                                                       |
+| ------------------------------------------- | ------------- | -------------------------------------------------------- |
+| 初创公司所有系统都跑在 AWS 上，和其他客户共用基础设施               | **Public**    | 供应商运营、在供应商那里、和所有人共享（Slide 22）                            |
+| 银行在自己的机房里用虚拟化建了一个只给自己用的云                    | **Private**   | Internal private cloud：内部 IT 运营、在公司里、不共享                 |
+| 政府的机房里放着一套由承包商运营的云                          | **Private**   | Outsourced private cloud：供应商运营，但设备在公司（政府）这边、不共享          |
+| 几家医院共用一个符合医疗数据法规的云平台                        | **Community** | 和同类机构共享：相同的法规要求让共享更划算                                    |
+| 客户记录放在自己的私有云，官网和营销活动放在公有云                   | **Hybrid**    | 敏感 workload 放私有，普通 workload 放公有：Slide 23 说的按 workload 放置 |
+| HKSAR 政府同时用自建私有云、外包私有云和公有云                  | **Hybrid**    | Slide 24：按数据敏感度和服务性质分开放                                  |
+| 37signals 把 Basecamp 搬回自己买的服务器，但客户文件暂时留在 S3 | **Hybrid**    | 一部分自有（放在租来的机房），一部分公有云：出云不一定是全部出                          |
+
+---
+
+## 5. 🟢 WHAT：技术趋势（Slides 25–27）
+
+![Serverless（AWS Lambda）、Cloud Containers（Docker）、Edge Computing](images/cloud_page_25.png)
+
+*Serverless（AWS Lambda）、Cloud Containers（Docker）、Edge Computing（Slide 25）*
+
+| 趋势                       | 是什么（课外补充，课件只列名字）                       | 经理要知道的                                                      |
+| ------------------------ | -------------------------------------- | ----------------------------------------------------------- |
+| **Serverless computing** | 只写函数，按调用次数和运行时间付费，连服务器都看不到（AWS Lambda） | 最极致的按需付费；锁定也最深                                              |
+| **Cloud containers**     | 把应用和它需要的环境打包成一个标准「集装箱」（Docker），在哪里都能跑  | **降低 lock-in**：同一个容器可以在不同云或自己机房运行。37signals 出云能这么快，容器化是前提之一 |
+| **Edge computing**       | 把计算放在靠近设备的地方（工厂、门店、汽车），而不是全部送回远方的云     | 解决延迟和带宽问题（Slide 13 的 Connectivity）：自动驾驶、工厂传感器               |
+
+![Neoclouds：CoreWeave、Nebius、Crusoe 按小时租 GPU，比三大云便宜 30–60%](images/cloud_page_26.png)
+
+*Neoclouds：CoreWeave、Nebius、Crusoe 按小时租 GPU，比三大云便宜 30–60%（Slide 26）*
+
+- **Neocloud**：只按小时租 GPU，没有庞大的服务目录。之所以出现，是因为 AI 需求超过了 AWS、Azure、Google 能提供的量，而且每 GPU 小时便宜 **30–60%**。
+- 含义：**专门化的供应商**可以在某一类 workload 上打败综合型大云。这也呼应 Slide 35：AI 训练几乎不值得自己买，但也不一定要找三大云。
+
+![Cloud service broker（例如 ArrowSphere）：聚合、整合、定制多家云服务](images/cloud_page_27.png)
+
+*Cloud service broker（例如 ArrowSphere）：聚合、整合、定制多家云服务（Slide 27）*
+
+- **Cloud broker**：夹在多家云供应商（SaaS / PaaS / IaaS）和客户（中小企业、大企业、经销商）之间，提供**聚合（aggregation）、整合（integration）、定制（customization）**。
+- 对中小企业：一个窗口买多家服务、统一账单、有人帮忙整合。代价是多了一层成本和依赖。
+
+---
+
+## 6. 🔴 HOW：选供应商、定价、TCO、市场集中（Slides 29–32、36）
+
+### 6.1 🟡 选云供应商的十个因素（Slide 29）
+
+![Factors to consider when choosing a cloud vendor](images/cloud_page_29.png)
+
+*Factors to consider when choosing a cloud vendor（Slide 29）*
+
+| 因素                          | 看什么                      |
+| --------------------------- | ------------------------ |
+| Service offerings           | 服务目录的广度和是否**适合**你        |
+| Performance and reliability | 过往的 uptime 和合同里的 **SLA** |
+| Security and compliance     | 认证、法规覆盖                  |
+| **Cost and pricing model**  | **总拥有成本（TCO），不是标价**      |
+| Scalability and flexibility | 能不能吸收需求高峰                |
+| Support and service         | 响应时间、升级处理路径              |
+| Reputation and stability    | 财务实力、市场记录（供应商倒闭怎么办？）     |
+| Geographic footprint        | 区域覆盖、**数据驻留**选项          |
+| Ecosystem and partners      | 集成、工具、市场上找不找得到会用的人       |
+| **Exit strategy**           | **数据和 workload 能不能带走**   |
+
+> **🎯 🎯 最容易被忽略的两项**
+>
+> **TCO** 和 **Exit strategy**。签约时大家都看单价和功能，但真正的成本是三五年的总成本（含人员、数据传出费、迁移），而**离开的成本**在签约时最好谈、之后最难谈。37signals 就是在用了十多年之后才算这笔账。
+
+### 6.2 🔴 定价：承诺越多，单价越低，越不能改主意（Slides 30、36）
+
+![Rent it · Book it · Bid for it：管理问题不是哪个最便宜，而是 workload 有多可预测](images/cloud_page_30.png)
+
+*Rent it · Book it · Bid for it：管理问题不是哪个最便宜，而是 workload 有多可预测（Slide 30）*
+
+| 买法                               | 是什么                             | 单价            | 风险         | 最适合          |
+| -------------------------------- | ------------------------------- | ------------- | ---------- | ------------ |
+| **Pay as you go —「Rent it」**     | 按需的计算、存储、数据传输、按请求计费的 serverless | **最高**，无承诺    | 用量失控时账单失控  | **不可预测的需求**  |
+| **Commit ahead —「Book it」**      | Reserved instances、订阅；1 年或 3 年  | 最多便宜 **75%**  | **买多了**也要付 | **稳定的基线负载**  |
+| **Take the spare —「Bid for it」** | Spot：供应商的闲置容量                   | 便宜 **70–90%** | 几分钟通知就被收回  | **可以中断的批处理** |
+
+> *The managerial question is not which model is cheapest — it is **how predictable the workload is**. Buy commitment only where demand is known.*  
+> Freemium 和 tiered pricing 是叠加在这三种之上的折扣，不是另外的买法。
+
+![附录：八种定价模型和例子](images/cloud_page_36.png)
+
+*附录：八种定价模型和例子（Slide 36）*
+
+| 定价模型               | 例子（Slide 36）                  | 属于哪种买法             |
+| ------------------ | ----------------------------- | ------------------ |
+| Pay-as-you-go      | AWS EC2 t3.micro US$0.10 / 小时 | Rent               |
+| Reserved Instances | 最多比按需便宜 75%                   | Book               |
+| Spot Instances     | 常常便宜 70–90%                   | Bid                |
+| Subscription       | Microsoft 365 每用户每月 US$6 起    | Book               |
+| Freemium           | Google Cloud 免费额度             | 折扣                 |
+| Tiered             | Azure Blob 前 50 TB 每 GB 0.017 | 折扣                 |
+| **Data transfer**  | AWS 数据传出 US$0.09 / GB         | Rent（**出云时的隐藏成本**） |
+| FaaS               | AWS Lambda 按 GB-秒计费           | Rent               |
+
+> **⚠️ ⚠️ 数据传出费（egress）是一种锁定**
+>
+> 把数据**放进**云通常免费，**拿出来**要按 GB 收费。数据越多，以后离开越贵。这就是 37signals 案例里「客户文件要不要一起搬」是一个**单独的、更难的问题**的原因之一。
+
+*（网页版此处是点选练习：这个 workload 怎么买容量最合理？；下表是全部题目和答案）*
+
+| 挑战                                   | 答案                   | 理由                                          |
+| ------------------------------------ | -------------------- | ------------------------------------------- |
+| 电商网站平时稳定，节日那一周流量变三倍：多出来的那部分          | **按需租（Rent it）**     | 短期、不可预测的峰值，不值得承诺；平时的基线可以预留                  |
+| 电商网站全年都要有的那部分基线流量                    | **预留 / 订阅（Book it）** | Steady baseline load：一到三年承诺换更低单价（Slide 30）  |
+| 新产品刚上线，不知道会有 3 万还是 30 万用户（HEY 2020）  | **按需租（Rent it）**     | 需求完全不可预测：按需最安全，预测错了也能马上加                    |
+| 可以中断、明天早上前跑完就行的视频转码批处理               | **Spot（Bid for it）** | Interruptible batch work：便宜 70–90%，被收回了重跑就好 |
+| 每晚的备份：量大、稳定、存在自己的设备上很便宜              | **自己买硬件**            | Slide 35：常见的「搬回自己机房」候选                      |
+| 成熟、用户量稳定增长的订阅软件，每年云账单数百万美元（Basecamp） | **自己买硬件**            | 需求可预测、规模够大、有运维能力：37signals 的出云逻辑            |
+| 财务部月底跑分析，其余时间几乎不用                    | **按需租（Rent it）**     | Bursts then idle：只在用的时候付钱（Slide 35）         |
+| 训练一个 AI 模型：几周内需要大量稀缺的 GPU，之后不用       | **按需租（Rent it）**     | Slide 35：几乎永远不值得自己买；按小时向 neocloud 租最常见      |
+
+### 6.3 🔴 Worked example：3 年 TCO（Slide 31）
+
+![On-premises US$624K（大部分是前期 capex）vs Cloud（AWS reserved）US$332K（按月 opex）](images/cloud_page_31.png)
+
+*On-premises US$624K（大部分是前期 capex）vs Cloud（AWS reserved）US$332K（按月 opex）（Slide 31）*
+
+| 成本项（3 年）   | On-premises                   | Cloud（AWS, reserved）           |
+| ---------- | ----------------------------- | ------------------------------ |
+| 服务器和存储硬件   | US$240,000 前期（12 台，第 3 年更新）   | US$0                           |
+| 机房空间、电力、冷却 | US$54,000（每月 1,500）           | 包含在服务里                         |
+| 软件许可       | US$90,000                     | US$36,000                      |
+| 计算和存储服务费   | 不适用                           | US$194,000（reserved，比按需低约 40%） |
+| 数据传出       | 不适用                           | US$22,000                      |
+| 运维人员       | US$180,000（1.0 FTE）           | US$72,000（0.4 FTE）             |
+| 宕机和峰值余量    | US$60,000（30% 余量一年大部分闲着）      | US$8,000（按需扩容）                 |
+| **3 年合计**  | **US$624,000**（主要是 capex，前期付） | **US$332,000**（opex，按月付）       |
+
+课件结论：*The headline saving is real, but the **bigger managerial shift is capex to opex** — cash is freed up front, and the bill now moves with usage.*
+
+> **📌 我的解答：读这张表要注意的三点**
+>
+> 1. **最大的差异不在硬件，在「人」和「闲置」**：on-prem 要 1 名全职运维、30% 的峰值余量；云只要 0.4 名、几乎不用余量。所以云的优势来自**规模小**和**需求有波动**。
+> 2. **规模一变，结论就可能反过来**：这家公司只有 12 台服务器。如果是 37signals 那种每年 US$3.2M 的账单，人员成本被摊薄，服务费变成大头，自有硬件就可能更便宜（下面的小实验可以切换两个预设对比）。
+> 3. **Capex → opex 对管理层的意义**：前期现金被释放（对现金紧张的公司很重要，例如 LearnSphere）；成本跟着用量走，预算变成「可变的」，但也**更难预测**，而且永远付下去。
+
+*（网页版此处可以拖动年数、云账单、硬件、运营和迁移成本，看累计成本曲线；下面是四个预设的结果）*
+
+**课件 p.31：3 年 TCO**：On-prem：硬件 US$240K（含第 3 年更新）+ 每年机房 18K、软件 30K、1 名 IT 120K… 合计 3 年 624K；Cloud（reserved）：每年约 111K，3 年 332K。这里的「Own」就是 on-premises。
+
+|       | 起点      | Y1      | Y2      | Y3      |
+| ----- | ------- | ------- | ------- | ------- |
+| 云：累计  | US$0K   | US$111K | US$221K | US$332K |
+| 自有：累计 | US$240K | US$368K | US$496K | US$624K |
+
+**3 年多花 US$292K，留在云上更便宜**；每年云账单高于约 US$208K 时买硬件才划算。
+
+**37signals：课件 p.2 的数字（自报）**：每年云账单 US$3.2M → 出云后 US$1.3M，买了 US$600K 服务器。只用课件给的数字，没有单独计机房租金、额外人手和迁移成本：这是公司自己报告的口径。
+
+|       | 起点      | Y1       | Y2       | Y3       | Y4        | Y5        |
+| ----- | ------- | -------- | -------- | -------- | --------- | --------- |
+| 云：累计  | US$0K   | US$3.20M | US$6.40M | US$9.60M | US$12.80M | US$16.00M |
+| 自有：累计 | US$600K | US$1.90M | US$3.20M | US$4.50M | US$5.80M  | US$7.10M  |
+
+**5 年省 US$8.90M，第 1 年回本**；每年云账单高于约 US$1.42M 时买硬件才划算。
+
+**37signals：加上保守假设（我的假设）**：示意数字：服务器多买 50% 作为应对突发的余量（US$900K）；每年加机房 US$250K、2 名运维 US$400K；一次性迁移 US$300K（工程师几个月不做产品）。看结论会不会变。
+
+|       | 起点       | Y1       | Y2       | Y3       | Y4        | Y5        |
+| ----- | -------- | -------- | -------- | -------- | --------- | --------- |
+| 云：累计  | US$0K    | US$3.20M | US$6.40M | US$9.60M | US$12.80M | US$16.00M |
+| 自有：累计 | US$1.20M | US$3.15M | US$5.10M | US$7.05M | US$9.00M  | US$10.95M |
+
+**5 年省 US$5.05M，第 1 年回本**；每年云账单高于约 US$2.19M 时买硬件才划算。
+
+**初创公司（示意）**：示意数字：每年云账单只有 US$200K，需求不可预测。买硬件要 US$300K、每年还要 1 名运维，出云很难回本。
+
+|       | 起点      | Y1      | Y2      | Y3      |
+| ----- | ------- | ------- | ------- | ------- |
+| 云：累计  | US$0K   | US$200K | US$400K | US$600K |
+| 自有：累计 | US$380K | US$540K | US$700K | US$860K |
+
+**3 年多花 US$260K，留在云上更便宜**；每年云账单高于约 US$287K 时买硬件才划算。
+
+### 6.4 🟡 市场集中：三家占了大半（Slide 32）
+
+![2026 Q1 云基础设施市场份额：AWS 28%、Azure 21%、Google Cloud 14%](images/cloud_page_32.png)
+
+*2026 Q1 云基础设施市场份额：AWS 28%、Azure 21%、Google Cloud 14%（Slide 32）*
+
+- 2026 Q1：**AWS 28%、Microsoft Azure 21%、Google Cloud 14%**，三家合计约 63%；Oracle、阿里云各 4%，Salesforce、华为云、腾讯云各 2%。季度收入 US$129B，同比 +35%。
+- 课件的问题：**三家控制了大部分市场，对买家意味着什么？你会怎么做？**
+
+> **📌 我的解答：寡头市场里的买家**
+>
+> **意味着什么**
+>
+> - **议价能力弱**：选择少，价格和合同条款大多是供应商定的。
+> - **锁定风险高**：每家都推自己的专有服务，用得越多越走不了。
+> - **集中风险**：一家大云出故障，影响的是一大片公司（Slide 13 Availability）。
+> - 好处：大供应商财务稳定、不容易倒闭（Slide 29 Reputation and stability）。
+>
+> **怎么应对**
+>
+> - **设计时就考虑可移植性**：用容器、开源数据库等标准技术，少用专有服务（降低 lock-in）。
+> - **签约时谈好 exit 条款**：数据导出格式、传出费、过渡期支持。
+> - **Multi-cloud / hybrid**：关键 workload 放两家，或者保留自建能力（Slide 23：73% 已经是 hybrid）。
+> - **用规模和承诺换折扣**：reserved / 企业协议；同时考虑 neocloud 等专门供应商作为替代。
+> - **保留谈判筹码**：37signals 的经验说明，「我们真的可以走」本身就是筹码。
+
+![Further reading（optional）：overview、security、resilience、contracting](images/cloud_page_33.png)
+
+*Further reading（optional）：overview、security、resilience、contracting（Slide 33）*
+
+---
+
+# 第二部分 · 案例：37signals
+
+## 7. 🔴 37signals: Should the Company Leave the Cloud?
+
+### 7.1 🟡 背景（案例摘要）
+
+| 项目       | 内容                                                                                           |
+| -------- | -------------------------------------------------------------------------------------------- |
+| 时间       | **2022 年 10 月**，高层准备开基础设施战略会                                                                 |
+| 公司       | 私人持有的软件公司；产品 **Basecamp**（项目管理和协作）、**HEY**（2020 年推出的电邮服务）；还有 Highrise、Campfire、Backpack 等老产品 |
+| 价值观      | **简单、盈利、独立、克制**，不追求不惜代价的增长                                                                   |
+| 现状       | Basecamp「一只脚在云里」十多年；HEY 从上线起**完全**跑在云上；用 AWS 和 Google Cloud 的虚拟机、托管数据库、搜索服务、云存储              |
+| 提案       | 把部分主要 workload 从公有云搬回**自己的硬件**，放在**租来的专业机房**（rent space、power、cooling、network），不是放在办公室       |
+| 出云后仍要自己做 | 管理服务器和软件、监控、安全、备份、设备故障时保持服务（容量规划、灾难恢复、供应商支持）                                                 |
+| 三个选项     | **批准迁移 / 否决 / 要求修改为 hybrid 方案**                                                              |
+| 课堂分组     | Cloud Exit Supporters · Cloud Remainers · Senior Management（听取、提问、拍板）                        |
+
+### 7.2 🔴 案例里的关键事实
+
+| 事实                                                                                                            | 支持谁        | 为什么重要                                     |
+| ------------------------------------------------------------------------------------------------------------- | ---------- | ----------------------------------------- |
+| 成熟产品、稳定的使用模式、订阅制商业模式                                                                                          | Exit       | 弹性的价值取决于需求波动；**需求稳定 → 为弹性付的溢价没用**         |
+| HEY 上线：3 周 **30 万人**试用，内部预测 6 个月 **3 万人**                                                                     | Remain     | 预测错了**一个数量级**；云让公司马上加容量。现在需要多少余量？         |
+| 到 2022 年底 HEY 不再是上线期，领导层认为需求更可预测                                                                              | Exit       | 上线期的理由已经过去                                |
+| HEY 一年光**托管数据库和搜索服务**就付给 Amazon **超过 50 万美元**                                                                 | Exit       | Managed service 很贵；但要看能**真正取消**多少         |
+| 全公司云账单大到「买服务器可能有吸引力」，**前提是不大幅增加人手**                                                                           | 关键条件       | 人员成本是决定性变量（和 Slide 31 一样）                 |
+| DHH：对中等规模、稳定增长的公司，租计算机「mostly a bad deal」；云承诺的降低运营复杂度没有实现                                                     | Exit       | 如果用云仍要同样多的运维人员，云的人力优势就不存在                 |
+| 候选 workload：HEY 应用服务器、数据库、搜索、邮件相关服务；Basecamp 在云上的部分；**老应用**（Highrise、Campfire、Backpack、Writeboard、Ta-da List） | —          | **不是全有或全无**，可以一个一个决定                      |
+| **客户文件**放在云 object storage，是「单独的、更难的问题」                                                                       | Remain（暂缓） | 数据量大，迁移要不丢文件、不影响访问；自建存储、备份、恢复的成本要**单独评估** |
+| 「云支出本身不能证明自有更便宜」：要比较**真正能取消的云费用**和自有的**投资 + 运营 + 迁移成本**                                                       | 方法         | 这句话就是答题的财务框架                              |
+
+### 7.3 🔴 用课上的工具分析：按 workload 拆开
+
+课件的中心句是「repatriation is a workload decision」。所以第一步是**把案例里的候选 workload 一个一个看**，而不是笼统地说「出云」。
+
+| Workload                                                  | 需求特点                      | 出云的好处                    | 出云的风险                                  | 我的判断                           |
+| --------------------------------------------------------- | ------------------------- | ------------------------ | -------------------------------------- | ------------------------------ |
+| **老应用**（Highrise、Campfire、Backpack、Writeboard、Ta-da List） | 不再增长、非常稳定、流量小             | 每年持续付租金却几乎没有弹性需求         | 小；坏了影响的客户少                             | **最先搬**：风险最低，适合作为试点，练出运维能力     |
+| **Basecamp** 在云上的部分                                       | 成熟、稳定增长、可预测               | 规模大，节省明显；公司本来就「一只脚」在自有设施 | 中：核心收入来源，停机代价高                         | **第二批搬**，在老应用试点成功后             |
+| **HEY 应用服务器**                                             | 上线期已过，变得可预测；仍可能有新功能带来的峰值  | 计算资源本身容易搬                | 突发流量（HEY 的教训）                          | **搬**，但保留余量和云上的「溢出」能力          |
+| **HEY 数据库和搜索**（Amazon 托管，每年 50 万美元以上）                     | 稳定                        | 省下 managed service 的溢价   | **最需要专业运维**：备份、复制、故障切换都要自己做            | **搬，但要先确认有人能管**；可以放在最后一批       |
+| **邮件相关服务**                                                | 稳定，但对可靠性和安全（垃圾邮件、投递信誉）要求高 | 同上                       | 邮件中断对用户影响大                             | 跟着 HEY 应用一起评估                  |
+| **客户文件（object storage）**                                  | 量巨大、只增不减                  | 存储量大，长期节省可能最大            | 数据迁移风险最大（丢文件、访问中断），**数据传出费**高，要自建备份和恢复 | **暂时留在云上**，作为单独的决定，等计算部分稳定后再评估 |
+
+> **🎯 🎯 这张表本身就是答案的骨架**
+>
+> 题目问「要不要出云」，最好的结构是：**先按 workload 分类 → 说明每一类的需求特点 → 决定哪些出、哪些留、按什么顺序**。比一句「建议出云，因为省钱」高好几个档次。
+
+### 7.4 🔴 财务：能省多少，取决于你算了什么
+
+案例原话：*This spending alone does not establish whether owned hardware would be cheaper.* 正确的比较是：
+
+**真正能取消的云费用** vs **自有方案的（硬件投资 + 机房 + 人员 + 运营 + 迁移成本）**
+
+| 要算进去的   | 案例 / 课件给了什么                          | 容易漏掉的                             |
+| ------- | ------------------------------------ | --------------------------------- |
+| 能取消的云费用 | 每年 US$3.2M → 出云后 US$1.3M（Slide 2，自报） | 剩下 US$1.3M 里有什么？（客户文件、仍在云上的服务）    |
+| 硬件投资    | US$600K（Slide 2）                     | **峰值余量**：HEY 那种突发要多买；硬件几年后要**更新** |
+| 机房      | 案例：租专业机房的空间、电、冷却、网络                  | Slide 2 的数字有没有包含？                 |
+| 人员      | 前提：**不大幅增加人手**                       | 如果要加 2–3 名运维，结论会变                 |
+| 迁移      | 6 个月搬 7 个应用（Slide 2）                 | 工程师几个月不做产品的**机会成本**；迁移期间两边一起付钱    |
+| 风险成本    | —                                    | 停机的损失、数据丢失的风险、灾难恢复设施              |
+
+*（网页版此处可以拖动年数、云账单、硬件、运营和迁移成本，看累计成本曲线；下面是四个预设的结果）*
+
+**课件 p.31：3 年 TCO**：On-prem：硬件 US$240K（含第 3 年更新）+ 每年机房 18K、软件 30K、1 名 IT 120K… 合计 3 年 624K；Cloud（reserved）：每年约 111K，3 年 332K。这里的「Own」就是 on-premises。
+
+|       | 起点      | Y1      | Y2      | Y3      |
+| ----- | ------- | ------- | ------- | ------- |
+| 云：累计  | US$0K   | US$111K | US$221K | US$332K |
+| 自有：累计 | US$240K | US$368K | US$496K | US$624K |
+
+**3 年多花 US$292K，留在云上更便宜**；每年云账单高于约 US$208K 时买硬件才划算。
+
+**37signals：课件 p.2 的数字（自报）**：每年云账单 US$3.2M → 出云后 US$1.3M，买了 US$600K 服务器。只用课件给的数字，没有单独计机房租金、额外人手和迁移成本：这是公司自己报告的口径。
+
+|       | 起点      | Y1       | Y2       | Y3       | Y4        | Y5        |
+| ----- | ------- | -------- | -------- | -------- | --------- | --------- |
+| 云：累计  | US$0K   | US$3.20M | US$6.40M | US$9.60M | US$12.80M | US$16.00M |
+| 自有：累计 | US$600K | US$1.90M | US$3.20M | US$4.50M | US$5.80M  | US$7.10M  |
+
+**5 年省 US$8.90M，第 1 年回本**；每年云账单高于约 US$1.42M 时买硬件才划算。
+
+**37signals：加上保守假设（我的假设）**：示意数字：服务器多买 50% 作为应对突发的余量（US$900K）；每年加机房 US$250K、2 名运维 US$400K；一次性迁移 US$300K（工程师几个月不做产品）。看结论会不会变。
+
+|       | 起点       | Y1       | Y2       | Y3       | Y4        | Y5        |
+| ----- | -------- | -------- | -------- | -------- | --------- | --------- |
+| 云：累计  | US$0K    | US$3.20M | US$6.40M | US$9.60M | US$12.80M | US$16.00M |
+| 自有：累计 | US$1.20M | US$3.15M | US$5.10M | US$7.05M | US$9.00M  | US$10.95M |
+
+**5 年省 US$5.05M，第 1 年回本**；每年云账单高于约 US$2.19M 时买硬件才划算。
+
+**初创公司（示意）**：示意数字：每年云账单只有 US$200K，需求不可预测。买硬件要 US$300K、每年还要 1 名运维，出云很难回本。
+
+|       | 起点      | Y1      | Y2      | Y3      |
+| ----- | ------- | ------- | ------- | ------- |
+| 云：累计  | US$0K   | US$200K | US$400K | US$600K |
+| 自有：累计 | US$380K | US$540K | US$700K | US$860K |
+
+**3 年多花 US$260K，留在云上更便宜**；每年云账单高于约 US$287K 时买硬件才划算。
+
+> **📌 我的解答：测算告诉我们什么**
+>
+> 1. **只用课件的数字**：5 年云 US$16M vs 自有 US$7.1M，省约 **US$8.9M**，和公司声称的 US$10M 接近（后者可能包括后来搬走存储等）。第一年就回本。
+> 2. **加上保守假设**（多买 50% 余量、机房 US$250K / 年、2 名运维、迁移 US$300K）：仍然省约 **US$5M**。说明对 37signals 这种规模，**结论比较稳健**：账单太大了。
+> 3. **真正的盈亏平衡点**：每年云账单要高过约 US$1.4–2.2M 才值得出云。小公司（「初创公司」预设）完全反过来。
+> 4. **结论对「人」最敏感**：把每年运营成本再加 US$1M（例如运维团队翻倍），省下的钱就大幅缩水。所以案例特别强调「provided the company can operate them without significantly increasing staff」。
+
+> **⚠️ ⚠️ 引用这些数字时要小心**
+>
+> - Slide 2 写明 **company figures are self-reported**：DHH 是出云最有名的倡导者，数字可能偏乐观（例如没计人员时间和机房）。答题时写「37signals reported / claimed」，不要写成事实。
+> - 「账单降到 US$1.3M」和「5 年省 US$10M」的口径不一定一致，不要硬把两个数字算成一个结论。
+
+### 7.5 🔴 三方立场：Supporters · Remainers · Senior Management
+
+#### Cloud Exit Supporters（支持出云）
+
+| 论点                                             | 背后的课上概念                                          |
+| ---------------------------------------------- | ------------------------------------------------ |
+| **需求已经稳定**：Basecamp 成熟、HEY 已过上线期；我们在为用不到的弹性付溢价 | Elasticity 的价值来自波动（Slide 9、30）                   |
+| **账单巨大**：每年 US$3.2M，HEY 光托管数据库和搜索就 50 万以上      | TCO（Slide 31）：规模大时自有更便宜                          |
+| **云没有减少运维复杂度**：我们仍然需要同样的工程师                    | Slide 31 的优势主要来自人员，这里不成立                         |
+| **Lock-in 越来越深**：越用 AWS 专有服务，越晚走越贵             | Vendor lock-in（Slide 13）、Exit strategy（Slide 29） |
+| **符合公司价值观**：简单、盈利、独立                           | 第 1 周：IT 要**符合商业模式**                             |
+| **可以分阶段、可回退**：机器放在专业机房，不是从零建机房                 | 风险可控                                             |
+| **业界也在这样做**：83% 的 CIO 计划搬回至少一个 workload        | Slide 3                                          |
+
+#### Cloud Remainers（留在云上）
+
+| 论点                                        | 背后的课上概念                                   |
+| ----------------------------------------- | ----------------------------------------- |
+| **预测会错**：HEY 的教训是错了 10 倍；下一个新产品呢？         | Under-capacity 的代价（Slide 9）               |
+| **运维责任全部回到自己身上**：容量、故障、补丁、监控、备份、灾难恢复      | Loss of control 反过来变成 full responsibility |
+| **可靠性**：大云的冗余超过我们自建的水平                    | Reliability（Slide 12）                     |
+| **分散注意力**：工程师去搬家，就没有在做产品                  | 机会成本                                      |
+| **省钱的数字不可靠**：自报、没算全人员和迁移成本                | TCO 要全口径                                  |
+| **Agility**：新产品、新功能想试就试，不需要先买机器           | Brooks Brothers（Slide 10）                 |
+| **客户文件迁移风险极大**                            | 数据迁移、egress                               |
+| **市场方向**：公有云支出 2025 年仍增长 21%；只有 8–9% 完全退出 | Slide 3                                   |
+
+*（网页版此处是点选练习：这个论点支持「出云」还是「留在云上」？；下表是全部题目和答案）*
+
+| 挑战                                  | 答案               | 理由                                             |
+| ----------------------------------- | ---------------- | ---------------------------------------------- |
+| Basecamp 和 HEY 都已经是成熟产品，需求可以预测      | **Cloud Exit**   | Elasticity 的价值来自需求波动；需求稳定时，为灵活性多付的钱就浪费了        |
+| HEY 上线时 3 周来了 30 万人，预测只有 6 个月 3 万人  | **Cloud Remain** | 预测会错，而且错一个数量级；云可以马上加容量                         |
+| HEY 一年光数据库和搜索服务就付给 Amazon 超过 50 万美元 | **Cloud Exit**   | Managed services 很贵，而且单价不会因为你长大而变便宜            |
+| 出云后要自己处理容量规划、硬件故障、安全更新、监控、备份和灾难恢复   | **Cloud Remain** | 这些责任以前是供应商承担的；做不好就是服务中断                        |
+| DHH：云承诺的「降低运营复杂度」在 37signals 并没有实现  | **Cloud Exit**   | 如果用云仍然需要同样多的运维人员，云的人力成本优势就不存在                  |
+| 工程师把几个月花在迁移上，就没有在做产品                | **Cloud Remain** | 机会成本：迁移会分散产品开发的注意力                             |
+| 公司重视简单、盈利、独立，而不是不惜代价的增长             | **Cloud Exit**   | 商业模式和文化：不靠爆发式增长，就不太需要为弹性付溢价；减少对外部供应商的依赖也符合「独立」 |
+| 把海量客户文件从 S3 搬走，可能丢文件或影响客户访问         | **Cloud Remain** | Object storage 的迁移风险最大，应该和应用服务器分开决策            |
+| 依赖 AWS / Google 的专有服务，以后换供应商会越来越难   | **Cloud Exit**   | Vendor lock-in（Slide 13）：越晚走越贵                 |
+| 云提供商的冗余和备份，超过大多数公司自建的水平             | **Cloud Remain** | Reliability（Slide 12）：自建要多花钱才能达到同样的可用性         |
+
+#### Senior Management 应该问的问题
+
+> **📌 我的解答：作为 Senior Management，拍板前要问清楚**
+>
+> 1. **哪些云费用能真正取消？** 剩下的 US$1.3M 里是什么？
+> 2. **要加多少人？** 「不大幅增加人手」的假设有多可靠？现有工程师有没有运维硬件的经验？
+> 3. **余量多少？** 如果下一个产品像 HEY 一样爆发，多久能加机器？能不能临时溢出（burst）到云上？
+> 4. **可靠性目标是什么？** 宕机多少小时可以接受？灾难恢复的第二个机房在哪？
+> 5. **顺序和回退方案**：先搬哪个？如果第一批出问题，能不能搬回去？
+> 6. **客户文件怎么办？** 要不要现在就决定？
+> 7. **机会成本**：迁移期间哪些产品工作会延后？
+> 8. **怎么衡量成功？** 每月的总成本、uptime、工程师花在运维上的时间。
+
+### 7.6 🔴 我的建议：有条件、分阶段的出云（modified hybrid）
+
+> **📌 我的解答：Approve a phased, workload-by-workload exit — not all at once, and not the files yet**
+>
+> **结论**：批准出云，但**不是一次全部搬**，而是一个**分阶段、按 workload、保留云上弹性**的方案。形式上接近案例里的第三个选项（modified hybrid proposal）。
+>
+> **理由**
+>
+> 1. **需求特点支持出云**：成熟产品、需求可预测、订阅制，弹性的价值已经很小。
+> 2. **规模支持出云**：账单每年数百万，即使用保守假设也能省下可观的钱。
+> 3. **符合商业模式和价值观**：简单、独立、盈利；减少对单一供应商的依赖。
+> 4. **但风险集中在少数 workload**：数据库、搜索和客户文件最难、最贵，应该放在后面或暂缓。
+>
+> **分阶段**
+>
+> | 阶段 | 做什么                            | 目的                     |
+> | -- | ------------------------------ | ---------------------- |
+> | 1  | 搬**老应用**（Highrise、Campfire 等）  | 低风险试点，建立运维流程和监控        |
+> | 2  | 搬 **Basecamp** 和 **HEY 应用服务器** | 主要的节省来源                |
+> | 3  | 搬 **HEY 数据库、搜索、邮件服务**          | 有了经验再碰最难的部分            |
+> | 暂缓 | **客户文件（object storage）**       | 单独评估：数据迁移风险、自建存储和备份的成本 |
+> | 保留 | 云上的**溢出容量**、新产品上线、灾难恢复         | 保住弹性：下一个「HEY」仍然先放在云上   |
+>
+> **成功条件 / 决策关卡**
+>
+> - 运维人员增加不超过事先设定的上限（例如 1–2 人）。
+> - 每阶段之后对比：实际总成本 vs 预测、uptime 不低于云上的水平。
+> - 硬件留出峰值余量（例如 30–50%），并保持和云供应商的账户，可以在几小时内临时扩到云上。
+> - 任何阶段达不到目标就暂停，不进入下一阶段。
+>
+> **一句话**：*Move the predictable workloads you can operate yourself; keep the cloud for the unpredictable ones and for the data you cannot yet move safely.*
+
+> **💡 🧠 如果你在角色扮演里抽到 Remainers**
+>
+> 最有力的不是「云更好」，而是**攻击 Supporters 的假设**：数字是自报的、没算人员和余量、HEY 证明预测会错、客户文件最难。然后给一个**让步方案**：先只搬老应用试点，用真实数字说话。这样你守住的是「不要一次全搬」，而不是「永远不搬」，更容易被 senior management 接受。
+
+### 7.7 🟡 后来发生了什么（Slide 2）
+
+- 37signals **6 个月把 7 个应用搬出云**，买了 US$600K 的服务器，账单从 US$3.2M 降到 US$1.3M，声称 5 年省 US$10M（Slide 2，来源是 2022–2025 年公司的博客和媒体报道）。
+- 但 Slide 3 立刻提醒：这**不代表所有人都该走**。只有 8–9% 打算完全退出；公有云支出还在增长。
+
+> **⚠️ ⚠️ 和 Zara 一样，别把结局当成因果的证明**
+>
+> 37signals 的成功说明：**对需求稳定、规模够大、有运维能力的公司**，出云可以省钱。它不能证明出云对别的公司也对。答题时写成「37signals' outcome shows that for stable, large and well-understood workloads, owning can be cheaper」，而不是「cloud is too expensive」。
+
+### 7.8 🔴 答题模板（英文）
+
+> **Recommendation.** Approve a phased, workload-by-workload exit rather than an all-at-once migration, and treat customer file storage as a separate decision.
+>
+> **Why the cloud's value has fallen.** Basecamp and HEY are mature subscription products with predictable demand, so the company pays a premium for elasticity it rarely uses. With an annual bill of about US$3.2m, including over US$0.5m for HEY's managed database and search alone, owned hardware placed in rented data-centre space could cost substantially less, provided staffing does not rise significantly.
+>
+> **What could go wrong.** Demand forecasts can be badly wrong (HEY attracted 300,000 users in three weeks against a forecast of 30,000 in six months). The company would take back responsibility for capacity, failures, security, backups and disaster recovery, and engineers would be diverted from product work. The savings figures are self-reported.
+>
+> **How to proceed.** Move legacy applications first as a pilot, then Basecamp and HEY's application servers, and only then databases and search. Keep spare capacity on owned hardware and retain cloud accounts for bursts, new launches and disaster recovery. Proceed to each phase only if cost, uptime and staffing targets are met.
+
+---
+
+# 第三部分 · 案例：Rexel
+
+## 8. 🔴 Rexel：全球统一的招聘系统 vs 本地自主
+
+### 8.1 🟡 背景（案例摘要）
+
+| 项目         | 内容                                                                        |
+| ---------- | ------------------------------------------------------------------------- |
+| 公司         | 国际电气产品分销商（工业、商业、住宅市场），也提供物流、库存管理、技术咨询和培训；1967 年起于法国，主要靠**收购**各地龙头扩张       |
+| 规模（FY2025） | 销售约 **€19.4bn**；欧洲 48%、北美 46%、亚太 6%；**1,876 家分店、17 国**；约 **27,000 名员工**   |
+| 组织         | 董事会、CEO、执行委员会 → 国家公司 → 区域和分店（Rexel USA：8 个区域、460+ 门店，多个品牌）                |
+| 管理原则       | 历史上**高度分权**，**local autonomy 是基础原则**；各国有自己的流程和工具，成熟度不同                    |
+| 本地经理的权力    | 分店经理做预算、管 P\&L、计划销售和运营、维护客户和供应商关系、管库存、带团队（在公司目标和标准之内）                     |
+| IT 的挑战     | CTO：在技术成熟度不同的地区实现一致和标准化是持续的挑战；要在**全球统一标准**和**本地业务需求的灵活性**之间平衡（包括整合收购来的公司） |
+
+**招聘的问题（为什么要改）**
+
+| 问题                                     | 后果                                    |
+| -------------------------------------- | ------------------------------------- |
+| 集团用 **8 个不同的 ATS**，**近一半国家用 Excel** 招聘 | 同样的核心任务用不同的工具做                        |
+| 职位、候选人、招聘活动的信息分散在各系统和表格里               | 总部**看不到全集团的招聘情况**（limited visibility） |
+| 各国招聘流程不同                               | **time-to-hire 等指标无法比较**：开始和结束的定义不一致  |
+| 内部流动缺乏结构                               | 员工能不能看到其他国家的空缺，取决于各国之间怎么协调            |
+
+**决定**：总部选择 **SmartRecruiters** 作为全集团统一的 ATS；总部和本地团队**共同设计（co-design）**；动员 HR 社群；**global governance + local flexibility**。
+
+### 8.2 🔴 角色扮演设定（2025 年 6 月，上线前）
+
+> **📌 案例原文要点：这是假设的课堂练习，不是真实发生的会议**
+>
+> - 为了练习，假设**总部要求每个国家都必须采用** SmartRecruiters。
+> - **Country manager**：本国已经用另一个 ATS 好几年；招聘人员熟悉，流程已按本地团队的方式调整；认为现有系统够用，**没有立即替换的业务理由**。迁移要转移数据、学新平台、重审流程，**同时还要继续招人**。想知道：新平台能照顾哪些本地需求？谁提供实施支持？采用后本国还保留多少自主权？
+> - **HQ 代表**：负责全球招聘平台。
+> - 要讨论的是：本国**要不要**、以及**在什么条件下**换到 SmartRecruiters。
+
+### 8.3 🔴 问题的本质：标准化 vs 本地自主
+
+> **🎯 🎯 这个案例真正考的**
+>
+> 不是「招聘系统选哪个」，而是一个 IT 管理的经典矛盾：**集中化 / 标准化（总部要的：可见性、可比性、规模、内部流动）** vs **分权 / 本地自主（国家要的：适应本地市场、对业绩负责、熟悉的流程）**。
+>
+> 好的答案**不选边**，而是回答：**哪些东西必须统一、哪些可以留给本地，以及用什么条件让本地愿意接受**。
+
+|     | 全球统一（HQ 的逻辑）                            | 本地自主（country 的逻辑）                           |
+| --- | --------------------------------------- | ------------------------------------------- |
+| 好处  | 集团视图、可比的 KPI、规模议价、统一的数据和安全、内部流动、并购后更快整合 | 贴近本地劳动力市场、法规、语言；本地经理对结果负责，就该有工具的选择权；流程已经优化过 |
+| 代价  | 一刀切的流程不适合某些国家；本地要付迁移和学习成本               | 数据孤岛、无法比较、重复采购和维护 8 个系统、员工看不到集团机会           |
+| 谁得益 | 总部、集团 HR、想跨国发展的员工、成熟度低的国家（从 Excel 升级）   | 成熟度高、已有好系统的国家                               |
+
+> **💡 🧠 和第 1 周的连接**
+>
+> - **OTISLINE**：系统让总部看得见一线（透明），**被看见的人会抵触**。Rexel 一样：统一 ATS 后，各国的 time-to-hire 第一次可以被直接比较。
+> - **CRM 课件 p.3**：每个部门一套系统 = **信息孤岛**；Rexel 是每个**国家**一套系统。
+> - **Zara**：*Standardization without ERP*，Zara 在全球用同一套流程，靠的是很少的 IT。Rexel 反过来：**历史上就没有统一流程**，所以要借一个统一平台来推动流程统一。
+
+### 8.4 🔴 HQ 代表的论点
+
+| 论点                                           | 用案例事实支撑                                        |
+| -------------------------------------------- | ---------------------------------------------- |
+| **集团视图**：总部现在看不到全集团的招聘                       | 8 个 ATS + 近一半国家用 Excel                         |
+| **可比的指标**：统一 time-to-hire 等定义，才能找出谁做得好、推广好做法 | 案例点名：定义不一致就无法比较                                |
+| **内部流动**：员工能看到集团所有空缺，留住人才、降低外部招聘成本           | 案例点名：internal mobility lacked structure        |
+| **规模**：一个合同、一个供应商，降低许可、维护、集成和安全的总成本          | 和 Slide 29「Cost — TCO」一致                       |
+| **SaaS 的好处**：供应商负责升级、安全、可用性；本国不用再维护自己的系统     | Slide 12：rapid deployment、security、reliability |
+| **数据合规**：候选人数据在一个受控平台上，比 Excel 更容易满足隐私法规     | Excel 招聘是合规风险                                  |
+| **不是一刀切**：co-design、本地 HR 参与、保留本地做法的灵活性      | 案例原文：global governance + local flexibility     |
+| **并购整合**：Rexel 靠收购增长，新收购的公司可以直接接入            | CTO 的原话                                        |
+
+### 8.5 🔴 Country manager 的担忧和条件
+
+| 担忧                                | 为什么合理                  | 要求的条件（我的解答）                                           |
+| --------------------------------- | ---------------------- | ----------------------------------------------------- |
+| **现有系统够用**，换了对本国没有直接好处            | 好处主要在总部和集团，成本在本地       | 说清楚本国能得到什么（集团人才库、内部候选人、HQ 承担的费用）；不要让本国**一边付成本、一边被考核** |
+| **本地需求**能不能被照顾：语言、本地招聘网站、劳动法、审批流程 | SaaS 只能配置不能改（Slide 19） | 上线前做 **fit-gap 分析**，列出必须保留的本地需求和平台怎么配置；做不到的有替代方案      |
+| **谁提供实施支持？**                      | 本地团队要一边招人一边迁移          | HQ 提供项目团队、数据迁移、培训和上线后的支持；**费用由集团承担**或分摊               |
+| **迁移时机**                          | 招聘旺季切换会直接影响业务          | 避开招聘高峰；新旧系统**并行**一段时间；已经在进行中的职位在旧系统里走完                |
+| **数据迁移**                          | 历史候选人和职位数据不能丢；要符合隐私法规  | 明确迁移哪些数据、谁验证、旧系统保留多久（只读）                              |
+| **采用后还有多少自主权**                    | 本地经理对招聘结果负责            | 写清楚**决策权分配**：哪些是全球标准、哪些本地可以配置、怎么申请变更（变更委员会里有国家代表）     |
+| **会不会被用来考核**                      | 新的可比指标会让本国被直接比较        | 先统一定义、给过渡期，再用来比较；指标用于**改进**而不是惩罚                      |
+| **旧系统的合同和成本**                     | 可能还有未到期的合同             | 由 HQ 处理违约 / 提前终止的成本                                   |
+
+*（网页版此处是点选练习：Rexel 的招聘平台：这一项应该全球统一，还是允许本地灵活？；下表是全部题目和答案）*
+
+| 挑战                          | 答案               | 理由                                               |
+| --------------------------- | ---------------- | ------------------------------------------------ |
+| 用哪一个 ATS 平台                 | **全球统一**         | 八个 ATS + Excel 正是问题来源；平台不统一就没有集团视图               |
+| time-to-hire 从哪一天开始算、到哪一天结束 | **全球统一**         | 定义不统一，各国的数字就不能比较（案例原文）                           |
+| 职位、候选人的核心数据字段（职位类别、状态、来源）   | **全球统一**         | 统一的数据模型才能汇总、比较、做内部流动                             |
+| 职位广告的语言和发布到哪些本地招聘网站         | **本地灵活（在平台内配置）** | 本地劳动力市场不同；这是配置，不影响集团数据                           |
+| 符合本国劳动法和隐私法的步骤（背景调查、候选人同意）  | **本地灵活（在平台内配置）** | 法规因国而异，必须按本地要求配置；集团可以定一个最低标准                     |
+| 内部空缺对全集团员工可见                | **全球统一**         | Internal mobility 缺乏结构是案例点名的问题，只有统一平台才能做到        |
+| 面试轮数、谁来审批录用                 | **本地灵活（在平台内配置）** | 本地经理对业绩负责（branch manager 管自己的 P\&L 和团队），流程细节可以配置 |
+| 给总部看的招聘报表和 KPI              | **全球统一**         | HQ 现在缺的就是 group-wide view                        |
+
+### 8.6 🔴 用第 1 周的四维框架看实施挑战
+
+| 维度             | Rexel 的实施挑战（我的解答）                                                                       |
+| -------------- | --------------------------------------------------------------------------------------- |
+| **Structure**  | 一向以 local autonomy 为原则的公司，第一次由总部规定系统：**决策权上移**；各国招聘数据第一次对总部透明，本地失去对信息的控制（和 OTISLINE 同理） |
+| **Complexity** | 17 国、8 个 ATS + Excel 的数据迁移；各国技术成熟度不同；要和本地招聘网站、HR 系统、收购来的公司对接；隐私法规因国而异                   |
+| **People**     | 熟悉旧系统的招聘人员要重新学；过渡期工作量增加、效率下降；country manager 看不到好处会消极配合；已有好系统的国家抵触最大                    |
+| **Process**    | 各国按旧系统调整过的流程要对照新平台重新设计；统一 time-to-hire 等数据定义；新增内部流动的流程（谁能看、怎么申请）                        |
+
+*（网页版此处是点选练习：这个 Rexel 实施挑战属于 Structure / Complexity / People / Process 哪一类？；下表是全部题目和答案）*
+
+| 挑战                                          | 答案             | 理由                            |
+| ------------------------------------------- | -------------- | ----------------------------- |
+| 一向以 local autonomy 为原则的公司，第一次由总部规定各国必须用哪个系统 | **Structure**  | 决策权从各国转向总部：权力结构变了             |
+| 总部第一次能直接看到各国的招聘数据和 time-to-hire             | **Structure**  | 信息流向变化，各国表现变透明（和 OTISLINE 一样） |
+| 17 个国家、8 个 ATS 加上 Excel 的数据都要迁移，各国技术成熟度不同   | **Complexity** | 规模、数据迁移、起点不一样                 |
+| 还要和收购来的公司、各国的 HR 系统和招聘网站对接                  | **Complexity** | 集成难度                          |
+| 用了多年旧系统的招聘人员要重新学习，还要一边继续招人                  | **People**     | 培训和工作负担；过渡期效率下降               |
+| Country manager 觉得旧系统没问题，看不到换的好处            | **People**     | 成本由本地承担、好处主要在总部：典型的阻力来源       |
+| 各国按旧系统调整过的招聘流程，要对照新平台重新设计                   | **Process**    | 流程重新设计，不能把旧流程原样搬进去            |
+| 统一「招聘从哪天开始、到哪天结束」等数据定义                      | **Process**    | 数据标准属于流程和定义问题                 |
+
+### 8.7 🔴 我的建议：用条件换同意 —「全球统一核心、本地配置细节」
+
+> **📌 我的解答：会议应该得出的结论**
+>
+> **结论**：本国**同意采用** SmartRecruiters，但写成一份**有条件的协议**，不是单方面的命令。
+>
+> **全球统一的（non-negotiable core）**
+>
+> - 平台本身（SmartRecruiters）。
+> - 核心数据模型和指标定义（职位、候选人状态、time-to-hire 的起止点）。
+> - 集团报表、内部空缺对全集团可见。
+> - 隐私和数据安全的最低标准。
+>
+> **本地可以配置的（local configuration）**
+>
+> - 语言、本地招聘网站、广告模板。
+> - 面试轮数、审批层级、录用流程的细节。
+> - 本国法规要求的额外步骤（背景调查、同意书、数据保留期限更严格的规定）。
+>
+> **HQ 的承诺**
+>
+> - 实施团队、数据迁移、培训和上线后支持，费用由集团承担。
+> - 上线前做 fit-gap 分析，本国参与 co-design。
+> - 变更管理机制：国家代表参与平台配置的变更委员会。
+>
+> **本国的承诺**
+>
+> - 按约定的时间表切换（避开招聘高峰、短期并行），旧系统设定退役日期。
+> - 使用统一的数据定义和报表。
+>
+> **顺序**：先迁移**近一半用 Excel 的国家**（好处最明显、阻力最小），已有成熟 ATS 的国家放在后面，等平台的本地配置被证明可行后再切换。
+>
+> **一句话**：*Standardise what the group needs to see and compare; leave to countries what they need to compete locally; and pay for the transition at the centre.*
+
+> **🎯 🎯 这种「总部 vs 本地」题的答题结构**
+>
+> 1. **说明总部要解决的业务问题**（可见性、可比性、规模、内部流动），用案例事实。
+> 2. **承认本地的合理担忧**（谁付成本、谁得好处、本地需求、自主权）。
+> 3. **划分全球 vs 本地**：什么必须统一、什么可以配置。
+> 4. **给出条件和顺序**：支持、资金、时机、变更机制、先易后难。
+> 5. 必要时用 **Structure / Complexity / People / Process** 列实施挑战。
+
+> **➕ 课外补充：federated IT governance**
+>
+> 这种「核心统一、细节本地」的安排在 IT 治理里叫 **federated model**（联邦式）：介于完全集中（centralized）和完全分权（decentralized）之间。课程后面的 **IT Governance** 模块（第 1 周课程地图）会讲到。可以记一个判断标准：**需要跨单位比较、共享或整合的东西集中；只影响本单位、需要贴近市场的东西下放。**
+
+### 8.8 🔴 答题模板（英文）
+
+> **The business problem.** Rexel runs eight applicant-tracking systems and nearly half its countries recruit in Excel. Headquarters has no group-wide view of recruitment, metrics such as time-to-hire cannot be compared because definitions differ, and internal mobility depends on ad hoc coordination.
+>
+> **The case for a common platform.** A single SaaS platform gives group visibility, comparable metrics, structured internal mobility, lower total cost and faster integration of acquired businesses, while the vendor takes over upgrades, security and availability.
+>
+> **The country's concerns.** The benefits accrue mainly to the group while the costs of migration, retraining and disruption fall on the country, during a period when it must keep filling vacancies. A SaaS platform can be configured but not rewritten, so local requirements may not fit, and the country fears losing discretion over a process it is accountable for.
+>
+> **Recommended terms.** Adopt, but on agreed terms: standardise the platform, core data definitions, group reporting and minimum privacy standards; let countries configure language, job boards, interview and approval steps, and legal requirements. Headquarters funds implementation, migration and training, runs a fit-gap analysis with the country, and gives countries a voice in platform changes. Migrate Excel-based countries first, run old and new systems in parallel outside peak hiring periods, and set a retirement date for the old system.
+
+---
+
+# 附 · Assignment 1
+
+## 9. 🟡 LearnSphere Online：CRM, or Not to CRM?（回顾）
+
+这是 Assignment 1 的案例，详细分析在本地的作业笔记里（没有发布）。这里只记结论和它和本周内容的联系。
+
+> **📌 我们组的结论**
+>
+> **Limited, phased implementation**：不批准现在全面上线 EduConnect 360，也不是简单推迟。
+>
+> | 阶段       | 时间          | 做什么                                                            |
+> | -------- | ----------- | -------------------------------------------------------------- |
+> | 0. 打基础   | 2027 Q1–Q2  | 稳定 LMS；统一学员 ID 和完成、出勤、参与度的定义；核实独立活跃学员人数；改入门课的 onboarding 和课前诊断 |
+> | 关卡 1     | 2027 年 6 月底 | 数据和 LMS 达标，才签试点合同                                              |
+> | 1. 窄范围试点 | 2027 Q3–Q4  | 只上**企业客户报告仪表盘 + 企业学员风险预警**，设对照组                                |
+> | 关卡 2     | 2028 年初     | 数据、使用率、业务结果都达标才扩展                                              |
+> | 2. 扩展    | 2028 年起     | 个人学员的复购营销、advisor 任务列表、风险评分                                    |
+>
+> **三个风险 → 方案设计**：数据和集成没准备好 → 决定**先后顺序**；组织消化能力不足（四年四个项目）→ 决定**范围**；现金紧张、收益假设乐观 → 决定**时机和方式**（试点 + 关卡）。
+>
+> **核心句**：问题是一个「学员成功」问题，有四个原因（关系管理、课程太难、数据分散、组织没稳定），**CRM 只能解决其中一个**；CRM 是放大器，不是根本原因的修复。
+
+> **💡 🧠 用本周的云知识再看 LearnSphere**
+>
+> - **EduConnect 360 是 SaaS**：按「过去 12 个月的独立活跃学员」订阅、最多 150,000 人，这是 Slide 30 的 **commit ahead（Book it）**：承诺越多单价越低，但买多了也要付。所以签约前核实真实人数、超额价格，就是在管理「over-buying」的风险。
+> - **Capex → opex**（Slide 31）：SaaS 不用买服务器，但每年 US$50–65 万的持续成本会一直付下去；对现金只剩约 US$3.2M 的公司，**持续成本**和第一年 US$1.05M 一样重要。
+> - **Exit strategy / lock-in**（Slide 29）：学员数据进了供应商的平台，以后换系统要迁移。试点合同要谈好数据导出和较短的合约期。
+> - **SaaS 只能配置不能改**（Slide 19）：LearnSphere 的完成状态定义不一致、流程没理清，SaaS 不会替你解决，只会把混乱自动化（第 1 周 CRM 失败原因：processes not redesigned）。
+
+---
+
+## 10. 🔴 三个案例放在一起：本周的决策模式
+
+|      | 37signals                         | Rexel                          | LearnSphere                  |
+| ---- | --------------------------------- | ------------------------------ | ---------------------------- |
+| 决定什么 | 出不出云（自有 vs 租）                     | 统一不统一（全球 vs 本地）                | 买不买 SaaS CRM（现在 vs 推迟 vs 部分） |
+| 关键事实 | 需求稳定、账单大、HEY 曾爆发                  | 8 个 ATS + Excel、分权传统、定义不一致     | 完成率和复购下滑、数据分散、现金紧张           |
+| 核心问题 | 弹性还值不值钱？能不能自己运维？                  | 哪些要统一才能比较和共享？谁付转换成本？           | 问题的原因是什么？组织准备好了吗？            |
+| 我的结论 | **分阶段、按 workload 出云**，保留云上弹性，文件暂缓 | **有条件采用**：核心统一、细节配置、HQ 出钱、先易后难 | **有限、分阶段、设关卡**               |
+| 共同模式 | 都不是「全做 / 不做」，而是**拆开 → 排顺序 → 设条件** | 同左                             | 同左                           |
+
+> **🎯 🎯 本周可以带进考场的通用答题步骤**
+>
+> 1. **先拆开**：把「一个大决定」拆成几块（workload、哪些统一、哪些模块）。
+> 2. **每一块看业务特点**：需求可预测吗？是不是差异化来源？谁得益、谁付成本？
+> 3. **排顺序**：先做风险低、好处明显的（老应用、用 Excel 的国家、企业客户试点）。
+> 4. **设条件和关卡**：达到什么指标才进入下一步；做不到怎么办（contingency，第 1 周 Zara）。
+> 5. **回到商业模式**：建议要符合这家公司靠什么赢（37signals 的简单和独立、Rexel 的本地经营、LearnSphere 的复购）。
+
+| 第 1 周的工具                                                         | 本周用在哪                                              |
+| ---------------------------------------------------------------- | -------------------------------------------------- |
+| IT 决策是商业决策                                                       | 云是「买 IT 的方式」，按业务特点决定                               |
+| Zara：Business model → IT alignment → 每个提议的价值 / 成本 / 风险 → 建议 + 应急 | 37signals 出云的分析步骤                                  |
+| OTISLINE：Structure / Complexity / People / Process；谁得益谁付代价       | Rexel 的实施挑战和 country manager 的阻力                   |
+| CRM：start narrow、slow return、integration                         | LearnSphere；也适用于 37signals 先搬老应用、Rexel 先迁 Excel 国家 |
+
+---
+
+## 🔴 综合速查表
+
+| 术语                                          | 中文                 | 一句话                                           |
+| ------------------------------------------- | ------------------ | --------------------------------------------- |
+| Cloud computing                             | 云计算                | 把计算当作服务（utility）而不是产品来买                       |
+| Workload                                    | 工作负载               | 一个应用 + 它需要的数据和计算容量；上云 / 出云按 workload 决定       |
+| Repatriation                                | 回迁                 | 把 workload 从公有云搬回自己的设施                        |
+| Elasticity                                  | 弹性                 | 容量跟着实际需求自动加减                                  |
+| Scalability / Agility                       | 可扩展性 / 敏捷          | 量变时跟得上（Uber）/ 做新事情时不用先买设备（Brooks Brothers）    |
+| Over- / under-capacity                      | 容量过剩 / 不足          | 按预测买容量的两种失败                                   |
+| Capex → opex                                | 资本支出 → 运营支出        | 前期不用大笔投资，账单按用量走                               |
+| IaaS / PaaS / SaaS                          | 基础设施 / 平台 / 软件即服务  | 交给供应商的层数越来越多：控制权换速度                           |
+| Shared responsibility                       | 共同责任               | 供应商保护平台，客户保护数据和配置                             |
+| Data residency / sovereignty                | 数据驻留 / 主权          | 法规规定数据可以放在哪个国家                                |
+| Vendor lock-in                              | 供应商锁定              | 专有服务越用越多，换供应商越难越贵                             |
+| Private / Public / Community / Hybrid cloud | 私有 / 公有 / 社群 / 混合云 | 放在哪、谁运营、和谁共享；73% 用 hybrid                     |
+| Serverless / FaaS                           | 无服务器               | 只交代码，按调用和运行时间付费                               |
+| Container                                   | 容器                 | 把应用和环境打包，可以在不同地方运行，降低锁定                       |
+| Edge computing                              | 边缘计算               | 计算放在靠近设备的地方，解决延迟和带宽                           |
+| Neocloud                                    | 新型 GPU 云           | 只按小时租 GPU，比三大云便宜 30–60%                       |
+| Cloud broker                                | 云服务经纪              | 聚合、整合、定制多家云服务                                 |
+| On-demand / Reserved / Spot                 | 按需 / 预留 / 竞价       | Rent it / Book it / Bid for it：承诺越多越便宜、越不能改   |
+| Egress / data transfer out                  | 数据传出费              | 数据拿出云要付费，是出云的隐藏成本                             |
+| TCO                                         | 总拥有成本              | 硬件、机房、软件、人员、余量、迁移全算进去                         |
+| SLA                                         | 服务水平协议             | 合同里承诺的可用性和响应时间                                |
+| Exit strategy                               | 退出策略               | 数据和 workload 能不能带走；签约时最好谈                     |
+| ATS                                         | 招聘管理系统             | 管理职位和候选人（Rexel：8 个 + Excel → SmartRecruiters） |
+| Time-to-hire                                | 招聘周期               | 要统一起止定义才能跨国比较                                 |
+| Internal mobility                           | 内部流动               | 员工看到并申请集团内其他职位                                |
+| Local autonomy                              | 本地自主               | Rexel 的历史原则：各国自己的流程和工具                        |
+| Global governance + local flexibility       | 全球治理 + 本地灵活        | 核心统一、细节配置（federated model）                    |
+| Fit-gap analysis                            | 差距分析               | 上线前对比本地需求和标准平台能做到什么                           |
+
+---
+
+## 模拟自测题
+
+**1. 课件说「Repatriation is a workload decision, not a verdict on the cloud」，用 Slide 3 的数据解释。**
+
+> Barclays 调查：83% 的 CIO 计划把**至少一个** workload 搬回本地（2020 年 43%）；但 IDC：只有 8–9% 打算**完全**退出；同时公有云支出 2025 年仍增长约 21%。说明几乎每家公司都在按 workload 调整放置位置（有的搬回、有的上云），而不是整体否定云。
+
+**2. 什么是 elasticity？为什么说它把 IT 从 fixed capital bet 变成 variable cost？**
+
+> Elasticity 是让容量跟着**实际需求**加减，而不是几个月前按预测一次买好。传统 IT 按预测阶梯式购买，需求低时闲置（over-capacity）、需求高时不够（under-capacity）；云按用量付费，所以成本随需求变动，前期不用押注一笔资本支出。
+
+**3. 电力和 IT 的类比合适吗？**
+
+> 部分合适：都是从自给自足变成按需购买的公共服务，有规模经济、按用量计费。但不完全合适：电是标准化的，IT 服务各家不同，换供应商有 lock-in；IT 服务里有**数据**（隐私、驻留）；有些 IT 能力是竞争优势，不能当成通用商品；云出故障时客户会怪你。所以对通用计算成立，对核心系统和数据会低估风险。
+
+**4. 云对大公司还是小公司更有利？**
+
+> 一般对小公司更有利：不用前期投资、请不起完整运维团队、需求不确定性高、能用上供应商级别的安全和可靠性。大公司有资金和团队，核心业务需求稳定、规模经济自己就有，所以相对优势较小；但大公司仍会为新项目的 agility、峰值、全球覆盖、AI 训练用云。37signals 就是「规模大 + 需求稳定 → 云的价值下降」。
+
+**5. 比较 IaaS、PaaS、SaaS，各举一个例子。从 No Cloud 到 SaaS 你牺牲了什么？**
+
+> IaaS 租服务器和存储（EC2、S3），OS 以上自己管；PaaS 租平台，只管应用和数据（Azure、App Engine）；SaaS 直接用应用（Salesforce、Microsoft 365）。往 SaaS 走牺牲的是**控制权和定制能力**（只能配置）、差异化、对数据的直接控制，并加深对供应商的依赖；换来速度、少请人、前期成本低。Slide 19：*trades control for speed*。
+
+**6. 列出云的六个风险，并解释 shared responsibility。**
+
+> Loss of control、Security、Data location、Availability、Connectivity、Vendor lock-in。Shared responsibility：供应商负责平台本身的安全，客户负责自己的数据、权限和配置；很多云上的数据泄露是客户配置错误造成的。
+
+**7. 什么是 private cloud？HKSAR 政府为什么用 hybrid？**
+
+> Private cloud 是只给一个组织用的云，可以在自己机房（internal）、由供应商在公司现场运营（outsourced）或放在供应商那里但专用（hosted）。选它是因为法规和数据主权、安全和控制、稳定大规模需求下的成本。HKSAR 按数据敏感度分层：最敏感的放自建私有云，大规模中等敏感的交给承包商管的私有云，公开和通用服务放公有云，兼顾控制、成本和弹性。
+
+**8. 三种云定价（Rent / Book / Bid）分别适合什么 workload？**
+
+> 按需（Rent）适合不可预测的需求，例如新产品上线、节日峰值、月底分析；预留 / 订阅（Book，最多便宜 75%）适合稳定的基线负载；Spot（Bid，便宜 70–90% 但可能被收回）适合可以中断的批处理。管理问题是 workload 有多可预测，只在需求已知时才承诺。
+
+**9. Slide 31 的 3 年 TCO 里，云便宜的主要原因是什么？为什么这个结论不一定适用于 37signals？**
+
+> 云便宜主要来自**人员**（1.0 FTE vs 0.4 FTE）和**闲置余量**（30% 余量 vs 按需扩容），而这家公司只有 12 台服务器。37signals 规模大得多（年账单 US$3.2M）、需求稳定：人员成本被摊薄、闲置很少，服务费成为大头，自有硬件就可能更便宜。另外 Slide 31 指出更大的管理变化是 capex → opex。
+
+**10. 三家云供应商控制了大部分市场，作为买家你会怎么做？**
+
+> 意味着议价能力弱、锁定风险高、集中故障风险。应对：用容器和开源等标准技术保持可移植性；签约时谈好数据导出、传出费和过渡支持（exit strategy）；关键 workload 用 multi-cloud / hybrid；用承诺换折扣，同时考虑 neocloud 等专门供应商；保留自建能力作为谈判筹码。
+
+**11. 37signals 案例里，支持出云最有力的三个事实和反对出云最有力的三个事实？**
+
+> 支持：① 产品成熟、需求可预测，为弹性付的溢价没用；② 账单巨大（HEY 光托管数据库和搜索每年 50 万美元以上）；③ 云没有减少运维复杂度，仍需要同样的工程师。反对：① HEY 上线 3 周 30 万人，预测错了 10 倍；② 出云后容量、故障、安全、备份、灾难恢复全部要自己负责；③ 迁移分散产品开发注意力，客户文件迁移风险尤其大，省钱数字是自报的。
+
+**12. 为什么客户文件（object storage）要和应用服务器分开决定？**
+
+> 数据量巨大，迁移要保证不丢文件、不中断客户访问；从云里拿出数据要付传出费；搬走后还要自建可靠的存储、备份和恢复，成本要单独评估。风险和成本结构都和应用服务器不同，所以应该在计算部分稳定后再单独决策。
+
+**13. 如果你是 37signals 的 senior management，你会怎么决定？**
+
+> 分阶段、按 workload 出云：先搬老应用试点，再搬 Basecamp 和 HEY 应用服务器，最后搬数据库和搜索；客户文件暂缓、单独评估；保留云账户用于突发、新产品上线和灾难恢复；硬件留峰值余量。每阶段设关卡：成本、uptime、运维人数达标才继续。
+
+**14. Rexel 为什么要统一 ATS？总部的主要论点是什么？**
+
+> 8 个 ATS + 近一半国家用 Excel，总部看不到全集团招聘情况；各国流程和定义不同，time-to-hire 无法比较；内部流动缺乏结构。统一平台带来集团视图、可比指标、内部流动、规模成本优势、更容易整合收购公司，SaaS 还由供应商负责升级和安全。
+
+**15. Country manager 的担忧合理吗？他应该要求什么条件？**
+
+> 合理：好处主要在总部、成本在本地；SaaS 只能配置，本地流程可能不适合；要一边招人一边迁移；可能失去自主权并被直接比较。条件：上线前做 fit-gap 分析并参与 co-design；HQ 提供并资助实施、迁移、培训；避开招聘高峰、并行运行；写清哪些全球统一、哪些本地可配置；变更委员会有国家代表；统一指标先用于改进、给过渡期。
+
+**16. 「全球统一核心、本地配置细节」在 Rexel 案例里具体指什么？**
+
+> 统一：平台、核心数据模型和指标定义（如 time-to-hire 起止点）、集团报表、内部空缺可见、隐私最低标准。本地配置：语言、本地招聘网站、面试和审批步骤、本国法规要求的额外流程。原则：需要跨国比较、共享、整合的集中；只影响本国、需要贴近市场的下放。
+
+**17. 用 Structure / Complexity / People / Process 分析 Rexel 的实施挑战。**
+
+> **Structure**：一向分权的公司由总部规定系统，决策权上移；各国招聘数据对总部透明。**Complexity**：17 国、8 个 ATS 和 Excel 的数据迁移，成熟度不同，要和本地招聘网站、HR 系统、收购公司对接，隐私法规各异。**People**：招聘人员要重新学、过渡期负担重；country manager 看不到好处会抵触，已有好系统的国家阻力最大。**Process**：本地流程要对照新平台重新设计；统一数据定义；建立内部流动流程。
+
+**18. 37signals、Rexel、LearnSphere 三个案例的共同决策模式是什么？**
+
+> 都不是「全做 / 不做」，而是**拆开 → 排顺序 → 设条件**：37signals 按 workload 拆、先搬风险低的；Rexel 拆成全球统一 vs 本地配置、先迁 Excel 国家；LearnSphere 先打基础、窄范围试点、过关卡再扩展。判断依据始终是这家公司的商业模式和准备度。
+
+**\[Long Question · 15 marks · 300–400 words] StreamFit is a profitable online fitness-class company. It has run entirely on a public cloud for six years and now pays about US$2.5 million a year. Its live classes have a stable daily pattern, but traffic doubles every January and spikes unpredictably when a celebrity instructor posts on social media. Its video archive (several petabytes) sits in cloud storage. The CTO proposes moving everything to company-owned servers in a rented data centre, claiming savings of US$1.2 million a year. Should StreamFit's leadership approve the proposal? Justify your recommendation.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[3 分] 按 workload 拆开：稳定的日常直播 vs 一月峰值 vs 不可预测的社交媒体峰值 vs 视频档案存储；不能一刀切  
+> ☐ \[3 分] 出云的理由：需求有稳定基线、账单大、有利可图、减少 lock-in；适合稳定 workload  
+> ☐ \[3 分] 风险：不可预测的峰值需要弹性；自建要负责容量、故障、安全、备份、灾难恢复；视频档案迁移风险和传出费；省钱数字需要核实（人员、余量、迁移、硬件更新）  
+> ☐ \[3 分] 明确建议：不批准「全部搬走」，批准分阶段的 hybrid（基线自有、峰值溢出到云、档案暂缓）  
+> ☐ \[3 分] 条件 / 关卡：TCO 全口径、余量、运维人数上限、uptime 目标、每阶段评估、保留云账户
+>
+> **English**
+>
+> **Recommendation.** Do not approve moving everything; approve a phased hybrid plan in which the predictable workloads move to owned servers and the cloud is kept for peaks and, for now, for the video archive.
+>
+> **Splitting the decision.** StreamFit has several workloads with different demand patterns. The daily live classes form a stable, predictable baseline: this is where owned hardware is cheapest, because the servers would be used most of the time. The January surge is predictable but short, and celebrity-driven spikes are unpredictable; buying hardware for these peaks would leave it idle most of the year, so they are best served by renting capacity on demand. The video archive is a separate decision: moving several petabytes risks losing files or disrupting access, incurs data-transfer charges, and requires the company to build its own storage, backup and recovery.
+>
+> **Testing the savings.** The claimed US$1.2 million a year must be checked against the full cost of ownership: hardware with spare capacity and periodic refresh, data-centre space, additional operations staff, migration effort and the engineering time diverted from product work. The case for owning is strongest only if staffing does not rise significantly.
+>
+> **How to proceed.** Move the baseline streaming servers first, keep cloud accounts for January and for unexpected spikes, and leave the archive in cloud storage until the compute migration has proved stable. Proceed to each phase only if cost, uptime and staffing targets are met, and keep a contingency to burst back to the cloud.
+>
+> **中文解析**
+>
+> 这道题是 37signals 换了个行业：**日常直播 = Basecamp（稳定），社交媒体峰值 = HEY 上线（预测会错），视频档案 = 客户文件（单独决定）**。关键是不回答「出云好不好」，而是按 workload 拆开，并指出 CTO 的省钱数字要全口径核实。
+
+**\[Long Question · 15 marks · 300–400 words] GlobalCare is a hospital group with 40 hospitals in 9 countries, built through acquisitions. Each hospital chooses its own staff-rostering software; some use spreadsheets. Group headquarters cannot see staffing levels across the group, overtime costs cannot be compared, and nurses cannot easily pick up shifts at nearby hospitals. Headquarters has selected a single SaaS rostering platform and wants all hospitals to adopt it. The director of one hospital, whose current system works well and is tailored to local labour agreements, objects. How should headquarters and the hospital resolve this?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[3 分] 总部要解决的业务问题：集团视图、可比的加班成本、跨医院调配（内部流动）、规模和并购整合  
+> ☐ \[3 分] 医院的合理担忧：成本在本地、好处在集团；SaaS 只能配置；本地劳动协议；过渡期影响排班和患者安全；失去自主权、被比较  
+> ☐ \[4 分] 划分全球统一 vs 本地配置：平台、数据定义（加班、班次）、集团报表、跨院可见统一；劳动协议规则、班次模板、审批本地配置  
+> ☐ \[3 分] 条件：fit-gap、co-design、总部出钱和支持、避开高峰并行、变更委员会、指标先用于改进  
+> ☐ \[2 分] 顺序（先迁用 spreadsheet 的医院）和实施挑战（可用四维框架简述）
+>
+> **English**
+>
+> **The group's problem.** Without a common rostering system, headquarters cannot see staffing levels, overtime costs are measured differently and cannot be compared, and nurses cannot be shared across nearby hospitals. A single platform would give group visibility, comparable cost data, cross-hospital shift sharing and a faster way to integrate acquired hospitals.
+>
+> **The hospital's concerns are legitimate.** The benefits flow mainly to the group while the hospital bears the cost and disruption of switching. Its current system encodes local labour agreements, and a SaaS platform can be configured but not rewritten. A badly managed switch could disrupt rosters and patient care, and the director fears losing discretion and being compared on new metrics.
+>
+> **Resolution: a common core with local configuration.** Standardise the platform, the definitions of shifts and overtime, group reporting and the visibility of open shifts across hospitals. Let each hospital configure rules required by local labour agreements, shift templates and approval steps. Before migration, headquarters should run a fit-gap analysis with the hospital and confirm that its labour rules can be configured.
+>
+> **Terms and sequence.** Headquarters funds implementation, data migration and training; the hospital runs old and new systems in parallel outside peak periods and agrees a retirement date for the old system. Hospitals using spreadsheets move first, where the gain is clearest; well-run hospitals follow once local configuration has been proved. A change board with hospital representatives governs the platform, and new metrics are used first for improvement rather than judgement.
+>
+> **中文解析**
+>
+> 这道题是 Rexel 换成医院：**医院 = 国家公司，排班系统 = ATS，加班成本 = time-to-hire，跨院调班 = internal mobility**。拿分的关键是承认对方的担忧，并清楚划出全球统一和本地配置的边界，再给出条件和顺序。
