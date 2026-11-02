@@ -56,6 +56,7 @@ import { LOOKUP_PRESETS, LOOKUP_ROUTERS, buildTable, lookup as routeLookup, stat
 import { upgradeCost as zaraCost, networkTradeoff as zaraNet, UPGRADE_PRESETS as ZARA_PRESETS, fmtEur } from "../../src/components/mdx/zara-logic.mjs";
 import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute, routeNote as crmRouteNote } from "../../src/components/mdx/crm-logic.mjs";
 import { MODELS as CLOUD_MODELS, STACK as CLOUD_STACK, KITCHEN as CLOUD_KITCHEN, ELASTIC_PRESETS, elasticity, elasticityVerdict, TCO_PRESETS, tco, fmtUsd as cloudUsd } from "../../src/components/mdx/cloud-logic.mjs";
+import { businessCase as crmCase, CASE_PRESETS as CRM_PRESETS, fmtUsdK as crmUsd } from "../../src/components/mdx/crm-case-logic.mjs";
 import { FLOW_PRESETS as OTIS_PRESETS, whoKnows as otisWhoKnows, flowSvg as otisFlowSvg, toStaticSvg as otisStatic, STAKEHOLDERS as OTIS_ROLES, ATTITUDE as OTIS_ATT } from "../../src/components/mdx/otis-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
 
@@ -964,6 +965,18 @@ const components = {
     return [
       note("（网页版此处可以选不同的来电客户，看在 slide 14 流程图里怎么走；下表是三种客户的路径）"),
       table(["来电客户", "路径", "结果"], CRM_CALLERS.map((c) => [c.label, crmRoute(c).map((p) => CRM_STEPS[p.step].split("（")[0] + (p.answer ? ` → ${p.answer}` : "")).join(" ⇒ "), crmRouteNote(c)])),
+    ];
+  },
+  CrmCaseLab() {
+    return [
+      note("（网页版此处可以拖动各项假设，看 EduConnect 360 每年净收益和累计现金流；下面是三个预设的结果）"),
+      ...CRM_PRESETS.flatMap((p) => {
+        const r = crmCase(p.x);
+        return [
+          para(strong(p.label), text(`：${p.note}`)),
+          table(["Repeat", "Tickets", "Corporate", "总收益", "持续成本", "净收益 / 年", "2027", "累计 2030"], [[crmUsd(r.repeat), crmUsd(r.tickets), crmUsd(r.corporate), crmUsd(r.benefit), crmUsd(p.x.ongoing), strong(crmUsd(r.net)), crmUsd(r.years[0].flow), crmUsd(r.years[3].cum)]]),
+        ];
+      }),
     ];
   },
   RouteLookupLab() {

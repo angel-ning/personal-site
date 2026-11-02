@@ -1,16 +1,16 @@
 ---
 title:
-  en: "Week 2 · Cloud Computing, 37signals & Rexel"
-  zh: "第 2 周 · 云计算、37signals 与 Rexel 案例"
+  en: "Week 2 · Cloud Computing, 37signals, Rexel & LearnSphere"
+  zh: "第 2 周 · 云计算、37signals、Rexel 与 LearnSphere 案例"
 summary:
-  en: "Technology topic: cloud computing (why: elasticity, benefits, risks; what: IaaS / PaaS / SaaS and deployment models; how: vendor choice, pricing, TCO). Two cases analysed in depth: should 37signals leave the cloud, and should a Rexel country adopt the global SmartRecruiters platform. Plus a short recap of Assignment 1 (LearnSphere)."
-  zh: "技术专题：云计算（Why：弹性、好处、风险；What：IaaS / PaaS / SaaS 和部署模型；How：选供应商、定价、TCO）。两个案例重点分析：37signals 要不要离开云、Rexel 的国家公司要不要换成全球统一的 SmartRecruiters。附 Assignment 1（LearnSphere）的结论回顾。"
+  en: "Technology topic: cloud computing (why: elasticity, benefits, risks; what: IaaS / PaaS / SaaS and deployment models; how: vendor choice, pricing, TCO). Two cases analysed in depth: should 37signals leave the cloud, and should a Rexel country adopt the global SmartRecruiters platform. Plus the Assignment 1 case, LearnSphere: symptoms, four diagnoses, the CRM business case and how to weigh the three options."
+  zh: "技术专题：云计算（Why：弹性、好处、风险；What：IaaS / PaaS / SaaS 和部署模型；How：选供应商、定价、TCO）。两个案例重点分析：37signals 要不要离开云、Rexel 的国家公司要不要换成全球统一的 SmartRecruiters。以及 Assignment 1 的 LearnSphere 案例：症状、四种诊断、CRM 的 business case 和三个选项怎么权衡。"
 week: 2
 date: 2026-11-02
-tags: [Cloud Computing, IaaS, SaaS, TCO, 37signals, Rexel, Standardization]
+tags: [Cloud Computing, IaaS, SaaS, TCO, 37signals, Rexel, LearnSphere, CRM]
 ---
 # ISOM 5100 Information Strategy & Management — Week 2 复习笔记
-**主题：第一部分 · 技术专题 Cloud Computing（Why / What / How）｜ 第二部分 · 37signals：要不要离开云 ｜ 第三部分 · Rexel：全球统一还是本地自主 ｜ 附：Assignment 1 LearnSphere 回顾**
+**主题：第一部分 · 技术专题 Cloud Computing（Why / What / How）｜ 第二部分 · 37signals：要不要离开云 ｜ 第三部分 · Rexel：全球统一还是本地自主 ｜ 第四部分 · LearnSphere：CRM, or Not to CRM?**
 
 > 优先级标注说明（按考试重要性）：
 > 🔴 **必考核心** — 考试会直接用到的分析方法和结论
@@ -21,7 +21,7 @@ tags: [Cloud Computing, IaaS, SaaS, TCO, 37signals, Rexel, Standardization]
 > ① **期末题型**（第 1 周课件 p.24）：open notes，**new short cases / essay questions**。所以两个案例的**分析方法**比云的定义更重要，第 7、8 节是本周重点；
 > ② **课件的提问**：Cloud Computing 课件几乎每页都留了一个讨论问题（电力类比合适吗？对大公司还是小公司更有利？从 No Cloud 到 SaaS 牺牲了什么？三家寡头对买家意味着什么？），这些问题在第 2–6 节都给了答案；
 > ③ **课件开头和结尾都在讲 37signals**（p.2–3、p.35 workload），说明「出云 / 上云是按 workload 决定的」是这节课的中心句；
-> ④ **你的要求**：LearnSphere 是 Assignment 1，只简单回顾你们已有的结论（第 9 节）；37signals 和 Rexel 着重分析。
+> ④ **你的要求**：三个案例都要会分析。LearnSphere 是 Assignment 1，第 9 节按案例学习整理（证据、框架、三个选项的前提），不写某一个最终决定。
 
 <Callout type="note" title="本笔记里的几种标记">
 
@@ -47,7 +47,7 @@ tags: [Cloud Computing, IaaS, SaaS, TCO, 37signals, Rexel, Standardization]
 | **第一部分 · 技术专题 Cloud Computing** | Why（弹性、好处、风险）→ What（服务模型、部署模型、趋势）→ How（选供应商、定价、TCO、寡头） | 第 1–6 节 |
 | **第二部分 · 37signals** | 一家成熟的软件公司要不要把 workload 从公有云搬回自己的服务器 | 第 7 节 |
 | **第三部分 · Rexel** | 一向分权的跨国公司，总部要求各国统一用一个 SaaS 招聘系统 | 第 8 节 |
-| 附 · LearnSphere（Assignment 1） | 结论回顾 + 和云的关系 | 第 9 节 |
+| **第四部分 · LearnSphere**（Assignment 1） | 学员成功问题有四个原因，要不要现在买 SaaS CRM | 第 9 节 |
 | 三个案例放在一起 | 本周的决策模式 + 和第 1 周框架的联系 | 第 10 节 |
 
 ```
@@ -60,7 +60,7 @@ tags: [Cloud Computing, IaaS, SaaS, TCO, 37signals, Rexel, Standardization]
 
 案例 1 · 37signals：需求稳定 + 账单大 + 有运维能力 → 稳定的 workload 出云，保留弹性和难迁移的部分（hybrid、分阶段）
 案例 2 · Rexel：分权的公司要统一一个 SaaS → 「全球统一核心、本地配置细节」，用条件换 country 的同意
-案例 3 · LearnSphere：一个 SaaS CRM → 有限范围、分阶段、设关卡
+案例 3 · LearnSphere：复购和完成率下跌 → 四位高管四种诊断 → CRM 只能解决其中一部分 → 现在买、推迟还是缩小范围
 ```
 
 **一句话抓住本周**：和第 1 周一样，**IT 决策是商业决策**。云不是「好」或「坏」，而是一种**买 IT 的方式**：看这个 workload 的需求有多可预测、对公司有多重要、你有没有能力自己管，再决定租、订、买，还是统一。
@@ -847,36 +847,313 @@ Slide 12 把 Security 列为好处（供应商级别的控制），Slide 13 又�
 
 ---
 
-# 附 · Assignment 1
+# 第四部分 · 案例：LearnSphere（Assignment 1）
 
-## 9. 🟡 LearnSphere Online：CRM, or Not to CRM?（回顾）
+## 9. 🔴 LearnSphere Online：CRM, or Not to CRM?
 
-这是 Assignment 1 的案例，详细分析在本地的作业笔记里（没有发布）。这里只记结论和它和本周内容的联系。
+<Callout type="note" title="这一节的定位">
 
-<Callout type="note" title="我们组的结论">
-
-**Limited, phased implementation**：不批准现在全面上线 EduConnect 360，也不是简单推迟。
-
-| 阶段 | 时间 | 做什么 |
-|---|---|---|
-| 0. 打基础 | 2027 Q1–Q2 | 稳定 LMS；统一学员 ID 和完成、出勤、参与度的定义；核实独立活跃学员人数；改入门课的 onboarding 和课前诊断 |
-| 关卡 1 | 2027 年 6 月底 | 数据和 LMS 达标，才签试点合同 |
-| 1. 窄范围试点 | 2027 Q3–Q4 | 只上**企业客户报告仪表盘 + 企业学员风险预警**，设对照组 |
-| 关卡 2 | 2028 年初 | 数据、使用率、业务结果都达标才扩展 |
-| 2. 扩展 | 2028 年起 | 个人学员的复购营销、advisor 任务列表、风险评分 |
-
-**三个风险 → 方案设计**：数据和集成没准备好 → 决定**先后顺序**；组织消化能力不足（四年四个项目）→ 决定**范围**；现金紧张、收益假设乐观 → 决定**时机和方式**（试点 + 关卡）。
-
-**核心句**：问题是一个「学员成功」问题，有四个原因（关系管理、课程太难、数据分散、组织没稳定），**CRM 只能解决其中一个**；CRM 是放大器，不是根本原因的修复。
+LearnSphere 是 Assignment 1 的案例，也是第 1 周 CRM 技术专题的应用题。这一节是**案例学习**：事实、证据怎么读、用课上的框架怎么分析、三个选项各自要成立需要什么前提。**不写某一个最终决定**，因为案例要训练的是推理过程（第 1 周 Zara：*no right answer, informed decisions*）。分析部分标为「我的解答」。
 
 </Callout>
 
-<Callout type="tip" title="🧠 用本周的云知识再看 LearnSphere">
+### 9.1 🟡 背景（案例摘要）
 
-- **EduConnect 360 是 SaaS**：按「过去 12 个月的独立活跃学员」订阅、最多 150,000 人，这是 Slide 30 的 **commit ahead（Book it）**：承诺越多单价越低，但买多了也要付。所以签约前核实真实人数、超额价格，就是在管理「over-buying」的风险。
-- **Capex → opex**（Slide 31）：SaaS 不用买服务器，但每年 US$50–65 万的持续成本会一直付下去；对现金只剩约 US$3.2M 的公司，**持续成本**和第一年 US$1.05M 一样重要。
-- **Exit strategy / lock-in**（Slide 29）：学员数据进了供应商的平台，以后换系统要迁移。试点合同要谈好数据导出和较短的合约期。
-- **SaaS 只能配置不能改**（Slide 19）：LearnSphere 的完成状态定义不一致、流程没理清，SaaS 不会替你解决，只会把混乱自动化（第 1 周 CRM 失败原因：processes not redesigned）。
+| 项目 | 内容 |
+|---|---|
+| 公司 | 2018 年在香港成立，给亚洲在职人士提供短期、和工作相关的网课；创办人兼 CEO **Elaine Lau**（HKUST MBA） |
+| 规模（2026 年 10 月） | 64 门课、5 个领域、6 个市场（新加坡、香港、马来西亚、印度、印尼、菲律宾）；**214 名全职员工** + 兼职讲师、助教、课程审稿人 |
+| 组织 | 从创办人主导变成六个职能：Growth & Marketing（含 Enrollment Advisors）、Learning Operations、Product & Technology、Learner Support、Corporate Partnerships、Finance & Admin；另有 Executive & Strategy |
+| 定位 | 夹在三类对手之间：**全球平台**（Coursera、edX、Udemy Business、LinkedIn Learning：便宜、品牌强、课多）、**本地培训机构**（Kaplan HK、Preface、Xccelerate、HKU SPACE：本地关系、时间灵活）、**大学 Executive Education**（HKUST、HKU、CUHK：品牌溢价）。卖点是**课少而精、实用作业、支持快、适合忙碌的职场人** |
+| 收入 | 个人学员 + 企业客户（2024 年起卖课程包给企业） |
+| 商业模式的关键 | **复购**：上完入门课再买进阶课。个人课平均 **US$280**，扣掉讲师、平台、支付费用后**贡献率约 48%**（每多一次复购约 **US$134**） |
+| 市场变化 | 从「卖内容」转向 **learner-success management**：企业买家要完成率、评估结果、参与度证据，证书本身不够了 |
+| 决策 | 要不要买教育行业 CRM **EduConnect 360**：**现在批准 / 推迟 / 有限范围实施** |
+
+**学员旅程（The Learner Journey）**：广告 / webinar / 推荐 → 下载资料、收营销邮件 → **enrollment advisor** 打电话或发消息 → 报名、拿到 LMS 权限和 orientation 清单 → 6–8 周课程（视频、直播、作业、论坛；助教答学术问题，Learner Support 管行政问题）→ 课后问卷 + 第二门课折扣。
+
+<Callout type="exam" title="🎯 先抓住这家公司靠什么赢">
+
+和 Zara 一样，先问商业模式。LearnSphere 不靠课程数量（打不过全球平台），也不靠品牌（打不过大学），靠的是**实用、支持快、学员能学完并回来买下一门**。所以「学员学不完、不回来」直接打在商业模式的核心上，而企业客户要的「完成证据」又变成了销售卖点。CRM 的价值要从这里讲起。
+
+</Callout>
+
+### 9.2 🔴 症状：怎么读 Exhibits 4–6
+
+| 指标（Exhibit 4） | 2024 | 2025 | 2026 | 变化 |
+|---|---|---|---|---|
+| Total enrollments | 82,000 | 104,000 | 128,000 | 还在涨（+27%、+23%） |
+| Revenue | US$22.6M | US$29.8M | US$36.4M | 还在涨（+32%、+22%） |
+| Average CAC | US$78 | US$96 | **US$124** | +59%：增长越来越贵 |
+| Course completion rate | 71% | 66% | **58%** | −13 个百分点 |
+| Second course within 6 months | 34% | 29% | **23%** | 复购在掉，**直接伤商业模式** |
+| Support tickets / 1,000 enrollments | 118 | 143 | **196** | +66% |
+| Corporate revenue share | 18% | 24% | 31% | 企业越来越重要 |
+
+<Callout type="warn" title="⚠️ Exhibit 4 的口径陷阱">
+
+2026 年的报名、收入、企业占比是**全年预测**；CAC、完成率、复购率、工单是**截至 10 月的实际值**（还在进行的课程没算进完成率）。和往年全年数比较要加一句 *interpret with caution*。答题时点出这一点，说明你读了注释。
+
+</Callout>
+
+<Callout type="note" title="我的解答：用 Exhibit 4 + 10 算几个比率，故事更清楚">
+
+| 推算 | 2024 | 2025 | 2026E | 说明什么 |
+|---|---|---|---|---|
+| Sales & marketing ÷ revenue | 28% | 34% | **44%** | 营销支出涨得比收入快（+59% vs +22%） |
+| 企业收入（占比 × 收入） | US$4.1M | US$7.2M | **US$11.3M** | 企业业务快速增长 |
+| 个人收入（剩下的） | US$18.5M | US$22.6M | **US$25.1M** | 个人业务增速从 22% 掉到 11% |
+| 全年工单（每千次 × 报名） | 约 9,700 | 约 14,900 | **约 25,100** | 两年翻了 2.6 倍，比报名增速快得多 |
+| Gross margin | 61% | 59% | 58% | 课程本身的毛利还稳定 |
+| Operating income | +0.7 | −1.6 | **−7.9** | 亏损主要来自营销和支持成本 |
+
+结论：**不是没人买，而是买了学不完、不回来，只好花更多钱去拉新人**。复购下降 → 更依赖拉新 → CAC 上升 → 亏损扩大。这是一个恶性循环。
+
+</Callout>
+
+| 课程（Exhibit 5） | 报名 | 完成率 | 评分 |
+|---|---|---|---|
+| Business Analytics Foundations | 18,400 | **49%** | **3.8** |
+| Digital Marketing Essentials | 15,200 | 63% | 4.2 |
+| Project Management for New Managers | 12,900 | 61% | 4.1 |
+| Data Visualization in Practice | 9,700 | **54%** | **3.9** |
+| AI Tools for Business Productivity | 21,300 | 57% | 4.0 |
+
+**怎么读**：完成率最低的两门正好是**评分最低**的两门，而且都是面向新手的分析类入门课。完成率和满意度一起低，说明**课程本身**可能有问题（太难、基础要求不清楚），这是 Head of Learning Operations 的证据。提醒和营销解决不了一门让人学不下去的课。
+
+| 工单来源（Exhibit 6） | 占比 | 性质 |
+|---|---|---|
+| Login or platform access | 22% | 行政 / 平台（LMS 刚迁移） |
+| Assignment deadline or extension | 19% | 行政（也可能是课太重） |
+| Certificate eligibility or completion status | 17% | **数据定义问题**（完成状态怎么算） |
+| Webinar timing or recording access | 14% | 行政 / 平台 |
+| Payment, invoice, refund | 10% | 行政 |
+| Course content routed to support | 9% | **找错了部门**（学员不知道该问谁） |
+| Other | 9% | — |
+
+前四类合计 **72%**，都是重复的行政问题，而且很多和 **LMS 迁移、完成状态定义**有关：这些是 CTO 和 CFO 诊断的证据。每张工单约 **US$6.40**。
+
+**企业客户的抱怨**：一个公司赞助的分析课只有一半员工完成最终作业；员工停止登录时经理没被提醒；有员工说看完了所有视频却被标为未完成（**报告准不准**）。企业合同 2026 年约 **US$11.3M**，中型客户平均 **US$92,000 / 年**；管理层认为丢两三个企业客户就会实质影响 business case。
+
+### 9.3 🔴 四位高管的四种诊断
+
+| 高管 | 认为问题出在 | 主张 | 支持的证据 |
+|---|---|---|---|
+| **Chief Growth Officer** | 没有系统地管理学员关系：信息分散、跟进靠个人、没人看到学员全貌 | 上 CRM：分群、及时干预、增加复购；竞争对手已经有了 | 复购 34% → 23%；advisor 看得到买了课，看不到有没有开始学；advisor 给还有未解决工单的学员发促销 |
+| **Head of Learning Operations** | 课程对目标学员太难；营销 webinar 讲职业好处、没讲清每周工作量；课程假设了学员没有的基础 | 先改课程节奏、onboarding、课前诊断，再考虑大型 CRM | 入门分析课完成率 49%、评分 3.8；完成率下跌集中在面向新手的高报名课程 |
+| **CTO** | **数据问题**：营销自动化、报名库、支付、LMS、工单、webinar、问卷七个来源各存一部分，重复、不一致、难匹配 | CRM 只有在数据和集成问题**先解决**后才能形成统一视图 | 同一学员在不同系统用不同 email；周报靠手工拼表，数字随定义变；「看完视频却未完成」 |
+| **CFO** | **时机问题**：四年四个大 IT 项目，LMS 迁移还没消化，员工还在学新流程 | 「We may not have a CRM problem yet. We may have a **stabilization** problem.」 | LMS 延期 4 个月、报表功能推迟；Elaine：2027 年只能负担**一个**大型跨部门项目 |
+
+<CaseSortQuiz set="lsdiag" />
+
+<Callout type="exam" title="🎯 这是案例的核心设计">
+
+四个人各说对了一部分，而且他们说的是**不同层次**的事：
+
+- **Learning Ops** 讲的是**根本原因之一**（课程设计）：CRM 解决不了。
+- **CTO** 讲的是 CRM 的**前提条件**（数据）：不先解决，CRM 会产生错误的风险评分和不可信的报告。
+- **CFO** 讲的是**组织的消化能力和节奏**。
+- **CGO** 讲的是 CRM 能解决的那一块（关系管理和跟进）。
+
+好的答案**不选边站**，而是说清楚：问题有几个原因、CRM 能解决哪一个、它依赖什么前提、什么时候做最合适。
+
+</Callout>
+
+### 9.4 🔴 过去四年的 IT 项目：一个反复出现的模式（Exhibit 3）
+
+| 年 | 项目 | 想要的好处 | 2026 年 10 月的状态 | 对应 CRM 失败原因（第 1 周 p.19） |
+|---|---|---|---|---|
+| 2023 | Marketing automation | 分群营销、追踪线索 | 营销用得很好，但形成**独立的潜在客户库**，和报名、学习数据没连通 | 数据孤岛 |
+| 2024 | 支付和报名门户 | 支持区域扩张、减少人工 | 标准报名可用；企业、奖学金、换过 email 的学员要**人工对账**（项目赶工） | Poor data quality |
+| 2025 | 工单系统 + 知识库 | 统一客服流程、看见工作量 | 客服团队采用率高；助教和 advisor 仍用 email / chat，**很多互动没被记录** | Weak user adoption |
+| 2026 | LMS 迁移 | 移动端、分析、作业、论坛 | **延期 4 个月**、定制超预期、在开课期间上线；能用但**没稳定**，报表功能推迟 | Unrealistic expectations / 没重新设计流程 |
+| 2027（提议） | EduConnect 360 | 统一学员档案、预警、advisor 工作流、企业报告 | 待决定；**依赖干净的数据和前面系统的稳定使用** | — |
+
+Elaine 自己的判断：公司「implemented several useful systems, but had not yet learned how to **operate them as a coherent whole**」。
+
+<Callout type="note" title="我的解答：这个模式说明什么">
+
+1. **每个系统单独都有用，但都只被一个部门用好**：营销用好了营销自动化，客服用好了工单系统。跨部门的部分都没做好。
+2. **学员旅程是跨部门的**：Growth → Enrollment → Product & Technology → Learning Ops → Learner Support，**没有一个人对「学员成功」整体负责**（第 1 周 p.19：No executive ownership）。
+3. **CRM 恰恰是最跨部门的系统**：它要把这五个部门、七个数据源接起来。前四个项目暴露的问题（数据不一致、采用率不均、赶工）在 CRM 上会被**放大**，而不是被解决。
+4. 所以这个案例和 OTISLINE 一样：真正的难点是 **Structure 和 People**，不是软件本身。
+
+</Callout>
+
+### 9.5 🔴 CRM 提案：功能、成本、合同条款（Exhibits 7–8）
+
+| 功能（Exhibit 8） | 供应商的说法 | 管理层的问题 | 我的解读 |
+|---|---|---|---|
+| **Unified learner profile** | 合并营销、报名、学习、工单、问卷 | 数据够准确，能支持决策吗？ | 取决于 CTO 说的数据问题 |
+| **Automated engagement nudges** | 学员落后或错过里程碑时自动提醒 | 如果学员是因为课太重、课程设计有问题而掉队，提醒有用吗？ | 取决于 Learning Ops 说的课程问题 |
+| **Advisor task lists** | 按风险分数安排外联 | advisor 人手够处理预警吗？ | 24 名 advisor（Exhibit 1）要面对几万名学员的预警 |
+| **Alumni campaigns** | 个性化推荐下一门课 | 如果学员对第一门课不满意，营销再好有用吗？ | 复购的前提是第一门课体验好 |
+| **Corporate reporting** | 按企业客户展示参与度和完成率的仪表盘 | 客户会相信这些数据和定义吗？ | 「看完视频却未完成」说明定义还没统一 |
+
+<Callout type="tip" title="🧠 Exhibit 8 的设计">
+
+每一个功能后面都跟着一个管理问题，而且每个问题都指向**四位高管中的某一位**。这张表本身就是答题提示：功能有没有价值，取决于前提条件是否成立（*features ≠ value*，第 1 周 Zara）。
+
+</Callout>
+
+| 第一年成本（Exhibit 7） | 金额 |
+|---|---|
+| 平台订阅（最多 150,000 名活跃学员） | US$420,000 |
+| 实施服务（生命周期阶段、活动模板、advisor 队列、预警、企业仪表盘） | US$185,000 |
+| 系统集成（LMS、支付、工单、webinar、营销自动化） | US$125,000 |
+| 数据迁移和清洗 | US$70,000 |
+| 培训和变革管理 | US$55,000 |
+| 供应商项目管理 | US$45,000 |
+| **供应商合计** | **US$900,000** |
+| 内部人员、数据核实、临时顶岗、上线后支持（CFO 估计） | 约 US$150,000 |
+| **第一年现金流出** | **约 US$1.05M** |
+| 之后每年持续成本 | **US$500,000–650,000** |
+
+**合同条款里的细节**
+- 报价 **9 月给出、有效 60 天**，假设 2027 年 1 月开始、实施 12 个月；过期要重新确认价格和时间。
+- License 按**过去 12 个月的独立活跃学员**（distinct learners），**不是**报名人次、潜在客户或校友。签约前要核实真实人数和**超额价格**；不能用 128,000 次报名来判断还剩多少容量。
+- 供应商合计**不含**内部人员、临时顶岗和以后的定制。
+
+<Callout type="extra" title="课外补充：用第 2 周的云知识看这份合同">
+
+- EduConnect 360 是 **SaaS**（Slide 19）：只能配置不能改。完成状态的定义、流程的责任分工，SaaS 不会替你理清，只会把现在的混乱**自动化**（第 1 周 p.19：processes not redesigned）。
+- 按活跃学员订阅是 **commit ahead / Book it**（Slide 30）：承诺越多单价越低，但**买多了也要付**，人数没核实就签是在承担 over-buying 的风险；人数超了又要按超额价付。
+- **Capex → opex**（Slide 31）：不用买服务器，但每年 50–65 万美元会一直付下去；对现金只剩 US$3.2M 的公司，**持续成本**和第一年 US$1.05M 一样重要。
+- **Exit strategy / lock-in**（Slide 29）：学员数据进了供应商平台，以后换系统要迁移；合约期和数据导出条款值得谈。
+- 60 天报价有效期是供应商常见的**时间压力**，它本身不是现在就买的理由。
+
+</Callout>
+
+### 9.6 🔴 Business case：Exhibit 9 里的四个陷阱
+
+| 收益 | 基线 | 假设改善 | 案例里的财务逻辑 | 陷阱 |
+|---|---|---|---|---|
+| **Repeat enrollment** | 23% | +2 到 +5 个百分点 | 每多一次复购贡献 **US$134**；按 128,000 示意算出 US$343K–858K | **分母**应该是**合格的独立个人学员**，不是 128,000 次报名（里面有企业学员、一人多课）；真实人数一定更少 |
+| **Support tickets** | 196 / 1,000 | routine 工单减 10–20% | 每张 US$6.40 × 约 25,088 张 → 只省 **US$16K–32K** | 案例自己说：*ticket savings cannot justify the CRM alone* |
+| **Corporate retention** | US$11.3M 企业收入 | 少流失 2–3 个中型客户 | 保住 US$184K–276K **收入** | 要换算成**贡献**（乘贡献率），不能用收入算 |
+| **Advisor productivity** | 手工查询和跟进 | 减少 10–15% | 没给金额 | 省下的时间是**降成本**还是**用来多创收**？都不是的话就不是现金收益 |
+
+另外两个贯穿性的问题：
+- **时间**：2027 年在实施，**最早 2028 年**才能大规模评估收益；第一年只有成本。
+- **因果（attribution）**：完成率提高了，是因为提醒、onboarding、课程设计还是 advisor 跟进？复购增加了，是 CRM 营销还是课程组合的变化？Elaine 要求说清系统和业务结果之间的联系。
+
+<CrmCaseLab />
+
+<Callout type="note" title="我的解答：几个用来检验 business case 的数字">
+
+1. **只靠复购覆盖持续成本，需要多少合格学员？** 持续成本取中间值 US$575K ÷ US$134 ≈ **4,300 次额外复购**。按 +5 个百分点需要约 **86,000** 名合格的独立个人学员；按 +3 个百分点需要约 **143,000** 名，**比全年总报名人次还多**。所以「合格学员人数」是整个 business case 最关键的未知数。
+2. **工单节省可以忽略**：最多 US$32K / 年。
+3. **企业客户是最有说服力的价值来源**：企业收入占比 18% → 31%，客户明确要求预警和准确报告。但一个中型客户 US$92K 收入，要按贡献率换算（案例没给企业合同的贡献率，个人课是 48%，要写明假设）。
+4. **这些改善幅度来自供应商「以前的教育客户」**，属于第 1 周 p.20 的 *hype versus reality*：别人的环境不等于 LearnSphere 现在的数据和组织状态。
+5. 做敏感性分析时，最值得拉动的三个变量是：**合格学员人数、复购提升幅度、企业合同贡献率**。
+
+</Callout>
+
+### 9.7 🔴 公司的财务状况（Exhibits 10–11）
+
+| US$ M | 2024 | 2025 | 2026E |
+|---|---|---|---|
+| Revenue | 22.6 | 29.8 | 36.4 |
+| Sales and marketing | 6.4 | 10.0 | **15.9** |
+| Learner support and operations | 2.6 | 3.8 | 5.4 |
+| Operating income / loss | 0.7 | −1.6 | **−7.9** |
+| 现金及短期投资 | 5.8 | 4.6 | **3.2** |
+| 短期借款 | 0.0 | 1.5 | **3.0** |
+| Operating cash flow | 1.3 | −0.4 | −1.1 |
+| Capex 和软件开发 | 1.1 | 1.6 | 3.0 |
+| Free cash flow | 0.2 | −2.0 | **−4.1** |
+
+- 第一年 US$1.05M ≈ 现有现金的**三分之一**；自由现金流已经是 −4.1M，短期借款翻倍到 3.0M。
+- 资本化软件资产从 2.9 → 6.8M：前几个 IT 项目的投入已经很大，折旧也从 0.5 涨到 1.4M。
+- Elaine：2027 年**只能负担一个**大型跨部门项目，否则执行风险太大。这意味着 CRM 和「稳定 LMS / 清理数据 / 改课程」在**争同一个名额**，要排先后。
+
+<Callout type="exam" title="🎯 财务状况在答题里的作用">
+
+不是用来证明「不能买」，而是用来回答 **timing、scope、approach**：钱和组织精力都只够做一件大事时，**先做哪件、做多大、怎么分阶段降低现金风险**。答题时把「1.05M ≈ 1/3 现金」「FCF −4.1M」「2027 年只能做一个跨部门项目」三个事实放在一起讲。
+
+</Callout>
+
+### 9.8 🔴 用课上的框架分析
+
+**① CRM 为什么失败（第 1 周 p.19）**
+
+| 失败原因 | LearnSphere 的风险信号 |
+|---|---|
+| Treated as a technology project | Growth 把 CRM 当成解决方案，但问题的原因还有争议 |
+| Weak user adoption | 助教和 advisor 至今不用工单系统；LMS 还在适应期 |
+| **Poor data quality** | 同一学员多个 email；完成状态定义不一致；周报靠手工拼表 |
+| Processes not redesigned | 学员问题该由谁处理（LMS、技术、政策）还没理清；有人在学术论坛问行政问题 |
+| No executive ownership | 学员旅程跨 5 个部门，没有一个人对「学员成功」负责 |
+| Unrealistic expectations | 供应商说稳定使用一年后就有效果；公司现金紧，可能太早要回报 |
+
+<CaseSortQuiz set="crmfail" />
+
+**② 四个关键挑战（第 1 周 p.20）**
+
+| 挑战 | LearnSphere |
+|---|---|
+| **Choosing the right scope** | 全套五个功能，还是只做其中价值最清楚的一部分？课件：从一个**窄而清楚的需求**开始 |
+| **Hype versus reality** | 收益假设来自供应商的其他客户 |
+| **Integration** | 要接 5 个系统，其中 LMS 还没稳定 |
+| **Slow return** | 2028 年才能评估；公司正在烧钱 |
+
+**③ Structure / Complexity / People / Process（第 1 周 OTISLINE 框架）**
+
+| 维度 | LearnSphere 的实施挑战 |
+|---|---|
+| **Structure** | 学员旅程跨 Growth、Enrollment、Learning Ops、Support、Corporate 五个部门，没有统一负责人；CRM 让各部门表现变透明（和 OTISLINE 一样），可能引起部门之间的抵触 |
+| **Complexity** | 和 5 个系统集成；先要清洗数据、统一学员 ID 和完成状态的定义；license 人数未核实 |
+| **People** | 四年四个项目带来的**变革疲劳**；助教和 advisor 采用率低；24 名 advisor 可能处理不了大量风险预警 |
+| **Process** | 学员问题的责任分工没理清；提醒和外联要重新设计，不能把现在的群发邮件原样自动化；要设计衡量方法才能证明效果来自 CRM |
+
+**④ Zara 型 + OTISLINE 型（第 1 周 7.1）**：LearnSphere 是两类题的结合。先回答「要不要投资、投多少、什么时候」（Zara 型：商业模式 → 问题 → 价值 / 成本 / 风险 → 建议），再回答「风险怎么影响实施」（OTISLINE 型：四维框架）。
+
+### 9.9 🔴 三个选项：各自要成立，需要相信什么
+
+案例要求的是 **clear and decisive** 的建议，讲清 **scope、timing、conditions for success**。三个选项都可以写出好答案，关键是**你的建议依赖哪些前提，并且用案例证据支持这些前提**。
+
+| | **Approve now** | **Postpone** | **More limited implementation** |
+|---|---|---|---|
+| 要成立，你得相信 | 主要问题是关系管理和跟进；数据问题可以在 12 个月实施中一起解决；组织能同时消化 LMS 和 CRM；收益足够大 | 主要问题是课程、数据和稳定性，CRM 现在只会放大混乱；等待的代价（企业客户流失）可以接受 | 价值集中在某一块（例如某类学员或某个功能）；可以先做小范围、证明价值再扩大；供应商愿意按较小范围报价 |
+| 最好的支持证据 | 复购下跌伤商业模式；企业客户要预警和报告；对手已经有类似系统；报价 60 天有效 | CFO 的 stabilization 论点；数据不一致；入门课完成率 49%；现金只剩 3.2M、只能做一个跨部门项目 | 第 1 周 p.26–27 的 best practices（start narrow、先解决具体问题）；企业客户的需求明确 |
+| 最大的弱点 | 第 1 周 p.19 六个失败原因几乎全中；占用 2027 年唯一的大项目名额；收益不确定 | 问题继续恶化，没有改善的时间表；报价过期；看起来像不作为 | 收益更小、更慢；要重谈范围和价格；需要说清楚扩大的条件，否则只是「小一点的全面上线」 |
+| 必须讲清的 | 怎么控制数据和采用风险；怎么衡量效果 | 推迟期间**具体做什么**、什么时候重新决定、用什么标准 | 范围选哪一块、为什么；什么指标达到了才扩大；先后顺序 |
+
+<Callout type="warn" title="⚠️ 常见丢分点">
+
+- **选边站**：只采纳四位高管中一位的诊断，忽略其他三位的证据。
+- **把 Exhibit 9 的示意数字当结论**：用 128,000 当合格学员、用收入算企业客户的价值。
+- **「Postpone」只写不做**：推迟必须附带推迟期间的行动和重新决策的条件，否则不是 decisive。
+- **「Limited」不说限在哪**：没有说明范围、时间、扩大的条件，就等于没有建议。
+- **没讲因果**：Elaine 明确要求说清系统怎么带来业务结果、怎么衡量。
+- **忽略财务状况**：1.05M、现金 3.2M、FCF −4.1M、2027 年只能做一个项目。
+
+</Callout>
+
+### 9.10 🟡 怎么衡量效果（Elaine 要的「因果」）
+
+案例特别强调：如果完成率或复购改善了，要能分清是哪个因素带来的。课外可以用的方法：
+
+| 方法 | 怎么做 | 用在 LearnSphere |
+|---|---|---|
+| **对照组（control group）** | 一部分学员用新做法，另一部分不用，比较差异 | 同一门课的不同 cohort，一组有 CRM 预警，一组没有 |
+| **分阶段上线（staggered rollout）** | 不同群体在不同时间上线，前后对比 | 先在部分课程或部分企业客户上线 |
+| **先定义指标和基线** | 上线前统一定义 completion、engagement，并记录基线 | 否则「看完视频却未完成」这类定义问题会让前后数据没法比 |
+| **领先指标 + 结果指标** | 领先：登录率、预警被处理的比例、advisor 使用率；结果：完成率、复购率、企业续约 | 结果指标要到 2028 年才看得出，领先指标可以更早判断方向 |
+
+### 9.11 🔴 董事会可能会问的问题
+
+- 竞争对手都上了，我们不上会不会落后？
+- 如果问题主要是课程太难，CRM 还有必要吗？
+- 合格的独立个人学员到底有多少？收益假设和供应商的比为什么不同？
+- 报价 60 天过期，以后价格涨了怎么办？
+- 数据还没统一，CRM 的风险评分和企业报告可信吗？
+- 谁对「学员成功」负责？用什么指标判断成功？
+- 2027 年只能做一个大项目，为什么是这一个？
+
+<Callout type="exam" title="🎯 期末遇到类似的「要不要买某个系统」短案例">
+
+按这个顺序写：① **商业模式和业务问题**（用数据，不只说「有问题」）→ ② **问题有几个原因，系统能解决哪个**（整合不同观点）→ ③ **business case**：价值来源、成本（一次性 + 持续）、关键假设和陷阱 → ④ **准备度和最重要的 2–3 个风险**（数据、采用、财务、组织消化能力）→ ⑤ **明确的建议**：scope、timing、sequencing、conditions for success，以及怎么衡量。
 
 </Callout>
 
@@ -889,14 +1166,14 @@ Slide 12 把 Security 列为好处（供应商级别的控制），Slide 13 又�
 | 决定什么 | 出不出云（自有 vs 租） | 统一不统一（全球 vs 本地） | 买不买 SaaS CRM（现在 vs 推迟 vs 部分） |
 | 关键事实 | 需求稳定、账单大、HEY 曾爆发 | 8 个 ATS + Excel、分权传统、定义不一致 | 完成率和复购下滑、数据分散、现金紧张 |
 | 核心问题 | 弹性还值不值钱？能不能自己运维？ | 哪些要统一才能比较和共享？谁付转换成本？ | 问题的原因是什么？组织准备好了吗？ |
-| 我的结论 | **分阶段、按 workload 出云**，保留云上弹性，文件暂缓 | **有条件采用**：核心统一、细节配置、HQ 出钱、先易后难 | **有限、分阶段、设关卡** |
-| 共同模式 | 都不是「全做 / 不做」，而是**拆开 → 排顺序 → 设条件** | 同左 | 同左 |
+| 本笔记的分析 | **分阶段、按 workload 出云**，保留云上弹性，文件暂缓 | **有条件采用**：核心统一、细节配置、HQ 出钱、先易后难 | 三个选项都可以，关键是讲清**前提、范围、时机、成功条件**（第 9.9 节） |
+| 共同模式 | 都不是简单的「做 / 不做」，而是**拆开 → 排顺序 → 设条件** | 同左 | 同左 |
 
 <Callout type="exam" title="🎯 本周可以带进考场的通用答题步骤">
 
 1. **先拆开**：把「一个大决定」拆成几块（workload、哪些统一、哪些模块）。
 2. **每一块看业务特点**：需求可预测吗？是不是差异化来源？谁得益、谁付成本？
-3. **排顺序**：先做风险低、好处明显的（老应用、用 Excel 的国家、企业客户试点）。
+3. **排顺序**：先做风险低、好处明显的（老应用、用 Excel 的国家）；LearnSphere 则要排「CRM、数据、LMS 稳定、课程改进」谁先谁后。
 4. **设条件和关卡**：达到什么指标才进入下一步；做不到怎么办（contingency，第 1 周 Zara）。
 5. **回到商业模式**：建议要符合这家公司靠什么赢（37signals 的简单和独立、Rexel 的本地经营、LearnSphere 的复购）。
 
@@ -1050,9 +1327,39 @@ Private cloud 是只给一个组织用的云，可以在自己机房（internal�
 
 </QA>
 
-<QA q="18. 37signals、Rexel、LearnSphere 三个案例的共同决策模式是什么？">
+<QA q="18. LearnSphere 的症状说明了什么？用 Exhibit 4 和 10 的数字讲。">
 
-都不是「全做 / 不做」，而是**拆开 → 排顺序 → 设条件**：37signals 按 workload 拆、先搬风险低的；Rexel 拆成全球统一 vs 本地配置、先迁 Excel 国家；LearnSphere 先打基础、窄范围试点、过关卡再扩展。判断依据始终是这家公司的商业模式和准备度。
+报名和收入还在涨，但 CAC 从 US$78 涨到 US$124，营销支出占收入从 28% 涨到 44%；完成率 71% → 58%，6 个月内复购 34% → 23%；每千次报名的工单 118 → 196。商业模式靠复购，复购下跌 → 更依赖拉新 → 营销成本上升 → 营业亏损扩大到 −7.9M。问题不是没人买，而是买了学不完、不回来。
+
+</QA>
+
+<QA q="19. 四位高管各自的诊断是什么？为什么说好的答案不选边？">
+
+CGO：没有系统管理学员关系（CRM 能解决的部分）；Learning Ops：课程太难、工作量没讲清（CRM 解决不了，例如入门分析课完成率 49%、评分 3.8）；CTO：七个系统数据不一致（CRM 的前提条件）；CFO：四年四个项目，LMS 还没稳定（决定节奏）。四人说的是不同层次：原因、前提、能力和节奏，要整合起来。
+
+</QA>
+
+<QA q="20. Exhibit 9 的 business case 有哪些陷阱？">
+
+① 复购的分母应是合格的独立个人学员，不是 128,000 次报名；② 工单只省 US$16K–32K，撑不起 CRM；③ 企业客户保住的是收入，要按贡献率换算；④ advisor 省下的时间要变成降成本或多创收才算收益。另外最早 2028 年才能评估，而且要说清因果。只靠复购覆盖每年约 US$575K 的持续成本，需要约 4,300 次额外复购：按 +5 个百分点也要约 86,000 名合格学员。
+
+</QA>
+
+<QA q="21. 用第 1 周 CRM 失败原因分析 LearnSphere 的风险。">
+
+当成技术项目（问题原因还有争议）；用户不用（助教和 advisor 不用工单系统）；数据质量差（多个 email、完成状态定义不一致）；流程没重新设计（学员问题的责任分工不清）；没有高管负责（学员旅程跨 5 个部门）；期望不现实（收益来自供应商的其他客户，公司现金紧）。
+
+</QA>
+
+<QA q="22. 如果建议「Postpone」或「Limited implementation」，答案里必须讲清什么？">
+
+Postpone：推迟期间具体做什么（例如稳定 LMS、统一数据定义、改课程）、什么时候用什么标准重新决定、等待的代价怎么控制。Limited：范围选哪一块和为什么、成本和合同怎么调整、用什么指标判断成功、达到什么条件才扩大。两者都要回应案例要求的 scope、timing、conditions for success。
+
+</QA>
+
+<QA q="23. 37signals、Rexel、LearnSphere 三个案例的共同决策模式是什么？">
+
+都不是「全做 / 不做」，而是**拆开 → 排顺序 → 设条件**：37signals 按 workload 拆、先搬风险低的；Rexel 拆成全球统一 vs 本地配置、先迁 Excel 国家；LearnSphere 要把问题拆成四个原因，再决定 CRM 的范围和时机。判断依据始终是这家公司的商业模式和准备度。
 
 </QA>
 
