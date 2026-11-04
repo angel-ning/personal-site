@@ -319,6 +319,35 @@ Distance vector 和 link-state 是两类**路由协议**（路由器学路由的
 
 </Callout>
 
+<Callout type="note" title="每个接口能跑不同的协议吗？再配一个协议会不会 overwrite？">
+
+**路由协议是路由器上的「进程」，不是接口的一个设置。** 配置顺序是：先进某个协议的进程，再用 `network` 选哪些接口参加：
+
+```
+Router(config)# router rip              ← 进 RIP 进程
+Router(config-router)# network 10.0.0.0
+Router(config)# router igrp 100         ← 进 IGRP 进程（IGRP / EIGRP 要写 AS 号）
+Router(config-router)# network 10.0.0.0
+```
+
+`show running-config` 里是两块，各管各的，**不会互相覆盖**：
+
+```
+router rip
+ network 10.0.0.0
+!
+router igrp 100
+ network 10.0.0.0
+```
+
+- **不同接口跑不同协议**：可以。E0 在 10.0.0.0、S0 在 172.16.0.0，`router rip` 下写 `network 10.0.0.0`、`router eigrp 100` 下写 `network 172.16.0.0`，E0 只跑 RIP，S0 只跑 EIGRP。
+- **同一个接口跑两个协议**：也可以。上面那样配完，E0 上 RIP 和 IGRP **都在跑**，两种更新都发、都听。两个协议都学到同一个网段时，路由表只放一条，按 **AD** 选：IGRP 100 < RIP 120，用 IGRP 的；RIP 那条只在 IGRP 那条没了时才顶上。
+- **什么时候会覆盖**：只在同一个协议里。再进一次 `router rip` 进的是**同一个** RIP 进程，新写的 `network` 是**加进去**。要让 E0 不跑 RIP，要在 `router rip` 下写 `no network 10.0.0.0`（同一个大网里的其他接口也会一起停，见第二周）。
+
+课外：两个协议学到的路由默认**互不相通**，要互相传得配 **redistribution**；一台路由器同时跑多个协议通常只在迁移（比如 RIP 换 EIGRP）或两个网络的交界处；IGRP 在新版 IOS 里已经去掉，现在用 EIGRP。
+
+</Callout>
+
 ---
 
 ## 7. 🔴 距离矢量 Distance Vector（Slides 20–23 + 板书 p.5）

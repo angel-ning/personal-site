@@ -141,6 +141,7 @@ tags: [IPv4, NAT, DHCP]
 | `<RipNetworkLab />` | ISOM 5190 第 2 周：给每台路由器勾选 / 输入 RIP `network` 命令（非 classful 会被改写），看哪些接口发·听·通告、各路由器收敛后的 `show ip route`（含等价路径上限）和「谁缺哪个网段、为什么」；预设是 Slide 5、9 和板书 p.1–2（`rip-logic.mjs`） |
 | `<AdLab />` | 同一目的地多个路由来源：最长前缀 → AD（Slide 14 默认值）→ metric，可改来源、metric、浮动静态路由 AD、断链路（`rip-logic.mjs`）。`<RoutingSortQuiz set="ripver\|ad" />` 是本周两组点选练习 |
 | `<EigrpDualLab />` | ISOM 5190 第 3 周：每个邻居的链路 cost + RD → 总距离、FD、successor（最多 4 条）、feasible successor（RD < FD）；断开链路看 FS 直接升级还是 Active 发 Query；预设是板书 p.2、Slide 13、Slide 12（`eigrp-logic.mjs`）。`<RoutingSortQuiz set="eigrptable\|eigrp" />` 是本周两组点选练习 |
+| `<PrefixMatchLab set="lab\|exercise" />` | ISOM 5190 Lab 2：最长前缀匹配逐位比较（前缀内的位上色、第一个不同的位标红），可改目的 IP 和路由；`exercise` 带 p.22 六个地址的点选练习（`prefix-logic.mjs`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 

@@ -29,6 +29,7 @@ tags: [RIP, RIPv2, Classful, Network Command, Equal Cost, Administrative Distanc
 - **➕ 课外补充** — 课件没写、但理解或答题会用到的背景知识，考试优先级按 🟢 处理。
 - 网页版有两个可以点的小实验（RIP network 命令 → 路由表、AD 选路）和两组点选练习，打印版会变成等价的表格。
 - 第 1 周的「距离矢量一轮轮更新」实验（`DistanceVectorLab`）讲的就是 RIP 的更新过程，这周不重复。
+- **上机部分单独一页：[Lab 2 · 配置 RIP](../../labs/lab-02/)**——所有 RIP 命令（`show ip protocols`、`debug ip rip`、`no debug all` 等）、版本收发、auto-summary、最长前缀匹配和 worksheet 的预期输出都在那里。
 
 </Callout>
 
@@ -192,6 +193,33 @@ Originally defined in **RFC 1058**（V1）。
 
 </Callout>
 
+<Callout type="exam" title="课堂补充：version 1 / version 2 / 不写（default），两台路由器能不能互相学到">
+
+`router rip` 下面有三种情况：
+
+| 配置 | 发 (send) | 收 (receive) |
+|---|---|---|
+| `version 1` | V1 | 只收 V1 |
+| `version 2` | V2 | 只收 V2 |
+| 不写 version（**default**） | **V1** | **V1 和 V2 都收** |
+
+规则只有一条：**对方发的版本，我收不收**。两个方向分开看：
+
+| 路由器 A | 路由器 B | A → B（B 收不收 A 发的） | B → A（A 收不收 B 发的） | 结果 |
+|---|---|---|---|---|
+| version 1 | version 1 | ✅ 发 V1，B 收 V1 | ✅ | 互相学到 |
+| version 2 | version 2 | ✅ 发 V2，B 收 V2 | ✅ | 互相学到（推荐） |
+| version 1 | version 2 | ❌ 发 V1，B 只收 V2 | ❌ 发 V2，A 只收 V1 | **谁也学不到谁** |
+| version 1 | default | ✅ 发 V1，B 都收 | ✅ 发 V1，A 收 V1 | 互相学到（实际都在说 V1） |
+| version 2 | default | ✅ 发 V2，B 都收 | ❌ 发 V1，A 只收 V2 | **单向**：B 学得到 A，A 学不到 B |
+| default | default | ✅ 发 V1，B 都收 | ✅ | 互相学到（实际都在说 V1，classful） |
+
+**最容易错的是 version 2 + default**：看起来 default「什么都收」，但它**发的是 V1**，配了 version 2 的那台不收。结果只有一边的路由表是完整的。
+
+**怎么修**：两边都写 `version 2`。课外：也可以在接口上用 `ip rip send version 1 2`、`ip rip receive version 1 2` 单独指定这个接口发、收哪些版本。
+
+</Callout>
+
 ---
 
 ## 3. 🔴 配置 RIP：`router rip` + `network`（Slides 5–6）
@@ -299,6 +327,25 @@ Major network：172.16.0.0 /16
 | S3 | 192.168.4.0（到 B） | ✓ | ✓ | ✓ |
 
 A 每 30 秒从 S3 发给 B 的更新里有 **1.0、3.0**，**没有 2.0**。S3 本身是开了的，门是通的，但 2.0 这条内容根本没写进去，所以 **B 永远学不到 192.168.2.0**。这就是板书右下角要画的 B 的路由表里缺的那一行。
+
+</Callout>
+
+<Callout type="extra" title="课外补充：发、收、通告三件事能分开控制吗？">
+
+`network` 命令是**一个开关管三件事**：写了，这个大网里的接口三件事一起开；不写，三件事一起关。要单独控制，得用课件没讲的其他命令：
+
+| 想要的效果 | 命令（在 `router rip` 下） | 结果 |
+|---|---|---|
+| **只关「发」** | `passive-interface e0` | E0 不再往外发更新；照样**收**，E0 的子网照样从**别的**接口**通告**出去 |
+| **只挡「收」进来的某些路由** | `distribute-list … in e0` | E0 收到的更新里，被过滤的路由不写进路由表 |
+| **只不「通告」某些路由** | `distribute-list … out` | 更新里不带被过滤的路由，其余照发 |
+
+最常用的是 **passive-interface**：接 PC 的 LAN 口，对面根本没有路由器，每 30 秒往 PC 发 RIP 更新只是浪费，还让局域网里的人看到你的路由信息（安全隐患）。设成 passive 以后不发了，但这个 LAN 网段照样通告给其他路由器。
+
+**关于「通告的内容是什么」**：Lab 2 p.11 的拓扑里链路是整个 **2.0.0.0/8**（2.0.0.1 ↔ 2.0.0.2），子网就是大网本身，所以 Router0 通告的正好是「Network 2.0.0.0 metric 1」。如果大网被切成了子网，比如 `network 2.0.0.0`、接口是 2.1.1.1/24：
+
+- 在**同一个大网内**发更新时，通告的是**子网** **2.1.1.0**，不是 2.0.0.0。
+- 跨过大网边界、发给**别的大网**那一侧时，V1（以及默认开着 auto-summary 的 V2）才把它汇总成 **2.0.0.0**（第 2 节）。
 
 </Callout>
 

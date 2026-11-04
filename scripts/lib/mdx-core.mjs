@@ -55,6 +55,7 @@ import { TLS_STEPS } from "../../src/components/mdx/tls-logic.mjs";
 import { LOOKUP_PRESETS, LOOKUP_ROUTERS, buildTable, lookup as routeLookup, staticCommand, prefixToMask, dvRun, LS_PRESETS, LS_LINKS, linkCost, spf, lsSvg, toStaticSvg as routingStatic } from "../../src/components/mdx/routing-logic.mjs";
 import { RIP_PRESETS, ripRun, showLine as ripShowLine, AD_PRESETS, chooseRoute, srcLabel as adSrcLabel } from "../../src/components/mdx/rip-logic.mjs";
 import { EIGRP_PRESETS, dual as eigrpDual, failover as eigrpFailover, ROLE_LABEL as EIGRP_ROLE } from "../../src/components/mdx/eigrp-logic.mjs";
+import { PREFIX_SETS, longestMatch } from "../../src/components/mdx/prefix-logic.mjs";
 import { upgradeCost as zaraCost, networkTradeoff as zaraNet, UPGRADE_PRESETS as ZARA_PRESETS, fmtEur } from "../../src/components/mdx/zara-logic.mjs";
 import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute, routeNote as crmRouteNote } from "../../src/components/mdx/crm-logic.mjs";
 import { MODELS as CLOUD_MODELS, STACK as CLOUD_STACK, KITCHEN as CLOUD_KITCHEN, ELASTIC_PRESETS, elasticity, elasticityVerdict, TCO_PRESETS, tco, fmtUsd as cloudUsd } from "../../src/components/mdx/cloud-logic.mjs";
@@ -1065,6 +1066,18 @@ const components = {
           para(text(`FD = ${d.fd}。successor 全部断掉时：`), text(f.steps.map((s, i) => `${i + 1}. ${s}`).join("  "))),
         ];
       }),
+    ];
+  },
+  PrefixMatchLab(_node, a) {
+    const S = PREFIX_SETS[a.set] ?? PREFIX_SETS.lab;
+    return [
+      note("（网页版此处可交互：改目的 IP、改路由的网段和前缀长度，逐位看哪几条匹配、哪条最长；下面是这一组的结果）"),
+      para(strong(S.label)),
+      table(["路由", "网段 / 前缀", "二进制"], S.routes.map((r) => [r.id + (r.out ? ` · ${r.out}` : ""), `${r.net}/${r.prefix}`, { type: "inlineCode", value: longestMatch(S.routes, S.dests[0]).rows.find((x) => x.id === r.id).netBin }])),
+      table(["目的 IP", "二进制", "匹配的路由", "选哪条"], S.dests.map((d) => {
+        const r = longestMatch(S.routes, d);
+        return [d, { type: "inlineCode", value: r.destBin }, r.rows.filter((x) => x.hit).map((x) => `${x.id} (/${x.prefix})`).join("、") || "—", strong(r.winner ?? "丢弃")];
+      })),
     ];
   },
   RoutingSortQuiz(_node, a) {

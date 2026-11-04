@@ -1,0 +1,498 @@
+---
+title:
+  en: "Lab 2 · Configuring RIP: Commands, Versions, Auto-Summary & Longest Match"
+  zh: "Lab 2 · 配置 RIP：命令速查、版本、自动汇总与最长前缀匹配"
+summary:
+  en: "Lab 2 notes for ISOM 5190: every RIP command used in the lab (router rip, version, network, no auto-summary, show ip route, show ip protocols, debug ip rip, no debug all), reading [120/1], RIP version send / receive compatibility, what network does (send, listen, advertise), auto-summary and discontiguous networks, longest prefix match with the p.22 exercise, and the worksheet's two parts with expected outputs."
+  zh: "ISOM 5190 Lab 2 笔记：实验里用到的所有 RIP 命令（router rip、version、network、no auto-summary、show ip route、show ip protocols、debug ip rip、no debug all）、读 [120/1]、RIP 版本收发兼容、network 命令的发 / 收 / 通告、自动汇总与不连续网络、最长前缀匹配（含 p.22 练习），以及 worksheet 两部分的步骤和预期结果。"
+week: 2
+date: 2026-11-04
+tags: [Lab, RIP, Cisco IOS, show ip protocols, debug ip rip, Auto Summary, Longest Prefix Match]
+---
+# Lab 2 · 配置 RIP
+
+**这一页怎么用**：上机前看第 1 节的命令速查表和第 8、9 节的步骤；做完对照第 5 节的 `show` / `debug` 输出和第 9 节的预期路由表；考前做第 7 节的最长前缀匹配练习。
+原理在 [第 2 周笔记](../../lectures/week-02/)（RIP V1 / V2、network 命令、AD），这里只讲上机。
+
+> 材料：*Lab 2.pdf*（22 页讲解）+ *Lab 2 worksheet.pdf*（6 页实验步骤）。
+> 标记：**「Lab p.N」** = 讲解第 N 页；**「Worksheet」** = 实验步骤；**「预期输出」** 是我按 Cisco IOS 的常见格式写的示例，你自己截图里的计时器秒数、接口名可能略有不同。
+
+---
+
+## 0. 一张图看懂这次 lab
+
+```
+Part 1（RIPv1，全部 /24）                  Part 2（RIPv2，192.168.1.0 切成两个 /26）
+PC1 — R1 ═══ R2 — PC2                      PC1 — R1 ═══ R2 — PC2
+1.0/24   2.0/24   3.0/24                   1.0/26   2.0/24   1.64/26
+                                            ↑ 同一个大网 192.168.1.0 被 2.0 隔成两半（不连续）
+
+配接口 IP → router rip → network（只写 classful）→ 等 1 分钟
+   → show ip route（有没有 R 开头的路由）→ show ip protocols（参数对不对）
+   → ping → debug ip rip（看更新怎么发）→ no debug all
+
+Part 2 的关键：默认版本 / V1 会在大网边界自动汇总 → R1 学不到 1.64/26
+             → version 2 + no auto-summary 才通
+```
+
+---
+
+## 1. 🔴 RIP 命令速查表
+
+**提示符就是「你在哪一层」**：`Router>` 用户模式 → `enable` → `Router#` 特权模式（`show`、`debug`）→ `configure terminal` → `Router(config)#` 全局配置 → `router rip` → `Router(config-router)#` RIP 配置。
+
+### 配接口（Worksheet Step 1）
+
+| 提示符 | 命令 | 作用 |
+|---|---|---|
+| `(config)#` | `interface g0/0` | 进入接口配置模式 `(config-if)#` |
+| `(config-if)#` | `ip address 192.168.1.1 255.255.255.0` | 给接口配 IP 和掩码 |
+| `(config-if)#` | `no shutdown` | 打开接口（路由器接口默认是关的） |
+| `(config-if)#` | `exit` | 回到上一层 |
+| `#` | `show ip interface brief` | 一行一个接口：IP、Status、Protocol 是不是 **up / up** |
+
+### 配 RIP（Lab p.4–7、p.13）
+
+| 提示符 | 命令 | 作用 |
+|---|---|---|
+| `(config)#` | `router rip` | 开启 RIP 进程，进入 `(config-router)#` |
+| `(config)#` | `no router rip` | **停掉 RIP 并删除全部 RIP 配置**（Lab p.4） |
+| `(config-router)#` | `network 192.168.1.0` | 把一个 **classful** 网络加进 RIP：属于它的接口开始发、收、通告（Lab p.7） |
+| `(config-router)#` | `no network 192.168.1.0` | 把它拿掉：这些接口不再发、收、通告（Lab p.10） |
+| `(config-router)#` | `version 1` | 只发 V1、只收 V1（Lab p.5–6） |
+| `(config-router)#` | `version 2` | 只发 V2、只收 V2 |
+| `(config-router)#` | `no version` | 回到默认：**发 V1，收 V1 和 V2** |
+| `(config-router)#` | `no auto-summary` | 关掉大网边界的自动汇总，每个子网都单独通告（Lab p.13） |
+
+### 查看和排错（Lab p.12）
+
+| 提示符 | 命令 | 看什么 |
+|---|---|---|
+| `#` | `show ip route` | **路由表**：R 开头的是 RIP 学来的，`[120/1]` = [AD / 跳数] |
+| `#` | `show ip protocols` | **RIP 的参数**：版本收发、哪些网络、计时器、自动汇总开没开、从谁那里学到路由（第 5 节） |
+| `#` | `debug ip rip` | **实时**显示每一次发出、收到的 RIP 更新 |
+| `#` | `no debug ip rip` | 只停 RIP 的 debug |
+| `#` | `no debug all` | **停掉所有 debug**（最保险，`undebug all` 同义） |
+| PC | `ping 192.168.3.2` | 端到端通不通 |
+
+### 收尾（Worksheet）
+
+| 提示符 | 命令 | 作用 |
+|---|---|---|
+| `#` | `erase startup-config` | 删掉保存的配置 |
+| `#` | `reload` | 重启；问 `Save? [yes/no]` 答 **no**，再按回车确认 |
+
+<Callout type="warn" title="三个常见手误">
+
+- `show` / `debug` 要在 **`#`** 下打，在 `(config)#` 下要加 `do`：`do show ip route`。
+- `network` 写接口 IP 或子网号，IOS 会自动改成 classful 网络号（第 2 周 §4）。Part 2 的 R2 接口是 192.168.1.65/26，命令照样写 `network 192.168.1.0`。
+- 开了 `debug` 一定记得 `no debug all`，不然屏幕一直刷，真实设备上还占 CPU。
+
+</Callout>
+
+<Callout type="extra" title="课外：lab 没用到但常见的 RIP 命令">
+
+| 命令 | 作用 |
+|---|---|
+| `passive-interface g0/0` | 这个接口不发更新（照样收、照样通告），适合接 PC 的 LAN 口 |
+| `ip rip send version 1 2` / `ip rip receive version 1 2` | 在**接口**上单独指定发、收哪个版本 |
+| `show ip rip database` | 看 RIP 自己的数据库（所有学到的路由，包括没进路由表的） |
+| `copy running-config startup-config` | 保存配置，重启后还在 |
+
+</Callout>
+
+---
+
+## 2. 🔴 读 `show ip route`（Lab p.2）
+
+<Figure src="images/page_02.png" caption="R 192.168.1.0/24 [120/1] via 192.168.3.1, 00:00:11, Serial2/0" source="Lab p.2" />
+
+| 片段 | 意思 |
+|---|---|
+| `R` | 来源是 RIP（Codes 里 C = connected、S = static、D = EIGRP、O = OSPF） |
+| `192.168.1.0/24` | 目的网段 |
+| `[120/1]` | **[Administrative Distance / metric]**：RIP 的 AD 是 120，metric 是 1 跳 |
+| `via 192.168.3.1` | 下一跳：发更新给我的那台路由器的接口 IP |
+| `00:00:11` | 距离上次收到这条路由的更新过了 11 秒（超过 30 秒还没刷新就说明更新有问题） |
+| `Serial2/0` | 从哪个接口出去 |
+
+Lab p.2 一句话：RIP **rarely used in modern world, but it is good as demonstration**。
+
+---
+
+## 3. 🔴 version 命令和收发兼容（Lab p.5–6）
+
+<Figure src="images/page_06.png" caption="Default 发 1 收 1、2；Version 1 发 1 收 1；Version 2 发 2 收 2" source="Lab p.6" />
+
+Lab p.6：**Routers with mismatch version may cause RIP update failed.** 两台路由器配在一起会怎样（我的整理，第 2 周 §2 也有同一张表）：
+
+| A | B | A → B | B → A | 结果 |
+|---|---|---|---|---|
+| version 1 | version 1 | ✅ | ✅ | 互相学到 |
+| version 2 | version 2 | ✅ | ✅ | 互相学到 |
+| version 1 | version 2 | ❌ | ❌ | 谁也学不到谁 |
+| version 1 | default | ✅ | ✅ | 互相学到（都在说 V1） |
+| version 2 | default | ✅ | ❌ | **单向**：default 那台学得到 A，A 学不到它 |
+| default | default | ✅ | ✅ | 互相学到（都在说 V1） |
+
+Worksheet Part 1 的提示：RIP 第一次开启时用的是 default；想「只用 V1、不收 V2」就写 `version 1`。
+
+---
+
+## 4. 🔴 network 命令的三件事（Lab p.7–11）
+
+Lab 的拓扑：PC0 1.0.0.2 — **1.0.0.1 Router0 2.0.0.1** ═══ **2.0.0.2 Router1 3.0.0.1** — 3.0.0.2 PC1。这里每段都是**整个 Class A 网络**（1.0.0.0/8、2.0.0.0/8、3.0.0.0/8），所以子网号和 classful 网络号是同一个数。
+
+<Figure src="images/page_08.png" caption="Send：network 2.0.0.0 → Router0 从 2.0.0.0 那个接口往外发更新" source="Lab p.8" />
+
+<Figure src="images/page_09.png" caption="Listen：network 2.0.0.0 → Router0 接受从 2.0.0.0 那个接口进来的更新" source="Lab p.9" />
+
+<Figure src="images/page_10.png" caption="no network 2.0.0.0 → Router0 不再接受从 2.0.0.0 进来的更新" source="Lab p.10" />
+
+<Figure src="images/page_11.png" caption="Advertise：network 2.0.0.0 → Router0 把「Network 2.0.0.0 metric 1」写进从别的接口（1.0.0.0 那边）发出去的更新" source="Lab p.11" />
+
+| 动作 | Lab 原文（假设 `network 1.0.0.0`） | 一句话 |
+|---|---|---|
+| **Send** | Router starts to send updates **to** 1.0.0.0 interface | 从这个接口往外发 |
+| **Listen** | Router starts to receive updates **from** 1.0.0.0 interface | 这个接口收进来的更新会被读 |
+| **Advertise** | Router starts to advertise 1.0.0.0 network **to 2.0.0.0 interface** | 这个网段写进从**别的**接口发出去的更新 |
+
+<Callout type="memo" title="Advertise 为什么是「发到别的接口」">
+
+p.11 的箭头是往**左**（PC0 那边）的：Router0 告诉 1.0.0.0 那一侧「2.0.0.0 经过我，1 跳」。不往右边 2.0.0.0 本身发，因为对面 Router1 自己就直连着 2.0.0.0（课外：这也是 split horizon，从哪学来、和谁直连的，不往那个方向说）。
+
+第 2 周 §4 板书 p.2 右边是同一个道理：A 漏写 `network 192.168.2.0`，从 S3 发给 B 的更新里就没有 2.0 这一条。
+
+</Callout>
+
+<Callout type="note" title="三件事能不能分开控制">
+
+`network` 一条命令同时开、同时关三件事（p.10 的 `no network` 三件事一起停）。要分开控制需要课外命令：`passive-interface`（只关发）、`distribute-list`（过滤收或通告的某些路由）。见第 2 周 §4 的课外补充。
+
+</Callout>
+
+---
+
+## 5. 🔴 排错四件套：show ip route、show ip protocols、debug ip rip、no debug all（Lab p.12）
+
+| 命令 | Lab 原文 | 什么时候用 |
+|---|---|---|
+| `debug ip rip` | Display RIP routing updates **as they are sent and received** | 想看「到底发了什么、收到了什么」 |
+| `no debug all` | Stop debugging | debug 看完马上关 |
+| `show ip protocols` | Display IP routing protocol information | 怀疑**配置**错：版本、network、auto-summary |
+| `show ip route` | Show the IP routing table on the router | 看**结果**：该有的 R 路由有没有 |
+
+**排错顺序**：`show ip interface brief`（接口 up 了吗）→ `show ip route`（缺哪条）→ `show ip protocols`（是不是 network 漏写、版本不对、auto-summary 开着）→ `debug ip rip`（更新到底发没发、对方收没收）。
+
+### `show ip protocols` 怎么读（预期输出，Part 1 的 R1，默认版本）
+
+```text
+R1#show ip protocols
+Routing Protocol is "rip"
+  Sending updates every 30 seconds, next due in 12 seconds
+  Invalid after 180 seconds, hold down 180, flushed after 240
+  Outgoing update filter list for all interfaces is not set
+  Incoming update filter list for all interfaces is not set
+  Redistributing: rip
+  Default version control: send version 1, receive any version
+    Interface             Send  Recv  Triggered RIP  Key-chain
+    GigabitEthernet0/0    1     1 2
+    Serial0/0/0           1     1 2
+  Automatic network summarization is in effect
+  Maximum path: 4
+  Routing for Networks:
+    192.168.1.0
+    192.168.2.0
+  Routing Information Sources:
+    Gateway         Distance      Last Update
+    192.168.2.2          120      00:00:05
+  Distance: (default is 120)
+```
+
+| 这一行 | 对应的知识点 |
+|---|---|
+| `Sending updates every 30 seconds` | 30 秒定期更新 |
+| `Invalid after 180 … hold down 180, flushed after 240` | 其他三个计时器（第 2 周 §2 的课外补充） |
+| `Default version control: send version 1, receive any version` | **默认版本**：发 1、收 1 和 2。写了 `version 2` 后变成 `send version 2, receive version 2` |
+| `Send 1 / Recv 1 2` | 每个启用了 RIP 的接口各发、收哪个版本；**没出现在这里的接口就没跑 RIP** |
+| `Automatic network summarization is in effect` | auto-summary 开着；`no auto-summary` 后变成 `… is not in effect`（Lab p.13：It can be verified using **show ip protocols**） |
+| `Maximum path: 4` | 等价路径默认 4 条 |
+| `Routing for Networks` | 你写的 `network` 命令 |
+| `Routing Information Sources` | 从哪些邻居收到过更新；**空的 = 一条更新都没收到** |
+| `Distance: (default is 120)` | RIP 的 AD |
+
+### `debug ip rip`：V1 和 V2 的更新长什么样（预期输出）
+
+Worksheet Part 2 Step 2 要你 *compare the difference between RIPv2 routing update and RIPv1 update*，答案就在这两段里：
+
+```text
+! Part 1，R1，RIPv1
+RIP: sending v1 update to 255.255.255.255 via Serial0/0/0 (192.168.2.1)
+RIP: build update entries
+      network 192.168.1.0 metric 1
+RIP: sending v1 update to 255.255.255.255 via GigabitEthernet0/0 (192.168.1.1)
+RIP: build update entries
+      network 192.168.2.0 metric 1
+      network 192.168.3.0 metric 2
+RIP: received v1 update from 192.168.2.2 on Serial0/0/0
+      192.168.3.0 in 1 hops
+```
+
+```text
+! Part 2，R2，RIPv2 + no auto-summary
+RIP: sending v2 update to 224.0.0.9 via Serial0/0/0 (192.168.2.2)
+RIP: build update entries
+      192.168.1.64/26 via 0.0.0.0, metric 1, tag 0
+RIP: sending v2 update to 224.0.0.9 via GigabitEthernet0/0 (192.168.1.65)
+RIP: build update entries
+      192.168.1.0/26 via 0.0.0.0, metric 2, tag 0
+      192.168.2.0/24 via 0.0.0.0, metric 1, tag 0
+RIP: received v2 update from 192.168.2.1 on Serial0/0/0
+      192.168.1.0/26 via 0.0.0.0 in 1 hops
+```
+
+<Callout type="exam" title="我的解答：RIPv1 和 RIPv2 的更新有什么不同（Worksheet Part 2 Step 2）">
+
+| | RIPv1 | RIPv2 |
+|---|---|---|
+| 发到哪 | **255.255.255.255**（broadcast） | **224.0.0.9**（multicast） |
+| 每条路由 | `network 192.168.3.0 metric 2`：**没有掩码** | `192.168.1.64/26 … metric 1`：**带掩码** → 支持 VLSM |
+| 额外字段 | 无 | `tag 0`（**route tag**）；`via 0.0.0.0` = next hop 就是发更新的我 |
+
+另外两段都能看到 **split horizon**：R1 从 S0/0/0 发出去的更新里**没有** 192.168.3.0（那是从 S0/0/0 学来的），也没有 192.168.2.0（对面直连着）。
+
+</Callout>
+
+---
+
+## 6. 🔴 Auto summary（Lab p.13–14）
+
+| Lab 原文 | 中文 |
+|---|---|
+| RIPv2 automatically summarizes networks at **major network boundaries by default**, just like RIPv1 | V2 默认也会在大网边界汇总，和 V1 一样 |
+| It can **shorten the routing table and memory** | 好处：路由表短 |
+| **Discontinuous network cannot be used** | 坏处：同一个大网被隔开时会出错 |
+| To ensure all specific subnets are advertised, automatic summarization **must be disabled** | 想每个子网都通告，必须关掉 |
+| It can be verified using **show ip protocols** | 看 `Automatic network summarization is …` 那一行 |
+| `Router(config-router)# no auto-summary` | 关掉的命令 |
+
+<Figure src="images/page_14.png" caption="Router2 有 192.168.1.0/26 和 192.168.1.64/26，发给 Router3（经过 192.168.2.0/24）时汇总成 192.168.1.0/24" source="Lab p.14" />
+
+<Callout type="board" title="读 Lab p.14">
+
+- Router2 的两个 LAN 都在大网 192.168.1.0 里；它和 Router3 之间是 192.168.2.0，属于**另一个**大网。
+- 所以 Router2 往 Se2/0 发更新时跨过了大网边界，把两个 /26 合成一条 **192.168.1.0/24**。
+- 问题：Router3 那边的 PC4 是 **192.168.1.128/26**，也在 192.168.1.0 里。Router3 收到「192.168.1.0/24 在 Router2 那边」，自己又直连着 192.168.1.128/26，这个大网被 2.0 隔成了两半，就是 **discontiguous network**，路由会乱。
+- 修法：两边 `version 2` + `no auto-summary`，各自把 /26 原样通告出去。
+
+</Callout>
+
+---
+
+## 7. 🔴 最长前缀匹配（Lab p.15–22）
+
+Lab p.15：If multiple routes match a packet's destination, the router will always choose the route with the **longest prefix length (the most specific match)**.
+
+<Figure src="images/page_16.png" caption="去 172.16.0.10：路由表里有 172.16.0.0 的 /12、/18、/26、/29 四条" source="Lab p.16" />
+
+**做法**（Lab p.17–21）：把目的地址和每条路由都写成二进制，只比较路由**前缀长度那么多位**：
+
+| 路由 | 比较前几位 | 结果 |
+|---|---|---|
+| Route 1 172.16.0.0/12 | 前 12 位 | ✓ 匹配 |
+| Route 2 172.16.0.0/18 | 前 18 位 | ✓ 匹配 |
+| Route 3 172.16.0.0/26 | 前 26 位 | ✓ 匹配 |
+| Route 4 172.16.0.0/29 | 前 29 位 | ✗ 第 29 位不同（10 = 00001**0**10，路由是 00000**0**00） |
+
+三条匹配里 **/26 最长 → 走 Route 3（Serial4/0）**。
+
+<Callout type="warn" title="注意：最长前缀先于 AD">
+
+最长前缀匹配比的是**不同网段**（/12、/18、/26 是三个不同的路由）；AD 比的是**同一个网段**的不同来源（第 2 周 §7）。路由器先按最长前缀挑网段，同一个网段有多个来源时才看 AD。
+
+</Callout>
+
+<Figure src="images/page_22.png" caption="Exercise：A 172.17.128.0/17、B 172.17.128.0/19、C 172.17.160.0/19、D 0.0.0.0/0；六个地址各走哪条" source="Lab p.22" />
+
+<Callout type="board" title="我的解答：Lab p.22 Exercise（先看第三段就够了）">
+
+前两段 172.17 大家都一样，只看第三段：A /17 = 第三段 **128–255**；B /19 = **128–159**；C /19 = **160–191**；D = 什么都匹配。
+
+| 地址 | 第三段 | 匹配 | 选 |
+|---|---|---|---|
+| 172.17.90.83 | 90 | 只有 D | **D** |
+| 172.17.165.91 | 165 | A、C、D | **C**（/19） |
+| 172.17.124.36 | 124 | 只有 D | **D** |
+| 172.17.169.20 | 169 | A、C、D | **C**（/19） |
+| 172.17.155.116 | 155 | A、B、D | **B**（/19） |
+| 172.17.193.140 | 193 | A、D | **A**（/17） |
+
+</Callout>
+
+<PrefixMatchLab set="exercise" />
+
+---
+
+## 8. 🟡 Worksheet Part 1：RIP version 1
+
+<Figure src="images/TOPO_PART1.png" caption="Part 1：PC1 192.168.1.2 — R1 G0/0 192.168.1.1 / S0/0/0 192.168.2.1 — R2 S0/0/0 192.168.2.2 / G0/0 192.168.3.1 — PC2 192.168.3.2，全部 /24" source="Worksheet p.1" />
+
+**Step 1 配接口**（R2 同理，换成 3.1 和 2.2）：
+
+```text
+R1(config)# interface g0/0
+R1(config-if)# ip address 192.168.1.1 255.255.255.0
+R1(config-if)# no shutdown
+R1(config-if)# exit
+R1(config)# interface s0/0/0
+R1(config-if)# ip address 192.168.2.1 255.255.255.0
+R1(config-if)# no shutdown
+R1(config-if)# exit
+R1# show ip interface brief
+```
+
+**Step 2 配 RIP**：每台只写**自己直连**的网络。
+
+```text
+R1(config)# router rip
+R1(config-router)# network 192.168.1.0
+R1(config-router)# network 192.168.2.0
+
+R2(config)# router rip
+R2(config-router)# network 192.168.2.0
+R2(config-router)# network 192.168.3.0
+```
+
+**Step 3 等 1 分钟，查路由表**（预期输出，IOS 15 会多出 `L` 本地地址行）：
+
+```text
+R1#show ip route
+     192.168.1.0/24 is variably subnetted, 2 subnets, 2 masks
+C       192.168.1.0/24 is directly connected, GigabitEthernet0/0
+L       192.168.1.1/32 is directly connected, GigabitEthernet0/0
+     192.168.2.0/24 is variably subnetted, 2 subnets, 2 masks
+C       192.168.2.0/24 is directly connected, Serial0/0/0
+L       192.168.2.1/32 is directly connected, Serial0/0/0
+R    192.168.3.0/24 [120/1] via 192.168.2.2, 00:00:16, Serial0/0/0
+```
+
+R1 学到了 **192.168.3.0，1 跳，经 R2**；R2 那边对应地学到 192.168.1.0。PC1 ping PC2 应该通。
+
+**Step 4**：`debug ip rip` 看更新（第 5 节第一段输出），看完 `no debug all`；最后 `erase startup-config` + `reload`（Save? 答 no）。
+
+---
+
+## 9. 🔴 Worksheet Part 2：RIP version 2（为什么必须 version 2 + no auto-summary）
+
+<Figure src="images/TOPO_PART2.png" caption="Part 2：R1 G0/0 192.168.1.1/26，R2 G0/0 192.168.1.65/26，中间 S0/0/0 还是 192.168.2.0/24" source="Worksheet p.4" />
+
+**和 Part 1 的区别**：两边 LAN 都是 192.168.1.0 这个大网切出来的 /26（1.0/26 和 1.64/26），中间被 192.168.2.0 隔开，正是 Lab p.13 说的 **discontinuous network**。
+
+**命令**：接口照 Part 1 改 IP 和掩码；RIP 两台都写
+
+```text
+R1(config)# router rip
+R1(config-router)# network 192.168.1.0
+R1(config-router)# network 192.168.2.0
+```
+
+Worksheet 的 Note：RIP 的 `network` 是 classful 的，**就算用了子网，也只按 Class 写** 192.168.1.0 和 192.168.2.0。
+
+然后两台都加：
+
+```text
+R1(config)# router rip
+R1(config-router)# version 2
+R1(config-router)# no auto-summary
+```
+
+<Callout type="board" title="我的解答：加 version 2 前后，R1 的路由表有什么不同（Worksheet：Compare the routing table）">
+
+**加之前**（默认版本，发 V1，auto-summary 开着）：
+
+- R2 从 S0/0/0 往外发时跨过了大网边界（192.168.1.0 → 192.168.2.0），把 192.168.1.64/26 汇总成 **192.168.1.0**，而且 V1 不带掩码。
+- R1 收到「192.168.1.0」，可它自己就直连着 192.168.1.0 这个大网的一个子网，于是认为整个 192.168.1.0 都在自己这边，**不会装进 192.168.1.64/26**。
+- 结果 R1 的路由表只有 C 192.168.1.0/26 和 C 192.168.2.0/24，**没有去 PC2 的路由**，PC1 ping PC2 **不通**。R2 那边同理。
+
+**加之后**（version 2 + no auto-summary）：
+
+```text
+R1#show ip route
+     192.168.1.0/24 is variably subnetted, 3 subnets, 2 masks
+C       192.168.1.0/26 is directly connected, GigabitEthernet0/0
+L       192.168.1.1/32 is directly connected, GigabitEthernet0/0
+R       192.168.1.64/26 [120/1] via 192.168.2.2, 00:00:09, Serial0/0/0
+     192.168.2.0/24 is variably subnetted, 2 subnets, 2 masks
+C       192.168.2.0/24 is directly connected, Serial0/0/0
+L       192.168.2.1/32 is directly connected, Serial0/0/0
+```
+
+多出了 **R 192.168.1.64/26**，带着正确的 /26 掩码，PC1 ping PC2 **通**。
+
+**两条命令缺一不可**：只写 `version 2` 不写 `no auto-summary`，V2 照样在边界汇总成 192.168.1.0/24（Lab p.13：just like RIPv1），问题还在；只写 `no auto-summary` 不写 `version 2`，发的还是不带掩码的 V1。
+
+</Callout>
+
+---
+
+## 模拟自测题
+
+<MCQ q="在哪个提示符下输入 network 命令？" a="Router#" b="Router(config)#" c="Router(config-router)#" d="Router(config-if)#" answer="C">
+
+先 `router rip` 进入 RIP 配置模式 `(config-router)#`，再写 `network`（Lab p.4、p.7）。
+
+</MCQ>
+
+<MCQ q="哪条命令会停掉 RIP 并删除所有 RIP 配置？" a="no network" b="no router rip" c="no debug all" d="no version" answer="B">
+
+Lab p.4：To stop the RIP process and erase all existing RIP configurations → `no router rip`。`no version` 只是回到默认版本。
+
+</MCQ>
+
+<MCQ q="一台路由器写了 version 2，另一台没写 version（default）。会怎样？" a="互相都学得到" b="都学不到" c="default 那台学得到对方，version 2 那台学不到 default 那台" d="version 2 那台学得到对方，default 那台学不到" answer="C">
+
+Lab p.6：default 发 V1、收 V1 和 V2；version 2 只收 V2。所以 default 收得到 V2 的更新，V2 那台不收 default 发的 V1。
+
+</MCQ>
+
+<MCQ q="想确认 auto-summary 有没有关掉，用哪条命令？" a="show ip route" b="show ip protocols" c="debug ip rip" d="show ip interface brief" answer="B">
+
+Lab p.13：It can be verified using **show ip protocols**（看 Automatic network summarization is / is not in effect）。
+
+</MCQ>
+
+<MCQ q="想实时看到 RIP 更新的发送和接收，用哪条命令？看完怎么停？" a="show ip rip；exit" b="debug ip rip；no debug all" c="show ip protocols；no shutdown" d="debug all；reload" answer="B">
+
+Lab p.12：debug ip rip = Display RIP routing updates as they are sent and received；no debug all = Stop debugging。
+
+</MCQ>
+
+<MCQ q="R 192.168.1.0/24 [120/1] via 192.168.3.1 里，120 和 1 分别是？" a="metric 和 AD" b="AD 和 hop count" c="带宽和延迟" d="hold time 和 hop count" answer="B">
+
+Lab p.2：[Administrative Distance / Hop count]。
+
+</MCQ>
+
+<MCQ q="路由表有 172.16.0.0/12、/18、/26、/29 四条，去 172.16.0.10 走哪条？" a="/12" b="/18" c="/26" d="/29" answer="C">
+
+Lab p.16–21：前三条都匹配，/29 第 29 位不同；匹配的里面 /26 最长。
+
+</MCQ>
+
+<MCQ q="Worksheet Part 2 中，下列哪两项是 PC1 ping 通 PC2 所必需的？" a="两台路由器都配 version 2" b="两台路由器都配 no auto-summary" c="network 写 192.168.1.64" d="把 S0/0/0 也改成 /26" e="开 debug ip rip" answer="AB">
+
+两边 /26 被 192.168.2.0 隔开（不连续网络）：要 V2 带掩码，还要关掉自动汇总。C 不行，network 只认 classful；D、E 无关。
+
+</MCQ>
+
+<QA q="Lab p.22：A 172.17.128.0/17、B 172.17.128.0/19、C 172.17.160.0/19、D 0.0.0.0/0。172.17.155.116 和 172.17.193.140 各走哪条？">
+
+只看第三段：155 落在 B（128–159）和 A（128–255），B 更长 → **B**。193 只落在 A（128–255），B、C 都不含 → **A**。
+
+</QA>
+
+<QA q="debug ip rip 里看到「sending v1 update to 255.255.255.255」和「sending v2 update to 224.0.0.9」，两者还有什么区别？">
+
+V1 是广播、每条路由只有网络号（`network 192.168.3.0 metric 2`）；V2 是组播 224.0.0.9、每条路由带掩码（`192.168.1.64/26`）和 route tag（`tag 0`）。
+
+</QA>
