@@ -1,0 +1,498 @@
+---
+title:
+  en: "Week 3 · EIGRP: Three Tables, Successors & Feasible Successors"
+  zh: "第 3 周 · EIGRP：三张表、Successor 与 Feasible Successor"
+summary:
+  en: "Module 3 Secure Routing Protocol Configuration and Authentication (EIGRP): what EIGRP is (Cisco advanced distance vector with neighbor discovery and partial triggered updates), routed vs routing protocols, metric from bandwidth and delay, the neighbor / topology / routing tables, Hello and hold time, Feasible Distance vs Reported Distance, successors, feasible successors and the DUAL feasibility condition RD < FD."
+  zh: "Module 3 Secure Routing Protocol Configuration and Authentication（EIGRP）：EIGRP 是什么（Cisco 的高级距离矢量，带邻居发现和部分触发更新）、routed vs routing protocol、用带宽和延迟算 metric、neighbor / topology / routing 三张表、Hello 和 hold time、Feasible Distance vs Reported Distance、successor、feasible successor 和 DUAL 的可行条件 RD < FD。"
+week: 3
+date: 2026-11-11
+tags: [EIGRP, DUAL, Successor, Feasible Successor, Topology Table, Hello]
+---
+# ISOM 5190 Network Security Management — Week 3 复习笔记
+**主题：Module 3 Secure Routing Protocol Configuration and Authentication — EIGRP 是什么 · Routed vs Routing protocol · EIGRP 概览（Cisco 私有、VLSM、bandwidth + delay）· 三张表 · Neighbor table 与 Hello / Hold · Topology table（FD、RD、Passive / Active）· DUAL · Successor 与 Feasible Successor**
+
+> 优先级标注说明（按考试重要性）：
+> 🔴 **必考核心** — 概念名称、定义、结构必须能背出来
+> 🟡 **需要理解** — 需要懂逻辑关系，能举例说明
+> 🟢 **了解即可** — 背景知识，考试大概率不会细抠
+>
+> **优先级依据**：
+> ① **老师的手写补充（5190M03 supp）**：p.2 整页是一道「给拓扑和链路 cost → 填 FD、RD → 选 successor 和 FS → 写 A 的路由表」的题，旁边写着 **FD > RD to be FS**；下面还画了两台路由器的 **Hello / Hold**。这是本周最可能的考法；
+> ② **篇幅**：15 页里有 8 页（Slides 8–15）在讲 topology table、FD / RD、successor / FS；
+> ③ **Slide 5 的三张表**和 **Slide 3–4 的特性**是现成的选择题素材；
+> ④ 板书 p.1 的 **Routed vs Routing** 对应 Slide 3 最后一条（EIGRP 能代替 Novell RIP 和 RTMP），标 🟡。
+
+<Callout type="note" title="本笔记里的几种标记">
+
+- **✍️ 老师板书** — 来自 *5190M03 supp*（老师上课手写的讲解图），放在对应课件内容旁边。这份是**空白版**（FD、RD、路由表都没填），下面的答案全部是 **「我的解答」**；拿到课堂照片或 Completed 版后再对照改成「课堂答案」。
+- **➕ 课外补充** — 课件没写、但理解或答题会用到的背景知识，考试优先级按 🟢 处理。
+- 网页版有一个可以点的小实验（FD / RD → successor / FS → 断线以后怎么切换）和两组点选练习，打印版会变成等价的表格。
+
+</Callout>
+
+<Callout type="todo" title="这份笔记是课前做的">
+
+日期按课表排在 11 月 11 日。上完课以后，把老师强调的点、板书的课堂答案告诉我，再对照改。
+
+</Callout>
+
+---
+
+## 0. 先讲 EIGRP：一页看懂
+
+### EIGRP 是什么
+
+**EIGRP = Enhanced Interior Gateway Routing Protocol**，Cisco 自己的路由协议，是老协议 **IGRP 的升级版**。第 1 周 §9 把它叫 **Balanced Hybrid**，第 1 周 Slide 34 叫 **Cisco advanced distance vector**，说的都是它。
+
+一句话：**骨架是距离矢量，但借了链路状态的几个优点，还提前准备好了备用路线。**
+
+| 从哪里来 | EIGRP 的做法 | 对比 |
+|---|---|---|
+| **距离矢量的骨架** | 只听邻居说「我到目的地有多远」（RD），自己加上到邻居的这一段，取最小的 | 跟 RIP 一样，不画整张地图、不跑 SPF |
+| **借链路状态的优点 ①** | 用 **Hello 包**主动找邻居、维持邻居关系 | 跟 OSPF 一样；RIP 不认识邻居，只是收更新 |
+| **借链路状态的优点 ②** | 拓扑变了才发，而且**只发变了的部分**（partial, triggered） | RIP 每 30 秒发整张表 |
+| **更聪明的 metric** | 默认看 **bandwidth + delay** | RIP 只数跳数 |
+| **自己的绝招：DUAL** | 提前算好一条**保证不成环的备用路线**（feasible successor），主路断了**立刻切换**，不用重新问一遍 | RIP 要等更新，OSPF 要重跑 SPF |
+
+**小白类比**：RIP 像「问路，每 30 秒再问一遍」；OSPF 像「人手一张地图，自己导航」；**EIGRP 像「问路，但同时记下一条已经确认不会绕回原地的备用路线」**，主路一堵就马上换，不用停下来再问。
+
+### 跟 RIP、OSPF 放一起比
+
+| | RIP | **EIGRP** | OSPF |
+|---|---|---|---|
+| 类型 | Distance vector | **Advanced distance vector**（hybrid） | Link-state |
+| 谁的 | 开放标准（RFC） | **Cisco 私有** | 开放标准 |
+| Metric | Hop count | **Bandwidth + delay**（可加 load、reliability） | Cost（按带宽） |
+| 认识邻居吗 | 不 | **Hello** | Hello |
+| 更新 | 每 30 秒整张表 | **只在变化时、只发变化的部分** | 变化时发 LSA |
+| 存什么 | 路由表 | **Neighbor / Topology / Routing 三张表** | 邻居表、LSDB、路由表 |
+| 备用路由 | 没有 | **Feasible successor，断了立刻顶上** | 重跑 SPF |
+| VLSM | V2 支持 | **支持** | 支持 |
+| AD | 120 | **90**（内部）/ 170（外部） | 110 |
+| 配置 | 简单 | **比 OSPF 简单**（Slide 4） | 较复杂 |
+
+### 本周的核心地图
+
+```
+EIGRP（Cisco 私有，IGRP 升级版，advanced distance vector）
+   ├─ 支持 CIDR / VLSM；metric = bandwidth + delay
+   ├─ 只在变化时发、只发变化的部分 → 省带宽、内存、CPU
+   └─ 还能给 Novell IPX、AppleTalk 当路由协议（板书 p.1：routed vs routing）
+                                     │
+三张表（Slide 5）
+   ├─ Neighbor table：Hello 认识的邻居（地址、接口、hold time）
+   ├─ Topology table：所有邻居报来的所有路径（FD、RD、接口、Passive / Active）
+   └─ Routing table：只放 successor
+                                     │
+DUAL 选路（Slides 9–15 + 板书 p.2）
+   ├─ 每条路径：总距离 = 到邻居的 cost + 邻居报的 RD
+   ├─ 最小的总距离 = FD → 那个邻居 = Successor（进路由表，最多 4 条）
+   ├─ 其他邻居：RD < FD → Feasible Successor（无环备胎，只留在 topology table）
+   └─ Successor 断了：有 FS → 立刻升级（Passive）；没有 FS → Active，发 Query 重新算
+```
+
+**一句话抓住本周**：EIGRP 的路由表里只有 successor，但 topology table 里还藏着满足 **RD \< FD** 的备胎；备胎越多，断线时切换越快。
+
+<Callout type="biz" title="为什么这一章叫 Secure Routing Protocol Configuration and Authentication">
+
+和上周一样，路由器会相信邻居发来的路由信息。EIGRP 先要用 Hello 建立邻居关系，才交换路由，所以可以在**建邻居**这一步加验证：只有带正确密钥的路由器才能成为邻居。这一版课件只讲到选路，没有讲 authentication 的配置，见第 7 节的课外补充。
+
+</Callout>
+
+---
+
+## 1. 🟡 Routed vs Routing protocol（板书 p.1 + Slide 3）
+
+<Figure board src="images/BOARD_ROUTED.png" caption="Routed vs Routing：IP → EIGRP；Novell IPX → Novell RIP；AppleTalk → RTMP；后两个 slow" source="5190M03 supp p.1" />
+
+两个名字只差一个词，指的是完全不同的东西：
+
+| | **Routed protocol**（被路由的协议） | **Routing protocol**（路由协议） |
+|---|---|---|
+| 是什么 | 包本身用的地址格式，**被路由器转发的货物** | 路由器之间**交换路由信息**、填路由表用的协议 |
+| 例子 | IP、Novell IPX、AppleTalk | RIP、OSPF、EIGRP、Novell RIP、RTMP |
+| 类比 | 快递包裹上的地址格式 | 快递站之间互相通报「哪条路能到哪里」 |
+
+<Callout type="board" title="我的解答：板书 p.1 读图">
+
+- 每一种 routed protocol 都要有自己的 routing protocol 来算路：**IP 用 EIGRP**（也可以用 RIP、OSPF），**Novell IPX 用 Novell RIP**，**AppleTalk 用 RTMP**（Routing Table Maintenance Protocol）。
+- 右边的 **slow**：Novell RIP 和 RTMP 都是早期的距离矢量协议，定期发整张表，收敛慢。
+- 这就是 Slide 3 最后一条：**EIGRP can replace Novell RIP and AppleTalk RTMP**。EIGRP 一个协议可以同时给 IP、IPX、AppleTalk 算路，每种 routed protocol 各有一套表（Slide 6、8：a table **for each protocol** that EIGRP supports）。
+
+</Callout>
+
+<Callout type="extra" title="课外补充：IPX 和 AppleTalk 现在还有吗">
+
+基本没有了。90 年代企业网里 Novell NetWare（IPX）和苹果电脑（AppleTalk）很常见，现在都换成了 IP。考试只要知道「EIGRP 支持多种 routed protocol，能代替 Novell RIP 和 RTMP」就够了。
+
+</Callout>
+
+---
+
+## 2. 🔴 EIGRP 概览（Slides 3–4）
+
+| 课件原文 | 中文 / 小白解释 |
+|---|---|
+| **Cisco-proprietary** routing protocol based on **IGRP** | Cisco 私有，IGRP 的升级版；别家路由器不一定支持 |
+| EIGRP routers **actively establish relationships with their neighbors** like OSPF (use **Hello** packets) | 像 OSPF 一样，主动用 Hello 认识邻居（第 4 节） |
+| Supports **CIDR and VLSM** | 更新里带掩码，classless（对比 RIP V1） |
+| Compared to IGRP, **faster convergence** and superior handling of **routing loops** | 比 IGRP 收敛快、更不容易成环（靠 DUAL） |
+| Can replace **Novell RIP** and **AppleTalk RTMP** | 第 1 节 |
+| Technically, an **advanced distance-vector** routing protocol … associated with link-state protocols such as **partial updates and neighbor discovery** | 本质是距离矢量，但有链路状态的「部分更新、发现邻居」 |
+| **Easier to configure than OSPF** | 比 OSPF 好配 |
+| Metric: **Bandwidth and delay**, by default, and the option to use **load and reliability** | 默认看带宽和延迟，可选再加负载和可靠性 |
+| When a topology change occurs, **routing table changes are only propagated**, not the entire routing table (**trigger update**) | 只发变了的部分，有变化才发 |
+| Use **less bandwidth, memory and processor** overhead | 比 OSPF 省资源（不用存整张拓扑、不跑 SPF），也比 RIP 省带宽（不定期发整表） |
+
+<Callout type="board" title="板书 p.2 左边：Cost = 1 / Bandwidth">
+
+老师写的是 metric 的直觉：**带宽越大，cost 越小**，路越好。所以 EIGRP 会选「跳数多但链路快」的路，RIP 只会选跳数少的。真正的公式见第 7 节课外补充。
+
+</Callout>
+
+<Callout type="exam" title="考点：EIGRP 是哪一类协议">
+
+- 课件原话：**advanced distance-vector**。第 1 周 Slide 30 的说法是 **balanced hybrid**，两种说法都对，看选项怎么给。
+- 和 RIP 一样**听邻居说**（RD），不画整张拓扑，所以本质是距离矢量。
+- 借了链路状态的 **neighbor discovery（Hello）** 和 **partial / triggered updates**。
+
+</Callout>
+
+---
+
+## 3. 🔴 三张表（Slide 5）
+
+| 表 | 存什么 | 从哪来 | 对应 OSPF |
+|---|---|---|---|
+| **Neighbor table** | 直连邻居：地址、接口、hold time | Hello 包 | adjacency database（Slide 6） |
+| **Topology table** | 每个目的地**所有**邻居报来的**所有**路径：FD、RD、接口、Passive / Active | 邻居的更新 | LSDB（但只存邻居报的距离，不是整张图） |
+| **Routing table** | 每个目的地只放**最好的**（successor） | DUAL 从 topology table 里挑 | 路由表 |
+
+**关系**：Neighbor table 决定「跟谁交换」→ Topology table 存「他们都说了什么」→ DUAL 挑出最好的放进 Routing table。
+
+<RoutingSortQuiz set="eigrptable" />
+
+---
+
+## 4. 🔴 Neighbor table 与 Hello / Hold（Slides 6–7 + 板书 p.2 下）
+
+| 课件原文 | 中文 / 小白解释 |
+|---|---|
+| Each EIGRP router maintains a neighbor table (from **hello packets** that it receives from adjacent EIGRP routers) that lists adjacent routers | 收到谁的 Hello，谁就进邻居表 |
+| **Comparable to the adjacency database** that OSPF uses | 和 OSPF 的邻接数据库一个意思 |
+| There is a table **for each protocol** that EIGRP supports | IP、IPX、AppleTalk 各一张 |
+| Newly discovered neighbors are learned, the **address and interface** of the neighbor are recorded | 记下邻居的 IP 和连着它的接口 |
+
+<Figure src="images/page_07.png" caption="show ip eigrp neighbors：三个邻居，Hold 一栏 11–13 秒在倒数" source="Slide 7" />
+
+<Callout type="board" title="读 Slide 7 的输出">
+
+| 列 | 意思 |
+|---|---|
+| Address | 邻居的 IP（200.10.10.10、200.10.10.5、199.55.32.10） |
+| Interface | 从哪个接口连着它（Se1、Se0、Et0） |
+| **Hold (sec)** | 还剩几秒。每收到一个 Hello 就重置；倒数到 0 还没收到 → 判定邻居挂了 |
+| Uptime | 邻居关系已经维持了多久 |
+| SRTT / RTO | 平均往返时间、重传超时（课外：EIGRP 的更新要对方确认，没确认就重传） |
+| Q Cnt | 排队等发的包数，0 = 正常 |
+| Seq Num | 从这个邻居收到的最后一个包的序号 |
+
+Hold 都在 11–13 之间：默认 hold time 是 15 秒，Hello 每 5 秒一个，所以总是从 15 倒数到 10 左右就被重置（课外：这两个默认值是 Cisco 在以太网和高速链路上的设置）。
+
+</Callout>
+
+<Callout type="board" title="我的解答：板书 p.2 下面，A：Hello 10 / Hold 30，B：Hello 11 / Hold 33">
+
+- **Hello interval**：每隔几秒发一个 Hello，告诉邻居「我还在」。
+- **Hold time**：多久没收到对方的 Hello 就认为它挂了，通常是 Hello 的 **3 倍**（10 → 30，11 → 33）。
+- 两台路由器的数字**不一样**，照样能成为邻居。每台在自己的 Hello 里告诉对方自己的 hold time，对方就按这个数等：A 最多等 B 33 秒，B 最多等 A 30 秒。
+- 对比 OSPF（课外）：OSPF 的 Hello / Dead 时间两边**必须一样**，否则建不了邻居。EIGRP 没有这个要求。
+
+我猜老师画这两个不一样的数，就是为了讲这一点；上课确认后改成课堂答案。
+
+</Callout>
+
+---
+
+## 5. 🔴 Topology table：FD、RD、接口、状态（Slides 8–12）
+
+| 课件原文 | 中文 / 小白解释 |
+|---|---|
+| Every EIGRP router maintains a topology table **for each configured network protocol** | 每种 routed protocol 一张 |
+| Topology table is made up of **all the EIGRP routing tables in the autonomous system** | 邻居们的路由表汇总在这里 |
+| **All learned routes** to a destination are maintained in the topology table | 不只最好的，**所有**学到的路径都留着 |
+| **Feasible Distance (FD)**：the **lowest calculated metric** to each destination | 我自己到目的地的**最短**总距离 |
+| **Reported Distance (RD)**：distance **reported by an adjacent neighbor** to a specific destination | **邻居**告诉我的、它自己到目的地的距离 |
+| **Interface Information**：interface through which the destination can be reached | 从哪个接口出去 |
+| **Route Status**：**Passive (P)** = stable and ready for use；**Active (A)** = being recomputed by **DUAL** | P = 稳定可用；A = 正在重新算 |
+| DUAL takes the information in the **neighbor table and the topology table** and calculates the lowest cost routes | DUAL 用这两张表算最好的路 |
+| EIGRP sorts the topology table so that **successor routes are at the top**, followed by the **feasible successors**；at the bottom, routes DUAL believes to be **loops** | 排序：successor → FS → 可能成环的 |
+
+<Callout type="memo" title="FD 和 RD 一句话分清">
+
+**RD = 邻居到目的地有多远**（邻居说的）；**我经过这个邻居的总距离 = 我到邻居的 cost + RD**；所有邻居里**总距离最小的那个数 = FD**。
+
+类比：你要去机场。朋友 B 说「我家到机场 2 公里」（RD = 2），你家到 B 家 1 公里，那经过 B 总共 3 公里。问遍朋友，最近的是 3 公里，这就是 FD。
+
+</Callout>
+
+<Figure src="images/page_12.png" caption="show ip eigrp topology：每条 via 后面括号是 (总距离 / RD)" source="Slide 12" />
+
+<Callout type="board" title="读 Slide 12：括号里是 (经过这个邻居的总距离 / 邻居报的 RD)">
+
+| 目的地 | 读法 |
+|---|---|
+| **170.32.0.0/16** | 两条路：via 199.55.32.10 **(2195456 / 2169856)**，Ethernet0；via 200.10.10.5 **(2681856 / 2169856)**，Serial0。FD = 较小的 **2195456** → 第一条是 successor（「1 successors」）。第二条的 RD 2169856 **\<** FD 2195456 → 它是 **feasible successor**，排在 successor 下面。 |
+| 32.0.0.0/8 | 只有一条 via 200.10.10.10，successor，FD 2195456 |
+| 200.10.10.8/30、200.10.10.4/30 | **via Connected**：直连网段，没有 RD |
+| 200.10.10.12/30 | via 200.10.10.10，FD 2681856 |
+| 200.10.10.0/24 | **via Summary (2169856/0), Null0**：自动汇总出来的一条（课外） |
+
+所有路由前面都是 **P**：全部 Passive，网络稳定，没有在重算的。
+
+</Callout>
+
+---
+
+## 6. 🔴 Successor 与 Feasible Successor（Slides 13–15 + 板书 p.2）
+
+| 课件原文 | 中文 / 小白解释 |
+|---|---|
+| FSMs define a set of possible **states**, what events cause those states … | DUAL 是一台有限状态机：路由在 Passive / Active 之间切换 |
+| **DUAL guarantees each path is loop free** | 选出来的路保证不成环 |
+| **Successor** is a route selected as the **Primary route** to reach a destination | 主路由 |
+| Successor places in the **routing table** and a copy is placed in the **topology table** | 两张表都有 |
+| There can be **up to four successor routes** for any particular destination | 一样好的最多 4 条，一起用 |
+| **Feasible Successor (FS)** is a **backup route (loop-free)** | 备用路由，保证无环 |
+| FS routes are identified **at the same time** the successors are identified but are kept in the **topology table only**. **Multiple** feasible successors can be retained | 跟 successor 同时算出来；**不进路由表**；可以有好几条 |
+| Feasible successor must have a **lower advertised cost than the current successor cost** to the destination | **可行条件：RD \< FD** |
+| If a successor route goes down, a FS route is **promoted to successor** status (from topology table) | 主路断了，备胎直接升正 |
+
+<Figure src="images/page_13.png" caption="RTB、RTC 报 metric 5，RTX 报 6：RTB、RTC 是 successor，RTX 是 feasible successor" source="Slide 13" />
+
+<Callout type="board" title="读 Slide 13">
+
+- RTB、RTC 都说「我到 Z 的 metric 是 5」，RTA 经过它们的总距离一样，都是最小的 → **两个 successor**（等价，一起用）。
+- RTX 说「我到 Z 是 6」。RTX 能当 FS，说明 RTA 的 FD **大于 6**：RTA 到 RTB 的那一段链路 cost 至少要 2，FD 才会 ≥ 7。课件没给链路 cost，这是从结论倒推的。
+- 底下那句：**By identifying feasible successors, EIGRP routers can immediately install alternate routes if a successor fails.**
+
+</Callout>
+
+<Figure board src="images/BOARD_DUAL.png" caption="A 经 B / D / E 到 C 后面的 X.0；链路 cost：A–B 1、B–C 2、A–D 2、D–C 2、A–E 2、E–C 4；FD = ?、RD = ?；FD > RD to be FS；A 的路由表" source="5190M03 supp p.2" />
+
+<Callout type="board" title="我的解答：板书 p.2 上面（C 到 X.0 这一段三条路都一样，不影响比较，省略不算）">
+
+**第 1 步：每个邻居的 RD**（邻居自己到 C 的 cost）
+
+| 邻居 | RD |
+|---|---|
+| B | B–C = **2** |
+| D | D–C = **2** |
+| E | E–C = **4** |
+
+**第 2 步：A 经过每个邻居的总距离**（A 到邻居的 cost + RD）
+
+| 经过 | 总距离 | 
+|---|---|
+| B | 1 + 2 = **3** |
+| D | 2 + 2 = 4 |
+| E | 2 + 4 = 6 |
+
+**第 3 步：FD = 最小的总距离 = 3**（经过 B）。
+
+**第 4 步：Topology table**（板书右边的 B →、D →、E →），按 successor → FS → 其他排：
+
+| 经过 | (总距离 / RD) | 角色 | 理由 |
+|---|---|---|---|
+| B | (3 / 2) | **Successor** | 总距离最小 |
+| D | (4 / 2) | **Feasible successor** | RD 2 \< FD 3 ✓ |
+| E | (6 / 4) | 不是 FS | RD 4 ≥ FD 3 ✗ |
+
+**第 5 步：A 的路由表**（只放 successor）：
+
+| N.W | Next Hop |
+|---|---|
+| X.0 | **B** |
+| PC1 的网段 | 直连（connected） |
+
+**断线**：A–B 断了 → D 已经是 FS，**马上升为 successor**，新 FD = 4，路由表改成 X.0 → D，不用问任何邻居。如果 B、D 都断了 → E 不是 FS，路由变成 **Active**，A 发 Query 问邻居，等回复后才确定走 E（FD = 6）。
+
+</Callout>
+
+<Callout type="warn" title="踩坑：比的是 RD，不是总距离">
+
+E 的总距离 6，D 的总距离 4，但判断能不能当 FS **不看总距离**，只看**邻居报的 RD 是否小于我的 FD**。有可能一条路总距离很大（我到邻居的链路很慢），但 RD 很小，照样是 FS；反过来也可能总距离不大却不是 FS。
+
+板书写的是 **FD > RD to be FS**，和课件的 RD \< FD 是同一句话。
+
+</Callout>
+
+<Callout type="memo" title="为什么 RD < FD 就保证不成环">
+
+如果邻居 D 去 X.0 的路要**绕回经过我 A**，那 D 的距离至少等于「我的距离 + A 到 D 这一段」，一定 **≥ 我的 FD**。
+反过来，D 报的 RD **比我的 FD 还小**，说明 D 有一条**不经过我**的更近的路。所以把包交给 D 不会绕回来。
+E 的 RD 4 ≥ 3：E 的路有可能经过 A（这里实际上没有，但 DUAL 不能确定），所以不能直接当备胎，要先问一遍。
+
+</Callout>
+
+<EigrpDualLab />
+
+<RoutingSortQuiz set="eigrp" />
+
+---
+
+## 7. 🟢 课外补充：EIGRP 的 metric 公式和认证
+
+<Callout type="extra" title="Slide 12 那些七位数是怎么来的">
+
+默认只用 bandwidth 和 delay（K1 = K3 = 1）：
+
+```
+metric = 256 × ( 10⁷ ÷ 路径上最小的带宽(kbps) + 路径上所有 delay 加起来(单位 10 微秒) )
+```
+
+用 Slide 12 验算（假设是 T1 串口，带宽 1544 kbps，delay 20000 μs）：
+
+- 10⁷ ÷ 1544 ≈ **6476**；delay 20000 μs = **2000** 个 10 μs
+- 256 × (6476 + 2000) = 256 × 8476 = **2169856** ← 就是表里的 RD
+- 再经过一段以太网（delay 1000 μs = 100）：2169856 + 256 × 100 = **2195456** ← 170.32.0.0 的 FD
+- 再经过一段串口（delay 2000）：2169856 + 256 × 2000 = **2681856** ← 第二条路的总距离
+
+所以板书的「Cost = 1 / Bandwidth」是简化：带宽项确实是 10⁷ ÷ 带宽，带宽越大越小；再加上一路的 delay。
+
+</Callout>
+
+<Callout type="extra" title="EIGRP 认证（模块标题里的 Authentication）">
+
+- EIGRP 可以给 Hello 和更新加 **MD5**（新版 IOS 也支持 SHA-256）认证：两边配同样的 key chain，密钥不对就**建不成邻居**，伪造的路由更新进不来。
+- 这一版课件没有讲配置命令；如果后面的课或 lab 讲到，再补到这里。
+
+</Callout>
+
+---
+
+## 🔴 综合缩写速查表
+
+| 缩写 / 术语 | 全称 | 一句话 |
+|---|---|---|
+| EIGRP | Enhanced Interior Gateway Routing Protocol | Cisco 私有，advanced distance vector，AD 90 |
+| IGRP | Interior Gateway Routing Protocol | EIGRP 的前身，Cisco 私有，AD 100 |
+| Routed protocol | — | 被转发的包用的协议：IP、IPX、AppleTalk |
+| Routing protocol | — | 路由器之间交换路由用的：RIP、OSPF、EIGRP、RTMP |
+| RTMP | Routing Table Maintenance Protocol | AppleTalk 的路由协议，慢 |
+| IPX | Internetwork Packet Exchange | Novell 的 routed protocol，配 Novell RIP |
+| Hello | — | 发现和维持邻居的包 |
+| Hold time | — | 多久收不到 Hello 就判邻居挂了，通常 3 × Hello |
+| Neighbor table | — | 邻居的地址、接口、hold time |
+| Topology table | — | 每个目的地所有邻居报来的所有路径 |
+| FD | Feasible Distance | 我到目的地算出来的最小 metric |
+| RD | Reported Distance | 邻居报的、它自己到目的地的距离（也叫 advertised distance） |
+| Successor | — | 主路由，进路由表，最多 4 条 |
+| FS | Feasible Successor | 无环备用路由，只在 topology table；条件 RD \< FD |
+| DUAL | Diffusing Update Algorithm | EIGRP 选路、保证无环的算法，是一台有限状态机 |
+| FSM | Finite-State Machine | 定义状态和状态切换的模型 |
+| Passive (P) | — | 路由稳定可用 |
+| Active (A) | — | 路由正在被 DUAL 重新计算（发 Query 问邻居） |
+| VLSM / CIDR | — | EIGRP 都支持 |
+
+---
+
+## 模拟自测题
+
+<MCQ q="EIGRP 是基于哪个协议发展来的？" a="RIP" b="OSPF" c="IGRP" d="BGP" answer="C">
+
+Slide 3：Cisco-proprietary routing protocol **based on IGRP**。
+
+</MCQ>
+
+<MCQ q="课件把 EIGRP 归为哪一类？" a="Link-state" b="Advanced distance-vector" c="Path vector" d="Exterior gateway protocol" answer="B">
+
+Slide 4：Technically, EIGRP is an **advanced distance-vector** routing protocol。第 1 周 Slide 30 叫它 balanced hybrid。
+
+</MCQ>
+
+<MCQ q="EIGRP 默认用哪两项计算 metric？" a="Hop count 和 bandwidth" b="Bandwidth 和 delay" c="Load 和 reliability" d="Cost 和 hop count" answer="B">
+
+Slide 4：Bandwidth and delay, by default, and the option to use load and reliability。
+
+</MCQ>
+
+<MCQ q="EIGRP 维护的三张表是？" a="Neighbor、Topology、Routing" b="ARP、MAC、Routing" c="LSDB、SPF、Routing" d="Neighbor、Link-state、Forwarding" answer="A">
+
+Slide 5：Neighbor table、Topology table、Routing table。
+
+</MCQ>
+
+<MCQ q="EIGRP 的 neighbor table 是从什么学到的？" a="LSA 泛洪" b="Hello 包" c="每 30 秒的完整路由表" d="ARP 请求" answer="B">
+
+Slide 6：from **hello packets** that it receives from adjacent EIGRP routers；Slide 3：use Hello packets like OSPF。
+
+</MCQ>
+
+<MCQ q="Feasible Distance (FD) 指的是？" a="邻居报给我的、它自己到目的地的距离" b="我到目的地算出来的最小 metric" c="到邻居的链路 cost" d="最大可接受的 hop count" answer="B">
+
+Slide 9：FD is the **lowest calculated metric** to each destination。A 是 RD。
+
+</MCQ>
+
+<MCQ q="某路由的 FD 是 3。下列哪个邻居可以成为 feasible successor？" a="RD = 4，总距离 6" b="RD = 3，总距离 5" c="RD = 2，总距离 4" d="RD = 5，总距离 7" answer="C">
+
+可行条件：RD \< FD。只有 C 的 RD 2 \< 3。B 的 RD 3 不小于 3，不行。这就是板书 p.2 的 D。
+
+</MCQ>
+
+<MCQ q="关于 feasible successor，下列哪两项正确？" a="它和 successor 同时被找出来" b="它放在路由表里，和 successor 一起转发" c="它只保存在 topology table 里" d="每个目的地最多只能有一个" e="successor 断了以后要先发 Query 才能用它" answer="AC">
+
+Slide 15：identified **at the same time** the successors are identified but are kept in the **topology table only**；Multiple feasible successors can be retained（D 错）；successor 断了直接 promote，不用 Query（E 错）。
+
+</MCQ>
+
+<MCQ q="同一个目的地最多可以有几条 successor 路由？" a="1" b="2" c="4" d="6" answer="C">
+
+Slide 14：There can be **up to four** successor routes for any particular destination。
+
+</MCQ>
+
+<MCQ q="show ip eigrp topology 里某条路由前面是 A，表示？" a="Active：DUAL 正在重新计算这条路由" b="Advertised：已经通告给邻居" c="Accepted：已经进入路由表" d="Authenticated：通过了认证" answer="A">
+
+Slide 10：Active (A), which means that route is in the process of being recomputed by **DUAL**。Passive (P) = stable and ready for use。
+
+</MCQ>
+
+<MCQ q="Successor 断了，topology table 里没有 feasible successor，会发生什么？" a="路由立刻从路由表删除，不再尝试" b="路由变成 Active，向邻居发 Query 重新计算" c="等 30 秒后的定期更新" d="改用 RD 最大的那条路" answer="B">
+
+没有现成的无环备胎，DUAL 只能进入 Active，问邻居、等回复后再选。有 FS 的话直接升级，路由保持 Passive（Slide 15）。
+
+</MCQ>
+
+<MCQ q="下列哪个是 routed protocol 而不是 routing protocol？" a="EIGRP" b="RTMP" c="Novell IPX" d="Novell RIP" answer="C">
+
+板书 p.1：IPX、IP、AppleTalk 是被路由的协议；EIGRP、Novell RIP、RTMP 是给它们算路的路由协议。
+
+</MCQ>
+
+<MCQ q="EIGRP 可以代替哪两个协议？" a="Novell RIP" b="OSPF" c="AppleTalk RTMP" d="BGP" answer="AC">
+
+Slide 3：EIGRP can replace Novell Routing Information Protocol (RIP) and AppleTalk Routing Table Maintenance Protocol (RTMP)。
+
+</MCQ>
+
+<QA q="板书 p.2：A 去 X.0，链路 cost 为 A–B 1、B–C 2、A–D 2、D–C 2、A–E 2、E–C 4。写出 B、D、E 的 RD，A 的 FD，successor 和 feasible successor。">
+
+RD：B = 2、D = 2、E = 4。经过 B / D / E 的总距离 3 / 4 / 6 → **FD = 3**，**successor = B**。D 的 RD 2 \< 3 → **FS**；E 的 RD 4 ≥ 3 → 不是 FS。A 的路由表：X.0 → next hop B。
+
+</QA>
+
+<QA q="接上题：A–B 断了以后，A 怎么处理？如果 A–D 也断了呢？">
+
+A–B 断：D 已经是 FS，直接升为 successor，新 FD = 4，路由表改成 X.0 → D，路由保持 Passive，不用问邻居。
+A–B、A–D 都断：E 不满足 RD \< FD，路由变成 Active，A 发 Query 问邻居，收到回复后选 E（FD = 6），再回到 Passive。
+
+</QA>
+
+<QA q="板书 p.2 下面：A 的 Hello 10 / Hold 30，B 的 Hello 11 / Hold 33。两台能成为 EIGRP 邻居吗？各自最多等对方多久？">
+
+能。EIGRP 不要求两边 Hello / Hold 一样。每台在 Hello 里告诉对方自己的 hold time：A 等 B 最多 33 秒，B 等 A 最多 30 秒，期间没收到 Hello 才判对方挂了。（我的解答，待课堂确认。）
+
+</QA>

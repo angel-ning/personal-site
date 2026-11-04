@@ -94,5 +94,44 @@
       { "q": "直连 (connected) vs 静态路由", "a": "L", "why": "Connected 0 < Static 1，直连永远最可信" },
       { "q": "RIP vs AD 调成 130 的浮动静态路由", "a": "L", "why": "120 < 130：浮动静态路由平时不用，RIP 那条断了才顶上" }
     ]
+    },
+  "eigrptable": {
+    "title": "这条信息存在 EIGRP 的哪张表里？",
+    "options": [
+      { "id": "N", "label": "Neighbor table" },
+      { "id": "T", "label": "Topology table" },
+      { "id": "R", "label": "Routing table" }
+    ],
+    "items": [
+      { "q": "邻居的地址和连着它的接口（从 Hello 包学到）", "a": "N", "why": "Slide 6：Newly discovered neighbors are learned, the address and interface of the neighbor are recorded" },
+      { "q": "Hold time、Uptime、SRTT、RTO（show ip eigrp neighbors）", "a": "N", "why": "Slide 7 的 show ip eigrp neighbors 输出" },
+      { "q": "去同一个目的地的所有路径，包括备用的", "a": "T", "why": "Slide 8：All learned routes to a destination are maintained in the topology table" },
+      { "q": "Feasible successor（备用路由）", "a": "T", "why": "Slide 15：FS routes … are kept in the topology table only" },
+      { "q": "每条路径的 FD 和 RD，例如 (2195456/2169856)", "a": "T", "why": "Slide 9、12：show ip eigrp topology 括号里是 (总距离 / RD)" },
+      { "q": "路由是 Passive 还是 Active", "a": "T", "why": "Slide 10：Route Status 是 topology table 的字段" },
+      { "q": "Successor（主路由），真正用来转发", "a": "R", "why": "Slide 14：Successor places in the routing table and a copy is placed in the topology table" },
+      { "q": "类似 OSPF 的 adjacency database", "a": "N", "why": "Slide 6：Comparable to the adjacency database that OSPF uses" }
+    ]
+  },
+  "eigrp": {
+    "title": "EIGRP 术语：这句话说的是哪个？",
+    "options": [
+      { "id": "FD", "label": "Feasible Distance" },
+      { "id": "RD", "label": "Reported Distance" },
+      { "id": "S", "label": "Successor" },
+      { "id": "FS", "label": "Feasible Successor" },
+      { "id": "DUAL", "label": "DUAL" }
+    ],
+    "items": [
+      { "q": "到某个目的地算出来的最小 metric", "a": "FD", "why": "Slide 9：FD is the lowest calculated metric to each destination" },
+      { "q": "邻居告诉我它自己到目的地有多远", "a": "RD", "why": "Slide 9：Distance reported by an adjacent neighbor to a specific destination" },
+      { "q": "被选为主路由、放进路由表的那条", "a": "S", "why": "Slide 14：Successor is a route selected as the Primary route" },
+      { "q": "无环的备用路由，只留在 topology table", "a": "FS", "why": "Slide 15：FS is a backup route (loop-free)" },
+      { "q": "必须满足：它的 RD 小于当前 successor 的 FD", "a": "FS", "why": "Slide 15：must have a lower advertised cost than the current successor cost；板书 p.2：FD > RD to be FS" },
+      { "q": "EIGRP 用来算最低 cost 路由、保证无环的算法", "a": "DUAL", "why": "Slide 10–11、14：Diffusing Update Algorithm，DUAL guarantees each path is loop free" },
+      { "q": "主路由断了，它被直接升级成主路由", "a": "FS", "why": "Slide 15：If a successor route goes down, a FS route is promoted to successor status" },
+      { "q": "同一个目的地最多可以有 4 条", "a": "S", "why": "Slide 14：There can be up to four successor routes for any particular destination" },
+      { "q": "板书 p.2 里 A 去 X.0 的 FD = 3", "a": "FD", "why": "A → B → C：1 + 2 = 3，是三条路里最小的" }
+    ]
   }
 }

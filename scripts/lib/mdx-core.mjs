@@ -54,6 +54,7 @@ import { costBalance, COST_PRESETS, fmtK as fmtCostK } from "../../src/component
 import { TLS_STEPS } from "../../src/components/mdx/tls-logic.mjs";
 import { LOOKUP_PRESETS, LOOKUP_ROUTERS, buildTable, lookup as routeLookup, staticCommand, prefixToMask, dvRun, LS_PRESETS, LS_LINKS, linkCost, spf, lsSvg, toStaticSvg as routingStatic } from "../../src/components/mdx/routing-logic.mjs";
 import { RIP_PRESETS, ripRun, showLine as ripShowLine, AD_PRESETS, chooseRoute, srcLabel as adSrcLabel } from "../../src/components/mdx/rip-logic.mjs";
+import { EIGRP_PRESETS, dual as eigrpDual, failover as eigrpFailover, ROLE_LABEL as EIGRP_ROLE } from "../../src/components/mdx/eigrp-logic.mjs";
 import { upgradeCost as zaraCost, networkTradeoff as zaraNet, UPGRADE_PRESETS as ZARA_PRESETS, fmtEur } from "../../src/components/mdx/zara-logic.mjs";
 import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute, routeNote as crmRouteNote } from "../../src/components/mdx/crm-logic.mjs";
 import { MODELS as CLOUD_MODELS, STACK as CLOUD_STACK, KITCHEN as CLOUD_KITCHEN, ELASTIC_PRESETS, elasticity, elasticityVerdict, TCO_PRESETS, tco, fmtUsd as cloudUsd } from "../../src/components/mdx/cloud-logic.mjs";
@@ -1048,6 +1049,20 @@ const components = {
           para(strong(`${p.label}`), text(`：去 ${p.dest}`)),
           table(["来源", "网段", "AD", "Metric", "经过", "链路", "结果"], r.rows.map((c) => [adSrcLabel(c.src), `${c.net}/${c.prefix}`, String(c.ad), String(c.metric), c.via, c.up ? "up" : "down", r.winners.includes(c.id) ? strong("✅ 进路由表") : "—"])),
           para(text(r.steps.map((s, i) => `${i + 1}. ${s}`).join("  "))),
+        ];
+      }),
+    ];
+  },
+  EigrpDualLab() {
+    return [
+      note("（网页版此处可交互：改链路 cost 和邻居报的 RD、断开链路，看 FD / successor / feasible successor 怎么变；下面是三个预设的结果，以及 successor 断掉时 DUAL 怎么处理）"),
+      ...EIGRP_PRESETS.flatMap((p) => {
+        const d = eigrpDual(p.paths);
+        const f = eigrpFailover(p.paths.map((x) => ({ ...x, up: !d.successors.includes(x.id) })));
+        return [
+          para(strong(`${p.label}`), text(`：${p.router} 去 ${p.dest}。${p.note}`)),
+          table(["经过邻居", "链路 cost", "RD", "总距离", "角色"], d.rows.map((r) => [r.via, String(r.link), String(r.rd), `${r.link} + ${r.rd} = ${r.total}`, r.role === "successor" ? strong(EIGRP_ROLE[r.role]) : EIGRP_ROLE[r.role]])),
+          para(text(`FD = ${d.fd}。successor 全部断掉时：`), text(f.steps.map((s, i) => `${i + 1}. ${s}`).join("  "))),
         ];
       }),
     ];
