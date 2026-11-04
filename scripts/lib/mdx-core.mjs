@@ -53,6 +53,7 @@ import { avalanche, HASH_PRESETS, chainCheck, sealChain, CHAIN_DATA } from "../.
 import { costBalance, COST_PRESETS, fmtK as fmtCostK } from "../../src/components/mdx/cost-balance-logic.mjs";
 import { TLS_STEPS } from "../../src/components/mdx/tls-logic.mjs";
 import { LOOKUP_PRESETS, LOOKUP_ROUTERS, buildTable, lookup as routeLookup, staticCommand, prefixToMask, dvRun, LS_PRESETS, LS_LINKS, linkCost, spf, lsSvg, toStaticSvg as routingStatic } from "../../src/components/mdx/routing-logic.mjs";
+import { RIP_PRESETS, ripRun, showLine as ripShowLine, AD_PRESETS, chooseRoute, srcLabel as adSrcLabel } from "../../src/components/mdx/rip-logic.mjs";
 import { upgradeCost as zaraCost, networkTradeoff as zaraNet, UPGRADE_PRESETS as ZARA_PRESETS, fmtEur } from "../../src/components/mdx/zara-logic.mjs";
 import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute, routeNote as crmRouteNote } from "../../src/components/mdx/crm-logic.mjs";
 import { MODELS as CLOUD_MODELS, STACK as CLOUD_STACK, KITCHEN as CLOUD_KITCHEN, ELASTIC_PRESETS, elasticity, elasticityVerdict, TCO_PRESETS, tco, fmtUsd as cloudUsd } from "../../src/components/mdx/cloud-logic.mjs";
@@ -1019,6 +1020,34 @@ const components = {
           para({ type: "image", url: file, alt: `SPF tree from ${p.root}` }),
           table(["步", "确定", "当时的距离"], r.steps.map((s, i) => [String(i + 1), `${s.pick} = ${s.cost}`, Object.entries(s.tentative).map(([x, d]) => `${x}=${d === Infinity ? "∞" : d}`).join(" ")])),
           table(["Network", "是什么", "Cost", "Next hop"], r.table.map((t) => [`${t.net}/24`, t.label, String(t.cost), t.hop ?? "直连"])),
+        ];
+      }),
+    ];
+  },
+  RipNetworkLab() {
+    return [
+      note("（网页版此处可交互：给每台路由器勾选 / 输入 network 命令、改等价路径上限，看哪些接口跑 RIP、路由表收敛成什么样；下面是六个预设的结果）"),
+      ...RIP_PRESETS.flatMap((p) => {
+        const r = ripRun(p.topo, p.cmds, p.maxPaths ?? 4);
+        const names = Object.keys(r.tables);
+        return [
+          para(strong(p.label), text(`（${r.topo.note}）`)),
+          table(["路由器", "network 命令", "跑 RIP 的接口", "没跑 RIP 的接口"], names.map((n) => [n, r.cmds[n].map((c) => `network ${c}`).join("；"), r.ifs[n].filter((i) => i.on).map((i) => `${i.name} ${i.ip}`).join("、") || "—", r.ifs[n].filter((i) => !i.on).map((i) => `${i.name} ${i.ip}`).join("、") || "—"])),
+          { type: "code", lang: "text", value: names.map((n) => `${n}#show ip route\n${r.tables[n].map(ripShowLine).join("\n")}`).join("\n\n") },
+          ...r.missing.map((m) => para(strong(`${m.routers.join("、")} 没有 ${m.net}`), text(`：${m.why}`))),
+        ];
+      }),
+    ];
+  },
+  AdLab() {
+    return [
+      note("（网页版此处可交互：换来源协议、改 metric、把静态路由的 AD 调成浮动、断开链路，看哪条进路由表；下面是六个预设的结果）"),
+      ...AD_PRESETS.flatMap((p) => {
+        const r = chooseRoute(p.cands, p.dest);
+        return [
+          para(strong(`${p.label}`), text(`：去 ${p.dest}`)),
+          table(["来源", "网段", "AD", "Metric", "经过", "链路", "结果"], r.rows.map((c) => [adSrcLabel(c.src), `${c.net}/${c.prefix}`, String(c.ad), String(c.metric), c.via, c.up ? "up" : "down", r.winners.includes(c.id) ? strong("✅ 进路由表") : "—"])),
+          para(text(r.steps.map((s, i) => `${i + 1}. ${s}`).join("  "))),
         ];
       }),
     ];

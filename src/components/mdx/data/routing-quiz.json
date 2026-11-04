@@ -53,5 +53,46 @@
       { "q": "学校网络 (AS 100) 和 ISP 网络 (AS 200) 之间交换路由", "a": "E", "why": "跨两个不同的 autonomous system（Slide 32、33）" },
       { "q": "同一家公司内部各分部路由器之间交换路由", "a": "I", "why": "同一个管理机构 = 同一个 AS" }
     ]
+  },
+  "ripver": {
+    "title": "这项特性是 RIP V1、V2 都有，还是只属于其中一个版本？",
+    "options": [
+      { "id": "BOTH", "label": "V1、V2 都有" },
+      { "id": "V1", "label": "只有 V1" },
+      { "id": "V2", "label": "只有 V2" }
+    ],
+    "items": [
+      { "q": "Metric 是 hop count", "a": "BOTH", "why": "Slide 3：Hop-count metric — Yes / Yes" },
+      { "q": "15 是最大有效 metric，16 = 无穷大（不可达）", "a": "BOTH", "why": "Slide 3、Slide 4：超过 15 跳就丢弃" },
+      { "q": "默认每 30 秒发一次更新", "a": "BOTH", "why": "Slide 3：Default 30-second update interval" },
+      { "q": "周期性发送完整路由表 (full periodic updates)", "a": "BOTH", "why": "Slide 3；两个版本都是距离矢量" },
+      { "q": "路由变化时发部分的触发更新 (partial triggered updates)", "a": "BOTH", "why": "Slide 3；Slide 11 也说 Cisco 的 RIP 一发现变化就发 triggered update" },
+      { "q": "Route poisoning、poison reverse、split horizon、holddown", "a": "BOTH", "why": "Slide 3：防环机制两个版本都有" },
+      { "q": "同一子网支持多条等价路由（默认 4 条，最多 6 条）", "a": "BOTH", "why": "Slide 3；板书 p.1 的 equal cost" },
+      { "q": "用广播 255.255.255.255 发更新", "a": "V1", "why": "板书 p.1：RIP V1 → Broadcast 255.255.255.255" },
+      { "q": "用组播 224.0.0.9 发更新", "a": "V2", "why": "Slide 3：Sends updates as multicasts；板书 p.1：RIP V2 → Multicast 224.0.0.9" },
+      { "q": "更新里带子网掩码，因此支持 VLSM", "a": "V2", "why": "Slide 3：Sends mask in updates, thereby supporting VLSM（V1 是 classful，不带掩码）" },
+      { "q": "支持 route tags", "a": "V2", "why": "Slide 3" },
+      { "q": "支持认证 (authentication)，防止伪造的路由更新", "a": "V2", "why": "Slide 3；这也是本模块标题 Secure IP Routing 的安全点" },
+      { "q": "RFC 1058", "a": "V1", "why": "Slide 3、Slide 4：RIP 最初定义在 RFC 1058；V2 是 RFC 2453" }
+    ]
+  },
+  "ad": {
+    "title": "两条路由去同一个网段，哪条进路由表？（看 AD）",
+    "options": [
+      { "id": "L", "label": "前一条" },
+      { "id": "R", "label": "后一条" }
+    ],
+    "items": [
+      { "q": "RIP 2 跳 vs OSPF cost 50", "a": "R", "why": "OSPF AD 110 < RIP 120；metric 不同协议之间不比" },
+      { "q": "静态路由 vs EIGRP（内部）", "a": "L", "why": "Static 1 < Internal EIGRP 90" },
+      { "q": "IGRP vs RIP（Slide 12）", "a": "L", "why": "IGRP 100 < RIP 120" },
+      { "q": "Internal BGP vs RIP", "a": "R", "why": "RIP 120 < Internal BGP 200" },
+      { "q": "External BGP vs OSPF", "a": "L", "why": "External BGP 20 < OSPF 110" },
+      { "q": "IS-IS vs OSPF", "a": "R", "why": "OSPF 110 < IS-IS 115" },
+      { "q": "EIGRP external route vs RIP", "a": "R", "why": "RIP 120 < EIGRP external 170" },
+      { "q": "直连 (connected) vs 静态路由", "a": "L", "why": "Connected 0 < Static 1，直连永远最可信" },
+      { "q": "RIP vs AD 调成 130 的浮动静态路由", "a": "L", "why": "120 < 130：浮动静态路由平时不用，RIP 那条断了才顶上" }
+    ]
   }
 }
