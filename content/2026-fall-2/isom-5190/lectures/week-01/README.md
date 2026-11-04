@@ -391,9 +391,21 @@ Hoboken(config)#ip route 172.16.5.0 255.255.255.0 172.16.4.2
 
 *Classes of Routing Protocols：Distance Vector 与 Link State（Slide 19）*
 
+> **⚠️ 易混：分类的是协议，不是路由器**
+>
+> Distance vector 和 link-state 是两类**路由协议**（路由器学路由的算法），不是两种路由器。同一台 Cisco 路由器可以跑 RIP（distance vector），也可以跑 OSPF（link-state），两个同时跑也行。同一个网段两个协议都给了路由时，用 **AD** 选（OSPF 110 < RIP 120，选 OSPF），见第二周。
+
 ---
 
 ## 7. 🔴 距离矢量 Distance Vector（Slides 20–23 + 板书 p.5）
+
+> **🎯 Distance Vector 五个重点**
+>
+> 1. **只知道 direction + distance**，不知道整张拓扑；**定期**（RIP 每 30 秒）把**整张路由表**发给**邻居**。
+> 2. 邻居报来的距离 **+1** 再存，一跳一跳累加（accumulate distance vectors）；RIP 的 metric = **hop count**。
+> 3. **收不到**某个邻居的更新 → **删掉**从它那里学来的路由。
+> 4. 拓扑变了，neighbours **won't know until the next update**（最多等 30 秒），再一跳一跳往外传 → **slow convergence**。Cisco 的 RIP 会在检测到变化时发 **triggered update** 来缓解（第二周 Slide 11）。
+> 5. 课外：会 **count to infinity**（最大 15 跳，16 = 不可达），用 **split horizon** 补救。
 
 ![W–A–X–B–Y–C–Z：每台路由器从邻居那里学到「方向（箭头）+ 距离」](images/page_21.png)
 
@@ -492,6 +504,27 @@ Hoboken(config)#ip route 172.16.5.0 255.255.255.0 172.16.4.2
 ④ 写路由表：只把最优路径和对应的出接口放进路由表
 ```
 
+> **📌 LSA 和 routing table 的区别：原材料 vs 结果**
+>
+> |        | LSA                      | Routing table           |
+> | ------ | ------------------------ | ----------------------- |
+> | 是什么    | 一台路由器对**自己直连链路**的描述      | 「去某网段 → 下一跳 / 出接口」的转发清单 |
+> | 范围     | 只讲**自己身边**（我连着谁、cost 多少） | 覆盖**全网**所有目的地           |
+> | 交换吗    | **交换**：泛洪给所有路由器          | **不交换**：只给自己转发用         |
+> | 各路由器之间 | 收齐后大家手里一样                | 各不相同（以自己为根算）            |
+>
+> 一句话：**LSA 讲「我连着谁」，routing table 讲「去哪该往哪走」**。RIP 直接交换路由表；OSPF 交换 LSA，各自算路由表。
+
+> **🧠 为什么要多此一举自己算？**
+>
+> - **路由表本来就没法共享**：它写的是「**从我这里出发**」怎么走，B 的表对 A 没用。能共享的只有跟位置无关的事实，也就是 LSA。
+> - **一手信息比转述可靠**：RIP 只能相信邻居报来的结论，旧消息被来回转述就会成环、count to infinity；OSPF 拿着整张地图算，算出来的最短路径不会成环。
+> - **变化来得快**：断一条线只要发一条新 LSA，大家重算一遍就收敛。
+> - **metric 可以更讲究**：有整张图，就能按带宽算 cost，不只数跳数。
+> - **代价**就是 Slide 29 的 concerns：更多 CPU / 内存。早年硬件弱所以用 RIP，硬件变强后才有 OSPF（第二周 Slide 2）。
+>
+> 一句话：**与其信别人转述的结论，不如拿事实自己算。**
+
 | 课件原文                                                                                                                     | 中文 / 小白解释                       |
 | ------------------------------------------------------------------------------------------------------------------------ | ------------------------------- |
 | Maintain **complex database of topology information**                                                                    | 有一份完整的拓扑数据库                     |
@@ -524,6 +557,11 @@ Hoboken(config)#ip route 172.16.5.0 255.255.255.0 172.16.4.2
 > **T.D. (A) 和 T.D. (B)**：泛洪之后**两张一模一样**，都是 5 条 LSA：LSA-A、LSA-B、LSA-C、LSA-D、LSA-E。区别只在后面——A 以 A 为根跑 SPF，B 以 B 为根，所以**数据库相同、SPF 树不同、路由表不同**。
 >
 > **A 的 SPF 结果**（每条链路 cost = 1）：A → B = 1，A → C = 1，A → E = 2（经 B），A → D = 2（经 C）。所以 A 去 ISP（10.0）走 B，去 PC4（6.0）走 C。
+
+> **⚠️ 两个容易想歪的地方**
+>
+> - **每台路由器都存一份完整的 LS database 吗？** 是。LSA 泛洪给所有路由器，所以每台都存一份，而且内容一样（OSPF 分 area 时是同一 area 内一样，课件没讲 area）。
+> - **SPF tree 分 left child / right child 吗？** 不分。它不是二叉树：子节点没有顺序、个数不限，只看**从根出发的累计 cost**。树里「根 → 某路由器」的路径就是最短路径，第一跳就是路由表里的 next hop。cost 相同的两条路 OSPF 可以都留下做负载均衡。
 
 *（网页版此处可交互：选 SPF 树的根、改每条链路的 cost 或断开链路；下面是三个预设）*
 
@@ -605,6 +643,23 @@ Hoboken(config)#ip route 172.16.5.0 255.255.255.0 172.16.4.2
 
 *拓扑变化 → 发 link-state update → 每台路由器更新数据库、重算路由表（Slide 28）*
 
+> **✍️ 课堂讲解 + 我的例子：一条线断了 → triggered update → LSA-B′（读作 B dash / B prime）**
+>
+> 老师说的「a special LSA called LSA-B dash」就是 **LSA-B′**：B 的 LSA 的**新版本**，不是另一种 LSA。用上面五边形举例，假设 **B–E（4.0）断了**：
+>
+> | LSA-B（旧） | LSA-B′（新）        |
+> | -------- | ---------------- |
+> | 2.0 连着 A | 2.0 连着 A         |
+> | 3.0 stub | 3.0 stub         |
+> | 4.0 连着 E | ~~4.0 连着 E~~（删掉） |
+>
+> 1. B 发现接口 down，**立刻**写出 LSA-B′，不等定时器，这就是 **triggered update**。E 那一端同样发 LSA-E′。
+> 2. LSA-B′ **泛洪**到每台路由器。
+> 3. 每台路由器在 T.D. 里**用 LSA-B′ 替换 LSA-B**，其他 LSA 不动。
+> 4. 每台**重跑 SPF**：A 去 E 原来经 B，现在改走 A → C → D → E。
+>
+> 只发变了的那一条，不重发整个数据库，更不像 RIP 发整张路由表。
+
 ![Link-State Concerns：更多 CPU / 内存；初次泛洪 LSA 占带宽](images/page_29.png)
 
 *Link-State Concerns：更多 CPU / 内存；初次泛洪 LSA 占带宽（Slide 29）*
@@ -613,6 +668,18 @@ Hoboken(config)#ip route 172.16.5.0 255.255.255.0 172.16.4.2
 >
 > - **代价**：Processing and memory requirements are **increased**（要存整张拓扑、跑 SPF）；**Bandwidth is consumed during the initial flooding** of LSAs（刚启动时大量泛洪）。
 > - **好处**：**Less network traffic** because routers are **not sending periodic updates**——稳定以后只在变化时发。
+> - 课上听到的「link-state doesn't wait / waste bandwidth」大概率就是这一条：不像 distance vector 每 30 秒发整张表白占带宽；拓扑一变也不用等定时器，马上发。
+
+> **➕ 课外补充：OSPF 从空数据库到全网同步**
+>
+> 1. **Hello**（默认 10 秒）找邻居。
+> 2. 先把自己的直连链路写成 LSA，放进自己的数据库。
+> 3. 跟每个邻居对账：**DBD** 互发目录 → **LSR** 要自己缺的 → **LSU** 发完整 LSA → **LSAck** 确认（没 ack 就重发）。对完以后这对邻居进入 **Full** 状态。
+> 4. 收到新 LSA 就从其他接口**泛洪**出去；靠**序列号**区分新旧，同一版本不重复转发。LSA-B′ 就是序列号 +1 的新版本。
+>
+> **怎么知道大家都同步了？** 没有路由器知道全网的情况，也不需要知道：每台只保证「我和每个邻居一致」（Full），每对邻居都一致，全网就一致。SPF 也不等到齐，**数据库一变就跑**（Cisco 会稍等几百毫秒到几秒，把一批变化攒在一起算）。
+>
+> **30 分钟是什么？** 每条 LSA 每 30 分钟由发起者重发一次（refresh），超过 60 分钟没刷新就过期删掉，防止已经下线的路由器留下旧 LSA。跟「同步完成」无关。
 
 > **➕ 课外补充：OSPF 的 cost**
 >
@@ -725,8 +792,34 @@ Hoboken(config)#ip route 172.16.5.0 255.255.255.0 172.16.4.2
 
 *Stub network：只有一条进出的路，不需要路由更新（Slide 36）*
 
-- **Stub network**：只有一条路进出（Only one way exists on to or off of a stub network），跑路由协议没意义，静态 / 默认路由就够。
-- 不跑路由协议时，**两个方向都要配**：A 要有去 stub 网络的静态路由，B 要有回来的默认路由。
+| 课件原文                                                                                               | 中文 / 小白解释                            |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| Only a single network connection with **no need for routing updates**                              | B 只有一根线连到 A，交换路由更新换不来任何新信息           |
+| Only one way exists **on to or off of** a stub network                                             | stub network 进出都只有一条路：进来经过 A，出去也经过 A |
+| If a routing protocol is not used, configure a static route or default route **in both direction** | 不跑协议的话，**去程、回程**都要手工配                |
+
+**为什么这里不用跑路由协议？** 路由协议的作用是在**多条路里选一条**，以及**路断了自动换一条**。B 只有一个出口，去全世界任何地方答案都一样：「交给 A」。跑 RIP、OSPF 不会算出别的答案，反而要定期发更新、占用 A–B 这根线的带宽和两边的 CPU。这根线断了也没有备用路可换，动态路由帮不上忙。
+
+**两个方向各配什么？** 包要能去、也要能回：
+
+```
+例子（地址是我设的）：stub network = 172.16.1.0/24，A–B 链路：A = 10.1.1.1，B = 10.1.1.2
+
+去程：A 要知道 stub network 在 B 后面 → 在 A 上配【静态路由】
+A(config)# ip route 172.16.1.0 255.255.255.0 10.1.1.2
+
+回程：B 去哪都是交给 A → 在 B 上配【默认路由】，一条顶所有
+B(config)# ip route 0.0.0.0 0.0.0.0 10.1.1.1
+```
+
+两条只配一条，包就只能单程：比如只配 A，那 PC 能收到外面发来的包，但回复发不出去，B 不知道往哪送。
+
+> **💡 一句话判断：什么时候用静态**
+>
+> **只有一条路可走 → 静态 / 默认路由；有多条路可选或要自动绕路 → 动态路由。**
+>
+> - ✅ 用静态：stub network、分支机构只有一根线连总部、企业出口只连一家 ISP（配默认路由）、网络很小且几乎不变、想严格控制路径（不接受别人的路由更新）。
+> - ❌ 不用静态：有冗余链路（像 Slide 17 的 A–B–C–D 环）、网络大、经常变。这时用静态，线一断就要人手改。
 
 > **🎯 考点：静态 vs 动态怎么选**
 >
