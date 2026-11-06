@@ -1,0 +1,315 @@
+{
+  "type": {
+    "title": "这个值是什么类型？",
+    "options": [
+      {
+        "id": "int",
+        "label": "int"
+      },
+      {
+        "id": "float",
+        "label": "float"
+      },
+      {
+        "id": "str",
+        "label": "str"
+      },
+      {
+        "id": "bool",
+        "label": "bool"
+      }
+    ],
+    "items": [
+      {
+        "q": "42",
+        "a": "int",
+        "why": "没有小数点、没有引号的整数"
+      },
+      {
+        "q": "368.0",
+        "a": "float",
+        "why": "有小数点就是 float，哪怕小数部分是 0"
+      },
+      {
+        "q": "\"368.0\"",
+        "a": "str",
+        "why": "有引号就是文字，长得像数字也不能直接做加减"
+      },
+      {
+        "q": "True",
+        "a": "bool",
+        "why": "首字母大写的 True / False 是布尔值；写成 true 会报 NameError"
+      },
+      {
+        "q": "\"ORD-2041\"",
+        "a": "str",
+        "why": "订单号要用引号包起来"
+      },
+      {
+        "q": "3 * 48.0",
+        "a": "float",
+        "why": "int 和 float 一起算，结果是 float（144.0）"
+      },
+      {
+        "q": "basket >= 300",
+        "a": "bool",
+        "why": "比较的结果只有 True / False，所以可以放进 if"
+      },
+      {
+        "q": "f\"HKD {total:.2f}\"",
+        "a": "str",
+        "why": "f-string 算出来的是一段文字，不再是数字"
+      }
+    ]
+  },
+  "struct": {
+    "title": "选哪种数据结构最合适？（Day 2 Section 1）",
+    "options": [
+      {
+        "id": "list",
+        "label": "list [ ]"
+      },
+      {
+        "id": "tuple",
+        "label": "tuple ( )"
+      },
+      {
+        "id": "dict",
+        "label": "dict { }"
+      }
+    ],
+    "items": [
+      {
+        "q": "一串还在增加的工单号，要按先后顺序处理",
+        "a": "list",
+        "why": "有顺序、会增减 → list（append / remove）"
+      },
+      {
+        "q": "办公室固定的 GPS 坐标 (22.3, 114.2)",
+        "a": "tuple",
+        "why": "一组固定、不该被改动的值 → tuple（不可变，改了会 TypeError）"
+      },
+      {
+        "q": "按 SKU 快速查单价：P100 → 48.0",
+        "a": "dict",
+        "why": "按名字 / 编号查东西 → dict 的 key: value"
+      },
+      {
+        "q": "一封告警的各个字段：alert_id、severity、source",
+        "a": "dict",
+        "why": "「字段名 → 内容」的一张卡片 → dict"
+      },
+      {
+        "q": "一个函数要返回 (商品名, 价格) 这一对，调用方只读不改",
+        "a": "tuple",
+        "why": "固定的一对值，只读 → tuple"
+      },
+      {
+        "q": "今天所有订单金额，之后要算总和、筛选大单",
+        "a": "list",
+        "why": "同类数据一串，按顺序遍历 → list"
+      },
+      {
+        "q": "员工编号 → 员工资料（名字、团队、年资）",
+        "a": "dict",
+        "why": "外层按编号查 → dict；资料本身也是 dict，所以是 dict of dicts"
+      }
+    ]
+  },
+  "error": {
+    "title": "这行代码会报什么错？",
+    "options": [
+      {
+        "id": "syntax",
+        "label": "SyntaxError"
+      },
+      {
+        "id": "name",
+        "label": "NameError"
+      },
+      {
+        "id": "type",
+        "label": "TypeError"
+      },
+      {
+        "id": "key",
+        "label": "KeyError"
+      },
+      {
+        "id": "index",
+        "label": "IndexError"
+      },
+      {
+        "id": "indent",
+        "label": "IndentationError"
+      }
+    ],
+    "items": [
+      {
+        "q": "if status = \"paid\":",
+        "a": "syntax",
+        "why": "比较要用两个等号 ==；一个 = 是赋值，不能写在 if 里"
+      },
+      {
+        "q": "print(revnue)    # 前面定义的是 revenue",
+        "a": "name",
+        "why": "拼错变量名 = Python 不认识这个名字"
+      },
+      {
+        "q": "\"Total: \" + 368.0",
+        "a": "type",
+        "why": "str 和 float 不能直接用 + 拼。改成 f\"Total: {total}\" 或 str(total)"
+      },
+      {
+        "q": "coords = (22.3, 114.2); coords[0] = 22.4",
+        "a": "type",
+        "why": "tuple 不可变：'tuple' object does not support item assignment"
+      },
+      {
+        "q": "ticket[\"category\"]    # ticket 里没有这个键",
+        "a": "key",
+        "why": "方括号取不存在的键 → KeyError；用 ticket.get(\"category\", \"unassigned\") 就不会报错"
+      },
+      {
+        "q": "skus = [\"P100\", \"P200\"]; skus[2]",
+        "a": "index",
+        "why": "只有位置 0、1；位置 2 越界。切片 skus[0:5] 越界却不会报错"
+      },
+      {
+        "q": "if basket >= 300:\nprint(\"Free\")    # print 没有缩进",
+        "a": "indent",
+        "why": "冒号后面那一行必须缩进（通常 4 个空格）"
+      },
+      {
+        "q": "true    # 想写布尔值",
+        "a": "name",
+        "why": "Python 的布尔值是 True（大写 T），小写 true 会被当成一个没定义的变量名"
+      },
+      {
+        "q": "for code in 42:\n    print(code)",
+        "a": "type",
+        "why": "for 只能遍历「序列」（list、str、range…）。整数不能遍历：'int' object is not iterable"
+      }
+    ]
+  },
+  "task": {
+    "title": "这个需求应该用哪个 pipeline 任务？",
+    "options": [
+      {
+        "id": "sentiment",
+        "label": "text-classification（情感）"
+      },
+      {
+        "id": "zeroshot",
+        "label": "zero-shot-classification"
+      },
+      {
+        "id": "ner",
+        "label": "ner / token-classification"
+      },
+      {
+        "id": "qa",
+        "label": "question-answering"
+      },
+      {
+        "id": "summarization",
+        "label": "summarization"
+      },
+      {
+        "id": "generation",
+        "label": "text-generation"
+      }
+    ],
+    "items": [
+      {
+        "q": "判断客户留言是正面还是负面",
+        "a": "sentiment",
+        "why": "两类固定标签（POSITIVE / NEGATIVE），SST-2 微调模型直接能用"
+      },
+      {
+        "q": "把 IT 工单分到 phishing / malware / data backup / physical security，没有训练数据",
+        "a": "zeroshot",
+        "why": "标签是你临时给的、模型没专门训练过 → 零样本分类（candidate_labels）"
+      },
+      {
+        "q": "从告警文字里找出人名、公司名、城市",
+        "a": "ner",
+        "why": "给句子里的「片段」打 PER / ORG / LOC 标签 → NER"
+      },
+      {
+        "q": "问「事件响应计划定义了什么？」，答案必须来自给定的政策段落",
+        "a": "qa",
+        "why": "extractive QA：从 context 里挑出一段作为答案"
+      },
+      {
+        "q": "把一页风险报告压缩成三句话给经理看",
+        "a": "summarization",
+        "why": "长文 → 短文 → 摘要（abstractive，会改写）"
+      },
+      {
+        "q": "给一句开头，让模型帮忙起草安全政策的下一句",
+        "a": "generation",
+        "why": "续写 → text-generation（结果要人工审，不能当正式政策）"
+      }
+    ]
+  },
+  "output": {
+    "title": "这个 pipeline 返回什么形状？第一步该怎么取？",
+    "options": [
+      {
+        "id": "listdict",
+        "label": "list of dicts → 先 [0]"
+      },
+      {
+        "id": "dict",
+        "label": "一个 dict → 直接 [\"键\"]"
+      },
+      {
+        "id": "empty",
+        "label": "可能是空 list []"
+      }
+    ],
+    "items": [
+      {
+        "q": "sentiment pipe(\"This restaurant is awesome\")（只传一句）",
+        "a": "listdict",
+        "why": "即使只有一句也返回 list：out[0][\"label\"]"
+      },
+      {
+        "q": "text-generation generator(prompt, num_return_sequences=1)",
+        "a": "listdict",
+        "why": "每个版本一个 dict：generated_story[0][\"generated_text\"]"
+      },
+      {
+        "q": "question-answering qa(question=…, context=…)",
+        "a": "dict",
+        "why": "直接 result[\"answer\"]，写 result[0] 会 KeyError"
+      },
+      {
+        "q": "zero-shot-classification zero_shot(ticket, candidate_labels=…)",
+        "a": "dict",
+        "why": "一个 dict，里面 labels 和 scores 是两个平行 list"
+      },
+      {
+        "q": "text-to-speech tts(text)",
+        "a": "dict",
+        "why": "speech_output[\"audio\"] 和 speech_output[\"sampling_rate\"]"
+      },
+      {
+        "q": "ner_pipeline(\"Deep Learning (DL) represents …\")（句子里没有人名地名）",
+        "a": "empty",
+        "why": "没有 PER / ORG / LOC / MISC 实体时返回 []，for 循环一次也不跑，不会报错"
+      },
+      {
+        "q": "summarizer(article, max_length=80)",
+        "a": "listdict",
+        "why": "summary[0][\"summary_text\"]"
+      },
+      {
+        "q": "translation_pipeline(text, max_length=512)",
+        "a": "listdict",
+        "why": "translated_text[0][\"translation_text\"]"
+      }
+    ]
+  }
+}

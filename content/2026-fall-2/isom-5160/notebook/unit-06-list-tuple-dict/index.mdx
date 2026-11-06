@@ -1,0 +1,109 @@
+---
+title:
+  en: "Unit 6 · list, tuple, dict: Three Containers"
+  zh: "第 6 单元 · list、tuple、dict：三种容器"
+summary:
+  en: "Creating lists, tuples and dictionaries; ordered vs keyed; mutable vs immutable (append, item assignment, TypeError); and choosing the right structure for a business record."
+  zh: "建 list / tuple / dict；按位置 vs 按键；可变 vs 不可变（append、按键改值、改 tuple 的 TypeError）；按业务场景选结构。"
+unit: 6
+date: 2026-11-06
+tags: [Python, list, tuple, dict, Mutable]
+---
+# Unit 6 · list、tuple、dict：三种容器
+
+**这一单元学什么**：Day 1 的变量一次只装一个值。真实数据是一堆：一串工单、一组坐标、一张告警卡片。Python 有三种最常用的「容器」来装它们。
+**对应材料**：Day 2 data-structures notebook Section 1（cell 5–11）。
+
+---
+
+## 0. 生词表
+
+| 术语 | 大白话 | 例子 |
+|---|---|---|
+| **list** 列表 | 方括号 `[]`，一串**有顺序**的东西，**可以改** | `["TST", "CWB", "MK"]` |
+| **tuple** 元组 | 圆括号 `()`，一串有顺序的东西，**建好就不能改** | `(22.3, 114.2)` |
+| **dict** 字典（dictionary） | 花括号 `{}`，一对一对的 `键: 值` | `{"alert_id": "AL-1001"}` |
+| **element / item** 元素 | 容器里的一个东西 | `"TST"` |
+| **key** 键 | dict 里「冒号左边」的名字，用来查 | `"severity"` |
+| **value** 值 | dict 里「冒号右边」的内容 | `"high"` |
+| **mutable** 可变 | 建好以后还能改（加、删、换） | list、dict |
+| **immutable** 不可变 | 建好以后不能改，只能重新做一个 | tuple、str、int、float |
+| **method** 方法（U1） | 容器自带的动作 | `queue.append("T-103")` |
+
+---
+
+## 1. 🔴 建出这三种容器
+
+<CodeTrace id="d-create" />
+
+| 类型 | 写法 | 有顺序？ | 能改？ | 典型用途（notebook 原表） |
+|---|---|---|---|---|
+| **list** | `[...]` | 是 | 能（加 / 改 / 删） | 会增减的一串：订单、工单 |
+| **tuple** | `(...)` | 是 | **不能** | 固定的一组：坐标、只读记录 |
+| **dict** | `{key: value}` | 按插入顺序（Python 3.7+） | 能 | 按名字 / 编号查：SKU → 库存 |
+
+<Callout type="tip" title="小白理解：三种容器的比喻">
+
+- **list** = 排队的队伍：有先后，可以有人加入、有人离开。
+- **tuple** = 身份证上的出生日期：几个数字固定在一起，不该被改。
+- **dict** = 通讯录：按名字查电话，不关心排第几。
+
+</Callout>
+
+<Callout type="note" title="多行写法只是为了好读">
+
+`alert = { ... }` 写成 6 行和写成一行完全一样。老师要求嵌套数据**多行缩进**（notebook 末尾的 Self-check 也提到），因为字段一多，一行根本看不清。
+
+</Callout>
+
+---
+
+## 2. 🔴 可变 vs 不可变
+
+<CodeTrace id="d-mutable" />
+
+那行被注释掉的 `coords[0] = 22.4` 真的跑起来是这样的：
+
+<CodeTrace id="d-tuple-error" />
+
+| 想做的事 | list | tuple | dict |
+|---|---|---|---|
+| 读一个元素 | `queue[0]` | `coords[0]` | `alert["severity"]` |
+| 改一个元素 | `queue[0] = "T-100"` ✓ | ✗ `TypeError` | `alert["severity"] = "critical"` ✓ |
+| 加一个元素 | `queue.append("T-103")` ✓ | ✗ | `alert["owner"] = "Ada"` ✓（新键 = 新增） |
+
+<Callout type="warn" title="append 不用再赋值">
+
+`queue.append("T-103")` 直接改掉 `queue` 本身。如果写成 `queue = queue.append("T-103")`，`append` 的返回值是 `None`，`queue` 反而变成了 `None`。这和 U1 的 `str.upper()`（返回新值、原来的不变）正好相反——**可变对象的方法通常直接改自己**。
+
+</Callout>
+
+---
+
+## 3. 🔴 按场景选结构
+
+<CodeTrace id="d-choose" />
+
+<PyNotebookSortQuiz set="struct" />
+
+---
+
+## 自测
+
+<QA q="Day 2 Practice question 1：为下面三种需求选结构并说理由：(a) 固定的 GPS 坐标 (b) 不断增长的工单号队列 (c) SKU → 单价查询">
+
+(a) **tuple**：一组固定的值，不该被改，误改会直接报错保护你；(b) **list**：有顺序、要 `append` 新工单；(c) **dict**：按 SKU 这个键直接查价格，不用知道它排第几。
+
+</QA>
+
+<QA q="type(desk_location).__name__ 为什么显示 tuple，而 print(type(desk_location)) 显示 <class 'tuple'>？">
+
+`type(x)` 拿到的是「类」这个对象本身，print 它会显示 `<class 'tuple'>`；`.__name__` 是类的一个属性，里面存着名字这段纯文字 `'tuple'`。
+
+</QA>
+
+<QA q="一个 dict 里同一个键写两次会怎样？例如 {&quot;a&quot;: 1, &quot;a&quot;: 2}">
+
+不报错，后写的覆盖前面的：结果是 `{'a': 2}`。dict 的键是唯一的。
+
+</QA>

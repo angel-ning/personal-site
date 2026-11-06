@@ -1,0 +1,112 @@
+---
+title:
+  en: "Unit 12 · Text Generation: Continuing a Prompt"
+  zh: "第 12 单元 · 文本生成：让模型接着写"
+summary:
+  en: "distilgpt2 on CPU and GPU, max_length vs max_new_tokens, num_return_sequences, do_sample, temperature, set_seed and pad_token_id — with a temperature lab."
+  zh: "distilgpt2 在 CPU / GPU 上续写；max_length vs max_new_tokens、num_return_sequences、do_sample、temperature、set_seed、pad_token_id，附 temperature 实验台。"
+unit: 12
+date: 2026-11-06
+tags: [Python, Hugging Face, Text generation, GPT-2, Sampling]
+---
+# Unit 12 · 文本生成：让模型接着写
+
+**这一单元学什么**：给一个开头（prompt），让 GPT 类模型往下写。重点是生成时那几个参数各管什么。
+**对应材料**：`Pipelines_Tutorial.ipynb` Sections 2–3（cells 7–11）、`Pipeline_SampleCode.ipynb` Section 1、`Pipeline_UsefulFunctions.ipynb` Section 7（cell 20）、课件 Slide 18。
+
+---
+
+## 0. 生词表
+
+| 术语 | 大白话 |
+|---|---|
+| **prompt** | 给模型的开头 / 指令 |
+| **causal language model** 因果语言模型 | 只看前面的字，预测**下一个** token，一个接一个往下写（GPT 系列） |
+| **distilgpt2** | GPT-2 的「蒸馏」小号版：更小更快，写得也更差，适合教学 |
+| **greedy decoding** 贪心 | 每次都选概率最高的那个 token |
+| **sampling** 抽样 | 按概率随机抽一个 token，所以每次结果不同 |
+| **random seed** 随机种子 | 随机数的起点，固定它，「随机」的结果就能复现 |
+
+---
+
+## 1. 🔴 最基本的续写（CPU）
+
+<CodeTrace id="p-gen-cpu" />
+
+| 参数 | 管什么 | 例子里的值 |
+|---|---|---|
+| 第 1 个参数（prompt） | 开头的文字 | `"Once upon a time in a land far, far away"` |
+| `max_length` | prompt + 新生成的**总** token 上限 | `150` |
+| `num_return_sequences` | 要几个不同版本 → 返回的 list 有几个 dict | `1` |
+
+<Callout type="warn" title="SampleCode 输出里的那几行警告">
+
+老师 SampleCode 保存的输出里有：*Both `max_new_tokens` (=256) and `max_length` (=150) seem to have been set. `max_new_tokens` will take precedence.*——新版 transformers 里模型自带了默认的 `max_new_tokens`，它会**优先于** `max_length`。想精确控制长度，就像 UsefulFunctions 那样直接写 `max_new_tokens=`。还有 *Setting `pad_token_id` to `eos_token_id`*，第 3 节解释。
+
+</Callout>
+
+<Callout type="note" title="print(generated_story) vs print(generated_story[0]['generated_text'])">
+
+SampleCode 直接 `print(generated_story)`，你会看到 `[{'generated_text': '…'}]`——带方括号、花括号、引号，就是整个 list of dicts。Tutorial 多走了两层（`[0]` 再 `['generated_text']`），只打印文字本身，更好读。
+
+</Callout>
+
+---
+
+## 2. 🟡 换到 GPU：只差一个参数
+
+<CodeTrace id="p-gen-gpu" />
+
+和 CPU 版本**唯一的区别**是 `device=0`。其他设置保持一样，才能公平比较速度。notebook cell 11 留了一个空格让你检查 GPU：
+
+```python
+import torch
+print("CUDA available:", torch.cuda.is_available())
+if torch.cuda.is_available():
+    print("GPU name:", torch.cuda.get_device_name(0))
+```
+
+---
+
+## 3. 🔴 控制「怎么写」：抽样参数
+
+<CodeTrace id="p-gen-sample" />
+
+| 参数 | 管什么 | 小白解释 |
+|---|---|---|
+| `max_new_tokens=35` | **只数新生成的** token | 比 `max_length` 直观：不管 prompt 多长，都再写 35 个 |
+| `do_sample=True` | 抽样 vs 贪心 | False：每次选最可能的词，稳定但容易重复绕圈；True：按概率抽，有变化 |
+| `temperature=0.8` | 抽样有多「大胆」 | < 1 保守，> 1 天马行空；只在 `do_sample=True` 时有用 |
+| `num_return_sequences=1` | 版本数 | 抽样时设 3，就会得到 3 个不同的续写 |
+| `pad_token_id=…eos_token_id` | 填充用哪个 token | GPT-2 没有专门的填充 token，借用「结束」token，消掉警告 |
+| `set_seed(42)` | 固定随机种子 | 同样的种子 + 同样的设置 → 同样的结果，方便对答案 |
+
+<TemperatureLab />
+
+<Callout type="biz" title="生成的内容不能直接用">
+
+notebook 反复提醒：生成的文字可能**不准确、重复、不合适**。UsefulFunctions 原话：*do not treat generated text as approved policy*。在业务里它只能是草稿，要有人审。
+
+</Callout>
+
+---
+
+## 自测
+
+<QA q="num_return_sequences=3 时，generated_story 有几个元素？怎么打印第二个版本？">
+
+3 个 dict。`print(generated_story[1]["generated_text"])`（第二个是位置 1）。也可以 `for g in generated_story: print(g["generated_text"])` 全部打印。
+
+</QA>
+
+<QA q="do_sample=False 时，改 temperature 有用吗？">
+
+没用。不抽样时每一步都选概率最高的 token，温度只影响「抽样时的概率分布」。（新版 transformers 还会提醒你这个参数被忽略了。）
+
+</QA>
+
+<QA q="prompt 有 10 个 token，max_length=15，最多会生成几个新 token？如果改成 max_new_tokens=15 呢？">
+
+`max_length=15` → 最多 5 个新 token（总数 15 包括 prompt 的 10 个）；`max_new_tokens=15` → 最多 15 个新 token。
+
+</QA>

@@ -1,12 +1,12 @@
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Note } from "@/lib/content";
-import { formatDate, pick, weekLabel, withLang, type Lang } from "@/lib/i18n";
+import { formatDate, pick, seqLabel, withLang, type Lang } from "@/lib/i18n";
 
 // One line in a list of notes. `lead` picks what goes in the left column.
 export function NoteRow({ note, lang, lead = "week" }: { note: Note; lang: Lang; lead?: "week" | "course" }) {
   const leadText =
-    lead === "course" ? note.courseCode : note.week != null ? weekLabel(note.week, lang) : "—";
+    lead === "course" ? note.courseCode : (seqLabel(note, lang) ?? "—");
   return (
     <li>
       <Link

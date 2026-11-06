@@ -66,6 +66,7 @@ import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, pr
 import { PY_DEFAULT_TEXT, PY_OPS, runPyOp } from "../../src/components/mdx/py-object-logic.mjs";
 import { TRIAGE_LABEL, TRIAGE_RULE_WORDS, evaluate as triageEvaluate } from "../../src/components/mdx/triage-logic.mjs";
 import { overfitTable } from "../../src/components/mdx/overfit-logic.mjs";
+import { FORMAT_PRESETS, formatValue, fl, pyRepr as pyLabRepr, BRANCH_PRESETS, runBranches, branchValueText, SLICE_ITEMS, SLICE_PRESETS, evalSubscript, RANGE_PRESETS, pyRange, NESTED_PRESETS, walkPath, shortRepr as pyShort, TEMP_PROMPT, nextTokenProbs } from "../../src/components/mdx/py-lab-logic.mjs";
 import { FLOW_STAGES } from "../../src/components/mdx/ai-flow-logic.mjs";
 import { LOOP_FACTORS, LOOP_PRESETS, decideLoop } from "../../src/components/mdx/loop-logic.mjs";
 import { PILOT_UNTESTED, pilotSummary, pct as pilotPct, zeroErrorBound } from "../../src/components/mdx/pilot-logic.mjs";
@@ -91,6 +92,8 @@ const l6Quiz = readJson("src/components/mdx/data/l6-quiz.json");
 const caseQuiz = readJson("src/components/mdx/data/case-quiz.json");
 const routingQuiz = readJson("src/components/mdx/data/routing-quiz.json");
 const pyIntroQuiz = readJson("src/components/mdx/data/py-intro-quiz.json");
+const pyTraces = readJson("src/components/mdx/data/py-traces.json");
+const pyNbQuiz = readJson("src/components/mdx/data/py-notebook-quiz.json");
 const govQuiz = readJson("src/components/mdx/data/gov-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
@@ -99,7 +102,11 @@ const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 const text = (value) => ({ type: "text", value });
 const strong = (value) => ({ type: "strong", children: [text(value)] });
 const para = (...children) => ({ type: "paragraph", children });
-const cell = (v) => ({ type: "tableCell", children: typeof v === "string" ? [text(v)] : [v] });
+const cell = (v) => ({ type: "tableCell", children: Array.isArray(v) ? v : typeof v === "string" ? [text(v)] : [v] });
+// `code` and **bold** inside a plain string → inline mdast nodes.
+const rich = (s) => s.split(/(`[^`]+`|\*\*[^*]+\*\*)/g).filter(Boolean).map((p) => p.startsWith("`") && p.endsWith("`") && p.length > 1 ? { type: "inlineCode", value: p.slice(1, -1) } : p.startsWith("**") && p.endsWith("**") && p.length > 3 ? strong(p.slice(2, -2)) : text(p));
+const codeBlock = (value, lang = null) => ({ type: "code", lang, value });
+const ic = (value) => ({ type: "inlineCode", value });
 const table = (head, rows) => ({
   type: "table",
   align: head.map(() => null),
@@ -1272,6 +1279,66 @@ const components = {
     const set = pyIntroQuiz[a.set] ?? pyIntroQuiz.task;
     const label = (id) => set.options.find((o) => o.id === id).label;
     return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  CodeTrace(_node, a) {
+    const t = pyTraces[a.id];
+    if (!t) return [note(`（找不到代码运行记录：${a.id}）`)];
+    const out = t.steps.map((st) => st.out).join("");
+    const err = t.steps.find((st) => st.error)?.error;
+    const tags = [t.mine ? "我的解答 / 补充" : "", t.mock ? "模型输出为示意" : "", t.source].filter(Boolean).join(" · ");
+    return [
+      para(strong(`▶ ${t.title}`), text(tags ? `（${tags}）` : "")),
+      ...(t.setupNote ? [note(t.setupNote)] : []),
+      codeBlock(t.code.join("\n"), "python"),
+      table(["行", "代码", "在做什么"], t.code.flatMap((c, i) => (t.notes[i] ? [[String(i + 1), ic(c.trim()), rich(t.notes[i])]] : []))),
+      para(text("运行结果：")),
+      codeBlock((out + (err ? `Traceback (most recent call last):\n  ...\n${err}\n` : "")).replace(/\n$/, "") || "（没有输出）", "text"),
+      note("（网页版可以点「下一步」一行一行运行，看每一步之后的变量表和输出）"),
+    ];
+  },
+  FStringLab() {
+    const vals = [fl(368), 7, "TST"];
+    return [
+      note("（网页版此处可以自己输入值和格式；下表是三个例子在常用格式下的结果，两边的 | 是为了看清空格）"),
+      table(["格式", "说明", ...vals.map((v) => `x = ${pyLabRepr(v)}`)], FORMAT_PRESETS.map((p) => [ic(p.spec === "" ? "{x}" : `{x:${p.spec}}`), p.desc, ...vals.map((v) => { const r = formatValue(v, p.spec); return r.ok ? ic(`|${r.text}|`) : r.error; })])),
+    ];
+  },
+  BranchLab(_node, a) {
+    const p = BRANCH_PRESETS.find((x) => x.id === a.preset) ?? BRANCH_PRESETS[0];
+    return [
+      note(`（网页版此处可以拖动 / 选择变量的值，看 if / elif / else 从上往下哪一支被选中：${p.title}）`),
+      codeBlock(p.branches.map((b) => b.code + "\n    ...").join("\n"), "python"),
+      table(["输入", "每个条件", "走哪一支", "结果"], p.samples.map((v) => { const r = runBranches(p, v); return [ic(branchValueText(p, v)), r.rows.map((x) => (x.state === "hit" ? "✓" : x.state === "false" ? "✗" : "–")).join(" "), ic(r.rows[r.hit].code), r.out.join("；")]; })),
+    ];
+  },
+  SliceLab(_node, a) {
+    if (a.mode === "range") {
+      return [note("（网页版此处可以自己输入 range 的参数）"), table(["写法", "list(range(...))", "说明"], RANGE_PRESETS.map((p) => { const r = pyRange(p.args); return [ic(`range(${p.args})`), r.ok ? ic(pyLabRepr(r.values)) : r.error, p.note]; }))];
+    }
+    return [
+      note(`（网页版此处可以自己输入 [i] / [a:b:c]，格子会高亮被取到的位置；skus = ${pyLabRepr(SLICE_ITEMS)}）`),
+      table(["写法", "结果", "说明"], SLICE_PRESETS.map((p) => { const r = evalSubscript(SLICE_ITEMS, p.expr); return [ic(`skus${p.expr}`), r.ok ? ic(pyLabRepr(r.value)) : r.error, p.note]; })),
+    ];
+  },
+  NestedPathLab(_node, a) {
+    const ids = String(a.presets ?? "alerts,inventory").split(",").map((s) => s.trim());
+    return [
+      note("（网页版此处可以点数据里的任意一个值，自动写出取到它的代码，并逐层说明每一步拿到的是什么）"),
+      ...NESTED_PRESETS.filter((p) => ids.includes(p.id)).flatMap((p) => [
+        para(strong(p.title)),
+        table(["代码", "拿到的是", "值"], walkPath(p, p.start).map((st) => [ic(st.code), st.what, ic(pyShort(st.value, 60))])),
+      ]),
+    ];
+  },
+  TemperatureLab() {
+    const ts = [0.5, 1, 1.5];
+    const rows = nextTokenProbs(1).map((c, i) => [ic(JSON.stringify(c.token)), ...ts.map((t) => `${(nextTokenProbs(t)[i].p * 100).toFixed(1)}%`)]);
+    return [note(`（网页版此处可以切换 do_sample、拖动 temperature；prompt = "${TEMP_PROMPT}"，分数是示意值。do_sample=False 时永远选第一名 " be"）`), table(["下一个 token", ...ts.map((t) => `temperature=${t}`)], rows)];
+  },
+  PyNotebookSortQuiz(_node, a) {
+    const set = pyNbQuiz[a.set] ?? pyNbQuiz.struct;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["题目", "答案", "理由"], set.items.map((it) => [ic(it.q.replace(/\n/g, " ⏎ ")), strong(label(it.a)), it.why]))];
   },
   AiFlowLab() {
     return [

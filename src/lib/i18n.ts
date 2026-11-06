@@ -92,6 +92,13 @@ export const pick = (v: L10n | undefined, lang: Lang) => v?.[lang] ?? "";
 export const weekLabel = (week: number, lang: Lang) =>
   lang === "zh" ? `第 ${week} 周` : `Week ${String(week).padStart(2, "0")}`;
 
+export const unitLabel = (unit: number, lang: Lang) =>
+  lang === "zh" ? `第 ${unit} 单元` : `Unit ${String(unit).padStart(2, "0")}`;
+
+// Left-column label for a note: its week, or its unit for notebook-style notes.
+export const seqLabel = (note: { week?: number; unit?: number }, lang: Lang) =>
+  note.week != null ? weekLabel(note.week, lang) : note.unit != null ? unitLabel(note.unit, lang) : null;
+
 export function formatDate(iso: string | undefined, lang: Lang) {
   if (!iso) return "";
   const [y, m, d] = iso.split("-").map(Number);

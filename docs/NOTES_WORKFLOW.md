@@ -142,6 +142,9 @@ tags: [IPv4, NAT, DHCP]
 | `<AdLab />` | 同一目的地多个路由来源：最长前缀 → AD（Slide 14 默认值）→ metric，可改来源、metric、浮动静态路由 AD、断链路（`rip-logic.mjs`）。`<RoutingSortQuiz set="ripver\|ad" />` 是本周两组点选练习 |
 | `<EigrpDualLab />` | ISOM 5190 第 3 周：每个邻居的链路 cost + RD → 总距离、FD、successor（最多 4 条）、feasible successor（RD < FD）；断开链路看 FS 直接升级还是 Active 发 Query；预设是板书 p.2、Slide 13、Slide 12（`eigrp-logic.mjs`）。`<RoutingSortQuiz set="eigrptable\|eigrp" />` 是本周两组点选练习 |
 | `<PrefixMatchLab set="lab\|exercise" />` | ISOM 5190 Lab 2：最长前缀匹配逐位比较（前缀内的位上色、第一个不同的位标红），可改目的 IP 和路由；`exercise` 带 p.22 六个地址的点选练习（`prefix-logic.mjs`） |
+| `<CodeTrace id="…" />` | ISOM 5160 Python 笔记本：逐行运行一段代码——高亮当前行 + 这一行的大白话讲解、if / while 条件真假、for 是否取到下一个、每步之后的变量表（变化的高亮）和输出。数据是**真的用 Python 跑出来的**：代码和逐行讲解写在 `scripts/py-traces/snippets_*.py`，改完运行 `python3 scripts/py-traces/build.py` 重新生成 `data/py-traces.json`；Pipeline 代码用 `mock_ml.py` 的假模型（输出结构真实、数字示意，页面上会标「模型输出为示意」） |
+| `<FStringLab />` · `<BranchLab preset="shipping\|tier\|promo\|status\|alert\|stock" />` · `<SliceLab mode="slice\|range" />` · `<NestedPathLab presets="alerts,inventory,staff,sentiment,batch,generation,qa,zeroshot,ner,tts" />` · `<TemperatureLab />` | Python 小实验（`py-lab-logic.mjs`，格式化和切片已逐条对照真 Python 验证）：f-string 格式说明 / if-elif 链从上往下选一支 / 索引切片和 range / 点嵌套数据自动写出取值路径 / do_sample 与 temperature |
+| `<PyNotebookSortQuiz set="type\|struct\|error\|task\|output" />` | Python 笔记本点选练习：值的类型 / 选 list·tuple·dict / 会报什么错 / 选哪个 pipeline 任务 / pipeline 输出的形状（`data/py-notebook-quiz.json`） |
 
 ### 什么时候新做一个互动组件（重要，别忘了）
 
@@ -162,11 +165,21 @@ tags: [IPv4, NAT, DHCP]
 4. **在 `scripts/lib/mdx-core.mjs` 里加一个同名映射**，用同一套纯函数算出一张静态表格，这样 README / 下载包里也有内容。没有映射的组件在导出时会丢失并打印警告。
 5. 需要示意图时优先画成 SVG（参考 `collision-map.mjs`）：颜色写成 `var(--token, #亮色值)`，网页能跟随暗色模式，导出时自动替换成亮色值。
 
+### 编程课：「笔记本」单元而不是周笔记
+
+Python 这类编程内容不按 week 写，而是放在课程下的 `notebook/` 栏目（网站显示为「Python 笔记本」），一个知识点一个单元：`content/<学期>/<课程>/notebook/unit-NN-<slug>/index.mdx`，frontmatter 用 `unit: N`（代替 `week`，列表里显示「第 N 单元」）。读者按「完全没学过 Python」写：
+
+- 每个单元开头一句「这一单元学什么」+ 对应 notebook 的 cell 号，然后一张**生词表**（术语 · 大白话 · 例子），每个参数 / 变量都解释。
+- notebook 里**每个代码格**都做成 `<CodeTrace>`，每一行配一句讲解；练习题的答案也做成 trace，标 `mine=True`（显示「我的解答」）。
+- 结尾是 notebook 自带的 Practice questions 的解答（`<QA>`）和点选练习。
+
 ## 5. 容易踩的坑
 
 - **MDX 转义**：正文里的 `<`、`{`、`}` 要写成 `\<`、`\{`、`\}`（例如 `{Attr}`、`|<`），否则编译报错。表格里的 `|` 写成 `\|`。
 - **中文粗体**：已装 `remark-cjk-friendly`，`**目标：**为……` 能正常加粗；如果看到页面上出现 `**`，先检查这个插件还在不在。
 - **图片**：截图只用课件页和板书，裁切后一定打开检查有没有切掉内容；手写板书要旋转的先旋转。SVG 必须保留 `viewBox` 的大小写（不要用会把属性转成小写的 HTML 解析器处理 SVG）。
+- **代码字体连字**：JetBrains Mono 会把 `>=` 显示成 `≥`、`->` 显示成 `→`。`globals.css` 已经对 `.prose pre / code` 和 Python 组件关掉了连字，新组件里显示代码时记得也加上。
+- **dev server 只能开一个**：同一个项目已经有 `next dev` 在跑时（例如 3456），第二个会直接退出；直接用已经在跑的那个，新建笔记目录后先 `npm run sync`。
 - **Node 版本**：本机默认 Node 18，要用 `PATH=~/.nvm/versions/node/v21.7.3/bin:$PATH`。
 - **新笔记路由 404**：dev server 只在启动时同步内容，新建笔记目录后要重启 `npm run dev`。
 

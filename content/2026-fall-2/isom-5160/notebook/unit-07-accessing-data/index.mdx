@@ -1,0 +1,141 @@
+---
+title:
+  en: "Unit 7 · Getting Data Out: Index, Slice, Key, .items()"
+  zh: "第 7 单元 · 把数据取出来：索引、切片、键、.items()"
+summary:
+  en: "Zero-based and negative indexes, slices that exclude the end, d[key] vs d.get(key, default), and looping over lists and dict views with .keys() / .values() / .items() — with a slicing lab and the access drills."
+  zh: "从 0 开始的索引和负索引、不含终点的切片、d[键] vs d.get(键, 默认)、用 .keys() / .values() / .items() 遍历，附切片实验台和 Practice P1 解答。"
+unit: 7
+date: 2026-11-06
+tags: [Python, Indexing, Slicing, dict.get, items]
+---
+# Unit 7 · 把数据取出来：索引、切片、键、.items()
+
+**这一单元学什么**：装进容器以后，要会**取**：取第几个、取一段、按名字取、一个一个全部取。这是 Day 2 后面所有内容（包括 AI 模型的输出）的基础。
+**对应材料**：Day 2 data-structures notebook Section 2（cell 12–20）。
+
+---
+
+## 0. 生词表
+
+| 术语 | 大白话 | 例子 |
+|---|---|---|
+| **index** 索引 / 位置 | 元素排第几，**从 0 开始数** | `skus[0]` 是第一个 |
+| **negative index** 负索引 | 从后往前数，`-1` 是最后一个 | `skus[-1]` |
+| **slice** 切片 | 取一段，`[开始:结束]`，**不含结束** | `skus[1:4]` |
+| **`KeyError`** | 用方括号取一个不存在的键 | `ticket["category"]` |
+| **`.get(key, default)`** | 安全地取：没有这个键就返回默认值 | `ticket.get("category", "unassigned")` |
+| **view** 视图 | `.keys()` / `.values()` / `.items()` 返回的东西，可以拿来 for | |
+| **unpacking** 拆包 | `for a, b in …` 把一对值拆进两个变量 | `for level, count in d.items():` |
+
+---
+
+## 1. 🔴 list / tuple：按位置取
+
+<CodeTrace id="d-index" />
+
+<SliceLab />
+
+<Callout type="memo" title="三条规则">
+
+1. **从 0 开始**：第二个是 `[1]`，第 n 个是 `[n-1]`。
+2. **负数从后数**：`[-1]` 最后一个，`[-2]` 倒数第二个，不用知道长度。
+3. **切片含头不含尾**：`[1:3]` = 位置 1、2。冒号一边不写 = 一直到头 / 到尾。
+
+</Callout>
+
+| 写法 | 意思 | 结果类型 |
+|---|---|---|
+| `seq[i]` | 第 i 个元素 | 元素本身（这里是 str） |
+| `seq[a:b]` | 位置 a 到 b-1 | 和原来一样的容器（list 切出 list，tuple 切出 tuple） |
+| `seq[:b]` / `seq[a:]` | 从头到 b-1 / 从 a 到最后 | 同上 |
+| `seq[::-1]` | 倒过来（第三个数是步长） | 同上 |
+
+<Callout type="warn" title="索引越界会报错，切片越界不会">
+
+`skus[5]`（只有 0–4）→ `IndexError: list index out of range`；`skus[1:99]` 不报错，只是取到最后为止。
+
+</Callout>
+
+---
+
+## 2. 🔴 dict：按键取，`[]` vs `.get()`
+
+<CodeTrace id="d-get" />
+
+对比一下键不存在时两种写法的差别：
+
+<CodeTrace id="d-keyerror" />
+
+| | `d["key"]` | `d.get("key")` | `d.get("key", 默认)` |
+|---|---|---|---|
+| 键存在 | 返回值 | 返回值 | 返回值 |
+| 键不存在 | **`KeyError`，程序停下** | 返回 `None` | 返回你给的默认值 |
+| 什么时候用 | 你确定一定有这个键 | 可能没有，没有就算了 | 可能没有，要一个兜底值 |
+
+<Callout type="biz" title="业务视角：为什么要 .get">
+
+真实数据经常缺字段：有的工单没填 category，有的告警没有 owner。用 `.get("category", "unassigned")` 让程序继续跑下去，而不是处理到第 300 条时因为一个缺失字段整个崩掉。
+
+</Callout>
+
+---
+
+## 3. 🔴 用 for 把东西全部走一遍
+
+<CodeTrace id="d-loops" />
+
+| 写法 | 每一轮拿到 | 用在 |
+|---|---|---|
+| `for x in my_list:` | 一个元素 | list / tuple |
+| `for k in d:` 或 `for k in d.keys():` | 一个键 | 只要键 |
+| `for v in d.values():` | 一个值 | 只要值（比如加总） |
+| `for k, v in d.items():` | 一对 (键, 值) | **最常用**：键和值都要 |
+
+<Callout type="tip" title="小白理解：.items() 给的是一对">
+
+`severity_counts.items()` 里面是 `('low', 12)`、`('medium', 7)`、`('high', 3)` 这样的**一对一对**（每对是个 tuple）。`for level, count in …` 把每一对拆开：左边给 `level`，右边给 `count`。
+
+</Callout>
+
+---
+
+## 4. 练习 P1：取数据小练习
+
+<CodeTrace id="d-p1" />
+
+输出和题目给的 **Expected output** 一字不差。
+
+---
+
+## 自测
+
+<PyNotebookSortQuiz set="error" />
+
+<QA q="Day 2 Practice question 2：ports = [&quot;443&quot;, &quot;22&quot;, &quot;80&quot;, &quot;8080&quot;]，meta = {&quot;host&quot;: &quot;gw01&quot;, &quot;zone&quot;: &quot;dmz&quot;}，打印前三个端口和 zone。">
+
+```python
+ports = ["443", "22", "80", "8080"]
+meta = {"host": "gw01", "zone": "dmz"}
+
+print(ports[:3])        # ['443', '22', '80']
+print(meta["zone"])     # dmz
+```
+
+</QA>
+
+<QA q="Day 2 Practice question 6：用任意一个 dict，通过 for 和 .items() 打印 key: value 报告。">
+
+```python
+case = {"ticket_id": "INC-42", "owner": "Ben Li", "priority": "high"}
+for key, value in case.items():
+    print(f"{key}: {value}")
+```
+
+</QA>
+
+<QA q="skus = [&quot;P100&quot;, &quot;P200&quot;, &quot;P300&quot;, &quot;P400&quot;, &quot;P500&quot;]，skus[-3:-1] 是什么？">
+
+`['P300', 'P400']`。-3 是 P300，-1 是 P500，但切片不含终点，所以停在 P400。
+
+</QA>

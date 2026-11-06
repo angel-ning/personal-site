@@ -13,9 +13,10 @@ import type { L10n } from "./i18n";
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
 // Known section types, in display order. Any other folder name still works.
-const SECTION_ORDER = ["lectures", "labs", "tutorials", "assignments", "readings", "projects", "exams"];
+const SECTION_ORDER = ["lectures", "notebook", "labs", "tutorials", "assignments", "readings", "projects", "exams"];
 const SECTION_LABELS: Record<string, L10n> = {
   lectures: { en: "Lectures", zh: "课堂笔记" },
+  notebook: { en: "Python Notebook", zh: "Python 笔记本" },
   labs: { en: "Labs", zh: "实验" },
   tutorials: { en: "Tutorials", zh: "习题课" },
   assignments: { en: "Assignments", zh: "作业" },
@@ -33,6 +34,7 @@ export type Note = {
   title: L10n;
   summary?: L10n;
   week?: number;
+  unit?: number; // notebook-style notes: "Unit 01" instead of a week
   date?: string;
   tags: string[];
   courseCode: string;
@@ -118,6 +120,7 @@ function readNote(term: string, course: string, courseCode: string, type: string
     title: l10n(meta.title, titleCase(slug)),
     summary: meta.summary ? l10n(meta.summary, "") : undefined,
     week: typeof meta.week === "number" ? meta.week : undefined,
+    unit: typeof meta.unit === "number" ? meta.unit : undefined,
     date: toDate(meta.date),
     tags: Array.isArray(meta.tags) ? (meta.tags as string[]) : [],
     courseCode,
@@ -127,7 +130,7 @@ function readNote(term: string, course: string, courseCode: string, type: string
 }
 
 const byWeek = (a: Note, b: Note) =>
-  (a.week ?? 999) - (b.week ?? 999) || (a.date ?? "").localeCompare(b.date ?? "") || a.slug.localeCompare(b.slug);
+  (a.week ?? a.unit ?? 999) - (b.week ?? b.unit ?? 999) || (a.date ?? "").localeCompare(b.date ?? "") || a.slug.localeCompare(b.slug);
 
 const sectionRank = (t: string) => {
   const i = SECTION_ORDER.indexOf(t);

@@ -1,0 +1,124 @@
+---
+title:
+  en: "Unit 10 · Dictionary of Dictionaries: Look Up a Whole Card by ID"
+  zh: "第 10 单元 · dict of dicts：按编号查一整张卡片"
+summary:
+  en: "Outer key → inner dict (inventory, staff), two-bracket access d[outer][inner], looping with .items(), reorder flags with if / elif / else, updating a nested field, the employee practice, and list-of-dicts vs dict-of-dicts."
+  zh: "外层键 → 内层 dict（库存、员工）；两层方括号取值；.items() 遍历；补货标记；改嵌套字段；Practice P4 解答；什么时候用 list of dicts、什么时候用 dict of dicts。"
+unit: 10
+date: 2026-11-06
+tags: [Python, dict of dicts, Nested data, Lookup]
+---
+# Unit 10 · dict of dicts：按编号查一整张卡片
+
+**这一单元学什么**：U9 是「一张表」，要找某一行得从头扫。如果你总是**按编号**找（SKU、员工号、资产标签），就把编号当外层的键：`inventory["VPN Token"]` 一步拿到那张卡片。
+**对应材料**：Day 2 data-structures notebook Section 5（cell 35–41）+ 末尾 Practice questions。
+
+---
+
+## 0. 生词表
+
+| 术语 | 大白话 | 例子 |
+|---|---|---|
+| **outer key** 外层键 | 用来查的编号 / 名字 | `"VPN Token"`、`"E101"` |
+| **inner dict** 内层字典 | 这个编号对应的一整张卡片 | `{"stock": 8, "reorder_level": 10, …}` |
+| **nested access** 嵌套取值 | 连续两个方括号，一层一层往里走 | `inventory["VPN Token"]["stock"]` |
+| **nested assignment** 嵌套赋值 | 用同样的路径把新值写回去 | `staff["E102"]["years"] = 3` |
+
+```
+inventory ──► {
+   "Smart Badge": {stock, reorder_level, unit_cost},
+   "VPN Token":   {stock, reorder_level, unit_cost},   ← inventory["VPN Token"]
+   "USB-C Cable": {stock, reorder_level, unit_cost},
+}
+inventory["VPN Token"]["unit_cost"]  → 60.0
+```
+
+---
+
+## 1. 🔴 遍历 + 补货标记
+
+<CodeTrace id="d-inventory" />
+
+<NestedPathLab presets="inventory,staff" />
+
+<BranchLab preset="stock" />
+
+| 写法 | 拿到什么 |
+|---|---|
+| `inventory` | 整个外层 dict |
+| `inventory["VPN Token"]` | VPN Token 的卡片（内层 dict） |
+| `inventory["VPN Token"]["stock"]` | 卡片上的 stock：`8` |
+| `for sku, info in inventory.items():` | 每轮：`sku` = 商品名，`info` = 那张卡片 |
+
+---
+
+## 2. 🔴 改嵌套字段
+
+<CodeTrace id="d-update" />
+
+<Callout type="tip" title="小白理解：先找到抽屉，再改里面的东西">
+
+`inventory["VPN Token"]["stock"] = 13` 读作：在 inventory 柜子里找到「VPN Token」那个抽屉，把抽屉里 stock 那一格换成 13。左边的路径和取值时一模一样，只是放在 `=` 左边。
+
+</Callout>
+
+---
+
+## 3. 练习 P4：员工目录
+
+题目（cell 40）：① 每个员工打印成 `emp_id | name | team | years`；② 按年资加上 `senior`（≥ 5）/ `mid`（≥ 2）/ `junior`；③ 打印 E101 的 team；④ 把 E102 的 years 改成 3。
+
+<CodeTrace id="d-p4" />
+
+---
+
+## 4. 🟡 list of dicts 还是 dict of dicts？
+
+| | list of dicts（U9） | dict of dicts（U10） |
+|---|---|---|
+| 长什么样 | `[{…}, {…}, {…}]` | `{"E100": {…}, "E101": {…}}` |
+| 找某一条 | 从头扫，看哪行的 id 对 | `staff["E101"]` 一步到位 |
+| 顺序 | 天然有顺序（队列、时间线） | 主要靠键查 |
+| 重复 | 可以有两条一样的记录 | 键唯一，同一个编号只能有一张卡 |
+| 适合 | 告警流、工单队列、模型的输出 | 库存、员工档案、资产清单 |
+
+---
+
+## 自测
+
+<QA q="Day 2 Practice question 5：建一个 assets（dict of dicts，内层 owner、status），打印每个资产标签和 OK / CHECK。">
+
+```python
+assets = {
+    "LAP-001": {
+        "owner": "Ada Chen",
+        "status": "active",
+    },
+    "LAP-002": {
+        "owner": "Ben Li",
+        "status": "lost",
+    },
+}
+
+for tag, info in assets.items():
+    if info["status"] == "active":
+        flag = "OK"
+    else:
+        flag = "CHECK"
+    print(f"{tag} | {info['owner']} | {flag}")
+```
+
+</QA>
+
+<QA q="Day 2 Practice question 7：什么时候用 list of dicts 而不是 dict of dicts？（两句话）">
+
+当记录**有先后顺序**、或者**没有唯一编号**、或者主要是**一条条按顺序处理**时（例如告警流、工单队列），用 list of dicts。当你经常**按某个唯一编号直接查**一条记录时（例如按 SKU 查库存），用 dict of dicts。
+
+</QA>
+
+<QA q="inventory[&quot;Webcam&quot;][&quot;stock&quot;] 会怎样？怎么安全地查？">
+
+外层没有 "Webcam" → `KeyError: 'Webcam'`。安全写法：`inventory.get("Webcam", {}).get("stock", 0)`——外层找不到就先给一个空 dict，再在空 dict 上 `.get` 出默认 0。
+
+</QA>

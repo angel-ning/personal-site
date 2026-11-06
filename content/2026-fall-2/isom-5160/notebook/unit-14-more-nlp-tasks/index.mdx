@@ -1,0 +1,152 @@
+---
+title:
+  en: "Unit 14 · More NLP Pipelines: Summarize, NER, QA, Translate, Fill-mask"
+  zh: "第 14 单元 · 更多 NLP 任务：摘要、NER、问答、翻译、填空"
+summary:
+  en: "Summarization (max_length / min_length / do_sample), NER with and without aggregation_strategy, extractive question answering with question= and context=, translation task names, fill-mask with tokenizer.mask_token, top_k and enumerate."
+  zh: "摘要（max_length / min_length / do_sample）、NER 和 aggregation_strategy、抽取式问答（question= / context=）、翻译任务名、填空（tokenizer.mask_token、top_k、enumerate）。"
+unit: 14
+date: 2026-11-06
+tags: [Python, Hugging Face, Summarization, NER, Question answering, Translation, Fill-mask]
+---
+# Unit 14 · 更多 NLP 任务：摘要、NER、问答、翻译、填空
+
+**这一单元学什么**：同一套 `pipeline(任务, model=…)` → 调用 → 取结果，换五种任务。每种任务只需要记三件事：**任务名、特有的参数、结果的键名**。
+**对应材料**：`Pipelines_Tutorial.ipynb` Sections 5–8（cells 19–26）、`Pipeline_UsefulFunctions.ipynb` Sections 3–6 和 8。
+
+---
+
+## 0. 一张表看完五个任务
+
+| 任务名 | 做什么 | 特有参数 | 结果形状 → 取值 |
+|---|---|---|---|
+| `"summarization"` | 长文 → 短文（改写式） | `max_length`、`min_length`、`do_sample` | list of dicts → `summary[0]["summary_text"]` |
+| `"ner"` / `"token-classification"` | 找出人名、组织、地名 | `aggregation_strategy="simple"` | list of dicts（可能是 `[]`）→ `entity["word"]`、`entity["entity_group"]` |
+| `"question-answering"` | 从给定文章里找答案 | `question=`、`context=` | **一个 dict** → `result["answer"]` |
+| `"translation_en_to_zh"` 等 | 翻译 | `max_length` | list of dicts → `out[0]["translation_text"]` |
+| `"fill-mask"` | 猜被遮住的词 | `top_k` | list of dicts → `s["token_str"]` |
+
+---
+
+## 1. 🔴 摘要 Summarization
+
+<CodeTrace id="p-summary" />
+
+<CodeTrace id="p-summary-small" />
+
+| 参数 | 意思 |
+|---|---|
+| `max_length` | 摘要最多几个 token |
+| `min_length` | 摘要最少几个 token（防止只写半句） |
+| `do_sample=False` | 不抽样，同样输入每次结果一样（U12） |
+
+<Callout type="warn" title="abstractive 摘要会改写，也可能写错">
+
+notebook 的 Warning：摘要可能**换说法、漏掉细节、甚至加入原文没有的内容**。学术、专业或安全相关材料，用之前要和原文对照。
+
+</Callout>
+
+<Callout type="extra" title="两种写长字符串的方法">
+
+Tutorial 用三引号 `"""…"""`（里面的换行会保留）；UsefulFunctions 用**括号里放几段相邻的字符串**，Python 会自动把它们接成一段（不会多出换行，但每段末尾的空格要自己留）。
+
+</Callout>
+
+---
+
+## 2. 🔴 命名实体识别 NER
+
+<CodeTrace id="p-ner" />
+
+<CodeTrace id="p-ner-agg" />
+
+<NestedPathLab presets="ner" />
+
+| | 不合并（Tutorial） | `aggregation_strategy="simple"`（UsefulFunctions） |
+|---|---|---|
+| 一个结果是 | 一个 **token**（可能是半个词，例如 `##soft`） | 一个**完整实体**（`Microsoft`） |
+| 标签的键名 | `entity`，值像 `I-ORG`、`B-PER` | `entity_group`，值像 `ORG`、`PER` |
+| 其他键 | `score`、`index`、`word`、`start`、`end` | `score`、`word`、`start`、`end` |
+
+CoNLL-2003 只有四类：**PER** 人、**ORG** 组织、**LOC** 地点、**MISC** 其他。所以 Tutorial 那句关于深度学习的话很可能返回空列表——「Deep Learning」不属于这四类。
+
+<Callout type="note" title="{entity['word']!r} 的 !r">
+
+`!r` 让 f-string 用 `repr()` 显示值：字符串会带引号，例如 `'Alice Chen'`。好处是能看清前后有没有多余的空格或奇怪字符。
+
+</Callout>
+
+---
+
+## 3. 🔴 抽取式问答 Question answering
+
+<CodeTrace id="p-qa" />
+
+<CodeTrace id="p-qa-policy" />
+
+<NestedPathLab presets="qa" />
+
+| 键 | 意思 |
+|---|---|
+| `answer` | 答案文字——一定是 context 里**原样**的一段 |
+| `score` | 模型的信心 |
+| `start` / `end` | 答案在 context 里的起止位置（字符位置，从 0 数） |
+
+<Callout type="exam" title="问答返回的是 dict，不是 list">
+
+`result["answer"]`，**不要** `result[0]`。这和分类、生成不一样，最容易写错。
+
+</Callout>
+
+<Callout type="biz" title="extractive 的好处和局限">
+
+好处：答案一定出自你给的文字，不会凭空编（适合「问公司政策」）。局限：context 里根本没答案时，它**照样会挑一段**给你，分数也不一定低（notebook Tip：把 score 当排序信号，要人工核对）。UsefulFunctions Try it Q3 要你各写一个「答得出」和「答不出」的问题对比一下。
+
+</Callout>
+
+---
+
+## 4. 🟡 翻译 Translation
+
+<CodeTrace id="p-translate" />
+
+<CodeTrace id="p-translate-fr" />
+
+任务名格式是 `translation_<源语言>_to_<目标语言>`，模型要和方向配对（`opus-mt-en-zh` 只能英译中）。Helsinki-NLP 的 MarianMT 模型需要 `sentencepiece` 包。notebook 提醒：中文输出可能是简体或繁体；技术、法律、安全术语发布前要人工审核。
+
+---
+
+## 5. 🟢 填空 Fill-mask
+
+<CodeTrace id="p-fillmask" />
+
+| 写法 | 意思 |
+|---|---|
+| `fill_mask.tokenizer.mask_token` | 这个模型的「空格」记号。BERT 是 `[MASK]`，RoBERTa 是 `<mask>`，所以从 tokenizer 读，不写死 |
+| `top_k=3` | 返回最可能的 3 个候选 |
+| `enumerate(suggestions, start=1)` | 遍历时顺便给编号 1、2、3（U5 的 for + 一个计数器的简写） |
+| 结果的键 | `token_str` 猜的词、`score` 分数、`sequence` 填好后的整句、`token` 词表编号 |
+
+用途是探索「模型觉得这里最可能是什么词」，**不是**事实来源。
+
+---
+
+## 自测
+
+<QA q="问答结果 result = {'score': 0.8731, 'start': 47, 'end': 100, 'answer': '...'}，context[47:100] 是什么？">
+
+就是 `result["answer"]` 那段文字——`start` / `end` 是切片位置（U7：含头不含尾），所以 `context[result["start"]:result["end"]] == result["answer"]`。
+
+</QA>
+
+<QA q="NER 返回 []，for entity in entities: 会报错吗？">
+
+不会。空列表的 for 循环一次都不执行，直接跳过。所以程序「没报错但什么都没打印」时，先 `print(entities)` 看看是不是空的。
+
+</QA>
+
+<QA q="要把英文告警翻成法文，任务名和模型分别填什么？">
+
+`pipeline("translation_en_to_fr", model="Helsinki-NLP/opus-mt-en-fr")`，结果用 `translation[0]["translation_text"]` 取。
+
+</QA>

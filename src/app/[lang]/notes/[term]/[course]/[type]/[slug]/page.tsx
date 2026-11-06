@@ -9,7 +9,7 @@ import { HtmlNoteFrame } from "@/components/html-note-frame";
 import { getAllNotes, getNote, getTerm, noteAssetBase, noteDownload, noteSourcePath, type Note } from "@/lib/content";
 import { renderMarkdownFile } from "@/lib/markdown";
 import { renderMdxFile } from "@/lib/mdx";
-import { formatDate, getDict, isLang, pick, weekLabel, withLang, type Lang } from "@/lib/i18n";
+import { formatDate, getDict, isLang, pick, seqLabel, withLang, type Lang } from "@/lib/i18n";
 
 type Params = { lang: string; term: string; course: string; type: string; slug: string };
 type Props = { params: Promise<Params> };
@@ -72,7 +72,7 @@ export default async function NotePage({ params }: Props) {
     { label: found.course.code, href: withLang(lang, found.course.href) },
     { label: pick(section.label, lang), href: withLang(lang, `${found.course.href}#${section.type}`) },
   ];
-  const meta = [note.week != null ? weekLabel(note.week, lang) : null, note.date ? `${t.notes.updated} ${formatDate(note.date, lang)}` : null]
+  const meta = [seqLabel(note, lang), note.date ? `${t.notes.updated} ${formatDate(note.date, lang)}` : null]
     .filter(Boolean)
     .join("  ·  ");
 

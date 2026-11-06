@@ -1,0 +1,107 @@
+---
+title:
+  en: "Unit 2 · print(): Showing Values on Screen"
+  zh: "第 2 单元 · print()：把东西显示出来"
+summary:
+  en: "Functions, arguments and keyword arguments through print(): several values on one line, sep and end, and the desk-note practice."
+  zh: "用 print() 认识「函数、参数、关键字参数」：一行显示多个值、sep 和 end，附 Practice P1 解答。"
+unit: 2
+date: 2026-10-30
+tags: [Python, print, Functions, Arguments]
+---
+# Unit 2 · print()：把东西显示出来
+
+**这一单元学什么**：`print()` 是你最先用、也用得最多的东西——调试、看结果、出报表都靠它。借它顺便搞懂三个以后天天见的词：**函数、参数、关键字参数**。
+**对应材料**：Day 1 notebook Section 1（cell 5–11）。
+
+---
+
+## 0. 生词表
+
+| 术语 | 大白话 | 例子 |
+|---|---|---|
+| **function** 函数 | 一个有名字的「功能」，后面加括号 `()` 就是**调用**它（让它去做事） | `print(…)`、`type(…)`、`len(…)` |
+| **argument** 参数 | 调用函数时放进括号里、交给它处理的东西，多个用逗号隔开 | `print("Store:", "Harbour Mart")` 有 2 个参数 |
+| **positional argument** 位置参数 | 只写值、靠**位置**区分的参数 | 上面那两个 |
+| **keyword argument** 关键字参数 | 写成 `名字=值` 的参数，靠**名字**区分，可选 | `sep=" \| "`、`end=" "` |
+| **default** 默认值 | 你不写某个关键字参数时，它自动用的值 | `sep` 默认 `" "`，`end` 默认 `"\n"` |
+| `"\n"` 换行符 | 一个看不见的字符，意思是「换到下一行」 | `print("a\nb")` 显示成两行 |
+
+<Callout type="tip" title="小白理解：函数像自动售货机">
+
+`print` 是机器的名字，括号里的参数是你投进去的东西，机器做完事把结果显示出来。关键字参数像机器上的旋钮：`sep` 调「每样东西之间放什么」，`end` 调「最后补什么」，不碰旋钮就用出厂设置（默认值）。
+
+</Callout>
+
+---
+
+## 1. 🔴 基本用法：一个或多个值
+
+<CodeTrace id="b-print" />
+
+要点：
+
+- 参数可以是文字、数字、变量，混在一起也行——print 会自动把数字转成文字。
+- 多个参数之间 print **自动加一个空格**，所以 `"Store:"` 后面不用自己加空格。
+- 字符串显示时**不带引号**；但如果 print 的是一个 list / dict，里面的字符串会带引号（U6 会看到）。
+
+---
+
+## 2. 🔴 两个旋钮：`sep` 和 `end`
+
+<CodeTrace id="b-sep-end" />
+
+| 参数 | 管什么 | 默认值 | 改了会怎样 |
+|---|---|---|---|
+| `sep` | separator 分隔符：**参数和参数之间**放什么 | `" "`（一个空格） | `sep=" \| "` → `SKU \| P100 \| P200`；`sep=""` → 紧贴在一起 |
+| `end` | 这次 print **最后**补什么 | `"\n"`（换行） | `end=" "` → 不换行，下一次 print 接在后面 |
+
+<Callout type="warn" title="关键字参数必须写在最后">
+
+`print(sep=" | ", "SKU", "P100")` 会报 `SyntaxError`：位置参数要放前面，`名字=值` 放后面。
+
+</Callout>
+
+---
+
+## 3. 练习 P1：打印一张值班便条
+
+题目（cell 10）：打印三行——① 标题 `Harbour Mart - Daily Desk Note`；② 收银员 `Ada Chen` 和收银机 `R3` 放在一行；③ 用 `end=" "` 让 `Shift open` 和 `09:00` 显示在同一行。
+
+<CodeTrace id="b-p1" />
+
+<Callout type="note" title="第 2 项有很多种写法">
+
+`print("Cashier: Ada Chen | Register: R3")`（一个字符串）、`print("Cashier:", "Ada Chen", "Register:", "R3")`（多个参数），以及 U3 的 f-string，结果都可以。题目只要求「在一行里」。
+
+</Callout>
+
+---
+
+## 自测
+
+<QA q="print(&quot;A&quot;, &quot;B&quot;, &quot;C&quot;, sep=&quot;-&quot;) 显示什么？">
+
+`A-B-C`。三个参数之间用 `-` 隔开，最后照常换行。
+
+</QA>
+
+<QA q="连续两行 print(&quot;Hi&quot;, end=&quot;&quot;) 和 print(&quot;there&quot;) 显示什么？">
+
+`Hithere`——第一行最后什么都没补（连空格都没有），第二行紧接着显示。
+
+</QA>
+
+<QA q="Day 1 Practice question 1：用 print 在三行里写三件关于你自己的事。">
+
+最简单就是三次 print，每次一行：
+
+```python
+print("Name: Ada")
+print("Programme: MSc ISOM")
+print("Favourite language: Python")
+```
+
+也可以一次 print 用 `sep="\n"`：`print("Name: Ada", "Programme: MSc ISOM", "Favourite language: Python", sep="\n")`。
+
+</QA>

@@ -1,0 +1,154 @@
+---
+title:
+  en: "Unit 5 · for and while: Repeating Work"
+  zh: "第 5 单元 · for 与 while：让程序重复做事"
+summary:
+  en: "for loops over a list, range(start, stop, step), while loops and the infinite-loop trap, for + if as a filter, the loop practices and all Day 1 closing questions."
+  zh: "for 遍历列表、range(start, stop, step)、while 循环和死循环陷阱、for + if 筛选，附 Practice P4 和 Day 1 收尾练习全部解答。"
+unit: 5
+date: 2026-10-30
+tags: [Python, for, while, range, Loops]
+---
+# Unit 5 · for 与 while：让程序重复做事
+
+**这一单元学什么**：同一件事要对很多东西做（每家分店、每笔订单、每条告警），就用循环。`for` = 「对每一个……」，`while` = 「只要……就继续」。
+**对应材料**：Day 1 notebook Section 4（cell 28–38）+ 末尾 Practice questions。
+
+---
+
+## 0. 生词表
+
+| 术语 | 大白话 | 例子 |
+|---|---|---|
+| **loop** 循环 | 重复执行一块代码 | |
+| **iteration** 迭代 / 一轮 | 循环体执行的「一次」 | 4 家分店 = 4 轮 |
+| **loop variable** 循环变量 | `for` 后面那个名字，每一轮自动换成下一个元素 | `for code in branches:` 里的 `code` |
+| **sequence** 序列 | 能一个一个往外拿东西的数据：list、str、range…… | `["TST", "CWB"]` |
+| **loop body** 循环体 | 循环下面缩进的那几行 | |
+| **counter** 计数器 | 用来记「还剩几次 / 第几次」的变量 | `batches_left` |
+| **infinite loop** 死循环 | 条件永远是 True，停不下来 | 忘了 `batches_left - 1` |
+
+---
+
+## 1. 🔴 `for`：对列表里的每一个……
+
+<CodeTrace id="b-for-list" />
+
+读法：「对 `branches` 里的**每一个** `code`，执行一次 `print(...)`」。`code` 是你自己起的名字，起成 `branch` 也完全一样——但最好起一个说明「这是什么」的名字。
+
+<Callout type="tip" title="小白理解：发传单">
+
+`for code in branches:` 就像「把这叠传单（列表）一张一张拿起来（code），每拿一张就做一次缩进里的事」。拿完了，循环自动结束，不用你管什么时候停。
+
+</Callout>
+
+---
+
+## 2. 🔴 `range()`：重复固定次数
+
+<CodeTrace id="b-range" />
+
+| 写法 | 产生的数 | 记法 |
+|---|---|---|
+| `range(5)` | 0, 1, 2, 3, 4 | 从 0 开始，正好 5 个 |
+| `range(1, 6)` | 1, 2, 3, 4, 5 | **包含开头、不包含结尾** |
+| `range(0, 10, 2)` | 0, 2, 4, 6, 8 | 第 3 个参数是步长 |
+| `range(10, 0, -3)` | 10, 7, 4, 1 | 步长为负 = 倒数 |
+
+<SliceLab mode="range" />
+
+<Callout type="memo" title="口诀：含头不含尾">
+
+`range(a, b)` 和 U7 的切片 `[a:b]` 是同一个规则：**从 a 开始，到 b 之前停**。想要 1 到 5，就写 `range(1, 6)`。
+
+</Callout>
+
+---
+
+## 3. 🔴 `while`：只要条件成立就继续
+
+<CodeTrace id="b-while" />
+
+`for` 和 `while` 怎么选：
+
+| | `for` | `while` |
+|---|---|---|
+| 什么时候停 | 序列走完自动停 | 条件变 False 才停 |
+| 适合 | 「对每一个……」：已知要处理哪些东西 | 「直到……为止」：不知道要几轮（存够钱、用户输入正确、重试） |
+| 风险 | 几乎没有 | **忘了更新变量 → 死循环** |
+
+<Callout type="warn" title="死循环怎么办">
+
+如果 while 一直停不下来（输出一直在刷），在 Colab 里点那一格左边的 ■ 停止按钮，或 **Runtime → Interrupt execution**。然后检查循环体里有没有改变条件里的变量。
+
+</Callout>
+
+---
+
+## 4. 🔴 `for` + `if`：边走边筛
+
+<CodeTrace id="b-for-if" />
+
+这是 Day 1 最重要的组合，Day 2 会一直用：**循环负责「每一个」，if 负责「哪些」**。注意两层缩进：`if` 属于 `for`，`print` 属于 `if`。
+
+---
+
+## 5. 练习 P4：两个小循环
+
+题目（cell 37）：① 用 `for` 把 `catalog` 每个商品打印成 `Item: <name>`；② 用 `while` 打印 `Attempt 1`、`Attempt 2`、`Attempt 3`。
+
+<CodeTrace id="b-p4" />
+
+<Callout type="note" title="第 2 项也可以用 for">
+
+`for attempt in range(1, 4): print(f"Attempt {attempt}")` 更短也不会死循环。题目指定用 while 是为了练习「自己维护计数器」。
+
+</Callout>
+
+---
+
+## Day 1 收尾练习（notebook 末尾 Practice questions）
+
+Q1–Q4 和 Q8 的答案分别在 U2、U3、U4、U1 的自测里。下面是循环相关的三题。
+
+<QA q="Q5：names = [&quot;Ada&quot;, &quot;Ben&quot;, &quot;Cara&quot;]，每个人打印 Hello, <name>!">
+
+```python
+names = ["Ada", "Ben", "Cara"]
+for name in names:
+    print(f"Hello, {name}!")
+```
+
+</QA>
+
+<QA q="Q6：balance 从 0 开始，每轮加 200，直到 balance >= 1000，每轮打印余额。">
+
+```python
+balance = 0
+while balance < 1000:
+    balance = balance + 200
+    print(f"Balance: {balance}")
+```
+
+输出 200、400、600、800、1000。注意条件写的是「**还没到**目标就继续」：`balance < 1000`。如果先 print 再加，最后一行会是 800（自己跑一下对比）。
+
+</QA>
+
+<QA q="Q7：prices = [19, 55, 120, 8, 77]，只打印严格大于 50 的价格。">
+
+```python
+prices = [19, 55, 120, 8, 77]
+for price in prices:
+    if price > 50:
+        print(price)
+```
+
+输出 55、120、77。「严格大于」→ `>`，不是 `>=`。
+
+</QA>
+
+<QA q="for i in range(3): 下面的代码会执行几次？i 依次是什么？">
+
+3 次，`i` 依次是 0、1、2。
+
+</QA>

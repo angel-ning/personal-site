@@ -1,0 +1,155 @@
+---
+title:
+  en: "Unit 4 · if / elif / else: Making Decisions"
+  zh: "第 4 单元 · if / elif / else：让程序做选择"
+summary:
+  en: "Conditions, comparison operators, indentation, if / else, elif chains where only the first True branch runs, and and / or / not — with a branch lab and the order-status practice."
+  zh: "条件和比较运算符、缩进、if / else、只走第一个 True 的 elif 链、and / or / not，附分支实验台和 Practice P3 解答。"
+unit: 4
+date: 2026-10-30
+tags: [Python, if, Conditionals, Boolean]
+---
+# Unit 4 · if / elif / else：让程序做选择
+
+**这一单元学什么**：商业规则几乎都是「如果……就……否则……」：满额免运费、按积分分等级、按分数给告警定级。`if` 就是把这些规则写成代码。
+**对应材料**：Day 1 notebook Section 3（cell 19–27）。
+
+---
+
+## 0. 生词表
+
+| 术语 | 大白话 | 例子 |
+|---|---|---|
+| **condition** 条件 | 一个算出来是 `True` 或 `False` 的表达式 | `basket >= 300` |
+| **comparison operator** 比较运算符 | 比大小、比相等的符号，结果是 bool | 见下表 |
+| **branch** 分支 | if / elif / else 下面各自那一块代码，只会走其中一块 | |
+| **indentation** 缩进 | 行首的 4 个空格。**缩进的行属于上面那个冒号** | `    fee = 25.0` |
+| **block** 代码块 | 缩进相同、连在一起的几行 | if 下面的两行 |
+| **logical operator** 逻辑运算符 | `and`、`or`、`not`，把几个条件组合起来 | `is_member and basket >= 400` |
+
+| 运算符 | 意思 | 例子 → 结果 |
+|---|---|---|
+| `==` | 等于（**两个**等号） | `status == "paid"` |
+| `!=` | 不等于 | `status != "paid"` |
+| `>` / `<` | 大于 / 小于 | `820 > 1000` → `False` |
+| `>=` / `<=` | 大于等于 / 小于等于 | `300 >= 300` → `True` |
+
+<Callout type="warn" title="= 和 == 是两回事">
+
+`=` 是**赋值**（放进盒子），`==` 是**比较**（问「是不是相等」）。`if status = "paid":` 会直接 `SyntaxError`。
+
+</Callout>
+
+---
+
+## 1. 🔴 if / else：二选一
+
+<CodeTrace id="b-shipping" />
+
+格式要点：
+
+1. `if 条件:`——**行末冒号**不能漏。
+2. 下面属于它的行**缩进 4 个空格**（Colab 按 Tab 会自动插 4 个空格）。
+3. `else:` 不写条件，和 `if` 对齐。
+4. 缩进回到最左边 = if / else 结束，之后的代码无论如何都会执行（最后那行 `Payable total`）。
+
+<BranchLab preset="shipping" />
+
+---
+
+## 2. 🔴 if / elif / else：多选一，**只走第一个 True**
+
+<CodeTrace id="b-tier" />
+
+<BranchLab preset="tier" />
+
+<Callout type="exam" title="项目里最容易错：门槛的顺序">
+
+Python 从上往下**一个一个问**，第一个 `True` 就进去，**后面的全部跳过**。所以多个门槛要**从严到宽**写（`>= 1000` → `>= 500` → `>= 100`）。如果把 `points >= 100` 写在第一个，820 分会被判成 Bronze。
+
+自测时一定要试**边界值**：刚好 1000、刚好 500、499……（notebook 末尾的 Self-check 也这么要求）。
+
+</Callout>
+
+---
+
+## 3. 🔴 组合条件：`and` / `or` / `not`
+
+<CodeTrace id="b-promo" />
+
+| 运算符 | 什么时候是 True | 例子 |
+|---|---|---|
+| `A and B` | A、B **都**是 True | 是会员 **并且** 满 400 |
+| `A or B` | A、B **至少一个**是 True | 是学生 **或者** 未满 18 |
+| `not A` | A 是 False | 不是会员 |
+
+<BranchLab preset="promo" />
+
+<Callout type="tip" title="小白理解：括号让规则更好读">
+
+`not is_member and basket >= 600` 的意思是 `(not is_member) and (basket >= 600)`。不确定先算哪个时，**自己加括号**，效果一样，读起来更清楚。
+
+</Callout>
+
+---
+
+## 4. 练习 P3：订单状态标签
+
+题目（cell 26）：`"paid"` → `Ready to ship`；`"pending"` → `Awaiting payment`；`"cancelled"` → `Do not ship`；其他 → `Unknown status - check with supervisor`。
+
+<CodeTrace id="b-p3" />
+
+<BranchLab preset="status" />
+
+<Callout type="warn" title="字符串比较区分大小写">
+
+`"Paid" == "paid"` 是 `False`，所以 `"Paid"` 会掉进 else。真实数据里常先统一大小写：`if status.lower() == "paid":`。
+
+</Callout>
+
+---
+
+## 自测
+
+<QA q="Day 1 Practice question 3：给定 age 和 is_student，学生或未满 18 打印 Student rate，否则 Standard rate。">
+
+```python
+age = 20
+is_student = True
+
+if is_student or age < 18:
+    print("Student rate")
+else:
+    print("Standard rate")
+```
+
+「或」→ `or`。边界：`age = 18` 且不是学生 → `18 < 18` 是 False → Standard rate。
+
+</QA>
+
+<QA q="Day 1 Practice question 4：用你自己的门槛改写积分等级，并用 f-string 打印。">
+
+```python
+points = 2600
+
+if points >= 5000:
+    tier = "Platinum"
+elif points >= 2000:
+    tier = "Gold"
+elif points >= 800:
+    tier = "Silver"
+else:
+    tier = "Member"
+
+print(f"Points {points} -> tier {tier}")
+```
+
+关键是门槛**从大到小**排。
+
+</QA>
+
+<QA q="下面这段打印什么？score = 70; if score > 70: print(&quot;A&quot;) elif score >= 70: print(&quot;B&quot;) else: print(&quot;C&quot;)">
+
+`B`。`70 > 70` 是 False；`70 >= 70` 是 True。`>` 和 `>=` 在边界上结果不同。
+
+</QA>
