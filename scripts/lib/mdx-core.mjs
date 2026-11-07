@@ -70,6 +70,9 @@ import { FORMAT_PRESETS, formatValue, fl, pyRepr as pyLabRepr, BRANCH_PRESETS, r
 import { FLOW_STAGES } from "../../src/components/mdx/ai-flow-logic.mjs";
 import { LOOP_FACTORS, LOOP_PRESETS, decideLoop } from "../../src/components/mdx/loop-logic.mjs";
 import { PILOT_UNTESTED, pilotSummary, pct as pilotPct, zeroErrorBound } from "../../src/components/mdx/pilot-logic.mjs";
+import { RECEIPT_PRESETS, traceCopies } from "../../src/components/mdx/copy-trace-logic.mjs";
+import { GATES, PATHS, RECORDS, USERS, WORKPAPER, evaluateGate } from "../../src/components/mdx/permission-gate-logic.mjs";
+import { SUBGROUP_PRESETS, subgroupCheck } from "../../src/components/mdx/subgroup-logic.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
 const osi = readJson("src/components/mdx/data/osi.json");
@@ -95,6 +98,7 @@ const pyIntroQuiz = readJson("src/components/mdx/data/py-intro-quiz.json");
 const pyTraces = readJson("src/components/mdx/data/py-traces.json");
 const pyNbQuiz = readJson("src/components/mdx/data/py-notebook-quiz.json");
 const govQuiz = readJson("src/components/mdx/data/gov-quiz.json");
+const privacyQuiz = readJson("src/components/mdx/data/privacy-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -1368,6 +1372,51 @@ const components = {
   },
   GovSortQuiz(_node, a) {
     const set = govQuiz[a.set] ?? govQuiz.response;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  CopyTraceLab() {
+    const t = traceCopies({ expanded: true, masked: false, covers: RECEIPT_PRESETS[0].covers });
+    return [
+      note("（网页版此处可以切换试点 / 扩展、勾选「发送前遮蔽」、改删除回执覆盖哪些副本；下表是扩展方案 + L2-A5 删除测试的情况）"),
+      table(["副本", "在哪 · 谁持有", "到期问题", "要的证据", "L2-A5 回执覆盖"], t.rows.map((r) => [r.zh, `${r.where} · ${r.holder}`, r.expiry, r.evidence, r.covered ? "✓" : "✗"])),
+      para(text(t.claim)),
+    ];
+  },
+  PermissionGateLab() {
+    const cases = [
+      { user: "alex", record: "alex", path: "ask", gate: "before" },
+      { user: "alex", record: "sam", path: "ask", gate: "before" },
+      { user: "alex", record: "alex", path: "inject", gate: "before" },
+      { user: "alex", record: "alex", path: "inject", gate: "prompt" },
+      { user: "alex", record: "sam", path: "api", gate: "before" },
+      { user: "alex", record: "sam", path: "ask", gate: "none" },
+    ];
+    const lbl = (xs, id) => xs.find((x) => x.id === id).label;
+    return [
+      note("（网页版此处可以选登录身份、请求的记录、访问路径、检查放在哪、能不能对外发送；下表是几个代表情形）"),
+      table(["登录", "请求", "路径", "检查在哪", "结果", "测试覆盖"], cases.map((c) => {
+        const r = evaluateGate({ ...c, outbound: false });
+        return [lbl(USERS, c.user), lbl(RECORDS, c.record), lbl(PATHS, c.path), lbl(GATES, c.gate), r.why, r.tested ? "在两条 trace 里" : "未测试"];
+      })),
+      table(["Workpaper 字段", "按 Slide 34 能填的", "还缺"], WORKPAPER.map((w) => [`${w.field}（${w.zh}）`, w.fill, w.missing])),
+    ];
+  },
+  SubgroupGapLab() {
+    return SUBGROUP_PRESETS.flatMap((p) => {
+      const s = subgroupCheck({ target: p.target, groups: p.groups });
+      return [
+        para(strong(`${p.label}（每组标准 ≥ ${pilotPct(p.target)}）`)),
+        table(["组", "对 / 测", "准确率", "95% 区间", "达标"], [
+          ...s.rows.map((r) => [r.label, `${r.ok} / ${r.n}`, pilotPct(r.rate), `${pilotPct(r.ci.lo)}–${pilotPct(r.ci.hi)}`, r.meets ? "✓" : "✗"]),
+          [strong("合计"), `${s.combined.ok} / ${s.combined.n}`, pilotPct(s.combined.rate), `${pilotPct(s.combined.ci.lo)}–${pilotPct(s.combined.ci.hi)}`, s.combined.meets ? "✓" : "✗"],
+        ]),
+        para(text(`${s.verdict} ${p.note}`)),
+      ];
+    });
+  },
+  PrivacySortQuiz(_node, a) {
+    const set = privacyQuiz[a.set] ?? privacyQuiz.ref;
     const label = (id) => set.options.find((o) => o.id === id).label;
     return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
   },
