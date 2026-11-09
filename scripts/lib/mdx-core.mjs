@@ -59,6 +59,7 @@ import { PREFIX_SETS, longestMatch } from "../../src/components/mdx/prefix-logic
 import { upgradeCost as zaraCost, networkTradeoff as zaraNet, UPGRADE_PRESETS as ZARA_PRESETS, fmtEur } from "../../src/components/mdx/zara-logic.mjs";
 import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute, routeNote as crmRouteNote } from "../../src/components/mdx/crm-logic.mjs";
 import { MODELS as CLOUD_MODELS, STACK as CLOUD_STACK, KITCHEN as CLOUD_KITCHEN, ELASTIC_PRESETS, elasticity, elasticityVerdict, TCO_PRESETS, tco, fmtUsd as cloudUsd } from "../../src/components/mdx/cloud-logic.mjs";
+import { OPTION_SETS, weightedScores, PROVIDERS, quoteRow, LAYER_PRESETS, layerCase, CAPACITY_PRESETS, capacityMix, capacityVerdict, fmtEur as sourcingEur } from "../../src/components/mdx/sourcing-logic.mjs";
 import { businessCase as crmCase, CASE_PRESETS as CRM_PRESETS, fmtUsdK as crmUsd } from "../../src/components/mdx/crm-case-logic.mjs";
 import { FLOW_PRESETS as OTIS_PRESETS, whoKnows as otisWhoKnows, flowSvg as otisFlowSvg, toStaticSvg as otisStatic, STAKEHOLDERS as OTIS_ROLES, ATTITUDE as OTIS_ATT } from "../../src/components/mdx/otis-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
@@ -971,6 +972,46 @@ const components = {
             ["自有：累计", ...r.rows.map((row) => cloudUsd(row.own))],
           ]),
           para(strong(r.saving > 0 ? `${p.x.years} 年省 ${cloudUsd(r.saving)}${r.payback ? `，第 ${r.payback} 年回本` : ""}` : `${p.x.years} 年多花 ${cloudUsd(-r.saving)}，留在云上更便宜`), text(`；每年云账单高于约 ${cloudUsd(r.breakEven)} 时买硬件才划算。`)),
+        ];
+      }),
+    ];
+  },
+  WeightedOptionLab(_node, a) {
+    const set = OPTION_SETS[a.set] ?? OPTION_SETS.method;
+    return [
+      note("（网页版此处可以改权重和 1–5 分，看哪个方案胜出、什么会改变结论；分数是我的判断，下面是几组权重的结果）"),
+      table(["标准", ...set.options.map((o) => o.label)], set.criteria.map((c) => [c.label, ...c.scores.map(String)])),
+      table(["权重视角", ...set.options.map((o) => o.label), "得分最高"], set.presets.map((p) => {
+        const r = weightedScores(set, p.weights);
+        return [p.label, ...r.totals.map((o) => String(o.total)), strong(r.winners.map((o) => o.label).join("、"))];
+      })),
+    ];
+  },
+  IntegrationLayerLab() {
+    return [
+      note("（网页版此处可以拖动客户数、集成费、留存等假设；除三家报价外都是示意数字，下面是三个预设的结果）"),
+      table(["供应商", "报价", "人 × 周", "每人周（假设全程全职）", "团队"], PROVIDERS.map((p) => {
+        const q = quoteRow(p);
+        return [q.id, sourcingEur(q.cost), `${q.people} × ${q.weeks} = ${q.personWeeks}`, sourcingEur(q.perPersonWeek), q.team];
+      })),
+      ...LAYER_PRESETS.flatMap((p) => [
+        para(strong(p.label), text(`：${p.note}`)),
+        table(["供应商", "每年净收益", "前期合计", "回本（年）", "换 SaaS：直接集成 vs 中间层"], PROVIDERS.map((v) => {
+          const r = layerCase(p.x, v);
+          return [v.id, sourcingEur(r.benefit), sourcingEur(r.upfront), r.payback === null ? "回不了本" : r.payback.toFixed(1), `${sourcingEur(r.reintegrate)} vs ${sourcingEur(r.connector)}`];
+        })),
+      ]),
+    ];
+  },
+  CapacityMixLab() {
+    return [
+      note("（网页版此处可以拖动放在 CoreWeave 的比例、切换技术栈是否可迁移；所有数字都是示意指数，总需求 100，下面是三个预设）"),
+      ...CAPACITY_PRESETS.flatMap((p) => {
+        const r = capacityMix(p.split, p.portable);
+        return [
+          para(strong(p.label)),
+          table(["情景", "需要", "拿到", "发布延误（周）", "总成本", "用不完的承诺"], r.rows.map((x) => [x.scenario.label, String(x.need), String(Math.round(x.served)), x.delay.toFixed(0), x.cost.toFixed(0), x.stranded.toFixed(0)])),
+          para(text(capacityVerdict(p.split, p.portable, r))),
         ];
       }),
     ];

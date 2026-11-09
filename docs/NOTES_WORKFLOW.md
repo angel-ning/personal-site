@@ -142,6 +142,9 @@ tags: [IPv4, NAT, DHCP]
 | `<AdLab />` | 同一目的地多个路由来源：最长前缀 → AD（Slide 14 默认值）→ metric，可改来源、metric、浮动静态路由 AD、断链路（`rip-logic.mjs`）。`<RoutingSortQuiz set="ripver\|ad" />` 是本周两组点选练习 |
 | `<EigrpDualLab />` | ISOM 5190 第 3 周：每个邻居的链路 cost + RD → 总距离、FD、successor（最多 4 条）、feasible successor（RD < FD）；断开链路看 FS 直接升级还是 Active 发 Query；预设是板书 p.2、Slide 13、Slide 12（`eigrp-logic.mjs`）。`<RoutingSortQuiz set="eigrptable\|eigrp" />` 是本周两组点选练习 |
 | `<PrefixMatchLab set="lab\|exercise" />` | ISOM 5190 Lab 2：最长前缀匹配逐位比较（前缀内的位上色、第一个不同的位标红），可改目的 IP 和路由；`exercise` 带 p.22 六个地址的点选练习（`prefix-logic.mjs`） |
+| `<WeightedOptionLab set="method\|cohere" />` | ISOM 5100 第 3 周：多方案加权打分，权重和 1–5 分都可改，显示谁胜出、改哪个权重会翻盘；预设是案例里不同角色的视角（`sourcing-logic.mjs`，分数是判断，不是案例数据） |
+| `<IntegrationLayerLab />` | Method 案例 Exhibit 5–6：中间层结构图、三家报价的人周单价、回本年限、以后换 SaaS 的成本（除报价外都是示意假设） |
+| `<CapacityMixLab />` | Cohere 案例：算力在 CoreWeave 和 Hyperscaler 之间怎么分，五种情景下的延误、成本和用不完的承诺（示意指数） |
 | `<CodeTrace id="…" />` | ISOM 5160 Python 笔记本：逐行运行一段代码——高亮当前行 + 这一行的大白话讲解、if / while 条件真假、for 是否取到下一个、每步之后的变量表（变化的高亮）和输出。数据是**真的用 Python 跑出来的**：代码和逐行讲解写在 `scripts/py-traces/snippets_*.py`，改完运行 `python3 scripts/py-traces/build.py` 重新生成 `data/py-traces.json`；Pipeline 代码用 `mock_ml.py` 的假模型（输出结构真实、数字示意，页面上会标「模型输出为示意」） |
 | `<FStringLab />` · `<BranchLab preset="shipping\|tier\|promo\|status\|alert\|stock" />` · `<SliceLab mode="slice\|range" />` · `<NestedPathLab presets="alerts,inventory,staff,sentiment,batch,generation,qa,zeroshot,ner,tts" />` · `<TemperatureLab />` | Python 小实验（`py-lab-logic.mjs`，格式化和切片已逐条对照真 Python 验证）：f-string 格式说明 / if-elif 链从上往下选一支 / 索引切片和 range / 点嵌套数据自动写出取值路径 / do_sample 与 temperature |
 | `<PyNotebookSortQuiz set="type\|struct\|error\|task\|output" />` | Python 笔记本点选练习：值的类型 / 选 list·tuple·dict / 会报什么错 / 选哪个 pipeline 任务 / pipeline 输出的形状（`data/py-notebook-quiz.json`） |
