@@ -73,6 +73,7 @@ import { LOOP_FACTORS, LOOP_PRESETS, decideLoop } from "../../src/components/mdx
 import { PILOT_UNTESTED, pilotSummary, pct as pilotPct, zeroErrorBound } from "../../src/components/mdx/pilot-logic.mjs";
 import { RECEIPT_PRESETS, traceCopies } from "../../src/components/mdx/copy-trace-logic.mjs";
 import { GATES, PATHS, RECORDS, USERS, WORKPAPER, evaluateGate } from "../../src/components/mdx/permission-gate-logic.mjs";
+import { CONTROL_MODES, SUPPLIERS, VERDICT_LABEL, assessTraining, gateDecision, memoryWalk } from "../../src/components/mdx/grc-talk-logic.mjs";
 import { SUBGROUP_PRESETS, subgroupCheck } from "../../src/components/mdx/subgroup-logic.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
@@ -1422,6 +1423,42 @@ const components = {
       note("（网页版此处可以切换试点 / 扩展、勾选「发送前遮蔽」、改删除回执覆盖哪些副本；下表是扩展方案 + L2-A5 删除测试的情况）"),
       table(["副本", "在哪 · 谁持有", "到期问题", "要的证据", "L2-A5 回执覆盖"], t.rows.map((r) => [r.zh, `${r.where} · ${r.holder}`, r.expiry, r.evidence, r.covered ? "✓" : "✗"])),
       para(text(t.claim)),
+    ];
+  },
+  TrainingEvidenceLab() {
+    const cases = [["first", ["q"], false], ["first", ["q", "c"], false], ["first", ["q", "c", "d"], false], ["second", ["q", "c", "d"], false], ["second", ["q", "c", "d"], true]];
+    return [
+      note("（网页版此处可以选供应商、勾选 AI 读了哪些文件、模拟只会照抄例题；下表是几个代表情形）"),
+      table(["供应商", "读了", "只会照抄例题", "AI 的结论", "说明"], cases.map(([supplierId, read, copyExample]) => {
+        const s = SUPPLIERS.find((x) => x.id === supplierId);
+        const r = assessTraining({ supplierId, read, copyExample });
+        return [s.label, s.docs.filter((d) => read.includes(d.id)).map((d) => d.label).join("、"), copyExample ? "是" : "否", VERDICT_LABEL[r.says], `${r.why} ${r.outcomeText}`];
+      })),
+    ];
+  },
+  ServiceGateLab() {
+    const cases = [
+      { accepted: true, validated: false, aiSkips: true, aiForges: false },
+      { accepted: true, validated: false, aiSkips: false, aiForges: true },
+      { accepted: true, validated: true, aiSkips: false, aiForges: false },
+    ];
+    return [
+      note("（网页版此处可以切换控制方式、两条记录的状态、AI 是否跳步或改字段；下表是几个代表情形）"),
+      table(["Accepted plan", "Validated fix", "AI 的行为", "控制方式", "结果", "说明"], cases.flatMap((c) => CONTROL_MODES.map((m) => {
+        const r = gateDecision({ ...c, mode: m.id });
+        return [c.accepted ? "Yes" : "No", c.validated ? "Yes" : "No", c.aiForges ? "试图改验证字段" : c.aiSkips ? "跳步" : "按步骤", m.label, strong(r.status), r.why];
+      }))),
+    ];
+  },
+  MemoryGovernanceLab() {
+    const base = { poisoned: true, provenance: false, writeApproval: false, revalidate: false, serviceGate: true };
+    const cases = [["没有记忆控制", base], ["只有写入审批", { ...base, writeApproval: true }], ["来源 + 写入审批", { ...base, provenance: true, writeApproval: true }], ["来源 + 复用前验证", { ...base, provenance: true, revalidate: true }]];
+    return [
+      note("（网页版此处可以勾选各项控制，跟踪一条被投毒的记忆；下表是几个代表情形）"),
+      table(["控制组合", "Write & store", "Retrieve & reuse", "同事的下一步"], cases.map(([label, c]) => {
+        const r = memoryWalk(c);
+        return [label, r.rows[1].text, r.rows[2].text, r.rows[3].text];
+      })),
     ];
   },
   PermissionGateLab() {

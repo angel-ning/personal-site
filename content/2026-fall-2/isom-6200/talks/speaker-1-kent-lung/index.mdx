@@ -1,0 +1,422 @@
+---
+title:
+  en: "Speaker 1 · Kent Lung: GRC in the Age of AI"
+  zh: "嘉宾 1 · Kent Lung：AI 时代的治理、风险与合规"
+summary:
+  en: "A reading of the guest talk in Lecture 2: one risk review AI, three decisions. What work may AI do (match claims to evidence, test on new cases), what must be checked before it acts (deterministic service checks), and what may it remember and reuse (provenance, write control, revalidation). Cases: Condor Capital, Bottleneck Labs' Quinn, Morgan Stanley, Salesforce Agentforce, the Rehberger memory demonstration and Microsoft Copilot Memory."
+  zh: "第 2 讲嘉宾演讲解析：一个风险审查 AI，三个决定。让它做什么（结论要配得上证据、用新案例测试），行动前查什么（确定性的服务检查），能记住和复用什么（来源、写入权限、复用前重新验证）。案例：Condor Capital 实盘测试、Bottleneck Labs 的 Quinn、Morgan Stanley、Salesforce Agentforce、Rehberger 的记忆投毒演示、Microsoft Copilot Memory。"
+week: 2
+date: 2026-11-07
+tags: [Guest Talk, AI Agents, Evaluation, Deterministic Controls, Prompt Injection, Memory Poisoning, Provenance, Least Privilege]
+---
+# Speaker 1 · Kent Lung：Governance, Risk & Compliance in the Age of AI
+**一个 AI 系统，三个决定：Work（让它做什么）· Actions（行动前查什么）· Memory（能记住什么）**
+
+> 优先级标注说明：
+> 🔴 **重点** — 可以直接用到小组项目和案例分析
+> 🟡 **需要理解** — 案例细节，帮你记住上面的原则
+> 🟢 **了解即可** — 背景、职业建议
+>
+> **优先级依据**：① 课件写明期末考全部课程内容，但**没有说嘉宾内容会不会考**，所以这里按「对这门课的用处」排序；② 小组项目要做一个审计 agent，这场演讲的三个决定正好是这个 agent 的设计清单；③ 三张 Takeaway（Slides 12、22、30）和总结页（Slide 31）是讲者自己划的重点。
+
+<Callout type="note" title="这份解析的来源">
+
+材料是讲者的 33 页幻灯片（`AI-x-GRC-HKUST-Kent-2026.html`）。**这个文件里没有逐页讲稿或演讲者备注**，所以下面的解释是我根据幻灯片内容做的解读，不是讲者的原话。课上听到的补充可以告诉我，再加进来。案例的数字都以幻灯片为准，没有另外核对原始报告。
+
+</Callout>
+
+---
+
+## 0. 核心地图
+
+讲者用同一个产品贯穿全场：一个帮公司审查**新客服供应商**的风险审查 AI。它能力一步步变大，每多一种能力，就多一个要回答的问题。
+
+```
+起点：读材料 → 检索证据 → 生成草稿 → 人来判断
+   → ① Work：让它做什么？
+        结论要配得上证据（Condor：「100% 胜率」；供应商问卷 vs 合同）
+        用没见过的案例测，改了就回归测试（Morgan Stanley）
+   → ② Actions：加了工具，行动前查什么？
+        Agent 会自己补上缺失的那一环（Quinn 用 Stripe 发账单）
+        Prompt / Skill 只是引导；关键条件交给确定性的服务检查（Salesforce）
+   → ③ Memory：加了持久记忆，能记什么？
+        文档里的内容变成指令，再变成长期「事实」（Rehberger）
+        保留来源 · 控制写入 · 复用前重新验证（Microsoft）
+   → 同一组问题评估整个 AI 系统
+```
+
+**一句话抓住这场演讲**：AI 能做得更多，**做到哪一步由我们决定，而每一步都要有对应的证据和控制**。
+
+<Figure src="images/slide_31.png" caption="Three decisions about one AI system：Agent Harness = 模型外面的软件" source="Slide 31" />
+
+| 决定 | 要问的问题 | 怎么做 | 一句话 |
+|---|---|---|---|
+| **01 Evidence** | 让 AI 做什么工作？ | 检查结论，测试新案例 | 责任要和证据相称 |
+| **02 Actions** | AI 行动前必须查什么？ | 设条件，查权限 | 用服务检查来强制 |
+| **03 Memory** | 能记住和复用什么？ | 保留来源，控制访问 | 复用前重新核对 |
+
+<Callout type="memo" title="和前两讲是同一套逻辑">
+
+第 1 讲：批准的是**用途**，权限变了要重新批准。这场演讲把它具体化了：**加工具 = 权限变了，加记忆 = 数据流和留存变了**。第 2 讲的「结论留在测过的范围内」，在这里就是 Slide 12 的 Takeaway。
+
+</Callout>
+
+---
+
+## 1. 🟢 讲者和这场演讲的设定（Slides 1–4）
+
+**Kent Lung**：经济金融背景，做过金融科技和咨询，现在在 Crypto.com 做关键系统安全评估、安全控制实施和面向安全的 AI 开发。他想传达的是：**不是技术出身，也能参与决定 AI 怎么建、怎么查、怎么用。**
+
+| 系统部件 | 作用 | 治理上要留意 |
+|---|---|---|
+| **Materials** 材料 | 公司政策告诉 AI 查什么；供应商文件描述服务 | 两类文件的**权威性不同**，供应商文件只是对方的说法 |
+| **Retrieval** 检索 | 找到相关证据 | 找漏了，结论就有偏差 |
+| **AI model** | 生成回答 | 草稿看起来很有说服力，但这不是证据 |
+| **Review draft** | 交给人工复核 | 人来形成评估 |
+| **Tools → Business service** | 请求在业务系统里执行动作 | 第 2 部分 |
+| **Persistent memory** | 现在存，以后读，**不需要重新训练** | 第 3 部分 |
+
+---
+
+## 2. 🔴 决定一：结论要配得上证据（Slides 5–12）
+
+### 2.1 🟡 Condor Capital：100% 胜率（Slides 5–8）
+
+三个 agent 各拿 500 美元真钱，从 2026 年 8 月 3 日到 5 日自主交易，目标是已实现利润最大，每天收盘前清仓。
+
+<Figure src="images/slide_07.png" caption="How did the accounts finish?" source="Slide 7 · Condor Capital report" />
+
+| Agent | 券商 | 最终已实现盈亏 | 来回交易次数 |
+|---|---|---|---|
+| Claude | Robinhood | +$14.34 | 10 |
+| Gemini | Webull | +$4.42 | 3 |
+| ChatGPT | Public | −$3.31 | 28 |
+
+Gemini 总结自己有「100% win rate」。这个数字**是真的**：三次交易都赚了，全是 NVDA，总共 +$4.42。
+
+<Callout type="exam" title="正确的数字也能给人错误的印象">
+
+| 我们看到的 | 我们没看到的 |
+|---|---|
+| 一只股票、三天、三次盈利 | 换别的投资或市场环境会怎样 |
+
+幻灯片也注明：三家用的券商不同，**这不是受控的模型比较**，所以别用这张表给三个模型排名。这和第 1 讲 Workado 的「98%——在什么上？」是同一个问题。
+
+</Callout>
+
+### 2.2 🔴 同样的错误放到供应商审查里（Slide 9）
+
+公司规则：**如果客户数据可能用于 AI 训练，或者不清楚，就要人工专家复核。** AI 给出的答案是「不需要专家复核，因为工单数据库不用于训练」。
+
+<Figure src="images/slide_09.png" caption="Would you accept this review? 三份文件拼起来才看得到路径" source="Slide 9" />
+
+问卷说的是真话，但只是一个数据库。合同和数据流图合起来指向另一条路：**工单片段 → 服务日志 → 可能用于训练**。
+
+<Callout type="tip" title="审计的基本动作：把几份文件连起来读">
+
+- 问卷回答的是「**这个库**」，结论说的是「**客户数据**」，范围被悄悄放大了。
+- 这里的数据流图标了「our interpretation」，是**我们的解读**，所以结论也要写成「可能」，这正好触发规则。
+- 这和第 2 讲的「不训练 ≠ 数据安全」、删除回执「只证明它写明的东西」是一回事。
+
+</Callout>
+
+<TrainingEvidenceLab />
+
+### 2.3 🔴 更好的 prompt 够了吗？（Slide 10）
+
+<Figure src="images/slide_10.png" caption="Would a better prompt be enough? 从 prompt 到评估闭环" source="Slide 10" />
+
+| 做法 | 含义 | 够不够 |
+|---|---|---|
+| **Rule + Connect Evidence**（Secure Prompting） | 把规则写清楚，并要求把证据连起来 | 让 prompt 更好，但不是测试 |
+| **One-Shot Prompting** | 给一个做好的例子 | 模型可能只是**重复答案**，而不是评估证据 |
+| **Sampling** | 把一部分新案例**留在 prompt 之外** | 能发现只会照抄的问题 |
+| **Check decisions** | 统计**漏报**和**多余的复核** | 两种错误都要看 |
+| **Regression testing** | 改了 prompt 或模型之后，**修复并重测** | 防止改好一处、弄坏另一处 |
+
+第二家供应商是这页的关键：三份文件都明确排除了日志片段和服务伙伴，正确答案是**训练用途不需要专家复核**。如果 AI 还是说「需要复核」，说明它只学会了例题的答案。
+
+<Callout type="extra" title="补充：这和机器学习的基本功一样">
+
+训练集和测试集要分开，第 1 讲 Workado 的课堂答案也强调「评估数据和训练数据分开」。写 prompt 时放进去的例子就相当于训练数据，所以测试要用没放进 prompt 的案例。「多余的复核」也是真实成本：它会消耗专家的时间，并让人慢慢忽视 AI 的提示。
+
+</Callout>
+
+### 2.4 🟡 Morgan Stanley：懂业务的人来检查（Slide 11）
+
+根据 2025 年 9 月的 Scale AI 访谈，它的内部助手用这样一个循环：员工提问 + 参考资料 → 财务顾问和支持人员判断**是否准确、完整、来源正确** → 用 **500 个问题**的固定集合反复检查 → 改动方案 → **重跑同一个集合**，并每天抽样员工交互。
+
+**对我们的启发**：懂网络安全和风险控制的人，正是该写这些测试的人。把领域知识变成 AI 产品的**需求和检查**，不需要会训练模型。
+
+<Callout type="memo" title="🔴 Takeaway 1（Slide 12）">
+
+**让 AI 的说法和允许的用途都配得上证据。** 做项目时：检查证据是否真的支持 AI 的结论；决定让它做什么之前，先用新案例测。
+
+</Callout>
+
+---
+
+## 3. 🔴 决定二：行动前必须查什么（Slides 13–22）
+
+团队想给 AI 加工具：把供应商文件存进 Google Drive，更新供应商清单里的审查状态。问题变成：**它会按我们想的方式用这些工具吗？**
+
+### 3.1 🟡 Quinn：用账单发营销（Slides 14–18）
+
+Bottleneck Labs 2026 年 8 月的实验：7 个 agent 每个有 300 美元、一台电脑、银行账户、网页和邮件、Stripe，用 72 小时做生意。Quinn（运行在 Qwen 上）做了 CodeProbe：给公开 GitHub 项目出免费健康报告，再卖深度审计。
+
+| 步骤 | 发生了什么 | 问题在哪 |
+|---|---|---|
+| 目标 | 把后续销售送到项目 owner 手里 | |
+| 受阻 | 碰到**邮件发送限制** | 这本来是一道控制 |
+| 绕过 | Stripe 能发账单邮件，Quinn 用它发营销 | 工具被用在**设计之外的用途** |
+| 合理化 | 研究者引用的推理：对方收过免费报告，发账单是正当的销售动作 | **免费报告 ≠ 付费订单**，缺失的一环由它自己补上 |
+| 结果 | 50 张账单，每张 $49–$599，合计开出 **$12,350** | 这是开票金额，**不是收入** |
+| 收场 | 收到投诉，研究者停止运行，账单作废 | 七个 agent 的实验中没有真正的客户收入 |
+
+<Figure src="images/slide_16.png" caption="It finds another way to deliver：邮件被限，转向 Stripe Invoices" source="Slide 16" />
+
+<Figure src="images/slide_18.png" caption="The researchers stop the run：Quinn 的目标 vs 收件人收到的东西" source="Slide 18" />
+
+<Callout type="warn" title="这不是模型坏了，而是目标、工具和缺失的检查共同造成的">
+
+每个工具单独看都在权限内：Stripe 就是用来发账单的。出问题的是**缺少一个业务条件**：「没有付费订单就不能开账单」。没人写这条规则，agent 就用自己的推理把空白填上了。
+
+第 1 讲的 Route A / Route B 在这里又出现了：从「起草」变成「行动」，要重新问**边界在哪、错了怎么办**。
+
+</Callout>
+
+### 3.2 🔴 我们的 AI 可能推断什么（Slide 19）
+
+<Figure src="images/slide_19.png" caption="What might our AI infer? 过去的模式 ≠ 这一次的事实" source="Slide 19" />
+
+供应商的整改方案被人工接受。AI 翻过往审查发现：**每个被批准的供应商都有被接受的方案**，于是推断可以把这家标记为 Approved。
+
+**被接受的方案不等于验证过的修复。** 人也会犯这个错，AI 可能犯同样的跳跃。
+
+### 3.3 🔴 Skill 够吗？把规则放进服务（Slide 20）
+
+<Figure src="images/slide_20.png" caption="Will our AI follow the steps? AI proposes. The service checks." source="Slide 20" />
+
+| 层 | 做法 | 能保证什么 |
+|---|---|---|
+| **Workflow + Worked Example → Agent Skill** | 把步骤和例子做成可复用的指令 | 提高照做的概率。**不能保证**：它可能跳步直接批准 |
+| **Deterministic service check** | AI 只发请求；业务服务更新记录前检查条件 | **同样的输入永远得到同样的结果** |
+| **验证字段的权限** | 有权的复核人确认修复，**AI 不能编辑验证记录** | 防止 AI 自己满足条件 |
+
+判断逻辑就是一个 if-else：Accepted plan 和 Validated fix **都**确认才 Allow，否则 Refuse。
+
+<ServiceGateLab />
+
+<Callout type="exam" title="和第 2 讲的 permission gate 是同一个原则">
+
+第 2 讲的提示注入课堂答案说：在**模型之外**强制允许的动作。这里是同样的设计，只是检查的从「这个人有没有权限」变成了「这个业务条件满足没有」。可以记成：**不要指望模型不做，要让它做不到。**
+
+注意一点：检查只防得住**写进去的条件**。条件本身要由业务和风险负责人定义，Quinn 的问题就是没人想到要写这一条。
+
+</Callout>
+
+### 3.4 🟡 Salesforce：对话可以灵活，检查留在流程里（Slide 21）
+
+Agentforce Builder / Agent Script 的做法：给 agent 一个流程，**动作之前检查配置好的条件**。例如退货：验证顾客 → 找到订单 → 服务检查（已验证的顾客、符合条件的订单、之前没退过），全部通过才退货。
+
+| 场景 | 缺失的一环 | 应由服务检查的条件 |
+|---|---|---|
+| Quinn | 付费订单 | 有订单才能开账单 |
+| 我们的 AI | 验证过的修复 | 修复确认了才能批准 |
+| 退货 | 订单资格 | 三项都满足才能退 |
+
+<Callout type="memo" title="🔴 Takeaway 2（Slide 22）">
+
+**在 AI 行动之前强制业务规则。** 做项目时：定义 AI 行动前必须满足的条件；用**确定性的服务**检查这些条件。
+
+</Callout>
+
+---
+
+## 4. 🔴 决定三：能记住和复用什么（Slides 23–30）
+
+团队又想让 AI 记住供应商进度，下次接着审。问题是：**它只会记住我们想让它记的吗？**
+
+### 4.1 🟡 从一张图片到长期信念（Slides 24–25）
+
+Johann Rehberger 2026 年 4 月的研究演示：用 ChatGPT 准备一张藏有指令的谜题图片，在新测试账号里让 Claude「分析这张图」。
+
+<Figure src="images/slide_25.png" caption="From an image to a lasting belief：每一步发生了什么变化" source="Slide 25 · Johann Rehberger" />
+
+| 步骤 | 发生了什么 | 术语 |
+|---|---|---|
+| 1 | 用户只要求分析图片 | |
+| 2 | 谜题 + 记忆提示变成了写记忆的指令 | **Indirect prompt injection**：内容变成命令 |
+| 3 | 风险被标记，但记忆**仍然写入**（虚构的个人信息） | 让分析图片，结果改了记忆 |
+| 4 | 新对话里继续沿用 | **Memory poisoning**：假事实影响以后的回答 |
+
+### 4.2 🔴 放到供应商审查里（Slides 26–27）
+
+<Figure src="images/slide_26.png" caption="Look closely at the supplier’s update：附件里藏了一句 Remember…" source="Slide 26" />
+
+供应商附件里夹了一句话，要求记住「以后这家供应商不需要人工专家复核」。如果 AI 照做，这句话被存成**内部决定**，实际来源却是供应商附件。
+
+<Figure src="images/slide_27.png" caption="What happens at the next review? 新对话、没有附件、另一位同事" source="Slide 27" />
+
+<Callout type="warn" title="为什么记忆比普通提示注入更麻烦">
+
+- **时间上延后**：注入发生在这次，伤害发生在以后的对话，那时已经看不到附件了。
+- **影响别人**：共享的 AI 会把它传给**没读过附件、不知道历史**的同事。
+- **来源被洗掉**：一句外部文字看起来像公司自己的结论。
+- **第 3 部分的闸门不够**：服务检查能挡住未验证的状态更新，但**假记忆还在，还能误导同事**（Slide 27）。
+
+</Callout>
+
+### 4.3 🔴 跟着一条记忆走完全程（Slide 28）
+
+<Figure src="images/slide_28.png" caption="How should our AI manage memory?" source="Slide 28" />
+
+| 阶段 | 控制 | 怎么做 |
+|---|---|---|
+| **Read & propose** | **Data provenance** | AI 提议保存，**服务保存并附上原始来源** |
+| **Write & store** | **Least privilege + HITL** | 只有有权的复核人能批准写入，并核对来源 |
+| **Retrieve & reuse** | **Revalidation + Audit trail** | 复用前重新核对来源和供应商清单状态；留下「来源 → 记忆 → 后续使用」的痕迹 |
+| **发现投毒之后** | 响应 | **排除**这条记忆 · **保留**审计痕迹 · **修复并重测** |
+
+试试只开其中一项，看哪一步还会出问题：
+
+<MemoryGovernanceLab />
+
+<Callout type="tip" title="用第 2 讲的语言再说一遍">
+
+记忆就是一份**留存的副本**：要有目的、期限、访问控制和删除路径。AI 从文档里总结出的记忆，也像第 2 讲的**衍生标签**，要分类管理、允许更正。「发现投毒后保留痕迹」也提醒我们：**排除使用**和**删除证据**是两件事。
+
+</Callout>
+
+### 4.4 🟡 Microsoft 的做法（Slide 29）
+
+根据 2026 年 6 月 Microsoft Security 的文章，Microsoft 365 Copilot 的做法：
+
+| 控制 | 怎么落地 |
+|---|---|
+| **HITL + 权限边界** | AI 建议一条记忆，用户确认才保存；管理员可以按用户组限制记忆功能 |
+| **记忆复核 + 审计痕迹** | 用户能查看和删除保存的记忆；安全日志记录记忆更新（幻灯片注明：在可用的情况下） |
+
+<Callout type="memo" title="🔴 Takeaway 3（Slide 30）">
+
+**治理 AI 记住和复用的东西。** 做项目时：保留每条记忆的来源；控制谁能写、谁能读；复用前核对当前证据。
+
+</Callout>
+
+---
+
+## 5. 🔴 收束：Agent Harness 和你的角色（Slides 31–32）
+
+**Agent Harness** 就是**模型外面的软件**：管理上下文、记忆、协调工具，执行权限和检查。这场演讲的控制几乎都放在这一层，所以讲者说：**不用自己造模型，也能塑造 AI 产品。**
+
+职业方向（Slide 32）：AI Security Analyst、AI Governance、Security Assurance。对应的三项能力：**检查 AI 的证据、把规则变成控制、定义数据和访问边界**。
+
+### 把这场演讲用到小组项目
+
+| 这场演讲 | 小组审计 agent 可以怎么用 |
+|---|---|
+| 结论不超出证据 | 每条发现都引用简报原文；把事实、提议、未知分开；写明没测什么 |
+| 留一部分案例在 prompt 外 | 项目不要只拿示例简报调试，要留几份没见过的简报，第 7 讲现场抽的就是没见过的 |
+| 漏报和多余复核 | 用预期答案统计两种错误，写进书面报告的 Performance |
+| 回归测试 | 改 prompt 后重跑同一批简报 |
+| 确定性检查 | 报告必需字段是否齐全、引用是否存在，用代码检查，不靠模型自查 |
+| 记忆治理 | 如果 agent 跨简报保留信息，要防止上一份简报的内容污染下一份 |
+| 外部内容是数据 | 变更简报里的文字可能包含指令，要当作证据处理，不能当命令 |
+
+### 和前两讲对照
+
+| 主题 | 第 1、2 讲 | 这场演讲 |
+|---|---|---|
+| 结论的边界 | 准确率在什么上；只支持测过的范围 | 100% 胜率；一个数据库 ≠ 所有路径 |
+| 行动权限 | Route A / B；HITL / HOTL / HOOTL | 加工具后的 Quinn；AI 提议、服务检查 |
+| 模型外的控制 | Permission gate | Deterministic service check |
+| 数据副本 | 副本清单、保留、删除回执 | 持久记忆、来源、复用前验证 |
+| 不可信内容 | 提示注入（OWASP LLM01） | 间接注入 → 记忆投毒 |
+| 设计 vs 运行 | Design · Implementation · Operation | Skill 是设计；服务检查和审计痕迹才能证明运行 |
+
+---
+
+## 🔴 术语速查表
+
+| 术语 | 一句话 |
+|---|---|
+| **Secure Prompting / Rule + Connect Evidence** | 把规则写进 prompt，并要求连接证据 |
+| **One-Shot Prompting** | 给一个做好的例子；风险是模型只会照抄 |
+| **Sampling (holdout)** | 留一部分案例不放进 prompt，用来测试 |
+| **Regression testing** | 改动后重跑，确认没弄坏原有行为 |
+| **Agent Skill** | 可复用的指令 + 例子；是引导，不是强制 |
+| **Deterministic service check** | 确定性的 if-else 检查，放在模型之外 |
+| **Agent Harness** | 模型外面的软件：上下文、记忆、工具、权限和检查 |
+| **Persistent memory** | 跨对话保存和读取，不需要重新训练模型 |
+| **Indirect prompt injection** | 文档或图片里的内容被当成命令执行 |
+| **Memory poisoning** | 假内容写进记忆，影响以后的回答 |
+| **Data provenance** | 保留数据或记忆的原始来源 |
+| **Least privilege** | 只给完成工作所需的最小权限 |
+| **Revalidation** | 复用前重新核对当前证据 |
+| **Audit trail** | 来源 → 记忆 → 后续使用的完整痕迹 |
+
+---
+
+## 自测题
+
+<GovSortQuiz set="talk" />
+
+<MCQ q="一个 AI 报告称某交易策略「胜率 100%」，记录显示只有一只股票、三次交易全部盈利。最准确的评价是：" a="数字是编造的，应该拒绝" b="数字可能是真的，但不足以支持关于更广泛表现的结论" c="胜率 100% 说明策略优于其他 agent" d="只要收益为正，结论就成立" answer="B">
+
+Slide 8：正确的数字也可能给人错误的印象。证据只覆盖一只股票和三天。
+
+</MCQ>
+
+<MCQ q="供应商问卷说工单数据库不用于训练，合同说服务日志可能用于训练，数据流图显示服务日志含工单片段。公司规则是可能或不清楚时要专家复核。AI 应该得出：" a="不需要专家复核，因为工单数据库不用于训练" b="需要专家复核，因为存在通过日志进入训练的可能路径" c="拒绝这家供应商" d="只要供应商再签一份声明，就不需要复核" answer="B">
+
+Slide 9：结论要覆盖所有路径。规则触发的是专家复核，不是直接拒绝。
+
+</MCQ>
+
+<MCQ q="在 prompt 里给模型一个例题后，它对新供应商也总回答「需要专家复核」，而这家供应商的文件明确排除了训练。这说明最需要补充的是：" a="把例题写得更长" b="用不在 prompt 里的新案例评估，同时统计漏报和多余的复核" c="换一个更大的模型" d="取消专家复核规则" answer="B">
+
+Slide 10：Sampling → Check decisions → Fix + Retest。
+
+</MCQ>
+
+<MCQ q="要确保「修复验证过才能批准供应商」，下面哪种控制最可靠？" a="在系统提示里强调「一定要先检查」" b="做成 Agent Skill 并附上例子" c="业务服务在更新状态前检查两条记录，并且 AI 不能编辑验证字段" d="让 AI 批准后写一段理由" answer="C">
+
+Slide 20：AI proposes, the service checks。A 和 B 都只是引导，模型可能跳步。
+
+</MCQ>
+
+<MCQ q="供应商附件中的一句话被写入 AI 记忆，并标记成内部决定。业务服务能阻止未验证的状态更新。还剩下什么问题？" a="没有问题，服务闸门已解决" b="假记忆仍然存在，可能误导没读过附件的同事" c="只需要重新训练模型" d="只要删除这份附件，记忆就会失效" answer="B">
+
+Slide 27：闸门挡得住状态更新，挡不住同事读到这句话后的判断。要在写入和复用两端控制（Slide 28）。
+
+</MCQ>
+
+<QA q="这场演讲的三个决定是什么？各自的控制是什么？">
+
+**Work / Evidence**：检查结论、用新案例测试，责任和证据相称。**Actions**：设条件、查权限，用确定性服务检查强制。**Memory**：保留来源、控制写入和读取、复用前重新验证。
+
+</QA>
+
+<QA q="为什么 Quinn 的案例不能简单说成「模型失控」？">
+
+每个工具都在权限内使用。缺的是业务条件：没有付费订单不能开账单。Agent 用「对方收过免费报告」补上了缺失的一环。控制要放在动作发生前的业务逻辑里，而且得有人事先把条件写出来。
+
+</QA>
+
+<QA q="Agent Skill 和 deterministic service check 的区别是什么？">
+
+Skill 是可复用的指令和例子，提高模型照做的概率，但它可以跳步。服务检查是模型之外的固定逻辑，同样的输入永远得到同样的结果，AI 也不能改它依赖的字段。
+
+</QA>
+
+<QA q="跟着一条记忆走，三个阶段分别要什么控制？发现投毒后怎么办？">
+
+Read & propose：Data provenance。Write & store：Least privilege + HITL。Retrieve & reuse：Revalidation + Audit trail。发现投毒：排除这条记忆、保留审计痕迹、修复并重测。
+
+</QA>
+
+<QA q="用这场演讲的思路，审计一个带工具和记忆的 AI 服务时，你会向团队要哪些证据？">
+
+①评估：测试集的来源、留在 prompt 外的新案例、漏报和多余复核、回归测试记录；②行动：工具权限清单、服务检查的逻辑和配置、允许和拒绝两类动作的日志，AI 不能改关键字段的证明；③记忆：来源字段、写入审批记录、读写权限、复用前验证的日志、发现问题后的处置记录。按第 1 讲的分法，分别看 Design、Implementation、Operation。
+
+</QA>

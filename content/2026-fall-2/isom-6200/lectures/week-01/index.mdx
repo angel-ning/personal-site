@@ -19,13 +19,16 @@ tags: [AI Governance, Accountability, HITL, NIST AI RMF, Risk Response, Risk Acc
 >
 > **优先级依据**：
 > ① **评分**（Slide 4）：期末 35%（Core Knowledge 25% + Knowledge Application 10%，**不能用 AI**，考全部内容）；Mid-term Quiz 15% 开卷，第 5 讲开头；小组项目 30%。所以既要记概念（HITL / HOTL / HOOTL、四种风险应对、NIST 四个功能），也要会**拿一堆记录写出带条件的建议**（Application）；
-> ② **课件自己的结构**：三章 Define the service · Assign authority · Judge risk，最后 Slide 47 Takeaways 和 Slide 48「What are we actually approving?」把三章收成一句话——这三张总结页标 🔴；
-> ③ **贯穿全课的开场案例 L1-A1–A4** 出现了 6 次（Slides 7、16、21、36、41、43–45），最后是 13 分钟小组练习——这就是 Knowledge Application 的考法；
-> ④ 这门课对应 **ISACA AAIA**（Advanced in AI Audit）认证，Lecture 1 = 1A–1C。
+> ② **课件自己的结构**：三章 Define the service · Assign authority · Judge risk，最后 Slide 54 Takeaways 和 Slide 55「What are we actually approving?」把三章收成一句话——这三张总结页标 🔴；
+> ③ **贯穿全课的开场案例 L1-A1–A4** 出现了 6 次（Slides 7、16、21、36、41、50–52），最后是 13 分钟小组练习——这就是 Knowledge Application 的考法；
+> ④ 这门课对应 **ISACA AAIA**（Advanced in AI Audit）认证，Lecture 1 = 1A–1C；
+> ⑤ **Session 1 小测**（Slides 43–49，Cedar Events，五道单选）是老师自己示范的题型：给几条记录，判断谁有权、什么触发重新审批、一个数字能支持什么结论（第 19 节有全部真题和解析）。
 
-<Callout type="todo" title="课前版">
+<Callout type="note" title="课后版：已对照 post-class 讲义更新（2026-11-09）">
 
-这份笔记是按 **pre-class 讲义**（*Lecture 1 · Pre-class T−2 · Content only*）做的，课在 10 月 31 日下午上。讲义几乎每页都是 Discussion 问题、没有给答案：笔记里讨论题的回答都标成 **「我的解答」**。上完课后把老师的说法补成「课堂答案」，有出入的地方改掉。
+- **「课堂答案」** = post-class 讲义里老师给的参考答案（Display answer / reasoning 弹窗和翻面内容），这里是中文转述。**「我的解答」** = 课前自己写的，保留下来对照；和课堂答案有出入的地方，已经改掉或在旁边说明。
+- **页码按 post-class 版（共 57 页）**：第 1–42 页不变；**第 43–49 页是新增的 Session 1 小测**；原来的第 43–48 页后移到第 50–55 页。截图文件名仍是课前版的页码。
+- 老师多次强调：**这些是一种可辩护的答案，不是唯一答案**。考试看的是范围、理由、权限和证据是否都能从记录里找到依据。
 
 </Callout>
 
@@ -33,7 +36,7 @@ tags: [AI Governance, Accountability, HITL, NIST AI RMF, Risk Response, Risk Acc
 
 - **➕ 课外补充** — 课件没写、但能帮助理解的背景（例如 Workado 案的细节、置信区间），优先级按 🟢。
 - **💼 业务视角** — 商科 / 管理术语从底层逻辑讲（谁负责、谁有权、凭什么证据）。
-- 网页版有三个小实验（AI flow 每一站问什么、HITL / HOTL / HOOTL 判断、试点准确率能说明什么）和六组点选练习，打印版会变成等价的表格。
+- 网页版有三个小实验（AI flow 每一站问什么、HITL / HOTL / HOOTL 判断、试点准确率能说明什么）和七组点选练习，打印版会变成等价的表格。
 
 </Callout>
 
@@ -63,9 +66,9 @@ tags: [AI Governance, Accountability, HITL, NIST AI RMF, Risk Response, Risk Acc
    → 决定：permitted / restricted / deferred + owner + 复审触发条件
 ```
 
-**一句话抓住本周**：我们批准的**不只是一个模型**，而是 *a defined use · an accountable owner · evidence appropriate to that use · conditions for stopping or reconsidering*（Slide 48）。
+**一句话抓住本周**：我们批准的**不只是一个模型**，而是 *a defined use · an accountable owner · evidence appropriate to that use · conditions for stopping or reconsidering*（Slide 55）。
 
-<Figure src="images/page_48.png" caption="What are we actually approving? Not just a model." source="Slide 48" />
+<Figure src="images/page_48.png" caption="What are we actually approving? Not just a model." source="Slide 55" />
 
 ---
 
@@ -95,6 +98,8 @@ tags: [AI Governance, Accountability, HITL, NIST AI RMF, Risk Response, Risk Acc
 
 <Figure src="images/page_05.png" caption="The course at a glance：周六 14:30–17:50，第 1 讲在 LG3009，之后在 LSK 1007" source="Slide 5" />
 
+post-class 版的课表写明了四位嘉宾：第 2、3、5、6 讲各一位（Speaker 1–4）。Speaker 1 的解析见[单独页面](../../talks/speaker-1-kent-lung/)。
+
 <Figure src="images/page_06.png" caption="Where Lecture 1 fits in the AAIA pathway" source="Slide 6" />
 
 | AAIA Domain | 讲次 | 内容 |
@@ -114,15 +119,15 @@ tags: [AI Governance, Accountability, HITL, NIST AI RMF, Risk Response, Risk Acc
 
 ---
 
-## 2. 🔴 开场案例：顾客建议服务能直接上线吗？（Slides 7、44）
+## 2. 🔴 开场案例：顾客建议服务能直接上线吗？（Slides 7、51）
 
 <Figure src="images/page_07.png" caption="Customer-advice service: ready for direct release? 虚构航空公司 · 退票资格建议 · L1-A1–A4" source="Slide 7" />
 
 **场景**：一家（虚构的）航空公司想让 AI 助手**直接告诉顾客**「你的票能不能申请退款」。助手检索票价政策、起草回答；**它不能改订单、不能批例外、不能付款**。呼叫中心这条路一直保留。
 
-四份记录在课上一份一份放出来（Slides 16、21、36、41），最后合在一起做小组练习（Slide 44）。**这四份是后面所有讨论的证据基础，要熟**：
+四份记录在课上一份一份放出来（Slides 16、21、36、41），最后合在一起做小组练习（Slide 51）。**这四份是后面所有讨论的证据基础，要熟**：
 
-<Figure src="images/page_44.png" caption="The same case. The same four records." source="Slide 44" />
+<Figure src="images/page_44.png" caption="The same case. The same four records." source="Slide 51" />
 
 | 记录 | 写了什么（课件原文要点） | 中文 / 审计时该注意的 |
 |---|---|---|
@@ -193,9 +198,27 @@ Chapter 1 的三个子题（Slide 9）：
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 10 问责三维度">
+
+| 维度 | 老师的回答 |
+|---|---|
+| **Responsibility** | **Service owner** 从请求到交付都要问责，供应商和交付团队的环节也算在内 |
+| **Authority** | 写明谁授权规则和发布、谁复核决定、谁能**停止或更正**未解决的建议 |
+| **Evidence** | 把请求、政策版本、回复、需要时的复核 / 批准、交付**串起来**。只有规则，证明不了它运行过 |
+
+</Callout>
+
 <Callout type="board" title="我的解答 · Slide 11「准确的建议送错了人：先查哪里、什么记录能解释？」">
 
 先查**最后一站 delivery** 和**第一站 identity**，因为内容本身没错：会话 / 身份记录（请求者是谁）→ 路由记录（回复被发往哪个账号、邮箱）→ 投递记录。要能用**同一个 advice ID** 把请求、生成和投递串起来；否则只能猜。
+
+</Callout>
+
+<Callout type="board" title="课堂答案 · Slide 11">
+
+**沿路径查，不要先假定原因。** Identity（本来该给谁）、Access（谁能访问）、Routing（输出发到哪）、Delivery records（什么能确认实际收到）都是合理的切入点。好答案要**点名一个位置，并说清它的记录能证明什么**；题目给的事实并不能确定原因。
+
+要记住的一句：**服务边界包括把输出变成结果的人和连接。** 模型答得准，不等于这次披露是被授权的。
 
 </Callout>
 
@@ -211,6 +234,16 @@ Chapter 1 的三个子题（Slide 9）：
 | 送到了谁、之后发生了什么 | 投递记录、转人工的队列记录、投诉记录 | 呼叫中心 / Trained Agent |
 
 现在最大的断点：投诉只记订单号，**没有 advice ID 和政策版本**（L1-A4），链在最后一环断了。
+
+</Callout>
+
+<Callout type="board" title="课堂答案 · Slide 16">
+
+一条可行的追溯链：**收到的请求 → 接收者 → 检索到的政策版本 → 生成的回复 → 交付事件**；如果有复核，再连上复核人和处置结果。
+
+**找谁要：请 Service Owner 指出是哪个运营团队持有这些记录**（我上面按角色猜了来源，这些角色不是记录里写明的持有人）。
+
+局限：这只是**提议的证据链**，不代表它存在，也不代表服务已批准。**政策签字和服务发布批准是两份不同的记录。**
 
 </Callout>
 
@@ -235,6 +268,20 @@ Chapter 1 的三个子题（Slide 9）：
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 12">
+
+变的是**权限**，模型和输出都没变。先分清三个词：
+
+| 词 | 含义 |
+|---|---|
+| **Drafting** 起草 | 准备材料，等人复核 |
+| **Recommending** 建议 | 提出决定，**由有权的人做决定** |
+| **Acting** 行动 | 在批准的边界内直接发送、拒绝、付款或改记录 |
+
+授权的 owner 要重新看：**行动边界、决定规则、受影响的人、后果、评估证据、介入和申诉安排**。「能当建议用」的证据，不能说明「能自动拒绝」。
+
+</Callout>
+
 <Figure src="images/page_15.png" caption="Did a recruiter review your rejection? ICO · Recruitment rewired · March 2026" source="Slide 15" />
 
 **ICO 招聘报告（英国信息专员办公室，2026 年 3 月）**：30 多家雇主自愿提供的证据显示，很多雇主**很可能**在用 *solely automated decisions without meaningful human involvement*——简历被自动筛掉，没有人真正看过。
@@ -250,6 +297,16 @@ Chapter 1 的三个子题（Slide 9）：
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 15">
+
+- **跟着被拒的人查。** 入围者后来有面试，**说明不了**更早的拒绝有人看过。要查的是这个被拒决定本身的复核和申诉路径。
+- **怎样算有意义**：复核人有相关信息、时间、培训和**改变决定的权力**；要看**没走下去的人**的复核和推翻记录，不能只看成功路径。
+- **来源的局限**：ICO 报告基于雇主自愿提供的情况，不是对每家雇主的审计结论；不能说明每个工具都用了生成式 AI，也不能说明香港适用同样的法律要求。
+
+一句话：**把人工参与定位在影响当事人的那个决定上**，而不是组织架构或流程图的别处。
+
+</Callout>
+
 ---
 
 ## 5. 🟡 Model behaviour：预测 vs 生成，三种学习方式（Slides 13–14）
@@ -262,6 +319,14 @@ Chapter 1 的三个子题（Slide 9）：
 | 例子 | 给申请人 A、B、C 排名 | 根据已批准的政策源写一段回复 |
 | 典型错误 | 排错、对某些群体系统性偏低 | 和来源不一致、编造内容、语气过于肯定 |
 | 我的解答：怎么测 | 和真实结果比的准确率、**分群体**看错误率、阈值附近的案例 | 和**来源文件逐条核对**一致性、换说法问同一个问题、问来源里没有的问题看它会不会编 |
+
+<Callout type="board" title="课堂答案 · Slide 13">
+
+- **排名**：先问这个排序**想代表什么**、用什么参照标准才算有用；看排错的情况及对申请人的影响。题目**没给决策阈值**，所以这里谈不上误批或误拒（我上面写的「阈值附近」是假设有阈值时才适用）。
+- **政策回复**：重要说法能否追溯到**授权来源**、是否忠于政策、是否适合披露。要看说法本身和对顾客的后果，**不能只看读起来流不流畅**。
+- 两者可能有共同风险（数据不合适、过度依赖有缺陷的输出），但**测试要贴合实际输出和后果**。
+
+</Callout>
 
 <Figure src="images/page_14.png" caption="From outputs to learning: what evidence matters?" source="Slide 14" />
 
@@ -301,6 +366,14 @@ L1-A3 说 AI 起草 30 秒、人工 4 分钟——但只比了**第一行**。AI
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 18">
+
+- **同类比同类**：同样的端到端案例类型，比政策核对、复核、纠正、升级、跟进和质量，再加上实施、复核人手和监控成本。
+- **可能否决的证据**：错误或伤害率不可接受、发布控制无效、复核人手不足、**总成本超过约定的收益门槛**。要写明标准和范围；发起人的「起草更快」并不能证明或推翻这些。
+- **限度**：不要只凭起草速度算 ROI 或声称总体节省。
+
+</Callout>
+
 Chapter 2 的三个子题（Slide 17）：**Purpose and value**（什么问题值得解决？）· **Ownership and controls**（谁决定，什么必须实际运作？）· **Continuing governance**（什么证据或变化会重新打开审批？）。
 
 ---
@@ -318,11 +391,16 @@ OutSystems 用 Hyperproof（合规平台）把合规证据集中起来，外部�
 | **Internal audit** 内部审计 | 评估治理和证据，给出**独立**意见 | **不替管理层接受风险**（Slide 39） |
 | **External assessor** 外部评估方 | 对控制给出**独立结论**（如认证、审计报告） | 不运营控制 |
 
-<Callout type="exam" title="Slide 19 讨论题的答案（我的解答）">
+<Callout type="board" title="课堂答案 · Slide 19">
 
-- **谁接受服务风险？** → Business owner / Service owner（有授权的管理层）。
-- **谁对控制给出独立结论？** → Internal audit 或 External assessor。
-- 关键原则：**独立性**。做控制的人、接受风险的人，不能同时是给出「控制有效」结论的人。证据可以放在同一个平台上，但**结论的归属**要分开。
+| 角色 | 决定 / 职责 | 权限边界 |
+|---|---|---|
+| **Business owner** | 在授权范围内**接受或升级**服务风险 | 仍对服务结果负责；**证据共享不转移决定权** |
+| **Control operator** | 执行 safeguard，保留运行证据 | 运行控制本身不带来接受风险的权力 |
+| **Internal audit** | 负责对控制和证据的**独立内部评估** | 不替管理层接受风险或做发布决定 |
+| **External assessor** | 在**约定的外部评估范围内**给结论 | 不拥有管理层的发布或风险接受决定 |
+
+局限：这是供应商发布的合作案例，四个角色是课堂设定，**不是 OutSystems 的真实组织架构**，这个来源也没有涉及 AI 发布决定。
 
 </Callout>
 
@@ -356,6 +434,14 @@ OutSystems 用 Hyperproof（合规平台）把合规证据集中起来，外部�
 - **测试**：不要只看「政策是否存在、员工是否签了确认书」（设计层面），要测**实际行为**（运行层面）：抽查网络日志看有没有访问未批准的 AI 服务、抽样访谈、看例外和违规是否被发现和处理过。
 
 审计术语：**design effectiveness**（控制设计得对不对）vs **operating effectiveness**（控制实际有没有在运作）。这张幻灯片讲的就是后者。
+
+</Callout>
+
+<Callout type="board" title="课堂答案 · Slide 20">
+
+- **让批准的路能走得通**：员工有好用的已批准渠道、清楚的允许用途例子、例外和上报路径。要调查流程中的激励和障碍，别以为再签一次字就能改变行为。
+- **测实际行为**：按比例检查业务沟通和留存，抽样真实流程，看主管的行为，跟踪例外直到纠正。**培训出勤不是合规证据。**
+- **搬到 AI 上**：测员工能否认出并使用批准的服务，以及敏感材料的实际处理是否符合规则。
 
 </Callout>
 
@@ -393,6 +479,18 @@ OutSystems 用 Hyperproof（合规平台）把合规证据集中起来，外部�
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 21">
+
+| 任务 | 老师的说法 |
+|---|---|
+| **例外决定** | A1 要求受训坐席决定，**人必须在执行前确认**；助手没有例外权限 |
+| **常规资格建议** | **不能因为请求看起来常规就给自主权。** HOTL 需要：验证过的范围、可观察的异常、**能及时介入的人**、能遏制后果的响应。这些没证明时可能需要 HITL |
+| **有边界的信息查询** | 对授权、测过的查询，且行动严格受限、后果可接受，**可以考虑** HOOTL。人仍要设定目标、约束和复核安排。**这是假设性选项，不等于批准当前方案** |
+
+三种情况都要考虑：**后果、可靠性、介入时间、可逆性、运营能力、授权边界**。**没有哪种模式能保证安全。**
+
+</Callout>
+
 <GovSortQuiz set="loop" />
 
 ---
@@ -411,7 +509,22 @@ OutSystems 用 Hyperproof（合规平台）把合规证据集中起来，外部�
 
 <Callout type="exam" title="核心原则">
 
-**批准是针对一个「定义好的用途」的，不是针对模型的。** *Prior acceptance does not automatically authorise changed use*（Slide 39 弹窗）。所以每个批准都要附带**复审触发条件 (reconsideration condition / review trigger)**——Slide 47 最后一句：*Changed use or evidence can reopen the assessment.*
+**批准是针对一个「定义好的用途」的，不是针对模型的。** *Prior acceptance does not automatically authorise changed use*（Slide 39 弹窗）。所以每个批准都要附带**复审触发条件 (reconsideration condition / review trigger)**——Slide 54 最后一句：*Changed use or evidence can reopen the assessment.*
+
+</Callout>
+
+<Callout type="board" title="课堂答案 · Slide 22 把重新评估放进生命周期">
+
+**模型没变，不代表服务没变。** 目的、受影响的人、数据、依赖或行动权限一变，后果和所需证据都可能变。
+
+| 阶段 | 要做什么 |
+|---|---|
+| **Proposal** 提案 | 确定目的、ownership、允许的用途 |
+| **Release** 发布 | 按约定标准审查证据，记录授权决定 |
+| **Operation & change** 运行与变更 | 监控结果，重新审视受影响的假设 |
+| **Retirement** 退役 | **撤销访问，处理留存数据和剩余义务** |
+
+批准绑定的是**一个定义好的用途及其证据**。重新评估不必等到模型换了或服务退役。
 
 </Callout>
 
@@ -433,6 +546,20 @@ OutSystems 用 Hyperproof（合规平台）把合规证据集中起来，外部�
 - 分群：复杂问题 vs 简单问题分开看（总数会掩盖复杂问题变差）。
 
 教训：只盯着「更快、更便宜」这个**奖励信号**，就会出现 Slide 14 强化学习那里说的问题——被奖励的东西和真正想要的结果不一致。
+
+</Callout>
+
+<Callout type="board" title="课堂答案 · Slide 23">
+
+要**分开测三件事**：
+
+| 问题 | 测什么 |
+|---|---|
+| **Value** 创造价值了吗 | 用相似的常规和困难请求，比处理时间和**首次解决率**。光快不代表问题解决了 |
+| **Harm** 顾客受伤害了吗 | 错误建议、未解决投诉、重复联系、满意度；**要包含困难案例** |
+| **Safeguard** 保障起作用了吗 | 顾客需要时能否找到人、交接是否解决问题、人手能否满足需求 |
+
+**扩张之前**就要约定质量阈值和复审 / 停止触发条件。
 
 </Callout>
 
@@ -459,6 +586,15 @@ OutSystems 用 Hyperproof（合规平台）把合规证据集中起来，外部�
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 26">
+
+- **不知道的**：模型架构、具体的训练 / prompt / 检索失败、是否完成整改。
+- **为什么仍有用**：不用编造工程解释，也能看出**政策一致性和问责问题**。
+- **责任**：仲裁庭认定 Air Canada 对网站上的信息负责，包括聊天机器人的建议；但没有指出内部哪个人是 policy owner。
+- **调查要的证据**：适用的政策和回答版本、配置和变更记录、交付或复核日志；并问运营方实际用了哪些组件。这些是提议的请求，不是已有发现。
+
+</Callout>
+
 <Callout type="extra" title="课外补充：赔了多少">
 
 裁决中 Air Canada 被判赔付票价差额加利息和费用，合计约 **812 加元**——金额很小，但这个先例很有名：**「是 AI 说的」不能当免责理由**。
@@ -481,6 +617,16 @@ Air Canada 的回答**本来就附了政策链接**——链接没能阻止矛�
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 28">
+
+一个完整的控制论证要覆盖 **检测 · 处理 · 证据**：
+
+- **链接不是一致性检查**：生成的回答可能和它链接的政策相矛盾。要把重要说法追溯到批准的政策版本，并测一致性。只允许批准文本是另一种限制手段，但本身不是保证。
+- **测「进入复核」这一步**：谁或什么来识别不确定 / 冲突的回答？测试要包括**看起来合理但错误、又没有任何警告**的回答。**被标记的案例处理得好，不代表该标记的都标记了。**
+- **测「检测之后」**：未解决的建议要一直扣住，直到受训且有权的人解决并批准，并在顾客做承诺之前核实结果。**升级不等于允许放行。**
+
+</Callout>
+
 <Figure src="images/page_29.png" caption="What can supplier and local service evidence establish?" source="Slide 29" />
 
 | 证据来源 | 能检查什么 | 局限 |
@@ -488,6 +634,17 @@ Air Canada 的回答**本来就附了政策链接**——链接没能阻止矛�
 | **Supplier evidence** 供应商证据 | Service design、stated limitations、test coverage、change notices | 供应商测的是**它的**测试集，不是你的政策和你的顾客 |
 | **Local service** 本地服务 | Intended users、data access、workflow controls、customer outcomes | 要你自己收集 |
 | 中间的放大镜 | **Fit to intended use?** | 供应商证据要和你的**具体用途**对得上才有用 |
+
+<Callout type="board" title="课堂答案 · Slide 29">
+
+| 证据来源 | 要提供什么 | 为什么需要 |
+|---|---|---|
+| **Supplier** | 带版本的设计和能力；测试结果及其覆盖的**任务、人群、条件**；声明的局限；产品 / 模型变更通知 | 确定产品和报告**实际覆盖什么**；判断是否适用于预期用途、变更是否需要重新评估 |
+| **Local service** | 预期用户、数据访问和权限；配置的流程、复核和例外处理；本地测试和运行记录；预期用途下的顾客结果 | 确定是否适合本地用户和数据，safeguard 在实际流程里是否有效 |
+
+要把**供应商测过的版本和范围**连到**本地配置的服务**上。这些记录合在一起才能支持评估，**它们的存在本身不等于上线批准**。
+
+</Callout>
 
 <Callout type="memo" title="记住">
 
@@ -512,6 +669,31 @@ Air Canada 的回答**本来就附了政策链接**——链接没能阻止矛�
 - **Traceable**：每次复核留什么记录（advice ID、政策版本、复核人、时间、决定）？怎么证明没被标记的回答没有绕过规则？
 
 </Callout>
+
+<Callout type="board" title="课堂答案 · Slide 30 要补的细节">
+
+| 设计字段 | 还要写清楚、证明什么 |
+|---|---|
+| **Review entry** | 怎么检测和路由不确定 / 冲突；测漏标和例外 |
+| **Reviewer and cover** | 有权的复核人、访问、人手和替补；用代表性案例测政策冲突判断、扣住 / 升级、决定记录；复核推翻情况，变更后重新评估 |
+| **Release and escalation** | 放行阻断、未解决案例的路径、每种案例谁能解决或升级 |
+| **Evidence and follow-up** | 保留服务 / 版本配置和变更记录；串起请求、复核人、处置、批准 / 放行时间和升级 |
+
+</Callout>
+
+<Callout type="exam" title="🔴 新增要点：不同的说法要不同的证据（Slide 30 第二个弹窗）">
+
+| 说法 | 要看的证据 | 能证明什么 |
+|---|---|---|
+| **Design** 设计 | 成文的触发条件、复核人、放行边界、升级规则 | 这个控制**打算做什么**；设计是否针对预期的失败，包括如何进入复核 |
+| **Implementation** 实施 | 对应服务和版本的**真实配置导出**和变更记录 | 规则在相关时间点**是否启用**。单靠它证明不了复核发生过 |
+| **Operation** 运行 | 有代表性的流程记录：请求和复核人身份、处置、批准和放行时间戳、扣住和升级，包括相关例外 | 被检查的案例中**实际发生了什么**。只有一个填好的字段不够 |
+
+这比第 8 节的 design vs operating 多了中间一层。另外要记住：**记录缺失会限制鉴证结论，但本身不能证明控制失败。**
+
+</Callout>
+
+<GovSortQuiz set="evidence" />
 
 ### Slide 27 小组练习：policy owner 应该要求什么？
 
@@ -572,6 +754,15 @@ FTC 指控 Rite Aid 部署人脸识别时**没有合理的 safeguards**，系统
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 33">
+
+- **伤害之前**：在预期的门店条件下测误报；员工对告警采取行动前**设一道独立核实**；不确定的匹配有清楚的停止或升级路径。
+- **伤害之后**：跟踪误报、员工行动和投诉，调查、更正并提供**补救 (redress)**。监控能指导以后的改动，但阻止不了已经发生的伤害。
+
+这些 safeguard 是课堂提议；Rite Aid 部分只是 FTC 的指控和当时提议的和解。
+
+</Callout>
+
 <GovSortQuiz set="harm" />
 
 ---
@@ -616,6 +807,19 @@ FTC 指控 Rite Aid 部署人脸识别时**没有合理的 safeguards**，系统
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 37">
+
+**老师没有给唯一答案：A 和 B 都可以优先，但必须给出基于事实的理由，以及能推翻它的条件。**
+
+| | 什么情况下优先 |
+|---|---|
+| **A** | 明天就要续约，可能造成紧迫且难以逆转的伤害。查漏掉的例外、源报告、明天谁行动、决定能否暂停或更正 |
+| **B** | 错误拒绝可能造成更大的直接伤害，尤其是复核或申诉不起作用时。查漏标的案例、申诉是否及时和可达、被排除的人群 |
+
+比较时用 **timing、reversibility、affected people、safeguard 的证据**。两个常见错误：观察到的错误少，**不能说明被排除的案例没问题**；每月 2,000 个决定是**暴露面，不是错误概率**。不要编造通用赢家或风险分数。
+
+</Callout>
+
 ---
 
 ## 15. 🔴 准确率「在什么上」？试点能支持更广的用途吗？（Slides 35–36）
@@ -624,9 +828,9 @@ FTC 指控 Rite Aid 部署人脸识别时**没有合理的 safeguards**，系统
 
 FTC 指控 Workado 宣称它的 **AI Content Detector** 判断 AI 生成文本的准确率达 **98%**，却**没有证据支持**这个说法；2025 年 8 月下达最终同意令。
 
-<Callout type="extra" title="课外补充：98% 是怎么来的">
+<Callout type="extra" title="课外补充 + 老师的修正：98% 和 53% 不能直接相减">
 
-据 FTC 的新闻稿，这个检测器只用**学术写作**训练和测试过，在一般内容上的独立测试准确率只有约 **53%**——接近抛硬币。教训：准确率**离开测试集就没有意义**，一个数字必须附带「在什么数据、什么人群、什么条件下」。
+据 FTC 的说法，98% 是产品**宣传的数字**，53% 来自**另一个范围不同的测试**。老师特别提醒：这两个数字放在一起**不代表性能下降了**，它们也都不能说明在**你自己的文件**上表现如何。（我课前写的「接近抛硬币」容易让人以为两者可比，已改正。）
 
 </Callout>
 
@@ -637,6 +841,18 @@ FTC 指控 Workado 宣称它的 **AI Content Detector** 判断 AI 生成文本�
 3. **按类别拆开**的结果，而不只是一个总数；错误例子本身；
 4. **准确率的定义**：正确率？精确率？召回率？阈值多少？
 5. **谁测的**：供应商自测还是独立测试；能不能在我们自己的数据上复测。
+
+</Callout>
+
+<Callout type="board" title="课堂答案 · Slide 35">
+
+| 要问 | 内容 |
+|---|---|
+| **Evaluation scope** | 先定义预期用途和被测的输出 / 决定；案例要代表这个用途（含困难案例）；要系统版本、样本选择、参考答案或标签、重要错误类型的结果 |
+| **Independence** | 谁选的测试；**评估数据和训练数据是否分开** |
+| **Error consequences** | 对这个用途而言，误报和漏报各造成什么后果（AI 文本检测要看文档类型和两类错误；别的任务指标可能不同） |
+
+一句话：**头条分数不是发布决定。** 证据要贴合你打算依赖它的人群、任务和后果。
 
 </Callout>
 
@@ -664,20 +880,46 @@ FTC 指控 Workado 宣称它的 **AI Content Detector** 判断 AI 生成文本�
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 36">
+
+- **一个可行的测试**：用部分使用的票或例外请求，看它是否**到达受训坐席由人决定**，而不是得到一个没有依据的自动承诺。观察**收到、处置、放行的顺序**。
+- **其他也站得住的测试**：政策更新后，检索到的政策和交付的回答是否一致；用有争议的回答测处理路线。
+- **局限**：样本只支持这些常规请求上观察到的结果。提议的测试不代表通过，也不代表可以放行。
+
+</Callout>
+
 ---
 
 ## 16. 🔴 四种风险应对（Slide 38）
 
-<Figure src="images/page_38.png" caption="What should we do about the risk? Four risk responses" source="Slide 38" />
+<Figure src="images/page_38.png" caption="What should we do about the risk? Four risk responses（课前版截图，post-class 版的措辞见下表）" source="Slide 38" />
 
-| 应对 | 课件原文 | 中文 / 本案例的例子 |
+post-class 版把这页改成了回到退票案例（错误资格建议可能让顾客做出代价高昂的决定；供应商协议拟分配特定测试义务）：
+
+| 应对 | 放到这个案例里（post-class 版） | 中文 / 要点 |
 |---|---|---|
-| **Risk avoidance** 规避 | Do not begin or continue the activity that creates the risk | 不做 / 停做。例：**例外申请不让 AI 回答**，只走人工 |
-| **Risk reduction** 降低 | Change likelihood or impact through controls | 用控制降低可能性或影响。例：加复核、补测试、日期类问题强制附政策原文 |
-| **Risk sharing / transfer** 分担 / 转移 | Allocate specified duties or exposure by agreement; **retain applicable responsibilities** | 通过协议分配**特定**义务或损失（合同、保险）。**对顾客的责任仍在自己身上**（Air Canada） |
-| **Risk acceptance** 接受 | An **authorised owner** decides on the remaining risk **within applicable limits** | **有授权的 owner** 在**限度内**决定接受剩余风险 |
+| **Risk avoidance** 规避 | 不授权这个有后果的自动用途 | 不做 / 停做 |
+| **Risk reduction** 降低 | 限制用途，测试复核或升级 | **限制 + 测控制**，不只是加一道流程 |
+| **Risk sharing / transfer** 分担 / 转移 | 通过协议分配特定义务或财务暴露 | **仍保留本地问责，并要核实本地控制**（Air Canada） |
+| **Risk acceptance** 接受 | 有授权的 owner 决定剩余风险和复审条件 | 受**授权、适用限度和发布要求**约束 |
 
-课件底注：*Responses may be combined. Their effectiveness requires evidence.* —— 四种可以组合使用（例：对例外规避 + 对常规建议降低 + 接受剩余风险），而且**应对有没有用要靠证据证明**。
+**可以组合使用**，但要说明组合的效果，以及还有哪些证据缺口。
+
+
+<Callout type="board" title="课堂答案 · Slide 38 加了复核之后还会出什么错？">
+
+| 概念 | 含义 |
+|---|---|
+| **Inherent risk** 固有风险 | 考虑**正在评估的 safeguard 之前**的风险 |
+| **Residual risk** 剩余风险 | 算上**这些特定 safeguard 之后**剩下的风险 |
+
+- 漏掉的例外、**根本没进入复核的错误回答**，仍然留有伤害路径。
+- 容易想错的一点：如果放行前的闸门有效，**复核人不在造成的是延误或拿不到及时帮助**；单凭「复核人不在」，不能说明错误建议被发出去了。
+- 提议的复核步骤**不是实测的风险降低**。不要画前后百分比，也不要暗示剩余风险已知很低。
+
+**Safeguard 改变的是风险论证，不会让剩下的失败消失。**
+
+</Callout>
 
 <GovSortQuiz set="response" />
 
@@ -720,6 +962,14 @@ FTC 指控 Workado 宣称它的 **AI Content Detector** 判断 AI 生成文本�
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 40">
+
+- **信号要附带**：报告期间、抽样方法、覆盖的请求类型、**分母（被复核的建议交互）**、约定上限和复核频率。**复核样本上的比率，不会自动等于所有顾客上的比率。**
+- **谁能行动**：有授权遏制或重新评估受影响用途、并升级超权事项的**服务或风险 owner**。要核实告警真的到达这个人、授权的动作真的能执行。
+- **留痕**：记录动作、跟进 owner、截止日期和关闭所需的证据。
+
+</Callout>
+
 <Figure src="images/page_41.png" caption="Opening case · can an escalation be evidenced? L1-A4 · Operating arrangements" source="Slide 41" />
 
 <Callout type="board" title="我的解答 · 什么记录链能证明下班后的请求被收到并解决了？什么仍无法证明？">
@@ -730,11 +980,67 @@ FTC 指控 Workado 宣称它的 **AI Content Detector** 判断 AI 生成文本�
 
 </Callout>
 
+<Callout type="board" title="课堂答案 · Slide 41">
+
+要串起：请求和 advice ID → 进队列 → 受训坐席收到 → 处置 → 必要的批准 → 交付的回复，并带**时间戳和适用的政策版本**。
+
+**写结论要有界**：现有证据没有演示端到端交接；但**缺记录不等于每次交接都失败**；**进了队列也不等于收到、解决或获授权放行**。
+
+</Callout>
+
 ---
 
-## 19. 🔴 综合应用：给出你的建议（Slides 43–46）
+## 19. 🔴 Session 1 小测真题：Cedar Events（Slides 43–49）
 
-<Figure src="images/page_45.png" caption="Prepare your recommendation and evidence brief：13 分钟，小组产出" source="Slide 45" />
+Mentimeter 10 分钟、形成性、不计分；**五道单选**；可以看提供的记录和课程笔记，**不能用 AI、不能讨论**。这就是 Knowledge Application 选择题的样子：**三条记录，五个判断**。
+
+| 记录 | 内容（中文转述） | 关键点 |
+|---|---|---|
+| **S1-R1 · 试点章程** | AI 给场地申请排序，协调员批准每次分配。**Events Director 负责服务结果和接受剩余风险**；IT 运营平台，供应商维护模型 | 谁有权：写得很明白 |
+| **S1-R2 · 扩展申请** | 分数低于阈值就**自动拒绝**。供应商报告在 100 个普通试点请求上与协调员 **96% 一致**；**没有测拒绝申诉和特殊无障碍需求** | 一致率 ≠ 正确率；被排除的人群 |
+| **S1-R3 · 内部发布规则** | **决定权变化**时，使用前要有修订的伤害评估、对照验收标准的证据、Events Director 记录在案的风险决定。IT 已确认容量够用 | 容量够不够不是这条规则的触发点 |
+
+<MCQ q="Q1 · 按这些记录，自动拒绝的剩余风险决定必须由谁记录？" a="IT，在核对容量和修订后的发布证据之后" b="Events Director，在审查修订后的风险证据之后" c="供应商，在验证拟用的拒绝阈值之后" d="协调员，在复核试点决定和例外之后" answer="B">
+
+**课堂答案**：R1 把风险接受分配给 Events Director，R3 在扩展时保留了这一决定。技术验证和运营经验只是**支持决定**，不转移权力。要区分**提供证据的人**和**明确被分配接受风险的人**。
+
+</MCQ>
+
+<MCQ q="Q2 · 哪个变化最直接地触发了发布规则？" a="从试点容量检查变成扩展服务的容量检查" b="从协调员记录变成供应商的一致率报告" c="从普通请求的测试变成无障碍案例的测试" d="从 AI 排序变成没有协调员批准的拒绝" answer="D">
+
+**课堂答案**：R2 把决定权从人工分配变成自动拒绝，正是 R3 规定的触发条件。容量检查、报告或测试覆盖的变化本身不授予拒绝权。要看**谁能做出有后果的决定**变了，不只是支持性工作变了。
+
+</MCQ>
+
+<MCQ q="Q3 · 关于 96% 这个结果，哪个结论有依据？" a="它显示了普通试点案例上的一致，不能说明未测试的拒绝情形有效" b="如果沿用同样的模型和阈值，它能估计拒绝的准确率" c="它确立了 4% 的拒绝错误率，Director 可以拿去和容忍度比较" d="当无障碍案例的分数与普通案例相似时，它能支持无障碍决定" answer="A">
+
+**课堂答案**：R2 只确立了普通案例上的**一致**，不是正确性，更不是拒绝错误率。无障碍请求被排除了，分数相似也不能验证它们。**结论要留在被测的人群和用途之内。**
+
+</MCQ>
+
+<MCQ q="Q4 · 自动拒绝这项扩展，最好的下一步是什么？" a="一边做修订的伤害评估，一边小范围上线拒绝并抽查" b="让 Director 在自动拒绝监控运行一个月后记录接受" c="维持人工批准的分配；取得修订评估、发布证据和 Director 的决定" d="暂停已批准的排序试点，直到自动拒绝的所有不确定性都解决" answer="C">
+
+**课堂答案**：R3 要求扩展**之前**完成评估、验收证据和 Director 的决定。上线后的监控代替不了批准；记录也没有理由叫停已批准的试点。**新用途先停在它自己的发布关卡前。**
+
+</MCQ>
+
+<MCQ q="Q5 · 哪项补充证据最直接地针对未测试的拒绝风险？" a="按约定验收标准测试与无障碍相关的拒绝" b="复核同一批普通试点请求的更大随机样本" c="核对协调员在普通试点请求上的决定是否符合政策" d="测量现有人工批准试点的复核工作量" answer="A">
+
+**课堂答案**：R2 排除了无障碍请求和申诉。针对性的拒绝测试才能填这个缺口，更多普通案例和工作量回答的是别的问题。**补充证据要对准未测的伤害和人群。**
+
+</MCQ>
+
+<Callout type="exam" title="五题背后的五个动作">
+
+①找记录里**明确写的权力**；②看**决定权**有没有变；③一个数字**量的是什么、在谁身上量的**；④新用途**先过关卡再上线**，已批准的不用连坐；⑤补证据**对准缺口**，不是堆数量。
+
+</Callout>
+
+---
+
+## 20. 🔴 综合应用：给出你的建议（Slides 50–53）
+
+<Figure src="images/page_45.png" caption="Prepare your recommendation and evidence brief：13 分钟，小组产出" source="Slide 52" />
 
 **任务**：从 L1-A1–A4 选三个优先事项，每个连到**一个提议的控制 + 有授权的 owner + 接受的证据**。**事实和提议分开写。** 最后给出建议：**permitted（允许）/ restricted（限制范围）/ deferred（暂缓）**，附理由、一个未解决问题、决定 owner、复审触发条件。
 
@@ -746,9 +1052,9 @@ FTC 指控 Workado 宣称它的 **AI Content Detector** 判断 AI 生成文本�
 | **② 日期类回答出错、高风险用途没测**（L1-A3：日期类 8/10；例外、争议、政策更新、交接都没测） | 技术供应商实施、Service Owner 验收：日期类扩大测试；例外和部分使用的票**一律转人工**并测试转接是否正确；政策更新后重跑 | 按类别报告的测试结果，每个错误有原因分析；局限：测试集仍是历史请求，上线后要监控 |
 | **③ 交接和追溯跟不上**（L1-A4：一名坐席、只在工作时间；没有端到端交接记录；投诉不记 advice ID / 政策版本） | Service Owner 指定 stop / restart owner 和复审频率；投诉记录加 advice ID + 政策版本字段；安排替补和下班时间的处理规则 | 计时的端到端交接测试（含下班时间）；能从一条投诉追到对应回答的演示；局限：没有真实投诉数据 |
 
-**最终建议：Restricted（限制范围），在条件满足前 deferred 直接交付。**
+**最终建议：Deferred（暂缓）直接交付，保留呼叫中心路线。**
 
-- **现在允许**：员工起草模式（HITL）——AI 给坐席起草，坐席核对后再发；以及照原文显示已批准的政策条款（HOOTL）。
+- **可以另行提议，但现在没有批准**：员工起草模式（HITL）或照原文显示已批准的政策条款（HOOTL），都要单独经 Service Owner 批准。
 - **暂不允许**：直接对顾客给出资格判断；任何例外、部分使用的票、争议。
 - **未解决的问题**：两个 14 天的错误是怎么产生的？会不会在政策更新后再发生？
 - **决定 owner**：Service Owner（发布）；Fare Policy Owner（范围内哪些问题可由 AI 回答）。
@@ -756,19 +1062,40 @@ FTC 指控 Workado 宣称它的 **AI Content Detector** 判断 AI 生成文本�
 
 </Callout>
 
-<Callout type="warn" title="Optional AI assistance 的规则（Slide 45）">
+<Callout type="warn" title="已改正：课前版把「员工起草」写成了「现在允许」">
+
+L1-A2 明确写着，员工起草只是修订方案的一个选项，**没有记录在案的批准，也没有完成复核人手评估**。我课前写「现在允许 HITL」超出了记录能支持的范围，正好犯了这门课要避免的错误：把提议当事实。
+
+</Callout>
+
+<Callout type="board" title="课堂答案 · Slide 53 一份示例答案（不是唯一正确答案）">
+
+**现在的建议**：暂缓对顾客的直接资格建议，保留 A2 的呼叫中心路线。理由：A1 没有上线批准；A3 有错误期限，重要案例没测。
+
+| 要求 / 决定 + 记录 | 提议的控制 + 有授权的 owner | 验收证据 + 局限 |
+|---|---|---|
+| **① 政策批准和版本变更**（A1：v3 和 library 一致，但无上线批准；A3：两个错误期限，没测政策变更） | **Fare Policy Owner** 授权政策变更；**Service Owner** 确保受控发布、版本检查，并在放行前更正回答 | 把期限错误追溯到 v3，更正后重测；检查检索到的回答版本，测一次受控的政策变更。局限：library 版本一致**不代表回答正确**；题目没有规定后续政策版本 |
+| **② 不确定或有冲突的资格建议**（A2：争议应到受训坐席；A3：没测争议和交接；A4：一名工作日坐席、下班队列是提议、无端到端记录） | **Service Owner** 批准复核边界，指定受训且有权的复核人和足够替补；未解决的建议一直扣住直到解决并批准；定义可用的下班时间响应 | 测复核人收到、解决、放行的顺序，包括坐席缺席和下班路径；核对容量和**没被标记的错误回答**。局限：缺记录不等于交接失败；被标记案例的测试不覆盖未标记的错误 |
+| **③ 投诉和持续复审**（A4：投诉只连订单，不连建议和政策版本；复审频率和 stop / restart 责任未分配） | **Service Owner** 分配监控、介入和 stop / restart 职责；Customer Service Lead 可以复核关联后的投诉（这是提议的角色） | 取得关联记录、批准的复审和响应规则、告警到 owner 的测试、更正 / 重测 / 跟进记录。局限：投诉少**不能说明准确或介入有效** |
+
+- **什么能允许重新考虑**：A1 的 Service Owner 在已知错误更正并重测、政策更新 / 复核 / 交接 / 监控控制都演示过后，审查**一个明确的范围**。过一项测试不等于批准整个服务。
+- **限制版替代方案**：可以提议单独授权的员工起草试点，带测过的发送前复核关卡、足够的值班和容量，并测量**含复核的完整工作量**。它**尚未批准**。
+- **一个未解决的问题**：提议的复核路线，能否在已证明的容量内，可靠地解决相关请求，包括下班时间和未标记的错误？
+
+</Callout>
+
+<Callout type="warn" title="Optional AI assistance 的规则（Slide 52）">
 
 可以用课程批准的 AI 工具协助讨论和起草，但**只能用虚构的 L1-A1–A4**，**每个说法和引用都要回到记录里核对**，**最终判断是你自己的**。——这本身就是这门课在教的东西：AI 起草，人负责。
 
 </Callout>
 
-<Figure src="images/page_46.png" caption="Compare your recommendation and evidence：哪些记录支持你的主要说法？什么还没解决？什么证据会改变你的决定？" source="Slide 46" />
 
 ---
 
-## 20. 🔴 总结：从一个定义好的 AI 服务到一个站得住的决定（Slide 47）
+## 21. 🔴 总结：从一个定义好的 AI 服务到一个站得住的决定（Slide 54）
 
-<Figure src="images/page_47.png" caption="Takeaways: From a defined AI service to a defensible decision" source="Slide 47" />
+<Figure src="images/page_47.png" caption="Takeaways: From a defined AI service to a defensible decision" source="Slide 54" />
 
 | 步骤 | 课件原文 | 中文 |
 |---|---|---|
@@ -796,7 +1123,11 @@ FTC 指控 Workado 宣称它的 **AI Content Detector** 判断 AI 生成文本�
 | **Severity · Likelihood · Exposure** | 风险比较三维度 | 多严重 · 多可能 · 影响多广；不编数字 |
 | **Avoid · Reduce · Share · Accept** | 四种风险应对 | 可组合，效果要有证据 |
 | **Risk appetite / tolerance** | 风险偏好 / 容忍度 | 高层态度 / 翻译成具体服务限度 |
-| **Residual risk** | 剩余风险 | 控制之后还剩下的风险，由有授权的 owner 接受 |
+| **Inherent risk** | 固有风险 | 考虑正在评估的 safeguard 之前的风险 |
+| **Residual risk** | 剩余风险 | 算上这些 safeguard 之后还剩下的风险，由有授权的 owner 接受 |
+| **Design / Implementation / Operation** | 控制证据三层 | 打算做什么 / 规则是否启用 / 实际发生了什么 |
+| **Drafting / Recommending / Acting** | 行动权限三档 | 准备材料 / 提建议由人决定 / 在边界内直接行动 |
+| **S1-R1–R3** | Session 1 quiz records | Cedar Events 的试点章程 / 扩展申请 / 内部发布规则 |
 | **Permitted / Restricted / Deferred** | 三种建议结论 | 允许 / 限制范围 / 暂缓 |
 | **ICO** | UK Information Commissioner's Office | 英国数据保护监管机构（招聘自动化报告） |
 | **FTC** | US Federal Trade Commission | 美国联邦贸易委员会（Rite Aid、Workado） |
@@ -936,8 +1267,20 @@ Severity（后果多严重：财务、隐私、服务、法律）、Likelihood�
 
 </QA>
 
+<QA q="一个复核规则写在文件里、系统配置显示已启用、抽样记录显示案例被扣住并批准。这三份证据分别证明什么？">
+
+**Design**：控制打算做什么。**Implementation**：规则在相关时间点是否启用，但证明不了复核发生过。**Operation**：被检查的案例里实际发生了什么，只有填好的字段不够。缺记录会限制结论，但本身不能证明控制失败（Slide 30）。
+
+</QA>
+
+<QA q="固有风险和剩余风险有什么区别？加了复核，但复核人不在，错误建议一定会发给顾客吗？">
+
+固有风险是考虑正在评估的 safeguard 之前的风险，剩余风险是算上它们之后剩下的。**不一定**：如果放行前的闸门有效，复核人不在会造成延误或拿不到及时帮助，而不是错误建议被发出（Slide 38）。
+
+</QA>
+
 <QA q="期末 Knowledge Application 题：给你一组记录，问 AI 服务能否上线。答案应该包含哪些部分？">
 
-按 Slide 45 的格式：①三个优先事项，每个写 **要求 + 依据的记录 → 提议的控制 + 有授权的 owner → 接受的证据 + 局限**，事实和提议分开；②结论 **permitted / restricted / deferred** 及理由；③一个未解决的问题；④决定 owner；⑤复审触发条件。一句话：*a defined use, an accountable owner, evidence appropriate to that use, conditions for stopping or reconsidering.*
+按 Slide 52 的格式：①三个优先事项，每个写 **要求 + 依据的记录 → 提议的控制 + 有授权的 owner → 接受的证据 + 局限**，事实和提议分开；②结论 **permitted / restricted / deferred** 及理由；③一个未解决的问题；④决定 owner；⑤复审触发条件。一句话：*a defined use, an accountable owner, evidence appropriate to that use, conditions for stopping or reconsidering.*
 
 </QA>

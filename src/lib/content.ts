@@ -13,9 +13,10 @@ import type { L10n } from "./i18n";
 const CONTENT_DIR = path.join(process.cwd(), "content");
 
 // Known section types, in display order. Any other folder name still works.
-const SECTION_ORDER = ["lectures", "notebook", "labs", "tutorials", "assignments", "readings", "projects", "exams"];
+const SECTION_ORDER = ["lectures", "talks", "notebook", "labs", "tutorials", "assignments", "readings", "projects", "exams"];
 const SECTION_LABELS: Record<string, L10n> = {
   lectures: { en: "Lectures", zh: "课堂笔记" },
+  talks: { en: "Guest Talks", zh: "嘉宾演讲" },
   notebook: { en: "Python Notebook", zh: "Python 笔记本" },
   labs: { en: "Labs", zh: "实验" },
   tutorials: { en: "Tutorials", zh: "习题课" },
