@@ -94,7 +94,7 @@
       { "q": "直连 (connected) vs 静态路由", "a": "L", "why": "Connected 0 < Static 1，直连永远最可信" },
       { "q": "RIP vs AD 调成 130 的浮动静态路由", "a": "L", "why": "120 < 130：浮动静态路由平时不用，RIP 那条断了才顶上" }
     ]
-    },
+  },
   "eigrptable": {
     "title": "这条信息存在 EIGRP 的哪张表里？",
     "options": [
@@ -132,6 +132,75 @@
       { "q": "主路由断了，它被直接升级成主路由", "a": "FS", "why": "Slide 15：If a successor route goes down, a FS route is promoted to successor status" },
       { "q": "同一个目的地最多可以有 4 条", "a": "S", "why": "Slide 14：There can be up to four successor routes for any particular destination" },
       { "q": "板书 p.2 里 A 去 X.0 的 FD = 3", "a": "FD", "why": "A → B → C：1 + 2 = 3，是三条路里最小的" }
+    ]
+  },
+  "aclnum": {
+    "title": "这个 ACL 编号是哪一种？",
+    "options": [
+      { "id": "std", "label": "Standard IP" },
+      { "id": "ext", "label": "Extended IP" },
+      { "id": "at", "label": "AppleTalk" },
+      { "id": "ipx", "label": "IPX / Extended IPX" },
+      { "id": "none", "label": "不是这几种" }
+    ],
+    "items": [
+      { "q": "access-list 50", "a": "std", "why": "Slide 15、18：Standard IP 用 1–99" },
+      { "q": "access-list 101", "a": "ext", "why": "Extended IP 用 100–199" },
+      { "q": "access-list 1350", "a": "std", "why": "Standard IP 的扩展范围 1300–1999" },
+      { "q": "access-list 2001", "a": "ext", "why": "Extended IP 的扩展范围 2000–2699" },
+      { "q": "access-list 650", "a": "at", "why": "Slide 18：AppleTalk 600–699" },
+      { "q": "access-list 850", "a": "ipx", "why": "Slide 18：IPX 800–899（Extended IPX 900–999）" },
+      { "q": "access-list 99", "a": "std", "why": "1–99 的最后一个，仍然是 Standard" },
+      { "q": "access-list 200", "a": "none", "why": "100–199 之后到 2000 之前不是 IP ACL；200–299 是别的协议（课件表里没列）" },
+      { "q": "access-list 1999", "a": "std", "why": "1300–1999 的最后一个" },
+      { "q": "access-list 2700", "a": "none", "why": "Extended IP 到 2699 为止" }
+    ]
+  },
+  "acl": {
+    "title": "Standard 还是 Extended？",
+    "options": [
+      { "id": "std", "label": "Standard ACL" },
+      { "id": "ext", "label": "Extended ACL" },
+      { "id": "both", "label": "两种都可以" }
+    ],
+    "items": [
+      { "q": "只看包的源 IP 地址", "a": "std", "why": "Slide 31–32：standard ACL can examine only the source IP address；板书 p.1：Standard – use only source address" },
+      { "q": "要同时看源地址和目的地址", "a": "ext", "why": "板书 p.1：extend – both source and destination and more" },
+      { "q": "要挡 Telnet（TCP 23），其他服务照常", "a": "ext", "why": "端口号在 TCP / UDP 头里，只有 extended 能看（Slide 41、47）" },
+      { "q": "Cisco 建议放在离目的地最近的地方", "a": "std", "why": "Slide 55：Standard ACLs – as close as possible to the packet's destination（因为它只认源，放早了会误伤）" },
+      { "q": "Cisco 建议放在离源最近的地方", "a": "ext", "why": "Slide 55：Extended ACLs – as close as possible to the packet's source（条件够细，早点丢省带宽）" },
+      { "q": "一条语句里写了好几个条件，全部满足才算匹配", "a": "ext", "why": "Slide 41：When a command lists multiple criteria, all the criteria must be true" },
+      { "q": "编号 100–199、2000–2699", "a": "ext", "why": "Slide 15、41" },
+      { "q": "可以用 host 和 any 关键字", "a": "both", "why": "Slide 27–28、35、42：两种都能用；standard 里 host 还可以省略" },
+      { "q": "可以用名字而不是编号来配置", "a": "both", "why": "Slide 32：named standard 和 named extended 都有" },
+      { "q": "最后都有一句看不见的 deny any", "a": "both", "why": "Slide 29、57：implicit deny any at the end of all access lists" },
+      { "q": "语句里必须先写协议（ip / tcp / udp）", "a": "ext", "why": "Slide 42：extended 至少要写 protocol type、source、destination" }
+    ]
+  },
+  "vlan": {
+    "title": "VLAN 这一章：说的是哪一个？",
+    "options": [
+      { "id": "vlan", "label": "VLAN" },
+      { "id": "router", "label": "路由器 / 三层交换机" },
+      { "id": "trunk", "label": "Trunk" },
+      { "id": "tag", "label": "Frame tagging" },
+      { "id": "isl", "label": "ISL" },
+      { "id": "q", "label": "802.1Q" }
+    ],
+    "items": [
+      { "q": "按部门、功能、应用把设备分组，不管它们在哪一层楼", "a": "vlan", "why": "Slide 3：logical grouping … regardless of their physical segment location" },
+      { "q": "一个 VLAN = 一个广播域", "a": "vlan", "why": "Slide 3：One logical broadcast domain" },
+      { "q": "让不同 VLAN 之间能通信", "a": "router", "why": "Slide 5、7：unless a router is configured to enable inter-VLAN routing；三层交换机也常做" },
+      { "q": "每个 VLAN 要有一个不同的网段，它在每个网段上有一个接口", "a": "router", "why": "Slide 7：Each VLAN must have a unique Layer 3 network or subnet address" },
+      { "q": "两台交换机之间的一条线，同时带好几个 VLAN 的流量", "a": "trunk", "why": "Slide 5、12：Trunk link carry traffic for multiple VLAN；不属于某一个 VLAN" },
+      { "q": "概念来自电话公司：一条线同时传很多通电话", "a": "trunk", "why": "Slide 11：History of Trunking" },
+      { "q": "在帧头里放一个标识，让下一台交换机知道这帧属于哪个 VLAN", "a": "tag", "why": "Slide 14–15：Places a unique identifier in the header of each frame" },
+      { "q": "帧离开 backbone 时，最后一台交换机把标识去掉", "a": "tag", "why": "Slide 16：When frame exits the backbone, the last switch removes the identifier" },
+      { "q": "Cisco 私有的打标签方式", "a": "isl", "why": "Slide 16：ISL – Cisco proprietary Inter-Switch Link Protocol" },
+      { "q": "IEEE 标准的打标签方式", "a": "q", "why": "Slide 16：802.1Q – IEEE standard" },
+      { "q": "把整个原始帧包起来，前面加一个头、后面加一个 CRC", "a": "isl", "why": "Slide 17 图：ISL | Frame（课外：26 字节头 + 4 字节 CRC，封装式）" },
+      { "q": "在原始帧里面插入 4 字节标签（不是外面再包一层）", "a": "q", "why": "课外补充：802.1Q 是 insert 式，插在源 MAC 后面" },
+      { "q": "把没用的端口放进一个低权限的默认 VLAN", "a": "vlan", "why": "Slide 10：VLANs Improve Network Security" }
     ]
   }
 }

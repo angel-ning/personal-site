@@ -55,6 +55,8 @@ import { TLS_STEPS } from "../../src/components/mdx/tls-logic.mjs";
 import { LOOKUP_PRESETS, LOOKUP_ROUTERS, buildTable, lookup as routeLookup, staticCommand, prefixToMask, dvRun, LS_PRESETS, LS_LINKS, linkCost, spf, lsSvg, toStaticSvg as routingStatic } from "../../src/components/mdx/routing-logic.mjs";
 import { RIP_PRESETS, ripRun, showLine as ripShowLine, AD_PRESETS, chooseRoute, srcLabel as adSrcLabel } from "../../src/components/mdx/rip-logic.mjs";
 import { EIGRP_PRESETS, dual as eigrpDual, failover as eigrpFailover, ROLE_LABEL as EIGRP_ROLE } from "../../src/components/mdx/eigrp-logic.mjs";
+import { ACL_PRESETS, runPreset as runAclPreset, WILDCARD_PRESETS, ipToInt, intToIp, wcCompare, wcSummary, prefixToMask as aclPrefixToMask, maskToWildcard, rangeToWildcard } from "../../src/components/mdx/acl-logic.mjs";
+import { VLAN_PRESETS, emptyState as vlanEmpty, sendVlan, routerTable as vlanRouterTable, TRUNK_PRESETS, TRUNK_MODES, sendTrunk, interSwitchLinks } from "../../src/components/mdx/vlan-logic.mjs";
 import { PREFIX_SETS, longestMatch } from "../../src/components/mdx/prefix-logic.mjs";
 import { upgradeCost as zaraCost, networkTradeoff as zaraNet, UPGRADE_PRESETS as ZARA_PRESETS, fmtEur } from "../../src/components/mdx/zara-logic.mjs";
 import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute, routeNote as crmRouteNote } from "../../src/components/mdx/crm-logic.mjs";
@@ -1117,6 +1119,81 @@ const components = {
           para(strong(`${p.label}`), text(`：${p.router} 去 ${p.dest}。${p.note}`)),
           table(["经过邻居", "链路 cost", "RD", "总距离", "角色"], d.rows.map((r) => [r.via, String(r.link), String(r.rd), `${r.link} + ${r.rd} = ${r.total}`, r.role === "successor" ? strong(EIGRP_ROLE[r.role]) : EIGRP_ROLE[r.role]])),
           para(text(`FD = ${d.fd}。successor 全部断掉时：`), text(f.steps.map((s, i) => `${i + 1}. ${s}`).join("  "))),
+        ];
+      }),
+    ];
+  },
+  AclLab(_node, a) {
+    const ids = String(a.presets ?? a.preset ?? "board3a").split(",");
+    return [
+      note("（网页版此处可交互：可以直接改 access-list 语句、选 ACL 挂在哪个接口的 in / out、自己设包，逐行看比对过程；下面是预设的结果）"),
+      ...ids.flatMap((id) => {
+        const p = ACL_PRESETS.find((x) => x.id === id.trim());
+        if (!p) return [];
+        const rows = runAclPreset(p);
+        const where = (r) => (p.topo && !r.checked ? "路径上没有 ACL" : r.implicit ? `implicit deny${r.where ? `（${r.where}）` : ""}` : `第 ${r.line + 1} 行${r.where ? `（${r.where}）` : ""}`);
+        return [
+          para(strong(p.label), text(p.note ? `：${p.note}` : "")),
+          codeBlock(p.acl + (p.apply?.length ? "\n" + p.apply.map((x) => `! 挂在 ${x.router} ${x.iface} ${x.dir}`).join("\n") : "")),
+          table(["包", "结果", "在哪里被判"], rows.map((r) => [r.p.label, strong(r.verdict === "permit" ? "✅ 通过" : "⛔ 丢弃"), where(r)])),
+        ];
+      }),
+    ];
+  },
+  WildcardLab() {
+    const bin = (n) => intToIp(n).split(".").map((o) => Number(o).toString(2).padStart(8, "0")).join(" ");
+    return [
+      note("（网页版此处可交互：输入地址、通配符和包的地址逐位比较；子网 → 通配符；一段范围 → 通配符。下面是预设的结果）"),
+      para(strong("① 地址 + 通配符 → 匹配谁")),
+      table(["预设", "ACL 地址 / 通配符", "包的地址", "结果", "匹配范围"], WILDCARD_PRESETS.match.map((p) => {
+        const c = wcCompare(ipToInt(p.addr), ipToInt(p.wc), ipToInt(p.ip));
+        const s = wcSummary(ipToInt(p.addr), ipToInt(p.wc));
+        return [p.label, ic(`${p.addr} ${p.wc}`), p.ip, strong(c.match ? "匹配" : `不匹配（第 ${c.firstDiff + 1} 位不同）`), `${intToIp(s.first)} – ${intToIp(s.last)}（${s.count} 个）`];
+      })),
+      para(strong("② 子网 → 通配符（255.255.255.255 − 掩码）")),
+      table(["预设", "掩码", "通配符", "二进制"], WILDCARD_PRESETS.mask.map((p) => {
+        const w = maskToWildcard(aclPrefixToMask(p.prefix));
+        return [p.label, `/${p.prefix} = ${intToIp(aclPrefixToMask(p.prefix))}`, strong(`${p.net} ${intToIp(w)}`), ic(bin(w))];
+      })),
+      para(strong("③ 一段范围 → 通配符")),
+      table(["预设", "范围", "地址 + 通配符", "是否正好"], WILDCARD_PRESETS.range.map((p) => {
+        const r = rangeToWildcard(ipToInt(p.first), ipToInt(p.last));
+        return [p.label, `${p.first} – ${p.last}`, strong(`${intToIp(r.addr)} ${intToIp(r.wc)}`), r.exact ? "正好" : `不对齐，会盖到 ${intToIp(r.addr)} – ${intToIp(r.last)}`];
+      })),
+    ];
+  },
+  VlanLab() {
+    const runs = [
+      ["board", "PC1", "PC2"],
+      ["board", "PC1", "PC3"],
+      ["board", "PC2", "broadcast"],
+      ["v3", "PC4", "PC1"],
+    ];
+    let state = vlanEmpty();
+    let cur = null;
+    const out = [note("（网页版此处可交互：给 E0–E3 选 VLAN、选谁发给谁，看每个 VLAN 的 MAC 表、广播传到哪、跨 VLAN 怎么走路由器；下面按板书 p.1 的分法依次发送）")];
+    for (const [pid, src, dst] of runs) {
+      const p = VLAN_PRESETS.find((x) => x.id === pid);
+      if (cur !== pid) state = vlanEmpty();
+      cur = pid;
+      const r = sendVlan(p.vlans, state, src, dst);
+      state = r.state;
+      out.push(para(strong(`${p.label}｜${src} → ${dst === "broadcast" ? "广播" : dst}`), text("：" + r.notes.join(" "))));
+      if (r.frames.length)
+        out.push(table(["#", "帧", "VLAN", "进口", "MAC (S → D)", "IP (S → D)", "交换机", "听不到"], r.frames.map((f, i) => [String(i + 1), f.label, String(f.vlan), f.inPort, `${f.srcMac} → ${f.dstMac}`, `${f.ipS} → ${f.ipD}`, `${f.decision} → ${f.out.join("、") || "—"}`, f.notHeard.join("、")])));
+    }
+    out.push(para(strong("路由器 R 的路由表")), table(["网段", "接口"], vlanRouterTable().map((r) => [r.net, `${r.iface}（VLAN ${r.vlan}）`])));
+    return out;
+  },
+  TrunkLab() {
+    const v = TRUNK_PRESETS[0].vlans;
+    return [
+      note("（网页版此处可交互：给 PC1–PC8 选 VLAN，切换「每个 VLAN 一根线 / 802.1Q / ISL」，看每一段线上的帧；下面是 PC1 发广播的结果）"),
+      ...TRUNK_MODES.flatMap((m) => {
+        const r = sendTrunk(v, m.id, "PC1", "broadcast");
+        return [
+          para(strong(m.label), text(`：交换机之间 ${interSwitchLinks(v, m.id).length} 根线；收到的 PC：${r.reached.join("、")}`)),
+          table(["一段", "线上的帧", "发生了什么"], r.segs.map((sg) => [`${sg.from} → ${sg.to}`, ic(sg.frame.map((f) => (f.v ? `${f.k}(${f.v})` : f.k)).join(" | ")), sg.note])),
         ];
       }),
     ];

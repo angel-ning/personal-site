@@ -143,6 +143,10 @@ tags: [IPv4, NAT, DHCP]
 | `<AdLab />` | 同一目的地多个路由来源：最长前缀 → AD（Slide 14 默认值）→ metric，可改来源、metric、浮动静态路由 AD、断链路（`rip-logic.mjs`）。`<RoutingSortQuiz set="ripver\|ad" />` 是本周两组点选练习 |
 | `<EigrpDualLab />` | ISOM 5190 第 3 周：每个邻居的链路 cost + RD → 总距离、FD、successor（最多 4 条）、feasible successor（RD < FD）；断开链路看 FS 直接升级还是 Active 发 Query；预设是板书 p.2、Slide 13、Slide 12（`eigrp-logic.mjs`）。`<RoutingSortQuiz set="eigrptable\|eigrp" />` 是本周两组点选练习 |
 | `<PrefixMatchLab set="lab\|exercise" />` | ISOM 5190 Lab 2：最长前缀匹配逐位比较（前缀内的位上色、第一个不同的位标红），可改目的 IP 和路由；`exercise` 带 p.22 六个地址的点选练习（`prefix-logic.mjs`） |
+| `<AclLab presets="board3a,board3b" />` | ISOM 5190 第 4 周：直接输入 `access-list` 命令（standard / extended，含 host、any、eq / gt / lt / range、端口关键字），选 ACL 挂在哪台路由器哪个接口的 in / out，点一个包看路由器的 4 步（拆帧 → 入站 ACL → 查路由表 → 出站 ACL）和逐行比对、first match、implicit deny；预设是板书 p.1、p.3、p.6 和 Slides 13、38–40、52–53（`acl-logic.mjs`） |
+| `<WildcardLab start="match\|mask\|range" />` | 通配符掩码：地址 + 通配符 + 包的地址逐位比较（要比的位、第一个不同的位）/ 子网 → 通配符（255.255.255.255 − 掩码）/ 一段范围 → 通配符（是否对齐）（`acl-logic.mjs`）。`<RoutingSortQuiz set="aclnum\|acl" />` 是本周两组点选练习 |
+| `<VlanLab preset="flat\|board\|v3" />` | ISOM 5190 第 5 周：一台交换机 E0–E3 分 VLAN + 路由器接 E4 / E5，发单播 / 广播，看每个 VLAN 一张 MAC 表、ARP 和广播只在本 VLAN 泛洪、跨 VLAN 两段 MAC (S, D) / IP (S, D)、没有网关的 VLAN 出不去（`vlan-logic.mjs`） |
+| `<TrunkLab />` | 两台交换机、PC1–PC8 分 VLAN：每个 VLAN 一根线 / 802.1Q / ISL，看每一段线上的帧（标签在哪里加、在哪里去掉）和需要几根线（`vlan-logic.mjs`）。`<RoutingSortQuiz set="vlan" />` 是本周点选练习 |
 | `<WeightedOptionLab set="method\|cohere" />` | ISOM 5100 第 3 周：多方案加权打分，权重和 1–5 分都可改，显示谁胜出、改哪个权重会翻盘；预设是案例里不同角色的视角（`sourcing-logic.mjs`，分数是判断，不是案例数据） |
 | `<IntegrationLayerLab />` | Method 案例 Exhibit 5–6：中间层结构图、三家报价的人周单价、回本年限、以后换 SaaS 的成本（除报价外都是示意假设） |
 | `<CapacityMixLab />` | Cohere 案例：算力在 CoreWeave 和 Hyperscaler 之间怎么分，五种情景下的延误、成本和用不完的承诺（示意指数） |

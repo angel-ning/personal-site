@@ -1,0 +1,660 @@
+---
+title:
+  en: "Week 5 · VLANs: Segmentation, Inter-VLAN Routing & Trunking"
+  zh: "第 5 周 · VLAN：网络分段、跨 VLAN 路由与 Trunk"
+summary:
+  en: "Module 5 Network Segmentation and Isolation Using VLANs, slide by slide: VLANs versus traditional LANs, VLAN characteristics (one broadcast domain, one switching table per VLAN, one VLAN per access port), the router's role between VLANs, benefits for moves, broadcast control and security, trunking history and concepts, frame tagging, and ISL vs 802.1Q."
+  zh: "Module 5 Network Segmentation and Isolation Using VLANs 逐页解析：VLAN vs 传统 LAN、VLAN 的特性（一个广播域、每个 VLAN 一张交换表、一个 access 端口只属于一个 VLAN）、路由器在 VLAN 之间的作用、搬位置 / 控制广播 / 安全三个好处、trunk 的来历和概念、frame tagging、ISL vs 802.1Q。"
+week: 5
+date: 2026-11-25
+tags: [VLAN, Broadcast Domain, Inter-VLAN Routing, Trunk, Frame Tagging, 802.1Q, ISL]
+---
+# ISOM 5190 Network Security Management — Week 5 复习笔记
+
+**主题：Module 5 Network Segmentation and Isolation Using Virtual LANs (VLANs) — VLAN vs 传统 LAN · VLAN 的特性（一个广播域、每个 VLAN 一张交换表）· 路由器的角色 · VLAN 的好处（搬位置、控制广播、安全）· Trunk · Frame tagging · ISL vs 802.1Q**
+
+> 优先级标注说明（按考试重要性）：  
+> 🔴 **必考核心** — 概念名称、定义、结构必须能背出来  
+> 🟡 **需要理解** — 需要懂逻辑关系，能举例说明  
+> 🟢 **了解即可** — 背景知识，考试大概率不会细抠
+>
+> **优先级依据**：  
+> ① **老师的手写补充（5190M05 supp）**：p.1 是一道完整的题——一台交换机分两个 VLAN、接一台路由器，要填 **S.T. V1 / S.T. V2 两张交换表**和**路由表**，再走 **① PC1 → PC2、② PC1 → PC3** 两个包；p.2 是两台交换机之间「**每个 VLAN 一根线 vs 一根 trunk**」。这是本周最可能的考法，而且把第 1 周的交换机 MAC 表、ARP 和 IP / MAC (S, D) 都串起来了；  
+> ② **篇幅**：17 页里 Slides 3、5、6 三页文字最多，讲 VLAN 的定义和特性，是选择题素材；  
+> ③ Slides 11–17 讲 trunk 和 frame tagging，**ISL = Cisco 私有、802.1Q = IEEE 标准**要背。
+
+> **📌 本笔记里的几种标记**
+>
+> - 每一页课件都有对应的解析，按 **📄 Slide N** 标出来，可以对着课件一页一页看。
+> - **✍️ 老师板书** — 来自 *5190M05 supp*，放在对应课件内容旁边。这份是**空白版**（交换表、路由表都没填，哪台 PC 属于哪个 VLAN 也没写），下面的答案全部是 **「我的解答」**，用到的假设都写在旁边；拿到课堂照片或 Completed 版后再对照改成「课堂答案」。
+> - **➕ 课外补充** — 课件没写、但理解或答题会用到的背景知识，考试优先级按 🟢 处理。
+> - 网页版有两个可以点的小实验：**VLAN 交换机**（给端口分 VLAN、发包，看每个 VLAN 的 MAC 表、广播传到哪、跨 VLAN 怎么走路由器）和 **Trunk**（每个 VLAN 一根线 / 802.1Q / ISL，看每一段线上的帧），另有一组点选练习；打印版会变成等价的表格。
+
+> **📝 这份笔记是课前做的；课件只到 Slide 17**
+>
+> 按课表排在 11 月 25 日。这版课件在 Slide 17（ISL 的图）就结束了，没有 802.1Q 的细节和 VLAN 的配置命令；第 7 节的课外补充先把这些讲了，上完课以后对照老师讲的内容和板书的课堂答案再改。
+
+---
+
+## 0. 核心地图（先建立整体框架）
+
+第 1 周讲过：**交换机分隔冲突域，路由器分隔广播域**。这周的 VLAN 是「**在一台交换机里面切出好几个广播域**」，不用为每个部门单独买交换机。
+
+```
+传统 LAN：按楼层 / 物理位置分，一个 hub / 交换机 = 一个广播域（Slide 2 左）
+                              │
+VLAN：按部门 / 功能 / 应用分，不管人坐在哪（Slides 2–4）
+   ├─ 在交换机上用软件配置：每个端口属于一个 VLAN（Slide 5）
+   ├─ 一个 VLAN = 一个广播域：广播只在本 VLAN 里传（Slides 3、9）
+   ├─ 交换机给每个 VLAN 一张交换表，学习和转发只查本 VLAN 的表（Slide 6）
+   └─ VLAN 之间不通 → 要靠路由器 / 三层交换机（inter-VLAN routing）
+         每个 VLAN 一个网段（Slide 7）
+                              │
+好处（Slides 8–10）：换座位不用改地址 · 控制广播 · 安全（限制成员、没用的端口放进低权限 VLAN）
+                              │
+多台交换机怎么连（Slides 11–17）
+   ├─ 每个 VLAN 一根线（板书 p.2 左）→ VLAN 多了线和端口都不够
+   └─ Trunk：一根线带所有 VLAN（不属于任何一个 VLAN）
+         帧上要打标签（frame tagging）→ 对面才知道它属于哪个 VLAN
+         最后一台交换机去掉标签；两种标签：ISL（Cisco 私有）· 802.1Q（IEEE 标准）
+```
+
+**一句话抓住本周**：VLAN 把一台交换机切成几个互不相通的广播域，VLAN 之间要靠路由器；交换机之间用 trunk 加标签，一根线带多个 VLAN。
+
+> **💼 为什么这一章叫 Network Segmentation and Isolation**
+>
+> **Segmentation（分段）+ Isolation（隔离）** 是安全设计的基本手段：把财务、研发、访客分到不同的 VLAN，访客电脑**在二层上根本看不到**财务的机器，要互通就必须经过路由器——而上周学的 **ACL 就挂在路由器上**。所以 VLAN 负责「分开」，ACL 负责「VLAN 之间谁能访问谁」，两周的内容是连在一起的。
+
+---
+
+## 1. 🔴 VLAN vs 传统 LAN（Slides 1–4）
+
+**📄 Slide 1 · 封面**：Module 5 *Network Segmentation and Isolation Using Virtual LANs (VLANs)*，Prof. Percy Dias。课件图片来自 Cisco。
+
+**📄 Slide 2 · VLANs Versus Traditional LANs**
+
+![左：传统 LAN，按楼层分，每层一个 shared hub = 一个 LAN，楼层之间靠路由器；右：VLAN，三台交换机跨楼层，同一竖列的电脑属于同一个 VLAN](images/page_02.png)
+
+*左：传统 LAN，按楼层分，每层一个 shared hub = 一个 LAN，楼层之间靠路由器；右：VLAN，三台交换机跨楼层，同一竖列的电脑属于同一个 VLAN（Slide 2）*
+
+|      | 传统 LAN（左）                                   | VLAN（右）                   |
+| ---- | ------------------------------------------- | ------------------------- |
+| 怎么分组 | **按物理位置**：Floor 1 = LAN 1，Floor 2 = LAN 2 … | **按逻辑**：VLAN 1、2、3 各自跨三层楼 |
+| 设备   | 每层一个 shared hub                             | 每层一台交换机，用软件分 VLAN         |
+| 换部门  | 要搬到那个部门的楼层，或者重新布线                           | 改交换机端口的 VLAN 就行           |
+| 广播域  | 每个 LAN 一个                                   | 每个 VLAN 一个                |
+
+**📄 Slide 3 · Virtual LANs (VLANs)**
+
+| 课件原文                                                                                                                                                       | 中文 / 小白解释              |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| VLAN is a **logical grouping** of devices or users … grouped by **function, department or application**, **regardless of their physical segment location** | 按「你是谁」分组，不按「你坐在哪」      |
+| Configuration is done **at the switch via software**                                                                                                       | 不用重新接线，在交换机上配          |
+| **One logical broadcast domain**                                                                                                                           | 一个 VLAN = 一个广播域        |
+| Broadcast frames are switched **only between ports within the same VLAN**                                                                                  | 广播只送到同一 VLAN 的端口       |
+| Modern VLANs typically are **localized**, spanning only one or two switches                                                                                | 现在的 VLAN 一般不跨太多交换机     |
+| Workstations and servers … can communicate **as if they were on the same LAN segment**                                                                     | 同一 VLAN 的机器就像插在同一个交换机上 |
+
+> **💡 小白类比：VLAN = 一栋楼里的几个微信群**
+>
+> 一栋楼（一台交换机）里的人分成「财务群」「研发群」「访客群」。在群里喊一声（广播），只有本群的人听得到；想跟别的群的人说话，得通过「前台」（路由器）转达。谁属于哪个群，管理员在手机上点一下就能改（软件配置），不用换座位。
+
+**📄 Slide 4 · Removes Physical Boundaries**
+
+![Engineering、Marketing、Accounting 三个 VLAN 各自跨 Floor 1–3；一台路由器通过 Fast Ethernet 接到交换机](images/page_04.png)
+
+*Engineering、Marketing、Accounting 三个 VLAN 各自跨 Floor 1–3；一台路由器通过 Fast Ethernet 接到交换机（Slide 4）*
+
+两句话：**Group users by department, team, or application**；**Routers provide communication between VLANs**。第二句是下一节的伏笔：同一部门在三层楼都能互通，**不同部门之间要经过路由器**。
+
+![左上：PC1–PC4 接在 A 上，旁边一个 S.T.；右上：Switch E0–E3 接 PC1–PC4；中间：Switch E0–E3 接 PC1–PC4（MAC-1 … MAC-4），E4（MAC-5）、E5（MAC-6）两根线接路由器 R；右边 S.T. V1、S.T. V2 两张表，左下 R.T.（NW / In）；下面两个问题：① PC1 → PC2 ② PC1 → PC3](images/BOARD_VLAN.png)
+
+*✍️ 左上：PC1–PC4 接在 A 上，旁边一个 S.T.；右上：Switch E0–E3 接 PC1–PC4；中间：Switch E0–E3 接 PC1–PC4（MAC-1 … MAC-4），E4（MAC-5）、E5（MAC-6）两根线接路由器 R；右边 S.T. V1、S.T. V2 两张表，左下 R.T.（NW / In）；下面两个问题：① PC1 → PC2 ② PC1 → PC3（5190M05 supp p.1）*
+
+> **✍️ 我的解答：板书 p.1 上面两张图（传统 LAN）**
+>
+> - **左上**：PC1–PC4 都接在 A 上，只有**一张 S.T.**（Switching Table，MAC 表）。四台机器在同一个广播域：PC1 发 ARP 广播，PC2、PC3、PC4 全都收到。
+> - **右上**：把 A 画成交换机的 E0–E3，还是一个广播域、一张表。这就是 Slide 2 左边的「传统 LAN」。
+> - 中间那张图开始分 VLAN，答案在第 2、3 节。
+
+---
+
+## 2. 🔴 VLAN 的特性（Slides 5–6 + 板书 p.1）
+
+**📄 Slide 5 · VLAN Characteristics**
+
+| 课件原文                                                                                                                                | 中文 / 小白解释                                   |
+| ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| VLANs work at OSI **Layers 2 and 3**                                                                                                | 分 VLAN 是二层的事（交换机端口），VLAN 之间互通是三层的事（路由）      |
+| Devices on a VLAN communicate **only with devices on that VLAN** unless a **router** is configured to enable **inter-VLAN routing** | 默认只跟本 VLAN 通；跨 VLAN 要路由器                    |
+| **Layer 3 Switches (multilayer switches)** commonly do inter-VLAN routing                                                           | 三层交换机 = 交换机 + 路由功能，常用来做 VLAN 间路由            |
+| VLANs provide a method of **controlling network broadcasts**                                                                        | 控制广播（Slide 9）                               |
+| Configured with the Catalyst switch **CLI** or via **centralized management software**                                              | 命令行或集中管理软件                                  |
+| A group of switch ports can be assigned to a single VLAN                                                                            | 好几个端口可以在同一个 VLAN                            |
+| **Each switch port can be assigned to only one VLAN** (**Trunk link** carry traffic for multiple VLAN)                              | 普通端口只属于一个 VLAN；**trunk 例外**，带多个 VLAN（第 5 节） |
+
+**📄 Slide 6 · VLAN Characteristics（续）**
+
+| 课件原文                                                                                             | 中文 / 小白解释                                 |
+| ------------------------------------------------------------------------------------------------ | ----------------------------------------- |
+| **Improperly configured** VLANs can make a network function poorly or not function at all        | 配错了网络就不通（比如两台该互通的 PC 放进了不同 VLAN）          |
+| The switch maintains a **separate switching table for each VLAN**                                | **每个 VLAN 一张 MAC 表**（板书的 S.T. V1、S.T. V2） |
+| If the frame comes in on a port in VLAN 1, the switch searches the table for VLAN 1              | 从哪个 VLAN 的端口进来，就查哪个 VLAN 的表               |
+| For learning and forwarding, the search is made against the address table **for that VLAN only** | 学习（记源 MAC）和转发（查目的 MAC）都只在本 VLAN 的表里做      |
+
+> **✍️ 我的解答：板书 p.1 中间的 S.T. V1 / S.T. V2（假设 PC1、PC2 = VLAN 1，PC3、PC4 = VLAN 2）**
+>
+> 板书没写谁在哪个 VLAN。按 S.T. V1、S.T. V2 两张表和路由器的两根线，我假设：**E0、E1（PC1、PC2）和 E4（R 的一个接口）= VLAN 1；E2、E3（PC3、PC4）和 E5（R 的另一个接口）= VLAN 2**。
+>
+> 学满以后的两张表：
+>
+> | S.T. V1：MAC | Port |
+> | ----------- | ---- |
+> | MAC-1       | E0   |
+> | MAC-2       | E1   |
+> | MAC-5       | E4   |
+>
+> | S.T. V2：MAC | Port |
+> | ----------- | ---- |
+> | MAC-3       | E2   |
+> | MAC-4       | E3   |
+> | MAC-6       | E5   |
+>
+> - 同一个 MAC **不会同时出现在两张表里**：交换机在 V1 的表里根本查不到 MAC-3。
+> - 路由器用了**两根线、两个接口**，每个接口在一个 VLAN 里，当这个 VLAN 的默认网关。
+
+*（网页版此处可交互：给 E0–E3 选 VLAN、选谁发给谁，看每个 VLAN 的 MAC 表、广播传到哪、跨 VLAN 怎么走路由器；下面按板书 p.1 的分法依次发送）*
+
+**板书 p.1：PC1、PC2 = VLAN 1；PC3、PC4 = VLAN 2｜PC1 → PC2**：192.168.1.12 和自己 192.168.1.11 在同一个网段（同一个 VLAN 1）→ 直接发给对方，不经过路由器。
+
+| # | 帧                               | VLAN | 进口 | MAC (S → D)            | IP (S → D)                  | 交换机           | 听不到      |
+| - | ------------------------------- | ---- | -- | ---------------------- | --------------------------- | ------------- | -------- |
+| 1 | PC1 ARP 请求：谁是 192.168.1.12？     | 1    | E0 | MAC-1 → FFFF.FFFF.FFFF | 192.168.1.11 → 192.168.1.12 | flood → E1、E4 | E2、E3、E5 |
+| 2 | PC2 ARP 回复：192.168.1.12 是 MAC-2 | 1    | E1 | MAC-2 → MAC-1          | 192.168.1.12 → 192.168.1.11 | forward → E0  | E2、E3、E5 |
+| 3 | PC1 → PC2 数据                    | 1    | E0 | MAC-1 → MAC-2          | 192.168.1.11 → 192.168.1.12 | forward → E1  | E2、E3、E5 |
+
+**板书 p.1：PC1、PC2 = VLAN 1；PC3、PC4 = VLAN 2｜PC1 → PC3**：192.168.2.13 不在自己的网段 192.168.1.0/24 → 要先交给默认网关（路由器）。 路由器拆掉帧头，查路由表：192.168.2.0/24 → Fa0/1（交换机 E5，VLAN 2）。重新封装：MAC 换成 MAC-6 → MAC-3，IP 不变。
+
+| # | 帧                                  | VLAN | 进口 | MAC (S → D)            | IP (S → D)                  | 交换机           | 听不到      |
+| - | ---------------------------------- | ---- | -- | ---------------------- | --------------------------- | ------------- | -------- |
+| 1 | PC1 ARP 请求：谁是 192.168.1.1？         | 1    | E0 | MAC-1 → FFFF.FFFF.FFFF | 192.168.1.11 → 192.168.1.1  | flood → E1、E4 | E2、E3、E5 |
+| 2 | R Fa0/0 ARP 回复：192.168.1.1 是 MAC-5 | 1    | E4 | MAC-5 → MAC-1          | 192.168.1.1 → 192.168.1.11  | forward → E0  | E2、E3、E5 |
+| 3 | PC1 → 网关 R Fa0/0（第 1 段）            | 1    | E0 | MAC-1 → MAC-5          | 192.168.1.11 → 192.168.2.13 | forward → E4  | E2、E3、E5 |
+| 4 | R Fa0/1 ARP 请求：谁是 192.168.2.13？    | 2    | E5 | MAC-6 → FFFF.FFFF.FFFF | 192.168.2.1 → 192.168.2.13  | flood → E2、E3 | E0、E1、E4 |
+| 5 | PC3 ARP 回复：192.168.2.13 是 MAC-3    | 2    | E2 | MAC-3 → MAC-6          | 192.168.2.13 → 192.168.2.1  | forward → E5  | E0、E1、E4 |
+| 6 | R Fa0/1 → PC3（第 2 段）               | 2    | E5 | MAC-6 → MAC-3          | 192.168.1.11 → 192.168.2.13 | forward → E2  | E0、E1、E4 |
+
+**板书 p.1：PC1、PC2 = VLAN 1；PC3、PC4 = VLAN 2｜PC2 → 广播**：
+
+| # | 帧       | VLAN | 进口 | MAC (S → D)            | IP (S → D)                   | 交换机           | 听不到      |
+| - | ------- | ---- | -- | ---------------------- | ---------------------------- | ------------- | -------- |
+| 1 | PC2 发广播 | 1    | E1 | MAC-2 → FFFF.FFFF.FFFF | 192.168.1.12 → 192.168.1.255 | flood → E0、E4 | E2、E3、E5 |
+
+**PC4 放进 VLAN 3（没有路由器接口）｜PC4 → PC1**：192.168.1.11 不在自己的网段 192.168.3.0/24 → 要先交给默认网关（路由器）。 VLAN 3 在路由器上没有接口，没有网关 → 这个包出不了 VLAN 3。VLAN 之间只能靠路由器（Slide 5、7）。
+
+**路由器 R 的路由表**
+
+| 网段             | 接口            |
+| -------------- | ------------- |
+| 192.168.1.0/24 | Fa0/0（VLAN 1） |
+| 192.168.2.0/24 | Fa0/1（VLAN 2） |
+
+---
+
+## 3. 🔴 路由器在 VLAN 里的角色（Slide 7 + 板书 p.1 ①②）
+
+**📄 Slide 7 · The Role of Routers in VLANs**
+
+![和 Slide 4 同一张图，路由器另一边接 Internet](images/page_07.png)
+
+*和 Slide 4 同一张图，路由器另一边接 Internet（Slide 7）*
+
+| 课件原文                                                               | 中文 / 小白解释                               |
+| ------------------------------------------------------------------ | --------------------------------------- |
+| Provide **connection between different VLANs**                     | VLAN 之间互通                               |
+| Connect to **other parts of the network**                          | 连到外面（图里的 Internet）                      |
+| **Each VLAN must have a unique Layer 3 network or subnet address** | **每个 VLAN 一个网段**：路由器靠网段区分「这个包要去哪个 VLAN」 |
+
+> **✍️ 我的解答：板书 p.1 的路由表和两个问题**
+>
+> **地址假设**：VLAN 1 = 192.168.1.0/24（PC1 .11、PC2 .12，R 在 E4 那个接口 .1）；VLAN 2 = 192.168.2.0/24（PC3 .13、PC4 .14，R 在 E5 那个接口 .1）。R 的两个接口我叫 Fa0/0（MAC-5，接 E4）、Fa0/1（MAC-6，接 E5）。
+>
+> **R.T.**
+>
+> | NW                     | In（接口）         |
+> | ---------------------- | -------------- |
+> | 192.168.1.0/24（VLAN 1） | Fa0/0 → 交换机 E4 |
+> | 192.168.2.0/24（VLAN 2） | Fa0/1 → 交换机 E5 |
+>
+> **① PC1 → PC2（同一个 VLAN）**
+>
+> PC1 发现对方 192.168.1.12 和自己同一个网段 → 直接发（不认识就先 ARP，广播只在 VLAN 1 里传：E1、E4 收到，**E2、E3、E5 听不到**）。
+>
+> | 段         | MAC (S, D)   | IP (S, D) | 交换机                                |
+> | --------- | ------------ | --------- | ---------------------------------- |
+> | PC1 → PC2 | MAC-1, MAC-2 | PC1, PC2  | 查 **S.T. V1**：MAC-2 在 E1 → 从 E1 转发 |
+>
+> **不经过路由器。**
+>
+> **② PC1 → PC3（不同 VLAN）**
+>
+> PC1 发现 192.168.2.13 不在自己的网段 → 交给默认网关（R 的 Fa0/0，MAC-5）。
+>
+> | 段             | MAC (S, D)       | IP (S, D) | 谁处理                                          |
+> | ------------- | ---------------- | --------- | -------------------------------------------- |
+> | 第 1 段 PC1 → R | MAC-1, **MAC-5** | PC1, PC3  | 交换机查 S.T. V1：MAC-5 在 E4 → 转发到 R              |
+> | R 内部          | —                | —         | 拆帧 → 查 R.T.：192.168.2.0 → Fa0/1 → 重新封装       |
+> | 第 2 段 R → PC3 | **MAC-6**, MAC-3 | PC1, PC3  | 交换机从 E5 收到（VLAN 2），查 S.T. V2：MAC-3 在 E2 → 转发 |
+>
+> **IP 地址从头到尾不变，MAC 地址每一段都换**（第 1 周的规律）。同一台交换机上的两台电脑，因为不在一个 VLAN，帧要先「出去」到路由器再「回来」。
+
+> **➕ 课外补充：Router-on-a-stick 和三层交换机**
+>
+> 板书用了**两根线**连路由器（每个 VLAN 一根）。VLAN 一多，路由器的接口就不够了。常见的两种做法：
+>
+> - **Router-on-a-stick**：交换机和路由器之间只拉**一根 trunk**（第 5 节），路由器在一个物理接口上开多个子接口（Fa0/0.1、Fa0/0.2…），每个子接口当一个 VLAN 的网关。
+> - **三层交换机**（Slide 5 提到的 multilayer switch）：交换机自己就会路由，VLAN 之间的流量不用出交换机，速度最快。
+
+---
+
+## 4. 🔴 VLAN 的好处：搬位置、控制广播、安全（Slides 8–10）
+
+**📄 Slide 8 · Benefits of VLANs**
+
+| 课件原文                                                                                                                                     | 中文 / 小白解释               |
+| ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------- |
+| When users in a VLAN are **moved** … as long as they remain within the **same VLAN** … their **network address do not change**           | 换座位不换 VLAN → IP 地址不用改   |
+| A location change can be as simple as **plugging a user into a port** on a VLAN-capable switch and **configuring the port** to that VLAN | 插上网线、把那个端口设成原来的 VLAN 就行 |
+| VLAN helps **control broadcast activity**                                                                                                | 见 Slide 9               |
+
+**📄 Slide 9 · VLANs Help Control Broadcast Activity**
+
+![同一套交换机，分成 Broadcast Domain 1 和 Broadcast Domain 2；下面接一台路由器](images/page_09.png)
+
+*同一套交换机，分成 Broadcast Domain 1 和 Broadcast Domain 2；下面接一台路由器（Slide 9）*
+
+| 课件原文                                                                                      | 中文 / 小白解释          |
+| ----------------------------------------------------------------------------------------- | ------------------ |
+| Broadcast traffic within one VLAN is **not transmitted outside the VLAN**                 | 本 VLAN 的广播出不去      |
+| Conversely, adjacent ports **do not hear** any broadcast traffic generated by other VLANs | 旁边的端口（别的 VLAN）也听不到 |
+
+为什么重要：ARP、DHCP 这些都靠广播。一个广播域里机器越多，每台机器收到的「跟自己无关的广播」越多，浪费带宽和 CPU。切成几个 VLAN，**每个广播域变小**。
+
+**📄 Slide 10 · VLANs Improve Network Security**
+
+| 课件原文                                                                                                                | 中文 / 小白解释                            |
+| ------------------------------------------------------------------------------------------------------------------- | ------------------------------------ |
+| **Restrict the number of users** in a VLAN group                                                                    | 敏感 VLAN 只放少数人                        |
+| Prevent another user from joining **without first receiving approval** from the VLAN network management application | 不是插上网线就能进某个 VLAN，要管理员批准              |
+| Configure **all unused ports** to a **default low-service VLAN**                                                    | 没用的端口放进一个「什么都访问不了」的 VLAN，防止有人随便插线进内网 |
+
+> **🎯 考点：VLAN 的三个好处**
+>
+> 1. **搬位置**：换座位只要改端口的 VLAN，IP 地址不变（Slide 8）；
+> 2. **控制广播**：一个 VLAN 一个广播域（Slides 3、9）；
+> 3. **安全**：限制成员、加入要审批、没用的端口放进低权限 VLAN（Slide 10）。
+
+> **➕ 课外补充：为什么说没用的端口要「放进别的 VLAN」**
+>
+> 交换机出厂时**所有端口默认都在 VLAN 1**。如果没用的端口留在 VLAN 1，有人在会议室插上网线，就直接进了和管理设备同一个广播域。所以 Slide 10 说把它们移到一个没有任何服务的 VLAN（通常还会 `shutdown` 掉）。
+
+---
+
+## 5. 🔴 Trunk（Slides 11–13 + 板书 p.2）
+
+**📄 Slide 11 · History of Trunking**
+
+![Traditional Telephone Trunk Line Carries Multiple Simultaneous Conversations：五部电话 → Access Multiplexer → 一条 Trunk Link → Central Office](images/page_11.png)
+
+*Traditional Telephone Trunk Line Carries Multiple Simultaneous Conversations：五部电话 → Access Multiplexer → 一条 Trunk Link → Central Office（Slide 11）*
+
+「Trunk」这个词来自电话网：五部电话不用各拉一条线到电话局，接到一个**多路复用器**上，用**一条干线**同时传多通电话。网络里的 trunk 是同一个意思：**一根线同时传多个 VLAN 的流量**。
+
+**📄 Slide 12 · Trunking Concepts**
+
+| 课件原文                                                                                               | 中文 / 小白解释                     |
+| -------------------------------------------------------------------------------------------------- | ----------------------------- |
+| A trunk is a **physical and logical connection between two switches**                              | 交换机之间的一条线                     |
+| Trunk is a single transmission channel between two points (**does not belong to a specific VLAN**) | 它不属于某一个 VLAN，而是**所有 VLAN 共用** |
+
+**📄 Slide 13 · Trunking Operation**
+
+| 课件原文                                                                                                                              | 中文 / 小白解释                        |
+| --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------- |
+| Trunks use **special encapsulation** to distinguish between different VLANs                                                       | 帧在 trunk 上要多带一点信息，标明自己是哪个 VLAN 的 |
+| **Trunking Protocols** were developed to effectively manage the transfer of frames from different VLANs on a single physical link | ISL、802.1Q 就是这种协议（Slide 16）      |
+
+![左：交换机 ②（PC1–PC4，MAC-1 … MAC-4）和交换机 ①（PC5–PC8，MAC-5 … MAC-8）之间画了两根线；右：同样两台交换机，中间没画线](images/BOARD_TRUNK.png)
+
+*✍️ 左：交换机 ②（PC1–PC4，MAC-1 … MAC-4）和交换机 ①（PC5–PC8，MAC-5 … MAC-8）之间画了两根线；右：同样两台交换机，中间没画线（5190M05 supp p.2）*
+
+> **✍️ 我的解答：板书 p.2（假设 PC1、PC2、PC5、PC6 = VLAN 1；PC3、PC4、PC7、PC8 = VLAN 2）**
+>
+> **左图：每个 VLAN 一根线。** 两台交换机之间拉两根线，一根在 VLAN 1、一根在 VLAN 2，两头都是普通的 access 端口。
+>
+> - 好处：帧不用改，简单。
+> - 问题：**有几个 VLAN 就要几根线、每台交换机就要占几个端口**。10 个 VLAN 就是 10 根线。
+>
+> **右图（我的答案：中间画一根 trunk）。** 两台交换机之间**只要一根线**，设成 trunk，带所有 VLAN。
+>
+> - 交换机 ② 从 PC1 收到一帧 → 按端口知道它是 VLAN 1 → 往 trunk 上发时**加上 VLAN 1 的标签**；
+> - 交换机 ① 从 trunk 收到 → 读标签 → 知道是 VLAN 1 → **去掉标签**，只送到 PC5、PC6 的端口；
+> - PC3 发的帧打 VLAN 2 的标签，到对面只会送到 PC7、PC8。
+>
+> **为什么一定要打标签**：一根线上混着 VLAN 1 和 VLAN 2 的帧，不打标签的话，对面交换机看到 PC1 发的广播，不知道该送给 VLAN 1 还是 VLAN 2 的端口。
+
+---
+
+## 6. 🔴 Frame Tagging：ISL vs 802.1Q（Slides 14–17）
+
+**📄 Slide 14 · Frame Tagging（图）**
+
+![两台交换机之间的 Backbone 上同时跑着 VLAN1、VLAN2、VLAN3 的帧；两边各有 VLAN1、2、3 的电脑](images/page_14.png)
+
+*两台交换机之间的 Backbone 上同时跑着 VLAN1、VLAN2、VLAN3 的帧；两边各有 VLAN1、2、3 的电脑（Slide 14）*
+
+**📄 Slide 15 · Frame Tagging（一）**
+
+| 课件原文                                                                                                                                                                  | 中文 / 小白解释                           |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| Places a **unique identifier in the header of each frame** as it is forwarded throughout the network backbone (receiving switch knows to what VLAN the frame belongs) | 在帧头里放一个 VLAN 标识，收到的交换机就知道它属于哪个 VLAN |
+| The identifier is understood and examined by **each switch** prior to any transmissions                                                                               | 每台交换机转发前都要看这个标识                     |
+| Frame identification function at **layer 2** and does not require much network resources or administrative overhead                                                   | 二层就能完成，开销小                          |
+
+**📄 Slide 16 · Frame Tagging（二）**
+
+| 课件原文                                                                      | 中文 / 小白解释                           |
+| ------------------------------------------------------------------------- | ----------------------------------- |
+| When frame **exits the backbone, the last switch removes the identifier** | 送给电脑之前，最后一台交换机把标签去掉——**电脑永远收到普通的帧** |
+| **ISL** – **Cisco proprietary** Inter-Switch Link Protocol                | Cisco 私有                            |
+| **802.1Q** – **IEEE standard**                                            | 开放标准，不同厂商的交换机都支持                    |
+
+**📄 Slide 17 · Inter-Switch Link Protocol**
+
+![① 帧从 VLAN 200 的 Port A 进入交换机 Y；② Y 往 trunk 上发时变成「ISL | Frame」；③ 经过 W 和上面的交换机，到 Z 后去掉 ISL，从 VLAN 200 的 Port C 发出普通帧](images/page_17.png)
+
+*① 帧从 VLAN 200 的 Port A 进入交换机 Y；② Y 往 trunk 上发时变成「ISL | Frame」；③ 经过 W 和上面的交换机，到 Z 后去掉 ISL，从 VLAN 200 的 Port C 发出普通帧（Slide 17）*
+
+逐步读图：
+
+1. 普通帧从 **Port A（VLAN 200，access link）** 进入交换机 Y；
+2. Y 要把它送到别的交换机，走 **trunk link**（红线），帧前面加上 **ISL 头**（带 VLAN 200）；
+3. 经过 W、顶上的交换机，到 Z；Z 看 ISL 头知道是 VLAN 200，**去掉 ISL**，从 **Port C（VLAN 200）** 发出普通帧。
+
+注意：Y 的 Port B 也在 VLAN 200，同一台交换机内直接转发，不需要加标签。W 上的 VLAN 100 收不到这个帧。
+
+*（网页版此处可交互：给 PC1–PC8 选 VLAN，切换「每个 VLAN 一根线 / 802.1Q / ISL」，看每一段线上的帧；下面是 PC1 发广播的结果）*
+
+**每个 VLAN 一根线（板书 p.2 左）**：交换机之间 2 根线；收到的 PC：PC2、PC5、PC6
+
+| 一段           | 线上的帧                                                                | 发生了什么                                |
+| ------------ | ------------------------------------------------------------------- | ------------------------------------ |
+| PC1 → SW2 F1 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS` | SW2 看进来的端口 F1 → 这是 VLAN 1 的帧         |
+| SW2 F2 → PC2 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS` | 同一台交换机上 VLAN 1 的端口也收到广播              |
+| SW2 → SW1    | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS` | 走 VLAN 1 专用的那根线；帧不用改，因为这根线只属于 VLAN 1 |
+| SW1 F1 → PC5 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS` | SW1 从 VLAN 1 的端口收进来，送到 VLAN 1 的端口    |
+| SW1 F2 → PC6 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS` | SW1 从 VLAN 1 的端口收进来，送到 VLAN 1 的端口    |
+
+**Trunk：802.1Q（板书 p.2 右）**：交换机之间 1 根线；收到的 PC：PC2、PC5、PC6
+
+| 一段           | 线上的帧                                                                                      | 发生了什么                                               |
+| ------------ | ----------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| PC1 → SW2 F1 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS`                       | SW2 看进来的端口 F1 → 这是 VLAN 1 的帧                        |
+| SW2 F2 → PC2 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS`                       | 同一台交换机上 VLAN 1 的端口也收到广播                             |
+| SW2 → SW1    | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| 802.1Q(VID 1) \| Type(0x0800) \| Data(…) \| FCS*(重算)` | SW2 在源 MAC 后面插入 4 字节的 802.1Q 标签（VLAN ID = 1），重算 FCS |
+| SW1 F1 → PC5 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS`                       | SW1 读标签 → VLAN 1，去掉标签，只送到 VLAN 1 的端口                |
+| SW1 F2 → PC6 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS`                       | SW1 读标签 → VLAN 1，去掉标签，只送到 VLAN 1 的端口                |
+
+**Trunk：ISL**：交换机之间 1 根线；收到的 PC：PC2、PC5、PC6
+
+| 一段           | 线上的帧                                                                                                        | 发生了什么                                                  |
+| ------------ | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| PC1 → SW2 F1 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS`                                         | SW2 看进来的端口 F1 → 这是 VLAN 1 的帧                           |
+| SW2 F2 → PC2 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS`                                         | 同一台交换机上 VLAN 1 的端口也收到广播                                |
+| SW2 → SW1    | `ISL 头(26 B · VLAN 1) \| DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS \| ISL CRC(4 B)` | SW2 把整个帧包进 ISL：前面加 26 字节的 ISL 头（含 VLAN 1），后面加 4 字节 CRC |
+| SW1 F1 → PC5 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS`                                         | SW1 读标签 → VLAN 1，去掉标签，只送到 VLAN 1 的端口                   |
+| SW1 F2 → PC6 | `DA(FFFF.FFFF.FFFF) \| SA(MAC-1) \| Type(0x0800) \| Data(…) \| FCS`                                         | SW1 读标签 → VLAN 1，去掉标签，只送到 VLAN 1 的端口                   |
+
+> **➕ 课外补充：ISL 和 802.1Q 的帧长什么样**
+>
+> |      | ISL                             | 802.1Q                                                 |
+> | ---- | ------------------------------- | ------------------------------------------------------ |
+> | 谁定的  | Cisco 私有                        | IEEE 标准                                                |
+> | 方式   | **封装（encapsulate）**：整个原始帧外面再包一层 | **插入（insert）**：在原始帧里面插一个标签                             |
+> | 加了多少 | 前面 26 字节 ISL 头 + 后面 4 字节 CRC    | 源 MAC 后面插 4 字节，原来的 FCS 要重算                             |
+> | 现在   | 基本淘汰，新的 Cisco 交换机只支持 802.1Q     | 主流                                                     |
+> | 特别的  | —                               | **Native VLAN**：这个 VLAN 的帧在 trunk 上**不打标签**（默认 VLAN 1） |
+>
+> 802.1Q 标签里放 VLAN ID 的是 12 位，所以最多 4096 个 VLAN（0 和 4095 保留，可用 1–4094）。
+
+*（网页版此处是点选练习：VLAN 这一章：说的是哪一个？；下表是全部题目和答案）*
+
+| 情景                             | 答案                | 理由                                                                             |
+| ------------------------------ | ----------------- | ------------------------------------------------------------------------------ |
+| 按部门、功能、应用把设备分组，不管它们在哪一层楼       | **VLAN**          | Slide 3：logical grouping … regardless of their physical segment location       |
+| 一个 VLAN = 一个广播域                | **VLAN**          | Slide 3：One logical broadcast domain                                           |
+| 让不同 VLAN 之间能通信                 | **路由器 / 三层交换机**   | Slide 5、7：unless a router is configured to enable inter-VLAN routing；三层交换机也常做  |
+| 每个 VLAN 要有一个不同的网段，它在每个网段上有一个接口 | **路由器 / 三层交换机**   | Slide 7：Each VLAN must have a unique Layer 3 network or subnet address         |
+| 两台交换机之间的一条线，同时带好几个 VLAN 的流量    | **Trunk**         | Slide 5、12：Trunk link carry traffic for multiple VLAN；不属于某一个 VLAN              |
+| 概念来自电话公司：一条线同时传很多通电话           | **Trunk**         | Slide 11：History of Trunking                                                   |
+| 在帧头里放一个标识，让下一台交换机知道这帧属于哪个 VLAN | **Frame tagging** | Slide 14–15：Places a unique identifier in the header of each frame             |
+| 帧离开 backbone 时，最后一台交换机把标识去掉    | **Frame tagging** | Slide 16：When frame exits the backbone, the last switch removes the identifier |
+| Cisco 私有的打标签方式                 | **ISL**           | Slide 16：ISL – Cisco proprietary Inter-Switch Link Protocol                    |
+| IEEE 标准的打标签方式                  | **802.1Q**        | Slide 16：802.1Q – IEEE standard                                                |
+| 把整个原始帧包起来，前面加一个头、后面加一个 CRC     | **ISL**           | Slide 17 图：ISL \| Frame（课外：26 字节头 + 4 字节 CRC，封装式）                              |
+| 在原始帧里面插入 4 字节标签（不是外面再包一层）      | **802.1Q**        | 课外补充：802.1Q 是 insert 式，插在源 MAC 后面                                              |
+| 把没用的端口放进一个低权限的默认 VLAN          | **VLAN**          | Slide 10：VLANs Improve Network Security                                        |
+
+---
+
+## 7. 🟢 课外补充：配置命令和 VLAN 的安全问题
+
+> **➕ Cisco 交换机上配 VLAN（课件还没讲到）**
+>
+> ```
+> Switch(config)#vlan 10
+> Switch(config-vlan)#name Finance
+> Switch(config)#interface fa0/1
+> Switch(config-if)#switchport mode access          ← 普通端口：只属于一个 VLAN
+> Switch(config-if)#switchport access vlan 10
+> Switch(config)#interface fa0/24
+> Switch(config-if)#switchport mode trunk           ← trunk 端口：带多个 VLAN
+> Switch(config-if)#switchport trunk encapsulation dot1q   ← 有的型号要指定 ISL / 802.1Q
+> Switch#show vlan brief
+> ```
+>
+> **Access port**（Slide 5 的 "each switch port can be assigned to only one VLAN"）vs **Trunk port**（"trunk link carry traffic for multiple VLAN"）是同一件事的两种端口。
+
+> **➕ VLAN 也会被攻击：VLAN hopping**
+>
+> VLAN 不是绝对安全的。常见的两种「跳 VLAN」：
+>
+> - **Switch spoofing**：攻击者的电脑假装成交换机，跟端口协商成 trunk，就能收到所有 VLAN 的帧。防御：普通端口固定写 `switchport mode access`，关掉自动协商。
+> - **Double tagging**：利用 802.1Q 的 native VLAN 不打标签，在帧里塞两层标签，让第二层标签在下一台交换机生效。防御：native VLAN 不要用 VLAN 1，也不要给用户用。
+>
+> 这也是 Slide 10 说「没用的端口放进低权限 VLAN」的原因之一。
+
+---
+
+## 🔴 综合缩写速查表
+
+| 缩写 / 术语                     | 全称                | 一句话                               |
+| --------------------------- | ----------------- | --------------------------------- |
+| VLAN                        | Virtual LAN       | 按部门 / 功能分组的逻辑 LAN，一个 VLAN = 一个广播域 |
+| Broadcast domain            | —                 | 一个广播能传到的范围；路由器和 VLAN 都能分隔         |
+| S.T.                        | Switching Table   | 交换机的 MAC 表；每个 VLAN 一张             |
+| Inter-VLAN routing          | —                 | VLAN 之间的通信，要靠路由器或三层交换机            |
+| Layer 3 / multilayer switch | —                 | 带路由功能的交换机，常做 inter-VLAN routing   |
+| Access port / link          | —                 | 只属于一个 VLAN 的普通端口（课外术语）            |
+| Trunk                       | —                 | 交换机之间带多个 VLAN 的一条线，不属于某个 VLAN     |
+| Frame tagging               | —                 | 在帧上加 VLAN 标识，出 backbone 时去掉       |
+| ISL                         | Inter-Switch Link | Cisco 私有的 trunk 协议，封装式            |
+| 802.1Q                      | IEEE 802.1Q       | IEEE 标准的 trunk 协议，插入 4 字节标签       |
+| Native VLAN                 | —                 | 802.1Q trunk 上不打标签的 VLAN（课外）      |
+
+---
+
+## 模拟自测题
+
+**VLAN 是按什么把设备分组的？**
+
+- A. 设备所在的楼层
+- B. 设备连接的 hub
+- C. 功能、部门或应用，不管物理位置
+- D. 设备的 MAC 地址厂商
+
+> **答案：C**
+>
+> Slide 3：logical grouping … by function, department or application, regardless of their physical segment location。
+
+**一个 VLAN 相当于？**
+
+- A. 一个冲突域
+- B. 一个广播域
+- C. 一个自治系统
+- D. 一个路由表
+
+> **答案：B**
+>
+> Slide 3：One logical broadcast domain。
+
+**PC1 在 VLAN 10，PC2 在 VLAN 20，接在同一台二层交换机上，没有路由器。PC1 能 ping 通 PC2 吗？**
+
+- A. 能，因为在同一台交换机上
+- B. 能，交换机会自动转发
+- C. 不能，不同 VLAN 之间要靠路由器或三层交换机
+- D. 不能，除非两台 PC 的 MAC 地址相同
+
+> **答案：C**
+>
+> Slide 5：communicate only with devices on that VLAN unless a router is configured to enable inter-VLAN routing。
+
+**交换机怎么维护 MAC 地址表？**
+
+- A. 所有 VLAN 共用一张表
+- B. 每个 VLAN 一张表，学习和转发只查本 VLAN 的表
+- C. 每个端口一张表
+- D. 只记录 trunk 端口的 MAC
+
+> **答案：B**
+>
+> Slide 6：The switch maintains a separate switching table for each VLAN … the search is made against the address table for that VLAN only。
+
+**关于 VLAN 和 IP 网段，下列哪个正确？**
+
+- A. 所有 VLAN 共用一个网段
+- B. 每个 VLAN 要有一个不同的三层网段
+- C. VLAN 不需要 IP 网段
+- D. 一个 VLAN 只能有一台主机
+
+> **答案：B**
+>
+> Slide 7：Each VLAN must have a unique Layer 3 network or subnet address assigned to it。
+
+**一个普通的交换机端口可以属于几个 VLAN？**
+
+- A. 1 个
+- B. 2 个
+- C. 最多 4 个
+- D. 任意多个
+
+> **答案：A**
+>
+> Slide 5：Each switch port can be assigned to only one VLAN；带多个 VLAN 的是 trunk link。
+
+**用户从 3 楼搬到 1 楼，仍在同一个 VLAN，需要做什么？**
+
+- A. 改 IP 地址和默认网关
+- B. 把新位置的交换机端口配置成原来的 VLAN，IP 地址不变
+- C. 重新布线到原来的交换机
+- D. 在路由器上加一条静态路由
+
+> **答案：B**
+>
+> Slide 8：network address do not change … plugging a user into a port … and configuring the port on the switch to that VLAN。
+
+**下列哪两项是 Slide 10 讲的用 VLAN 提高安全的做法？**
+
+- A. 限制一个 VLAN 里的用户数
+- B. 把所有端口都设成 trunk
+- C. 把没用的端口放进一个低权限的默认 VLAN
+- D. 关闭所有广播
+
+> **答案：A、C**
+>
+> Slide 10：Restrict the number of users in a VLAN group；Configure all unused ports to a default low-service VLAN；另一条是加入要审批。
+
+**Trunk 指的是？**
+
+- A. 属于 VLAN 1 的一条线
+- B. 两台交换机之间带多个 VLAN 流量的一条线，不属于某个 VLAN
+- C. 交换机到路由器的串口
+- D. 一个 VLAN 里所有端口的集合
+
+> **答案：B**
+>
+> Slide 12：A trunk is a physical and logical connection between two switches … does not belong to a specific VLAN。
+
+**帧在 trunk 上为什么要打标签？**
+
+- A. 为了加密
+- B. 为了让接收的交换机知道帧属于哪个 VLAN
+- C. 为了压缩帧的大小
+- D. 为了让电脑知道自己在哪个 VLAN
+
+> **答案：B**
+>
+> Slide 15：receiving switch knows to what VLAN the frame belongs。电脑收到的帧标签已经被去掉了（Slide 16）。
+
+**VLAN 标签在什么时候被去掉？**
+
+- A. 帧进入第一台交换机时
+- B. 帧离开 backbone 时，由最后一台交换机去掉
+- C. 路由器转发时
+- D. 永远不去掉
+
+> **答案：B**
+>
+> Slide 16：When frame exits the backbone, the last switch removes the identifier。
+
+**ISL 和 802.1Q 的区别是？**
+
+- A. ISL 是 IEEE 标准，802.1Q 是 Cisco 私有
+- B. ISL 是 Cisco 私有，802.1Q 是 IEEE 标准
+- C. 两个都是 Cisco 私有
+- D. ISL 是三层协议，802.1Q 是二层协议
+
+> **答案：B**
+>
+> Slide 16：ISL – Cisco proprietary Inter-Switch Link Protocol；802.1Q – IEEE standard。
+
+**下列哪个设备常被用来做 inter-VLAN routing？**
+
+- A. Hub
+- B. Repeater
+- C. Layer 3 switch
+- D. 二层交换机的 access 端口
+
+> **答案：C**
+>
+> Slide 5：Layer 3 Switches (multilayer switches) commonly do inter-VLAN routing。
+
+**板书 p.1：PC1、PC2 在 VLAN 1，PC3、PC4 在 VLAN 2，路由器接 E4（MAC-5，VLAN 1）和 E5（MAC-6，VLAN 2）。写出 S.T. V1、S.T. V2。**
+
+> S.T. V1：MAC-1 → E0、MAC-2 → E1、MAC-5 → E4。S.T. V2：MAC-3 → E2、MAC-4 → E3、MAC-6 → E5。每个 VLAN 一张表，学习和转发只查本 VLAN 的表（Slide 6）。（我的解答，VLAN 分法是我的假设。）
+
+**接上题：PC1 → PC3，写出每一段的 MAC (S, D) 和 IP (S, D)。**
+
+> 第 1 段 PC1 → R：MAC (MAC-1, MAC-5)，IP (PC1, PC3)，交换机查 S.T. V1 从 E4 送给 R。  
+> R 查路由表：VLAN 2 的网段 → 接 E5 的接口。  
+> 第 2 段 R → PC3：MAC (MAC-6, MAC-3)，IP (PC1, PC3)，交换机查 S.T. V2 从 E2 送出。  
+> IP 不变，MAC 每段都换。同一台交换机上的两台 PC，因为在不同 VLAN，要经过路由器。
+
+**接上题：PC1 发一个广播，哪些端口收到？**
+
+> 只有 VLAN 1 的其他端口：E1（PC2）和 E4（路由器）。E2、E3、E5 在 VLAN 2，听不到（Slide 9）。路由器也不会把广播转发到 VLAN 2。
+
+**板书 p.2：两台交换机各有 VLAN 1 和 VLAN 2 的电脑。比较「每个 VLAN 一根线」和「一根 trunk」。**
+
+> 每个 VLAN 一根线：帧不用改，但 VLAN 越多，线和交换机端口越多。  
+> 一根 trunk：只要一根线，带所有 VLAN；发送的交换机给帧加上 VLAN 标签（ISL 或 802.1Q），接收的交换机看标签决定送到哪个 VLAN 的端口，并在送给电脑前去掉标签（Slides 12–16）。
