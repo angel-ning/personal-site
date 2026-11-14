@@ -77,6 +77,9 @@ import { RECEIPT_PRESETS, traceCopies } from "../../src/components/mdx/copy-trac
 import { GATES, PATHS, RECORDS, USERS, WORKPAPER, evaluateGate } from "../../src/components/mdx/permission-gate-logic.mjs";
 import { CONTROL_MODES, SUPPLIERS, VERDICT_LABEL, assessTraining, gateDecision, memoryWalk } from "../../src/components/mdx/grc-talk-logic.mjs";
 import { SUBGROUP_PRESETS, subgroupCheck } from "../../src/components/mdx/subgroup-logic.mjs";
+import { CRITERIA as DQ_CRITERIA, NEEDS_LABEL as DQ_NEEDS, checkRows as dqCheckRows, dimLabel as dqDim, fmtAmount as dqAmount } from "../../src/components/mdx/data-quality-logic.mjs";
+import { ACC_PRESETS, METHODS as ACC_METHODS, confusion as accConfusion, pct as accPct, representation as accRep } from "../../src/components/mdx/accuracy-trap-logic.mjs";
+import { CHANGE_PRESETS, CHANGES as CI_CHANGES, STATUS as CI_STATUS, assessChange } from "../../src/components/mdx/change-impact-logic.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
 const osi = readJson("src/components/mdx/data/osi.json");
@@ -103,6 +106,7 @@ const pyTraces = readJson("src/components/mdx/data/py-traces.json");
 const pyNbQuiz = readJson("src/components/mdx/data/py-notebook-quiz.json");
 const govQuiz = readJson("src/components/mdx/data/gov-quiz.json");
 const privacyQuiz = readJson("src/components/mdx/data/privacy-quiz.json");
+const lifecycleQuiz = readJson("src/components/mdx/data/lifecycle-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -1574,6 +1578,45 @@ const components = {
     const set = privacyQuiz[a.set] ?? privacyQuiz.ref;
     const label = (id) => set.options.find((o) => o.id === id).label;
     return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  LifecycleSortQuiz(_node, a) {
+    const set = lifecycleQuiz[a.set] ?? lifecycleQuiz.quality;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  DataQualityLab() {
+    const rows = dqCheckRows();
+    return [
+      note("（网页版此处可以逐行勾选违反了哪项检查再核对；下表是按准则算出的全部答案）"),
+      para(text(`准则：${DQ_CRITERIA.join(" ")}`)),
+      table(["#", "Ticket", "Region", "Sale date", "Amount", "Cur.", "Loaded", "问题", "怎么处理"], rows.map((r) => [
+        String(r.row), r.ticket, r.region || "—", r.sale, dqAmount(r.amount), r.currency, r.loaded,
+        r.issues.length ? r.issues.map((x) => `${dqDim(x.dim)}：${x.why}`).join(" ") : `无。${r.trap ?? ""}`,
+        r.issues.length ? r.issues.map((x) => `${x.fix}（${DQ_NEEDS[x.needs]}）`).join(" ") : "—",
+      ])),
+    ];
+  },
+  AccuracyTrapLab() {
+    return [
+      note("（网页版此处可以改测试集构成和模型抓到 / 误报的数量；下表是几个预设）"),
+      table(["情形", "合法 / 欺诈", "TP · FN · FP · TN", "总准确率", "「永远判合法」", "欺诈召回率", "精确率"], ACC_PRESETS.map((p) => {
+        const r = accConfusion(p);
+        return [p.label, `${p.legit} / ${p.fraud}`, `${r.tp} · ${r.fn} · ${r.fp} · ${r.tn}`, accPct(r.accuracy), accPct(r.baseline), accPct(r.recall), accPct(r.precision)];
+      })),
+      para(text(accConfusion(ACC_PRESETS[0]).verdict)),
+      table(["欺诈手法（Slide 13 训练集）", "例数", "占比"], accRep(ACC_METHODS).map((m) => [`${m.label} · ${m.zh}`, String(m.n), `${accPct(m.share)}${m.thin ? " ⚠ 样本太少" : ""}`])),
+    ];
+  },
+  ChangeImpactLab() {
+    return CHANGE_PRESETS.flatMap((p) => {
+      const a = assessChange(p);
+      return [
+        para(strong(`${p.label}：${CI_CHANGES.filter((c) => p.changes.includes(c.id)).map((c) => c.label).join("；")}`)),
+        table(["必需的测试", "怎么查", "记录里有什么"], a.tests.map((t) => [t.label, t.how, `${CI_STATUS[t.ev.status].label}：${t.ev.text}`])),
+        table(["批准记录字段", "现状"], a.fields.map((f) => [`${f.label}（${f.zh}）`, `${f.have ? "✓" : "✗"} ${f.text}`])),
+        para(text(a.verdict)),
+      ];
+    });
   },
 };
 

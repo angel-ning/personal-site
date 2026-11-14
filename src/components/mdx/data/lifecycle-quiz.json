@@ -1,0 +1,117 @@
+{
+  "quality": {
+    "title": "这是哪一项数据质量问题？（Slide 10）",
+    "options": [
+      { "id": "accuracy", "label": "Accuracy" },
+      { "id": "completeness", "label": "Completeness" },
+      { "id": "consistency", "label": "Consistency" },
+      { "id": "timeliness", "label": "Timeliness" },
+      { "id": "validity", "label": "Validity" },
+      { "id": "uniqueness", "label": "Uniqueness" }
+    ],
+    "items": [
+      { "q": "配方记录里写的是「salt」，实际放的是糖", "a": "accuracy", "why": "格式没问题，但值和真实发生的事不一致（老师弹窗里的例子）" },
+      { "q": "日期字段是 2026-02-30", "a": "validity", "why": "不满足规定的日期规则——不存在的日期；不需要外部证据就能判定" },
+      { "q": "一半的工单没有填「解决结果」字段", "a": "completeness", "why": "必填值缺失，而且是同一个重要字段反复被跳过" },
+      { "q": "销售部用「HK」，财务部用「Hong Kong」，客服系统用「香港」", "a": "consistency", "why": "不同部门 / 系统的标签和定义不一致" },
+      { "q": "用上个月的库存快照回答今天的「有没有货」", "a": "timeliness", "why": "数据不是任务需要时的最新状态（也是 data lag）" },
+      { "q": "同一笔付款因为重试被装载了两次", "a": "uniqueness", "why": "两行代表同一个事件；要用记录键识别并合并真正的重复" },
+      { "q": "金额填的是 12,000，收据是 1,200，格式完全合法", "a": "accuracy", "why": "Validity ≠ accuracy：格式对，值也可能是错的（Slide 11 的 T107）" },
+      { "q": "金额填的是 −50，规则要求销售额为正", "a": "validity", "why": "违反规定的取值范围；至于它是不是退款、要不要留，是业务决定" }
+    ]
+  },
+  "dataset": {
+    "title": "这份数据是拿来干什么的？（Slide 26）",
+    "options": [
+      { "id": "train", "label": "Training data" },
+      { "id": "val", "label": "Validation data" },
+      { "id": "test", "label": "Reserved test data" },
+      { "id": "runtime", "label": "Data used at runtime" }
+    ],
+    "items": [
+      { "q": "模型从这些例子里学习模式", "a": "train", "why": "训练数据：Examples the model learns from" },
+      { "q": "比较两个设置哪个更好，用来指导调参", "a": "val", "why": "验证数据：compare choices and guide tuning——属于开发阶段" },
+      { "q": "冻结候选版本后才第一次拿出来，用来对照约定的标准做最终评估", "a": "test", "why": "保留的测试数据：和用来改进模型的数据分开" },
+      { "q": "RAG 回答时检索到的当前政策片段", "a": "runtime", "why": "运行时数据：用户输入 + 为当前任务检索的信息；RAG 不重新训练模型" },
+      { "q": "工程师反复对着同样 100 张工单找错、调整分类器", "a": "val", "why": "Slide 27：这 100 张被拿来改进模型，已经是开发用的数据，在上面得的 95% 不能当最终评估" },
+      { "q": "上线后用户提的问题", "a": "runtime", "why": "运行时输入；要按目的保留、限制访问，不要默认拿去训练" }
+    ]
+  },
+  "stage": {
+    "title": "这件事归哪个生命周期阶段、谁负责？（Slide 22 弹窗）",
+    "options": [
+      { "id": "usecase", "label": "Use case · business owner" },
+      { "id": "design", "label": "Design · service owner + specialists" },
+      { "id": "dev", "label": "Development & evaluation · builders / evaluators" },
+      { "id": "deploy", "label": "Deployment · release authority" },
+      { "id": "monitor", "label": "Monitoring · service owner" },
+      { "id": "retire", "label": "Retirement · service + asset owners" }
+    ],
+    "items": [
+      { "q": "定下「平均搜索时间减少 20%、98% 的回答与批准的信息一致」", "a": "usecase", "why": "业务 owner 定义目的和成功标准；记录：约定的目标和限度" },
+      { "q": "决定这个助手默认只能检索员工本人有权看的文件", "a": "design", "why": "service owner 和相关专家定义数据、访问和安全要求；记录：设计决定和职责" },
+      { "q": "指定一位没参与开发的人，在保留的测试集上评估冻结的候选版本", "a": "dev", "why": "builders 改进服务，指定的 evaluators 评估最终候选；记录：版本、测试、结果" },
+      { "q": "批准候选版本上线，并写明只能给 HR 部门用", "a": "deploy", "why": "发布权限人批准候选版本和使用条件；记录：发布决定和运行限度" },
+      { "q": "发现上线三个月后回答正确率下降，安排纠正", "a": "monitor", "why": "service owner 跟踪表现、调查变化、安排纠正；监控反馈回到设计、开发和评估" },
+      { "q": "撤销旧 API 凭证，确认没有定时任务还在调用旧服务", "a": "retire", "why": "service 和资产 owner 关掉剩下的连接、检查退役完成；记录：退役检查和签字" }
+    ]
+  },
+  "guard": {
+    "title": "这个控制属于哪一类 guardrail？（Slide 16 弹窗）",
+    "options": [
+      { "id": "in-id", "label": "Input · 身份与检索" },
+      { "id": "in-content", "label": "Input · 内容与格式" },
+      { "id": "out-disc", "label": "Output · 信息泄露" },
+      { "id": "out-qual", "label": "Output · 质量与安全" },
+      { "id": "action", "label": "Action · 执行与资源" }
+    ],
+    "items": [
+      { "q": "按登录员工的权限挑选能进 prompt 的文件，受限预算表不进", "a": "in-id", "why": "认证用户，只选有权限的文档；审计：用普通账户和高权限账户各试一次，看选中的 context" },
+      { "q": "把检索到的文档里的「指令」当作不可信数据，不执行", "a": "in-content", "why": "校验必填字段、最小化敏感数据、把检索到的指令当不可信数据；测畸形请求和提示注入" },
+      { "q": "交付前检查摘要和改写里有没有受限内容，按收件人套 DLP 规则", "a": "out-disc", "why": "改写也可能泄露；DLP = data loss prevention" },
+      { "q": "回答必须引用来源，没把握的转人工复核", "a": "out-qual", "why": "检查格式、有依据的说法、禁止内容；也要测「允许的回答确实有用」，不只测拒绝" },
+      { "q": "发会议邀请前必须用户明确批准，每小时最多 5 封", "a": "action", "why": "在应用里强制工具范围、明确审批、速率 / 成本上限和安全 fallback" },
+      { "q": "模型已经读到受限文件后，在输出里加一行警告", "a": "out-disc", "why": "这是输出端的措施，但它撤不回已经送进模型的受限内容——应该在输入端就拦（Slide 16）" }
+    ]
+  },
+  "agent": {
+    "title": "这是 prompt、skill、tool、MCP、agent、harness 还是 guardrail？（Slide 28 弹窗）",
+    "options": [
+      { "id": "prompt", "label": "Prompt" },
+      { "id": "skill", "label": "Skill" },
+      { "id": "tool", "label": "Tool" },
+      { "id": "mcp", "label": "MCP" },
+      { "id": "agent", "label": "Agent" },
+      { "id": "harness", "label": "Harness" },
+      { "id": "guardrail", "label": "Guardrail" }
+    ],
+    "items": [
+      { "q": "「帮我找一个开会时间。」", "a": "prompt", "why": "给模型的指令或请求；措辞本身不授予日历访问" },
+      { "q": "一份可复用的「安排会议」步骤说明，附带脚本", "a": "skill", "why": "可复用的任务流程；仍然需要被授权的工具和执行控制" },
+      { "q": "read_calendar() 和 send_invitation() 两个函数", "a": "tool", "why": "应用能调用的函数；读和发是两个不同的操作、不同的范围" },
+      { "q": "让应用用统一方式连到日历服务的协议连接", "a": "mcp", "why": "连接让工具可用，不等于每个工具调用都被允许" },
+      { "q": "根据模型的判断一步步完成「约会议」这个任务的系统", "a": "agent", "why": "它提议时间并请求发送——提议不等于许可" },
+      { "q": "在发送前检查身份、工具权限、审批、资源上限并记录任务的应用软件", "a": "harness", "why": "管理模型请求、任务信息和工具执行的应用层" },
+      { "q": "harness 里强制执行的「发邀请前必须审批」这道门", "a": "guardrail", "why": "围绕输入、输出或动作的特定风险控制；system prompt 只能描述规则，执行要靠应用" }
+    ]
+  },
+  "change": {
+    "title": "这一步属于紧急变更还是回滚？（Slides 39–40）",
+    "options": [
+      { "id": "u1", "label": "紧急 01 · 控制眼前的伤害" },
+      { "id": "u2", "label": "紧急 02 · 紧急审批流程" },
+      { "id": "u3", "label": "紧急 03 · 做并验证有限的变更" },
+      { "id": "u4", "label": "紧急 04 · 记录与复审" },
+      { "id": "r1", "label": "回滚 01 · 设触发条件" },
+      { "id": "r3", "label": "回滚 03 · 检查恢复后的行为" }
+    ],
+    "items": [
+      { "q": "发现导出功能把经理专用的个案记录发给了普通员工，先在现有权限内关掉导出，并通知 owner", "a": "u1", "why": "在现有授权内限制受影响的功能；暂停服务的权限 ≠ 发布新版本的批准" },
+      { "q": "有权的决策者看过为什么紧急、范围多大、有什么风险后批准", "a": "u2", "why": "紧急也要走（紧急）审批，而不是跳过审批" },
+      { "q": "只改导出的收件人检查，发布前跑一小组针对受影响功能和保护措施的测试", "a": "u3", "why": "最小必要变更 + 即使有时间压力也做有针对性的小规模测试" },
+      { "q": "写下决定、版本和结果，定好什么时候停或回滚，事后完成复审", "a": "u4", "why": "记录和复审，并指定一个验证过的 fallback" },
+      { "q": "发布前约定：只要有一次受限内容送到了无权的人，就回滚", "a": "r1", "why": "触发条件要在发布前定好，不是出事后再商量" },
+      { "q": "恢复后用普通员工账户再试导出，确认被拒绝，搜索仍正常", "a": "r3", "why": "保留旧文件只是准备；恢复后的服务要真的正确、安全地运行（Slide 41）" }
+    ]
+  }
+}
