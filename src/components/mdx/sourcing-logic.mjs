@@ -54,6 +54,54 @@ export const OPTION_SETS = {
       { id: "mine", label: "我的权重", note: "速度重要，但 Cohere 卖的是信任和部署灵活性。", weights: [4, 2, 3, 4, 4, 2] },
     ],
   },
+  // ISOM 5100 week 4.
+  co7: {
+    title: "CO7：四个 HCM 方案按六个标准打分",
+    source: "案例 p.4–9",
+    options: [
+      { id: "odoo", label: "① Odoo HR" },
+      { id: "odoopay", label: "② Odoo + 工资模块" },
+      { id: "payworks", label: "③ 扩展 Payworks" },
+      { id: "build", label: "④ 定制开发" },
+    ],
+    criteria: [
+      { id: "cost", label: "三年 TCO 在预算内", scores: [4, 1, 5, 2] },
+      { id: "func", label: "覆盖 Pouliot 的需求（培训、技能、绩效、调查）", scores: [5, 5, 3, 4] },
+      { id: "single", label: "一份员工数据，不再重复录入", scores: [3, 4, 4, 4] },
+      { id: "ease", label: "CO7 自己管得了（没有 IT 团队）", scores: [5, 2, 5, 1] },
+      { id: "fast", label: "马上能用（准备下一次收购）", scores: [4, 3, 5, 1] },
+      { id: "risk", label: "合规和安全风险低", scores: [4, 2, 5, 2] },
+    ],
+    presets: [
+      { id: "equal", label: "同等重要", note: "作为起点。① 和 ③ 很接近，结论取决于你更看重功能还是省事。", weights: [2, 2, 2, 2, 2, 2] },
+      { id: "laurence", label: "Laurence：财务和工资", note: "VP Finance，管工资和预算，刚花钱收购了 Sherbrooke。", weights: [5, 1, 3, 3, 2, 4] },
+      { id: "pouliot", label: "Pouliot：HR 功能", note: "她要培训计划、技能库、KPI 绩效和员工调查，想做数据驱动的 HR；系统由她自己管，不太担心操作复杂。", weights: [2, 5, 3, 1, 2, 2] },
+      { id: "growth", label: "收购节奏", note: "公司在考虑下一次收购：越快上线、越不需要技术人员越好。", weights: [3, 2, 3, 4, 5, 3] },
+    ],
+  },
+  cathay: {
+    title: "Cathay 2026：A 扩大供应商 vs B 少数战略伙伴",
+    source: "案例 p.2–3",
+    options: [
+      { id: "a", label: "A · 扩大供应商生态" },
+      { id: "b", label: "B · 少数战略伙伴" },
+    ],
+    criteria: [
+      { id: "price", label: "价格压力和透明度", scores: [5, 2] },
+      { id: "lock", label: "降低对单一供应商的依赖", scores: [5, 2] },
+      { id: "best", label: "拿到专业的 AI / 数据能力", scores: [5, 3] },
+      { id: "account", label: "责任清楚、出事有人负责", scores: [2, 5] },
+      { id: "integr", label: "整合成本和数据治理简单", scores: [2, 5] },
+      { id: "skills", label: "内部团队负担得起", scores: [1, 4] },
+      { id: "transit", label: "转换风险低（航空关键系统）", scores: [2, 5] },
+    ],
+    presets: [
+      { id: "equal", label: "同等重要", note: "作为起点：B 领先，但把「价格」或「依赖」的权重提到 5，A 就翻盘。", weights: [2, 2, 2, 2, 2, 2, 2] },
+      { id: "cfo", label: "采购 / 财务", note: "1997 年的教训是没有竞争就没有价格纪律，基准比较形同虚设。", weights: [5, 4, 3, 1, 1, 1, 2] },
+      { id: "ops", label: "运营 / IT 基础设施", note: "订票、值机、排班都在云上，宕机的代价远大于多付的钱。", weights: [1, 2, 2, 5, 4, 3, 5] },
+      { id: "mine", label: "我的权重", note: "价格和依赖都重要，但 Cathay 先要有管理多家供应商的能力。", weights: [4, 4, 3, 3, 3, 4, 3] },
+    ],
+  },
 };
 
 export function weightedScores(set, weights, scores = set.criteria.map((c) => c.scores)) {

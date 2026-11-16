@@ -312,5 +312,99 @@
       { "q": "US$7.5B 的债务融资额度", "a": "T", "why": "能说明拿得到钱，但这是要还的债，不能说明现金流撑得住承诺" },
       { "q": "标价便宜的 GPU 小时", "a": "T", "why": "工程投入、存储和数据传输费、长期承诺都可能吃掉节省" }
     ]
+  },
+  "erpmodule": {
+    "title": "Order-to-cash / procure-to-pay 的这一步，由哪个 ERP 模块负责？（Slides 14–15）",
+    "options": [
+      { "id": "SD", "label": "Sales & Distribution" },
+      { "id": "MM", "label": "Materials Management" },
+      { "id": "FI", "label": "Finance & Accounting" },
+      { "id": "HR", "label": "HR Management" }
+    ],
+    "items": [
+      { "q": "销售给客户报价、接订单", "a": "SD", "why": "下单、排程、发货、开票都属于 S&D" },
+      { "q": "处理订单后安排发货", "a": "SD", "why": "Slide 13：order placement, scheduling, shipping and invoicing" },
+      { "q": "查仓库库存够不够", "a": "MM", "why": "库存和物料是 MM" },
+      { "q": "库存不够，向供应商下采购单", "a": "MM", "why": "采购属于物料管理" },
+      { "q": "按 Bill of Material 计划生产", "a": "MM", "why": "Slide 13：BOM 和 material requirements planning" },
+      { "q": "收到供应商发票后更新应付账款", "a": "FI", "why": "Accounts payable" },
+      { "q": "客户付款后更新应收账款", "a": "FI", "why": "Accounts receivable" },
+      { "q": "给销售代表算佣金", "a": "HR", "why": "Slide 15 唯一的 HR 模块框，最可能对应佣金（薪酬）；这是我按版面推断的" }
+    ]
+  },
+  "erpdecision": {
+    "title": "这件事属于经理的哪一个 ERP 决策？（Slides 24–33）",
+    "options": [
+      { "id": "I", "label": "I 选供应商和模块" },
+      { "id": "II", "label": "II 配置" },
+      { "id": "III", "label": "III 批准增强 / 修改" },
+      { "id": "IV", "label": "IV 项目执行" }
+    ],
+    "items": [
+      { "q": "按 Functionality、Technology、Cost、Services、Viability、Vision 给 SAP 和 Oracle 打分", "a": "I", "why": "Gartner 的供应商评估模型" },
+      { "q": "决定收入按地区还是按产品线确认", "a": "II", "why": "Slide 29 的参数例子：只改设置，不改代码" },
+      { "q": "决定存货用 FIFO 还是 LIFO", "a": "II", "why": "同上，配置能做到 60–70% 的契合度" },
+      { "q": "在 ERP 外面写一段代码，做一张系统没有的报表", "a": "III", "why": "Enhancement：加在套件之上，契合度到 70–85%" },
+      { "q": "改动 ERP 供应商自己的源代码", "a": "III", "why": "Modification：以后升级最痛苦" },
+      { "q": "项目组要有业务的人，不能只有 IT", "a": "IV", "why": "Slide 33：mix of business and IT" },
+      { "q": "要求顾问公司派最好的人，并尽早把问题说出来", "a": "IV", "why": "Slide 33：communication & consultants" },
+      { "q": "不让顾问来告诉公司需要什么模块", "a": "I", "why": "Slide 24 的提醒：顾问可能有利益冲突，也不懂你的业务" }
+    ]
+  },
+  "erpfail": {
+    "title": "这是哪一类失败原因？（Slides 35–37，BCC 和 Hershey）",
+    "options": [
+      { "id": "T", "label": "技术" },
+      { "id": "P", "label": "项目执行" },
+      { "id": "C", "label": "文化" },
+      { "id": "O", "label": "组织 / 管理" }
+    ],
+    "items": [
+      { "q": "BCC：新 Oracle 系统和旧系统接不起来", "a": "T", "why": "Integration issues across legacy systems" },
+      { "q": "BCC：大量改造软件包", "a": "T", "why": "Excessive customization" },
+      { "q": "BCC：什么都靠 Oracle 和顾问，内部没有培养专家", "a": "P", "why": "Dependence on Oracle and consultants" },
+      { "q": "BCC：汇报一片乐观，严重问题被压下去", "a": "C", "why": "A culture of silence" },
+      { "q": "BCC：变革管理排在后面，高层不懂这个项目", "a": "O", "why": "Governance–expertise gap at the top" },
+      { "q": "Hershey：四年计划压缩到两年半", "a": "P", "why": "Squeezed deadlines" },
+      { "q": "Hershey：在万圣节旺季前上线", "a": "P", "why": "Wrong timing：最忙的时候切换" },
+      { "q": "Hershey：SAP、Siebel、Manugistics 三家模块一直没接好", "a": "T", "why": "Vendor integration" },
+      { "q": "Hershey：公司从来没做过这种规模的项目", "a": "O", "why": "Lack of experience：管理层低估了难度" }
+    ]
+  },
+  "co7fact": {
+    "title": "这个案例事实最支持哪个方案，还是两个都不利？",
+    "options": [
+      { "id": "1", "label": "① Odoo HR" },
+      { "id": "3", "label": "③ Payworks" },
+      { "id": "X", "label": "反对 ② 和 ④" }
+    ],
+    "items": [
+      { "q": "96 名员工都已经在 Payworks 里有档案", "a": "3", "why": "员工数据库已经存在，不用迁移" },
+      { "q": "Payworks 的 Absence Management 让批准的假期自动进入工资", "a": "3", "why": "直接解决 Laurence 的 Excel 假期表" },
+      { "q": "Payworks 的数据存在加拿大的两个数据中心", "a": "3", "why": "Pouliot 担心员工隐私，PIPEDA 合规" },
+      { "q": "Odoo 的 Standard plan 包括所有 app，$33.50 / 人 / 月", "a": "1", "why": "HR、招聘、考核、技能、培训一起拿到" },
+      { "q": "Odoo 有技能追踪、自动安排考核、员工调查", "a": "1", "why": "正好对应 Pouliot 的培训、技能、绩效和敬业度计划" },
+      { "q": "CO7 的财务、工程、销售已经天天在用 Odoo", "a": "1", "why": "同一个系统，经理不用再学一套" },
+      { "q": "Canadian Payroll 不能直接发工资、不能向政府申报", "a": "X", "why": "② 仍然离不开 Payworks" },
+      { "q": "第三方 app 没有质量审核，每次升级都要重新适配", "a": "X", "why": "② 和 ④ 都要外部顾问长期维护" },
+      { "q": "定制开发要 4–6 个月，CO7 管理层缺乏 IT 专长", "a": "X", "why": "④ 时间长，出了问题自己修不了" }
+    ]
+  },
+  "cathayfact": {
+    "title": "这条信息支持 A（扩大供应商）还是 B（少数战略伙伴）？",
+    "options": [
+      { "id": "A", "label": "支持 A" },
+      { "id": "B", "label": "支持 B" }
+    ],
+    "items": [
+      { "q": "偏好 IBM 和 Sabre 后，其他供应商不愿认真投标", "a": "A", "why": "没有竞争就没有可信的基准价" },
+      { "q": "经理先决定向谁买，再要报价", "a": "A", "why": "价格信息来得太晚，压不了价" },
+      { "q": "Cathay 自己在计划「rebalancing」云供应商，避免锁定", "a": "A", "why": "管理层已经担心依赖 AWS" },
+      { "q": "专业的 AI 和数据供应商在某些领域比大云厂商强", "a": "A", "why": "Best-of-breed 的好处" },
+      { "q": "订票、值机、排班都是任务关键系统", "a": "B", "why": "转换出错的代价太高" },
+      { "q": "多云会增加整合成本、重复的技能要求和分散的责任", "a": "B", "why": "案例原文列出的 multi-cloud 代价" },
+      { "q": "1997 年转型时，员工从「自己做」转到「管供应商」很不适应", "a": "B", "why": "管理多家供应商的能力要时间培养" },
+      { "q": "每周、每月、每季、半年四层治理会议需要大量管理精力", "a": "B", "why": "供应商越多，治理成本越高" }
+    ]
   }
 }

@@ -62,6 +62,7 @@ import { upgradeCost as zaraCost, networkTradeoff as zaraNet, UPGRADE_PRESETS as
 import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute, routeNote as crmRouteNote } from "../../src/components/mdx/crm-logic.mjs";
 import { MODELS as CLOUD_MODELS, STACK as CLOUD_STACK, KITCHEN as CLOUD_KITCHEN, ELASTIC_PRESETS, elasticity, elasticityVerdict, TCO_PRESETS, tco, fmtUsd as cloudUsd } from "../../src/components/mdx/cloud-logic.mjs";
 import { OPTION_SETS, weightedScores, PROVIDERS, quoteRow, LAYER_PRESETS, layerCase, CAPACITY_PRESETS, capacityMix, capacityVerdict, fmtEur as sourcingEur } from "../../src/components/mdx/sourcing-logic.mjs";
+import { TCO_PRESETS as HCM_PRESETS, tcoRows as hcmRows, fmtCad, BAND_LABEL as HCM_BAND } from "../../src/components/mdx/hcm-tco-logic.mjs";
 import { businessCase as crmCase, CASE_PRESETS as CRM_PRESETS, fmtUsdK as crmUsd } from "../../src/components/mdx/crm-case-logic.mjs";
 import { FLOW_PRESETS as OTIS_PRESETS, whoKnows as otisWhoKnows, flowSvg as otisFlowSvg, toStaticSvg as otisStatic, STAKEHOLDERS as OTIS_ROLES, ATTITUDE as OTIS_ATT } from "../../src/components/mdx/otis-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
@@ -1021,6 +1022,17 @@ const components = {
           para(text(capacityVerdict(p.split, p.portable, r))),
         ];
       }),
+    ];
+  },
+  HcmTcoLab() {
+    return [
+      note("（网页版此处可以改用户数、顾问时薪、Payworks 模块和定制开发的假设，看四个方案的三年 TCO；下面是三个预设的结果，价格来自案例）"),
+      ...HCM_PRESETS.flatMap((p) => [
+        para(strong(p.label), text(`：${p.note}`)),
+        table(["方案", "一次性", "每年", "三年合计", "每年平均"], hcmRows(p.x).map((r) => [r.label, fmtCad(r.acquisition), fmtCad(r.annual), fmtCad(r.total), `${fmtCad(r.perYear)}（${HCM_BAND[r.band]}）`])),
+      ]),
+      para(strong("按案例数字的明细")),
+      table(["方案", "费用项", "钱之外的缺口"], hcmRows(HCM_PRESETS[0].x).map((r) => [r.label, [...r.acq.map(([k, v]) => `一次性 · ${k} ${fmtCad(v)}`), ...r.yearly.map(([k, v]) => `每年 · ${k} ${fmtCad(v)}`)].join("；"), r.gaps.join("；")])),
     ];
   },
   CrmRouteLab() {

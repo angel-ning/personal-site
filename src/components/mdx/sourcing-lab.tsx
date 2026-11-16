@@ -23,7 +23,7 @@ type Option = { id: string; label: string; total: number };
 type Scored = { totals: Option[]; top: number; winners: Option[]; tie: boolean };
 
 // Method and Cohere: change the weights or the 1–5 scores and see which option wins and what would flip it.
-export function WeightedOptionLab({ set = "method" }: { set?: "method" | "cohere" }) {
+export function WeightedOptionLab({ set = "method" }: { set?: keyof typeof OPTION_SETS }) {
   const data = OPTION_SETS[set];
   const [presetId, setPresetId] = useState(data.presets[0].id);
   const [weights, setWeights] = useState<number[]>(data.presets[0].weights);
