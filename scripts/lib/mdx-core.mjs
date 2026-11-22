@@ -81,6 +81,7 @@ import { SUBGROUP_PRESETS, subgroupCheck } from "../../src/components/mdx/subgro
 import { CRITERIA as DQ_CRITERIA, NEEDS_LABEL as DQ_NEEDS, checkRows as dqCheckRows, dimLabel as dqDim, fmtAmount as dqAmount } from "../../src/components/mdx/data-quality-logic.mjs";
 import { ACC_PRESETS, METHODS as ACC_METHODS, confusion as accConfusion, pct as accPct, representation as accRep } from "../../src/components/mdx/accuracy-trap-logic.mjs";
 import { CHANGE_PRESETS, CHANGES as CI_CHANGES, STATUS as CI_STATUS, assessChange } from "../../src/components/mdx/change-impact-logic.mjs";
+import { ACTIONS as AL_ACTIONS, CALLERS as AL_CALLERS, DESIGNS as AL_DESIGNS, GATE_CASES, RELEASE_CHECKS, RESTART_ITEMS, SCORE_PRESETS, TIMELINE as AL_TIMELINE, evaluateCall, evaluateScores } from "../../src/components/mdx/alder-logic.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
 const osi = readJson("src/components/mdx/data/osi.json");
@@ -108,6 +109,7 @@ const pyNbQuiz = readJson("src/components/mdx/data/py-notebook-quiz.json");
 const govQuiz = readJson("src/components/mdx/data/gov-quiz.json");
 const privacyQuiz = readJson("src/components/mdx/data/privacy-quiz.json");
 const lifecycleQuiz = readJson("src/components/mdx/data/lifecycle-quiz.json");
+const lec4Quiz = readJson("src/components/mdx/data/lec4-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -1590,6 +1592,42 @@ const components = {
     const set = privacyQuiz[a.set] ?? privacyQuiz.ref;
     const label = (id) => set.options.find((o) => o.id === id).label;
     return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  Lec4SortQuiz(_node, a) {
+    const set = lec4Quiz[a.set] ?? lec4Quiz.test;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  AlderGateLab() {
+    const lbl = (xs, id) => xs.find((x) => x.id === id).label;
+    return [
+      note("（网页版此处可以选调用者、动作、控制设计、有没有 Finance 批准、context 里有没有被注入的 note；下表是几个代表情形）"),
+      table(["调用者", "动作", "控制设计", "批准 / note", "结果", "告警"], GATE_CASES.map((c) => {
+        const r = evaluateCall(c);
+        return [lbl(AL_CALLERS, c.caller), lbl(AL_ACTIONS, c.action), lbl(AL_DESIGNS, c.design), `${c.approval ? "有批准" : "无批准"} · ${c.note ? "有 note" : "无 note"}`, `${r.effect}：${r.why}`, r.alerts.join("；") || "—"];
+      })),
+    ];
+  },
+  GroupScoreLab() {
+    const out = [note("（网页版此处可以改每组的通过数 / 测试数、标准和已记录的检查；下表是三个预设在「检查都没记录」时的结果）")];
+    for (const p of SCORE_PRESETS) {
+      const r = evaluateScores({ groups: p.groups, threshold: 0.9, unauthorised: 0, checks: [] });
+      out.push(para(strong(p.label), text(`：${p.note}`)));
+      out.push(table(["组", "通过 / 测试数", "比例", "95% 区间", "≥ 90%？"], [
+        ...r.rows.map((g) => [g.name, `${g.k} / ${g.n}`, `${(g.p * 100).toFixed(1)}%`, `${(g.ci.lo * 100).toFixed(1)}–${(g.ci.hi * 100).toFixed(1)}%`, g.pass ? "✓" : "✗"]),
+        ["合计", `${r.K} / ${r.N}`, `${(r.overall * 100).toFixed(1)}%`, "", ""],
+      ]));
+      out.push(para(strong(`建议：${r.decision}`), text(` ${r.why} ${r.warnings.join(" ")}`)));
+    }
+    out.push(para(text("pilot 前必需的记录：" + RELEASE_CHECKS.filter((c) => c.need === "pilot").map((c) => c.label).join("；") + "。全面发布前还要：" + RELEASE_CHECKS.filter((c) => c.need === "full").map((c) => c.label).join("；") + "。")));
+    return out;
+  },
+  RestartCheckLab() {
+    return [
+      note("（网页版此处是重启检查清单：勾选做过的事，看能不能重启、踩了哪些陷阱）"),
+      table(["时间", "发生了什么", "记录"], AL_TIMELINE.map((t) => [t.t, t.what, t.rec])),
+      table(["类别", "检查", "必需 / 陷阱"], RESTART_ITEMS.map((i) => [i.group, i.label, i.trap ? `陷阱：${i.trap}` : "必需"])),
+    ];
   },
   LifecycleSortQuiz(_node, a) {
     const set = lifecycleQuiz[a.set] ?? lifecycleQuiz.quality;
