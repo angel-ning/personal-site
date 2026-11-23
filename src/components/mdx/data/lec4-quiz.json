@@ -387,5 +387,217 @@
         "why": "相关、原本正常的行为没倒退"
       }
     ]
+  },
+  "trap": {
+    "title": "期中复习：这个错误选项犯的是哪种错？（四次小测的真实干扰项，类型见上表）",
+    "options": [
+      {
+        "id": "scope",
+        "label": "① 推广过度"
+      },
+      {
+        "id": "authority",
+        "label": "② 找错决定人"
+      },
+      {
+        "id": "after",
+        "label": "③ 事后代替事前"
+      },
+      {
+        "id": "model",
+        "label": "④ 交给模型 / prompt"
+      },
+      {
+        "id": "proxy",
+        "label": "⑤ 不相关的证据"
+      },
+      {
+        "id": "overreact",
+        "label": "⑥ 反应过度"
+      }
+    ],
+    "items": [
+      {
+        "q": "Cedar Q3 · 「96% agreement 能估计自动拒绝的准确率」",
+        "a": "scope",
+        "why": "96% 只是 100 个普通请求上和 coordinator 一致；拒绝、申诉、无障碍需求都没测。结论只能留在测过的人群和用途里"
+      },
+      {
+        "q": "Cedar Q1 · 「IT 检查完容量后记录剩余风险决定」",
+        "a": "authority",
+        "why": "S1-R1 写明 Events Director 拥有剩余风险接受权。IT 做容量检查，只是提供证据"
+      },
+      {
+        "q": "Cedar Q4 · 「先有限上线自动拒绝 + 抽查，同时补做伤害评估」",
+        "a": "after",
+        "why": "S1-R3 要求「使用前」完成评估、证据和 Director 决定。上线后的监控不能代替批准"
+      },
+      {
+        "q": "Cedar Q4 · 「把已批准的排序试点也暂停，直到所有不确定性解决」",
+        "a": "overreact",
+        "why": "记录里没有任何理由停掉已批准、仍由人批准分配的试点。只 hold 新用途"
+      },
+      {
+        "q": "Mosaic Q1 · 「传输加密了，所以所有字段都可以上传」",
+        "a": "proxy",
+        "why": "加密保护传输过程，不证明多出来的字段是任务需要的。需要 ≠ 加密"
+      },
+      {
+        "q": "Mosaic Q2 · 「哈希去掉了名字，所以 ID 不能识别会员」",
+        "a": "scope",
+        "why": "员工保留了 lookup table，能把哈希 ID 连回会员。把「看起来匿名」推广成「不可识别」"
+      },
+      {
+        "q": "Mosaic Q3 · 「供应商确认模型能用这些字段，就可以做个性化推广」",
+        "a": "authority",
+        "why": "新字段、新目的要 Data Steward 审批。供应商不能代替组织内部的审批人"
+      },
+      {
+        "q": "Pine Q1 · 「当前 feed 的历史 uptime 图」",
+        "a": "proxy",
+        "why": "uptime 是旧 feed 的可用性，不是新 feed 的来源历史和本地季节覆盖"
+      },
+      {
+        "q": "Pine Q2 · 「替代 feed 通过了供应商的格式检查，所以没人需要再查」",
+        "a": "proxy",
+        "why": "格式检查 ≠ 本地适用性。合同规定由客户验证本地适用性"
+      },
+      {
+        "q": "Pine Q4 · 「先启用替代 feed，下个季节再查本地覆盖」",
+        "a": "after",
+        "why": "Release manifest 要求批准前先查来源和覆盖。合同允许用手工计划作 fallback"
+      },
+      {
+        "q": "Pine Q4 · 「让供应商的格式检查团队批准客户的发布」",
+        "a": "authority",
+        "why": "合同：客户拥有发布批准权。期限压力不会把权力转给供应商"
+      },
+      {
+        "q": "Pine Q3 · 「去掉旧 feed 标签的预测图」",
+        "a": "proxy",
+        "why": "改标签不证明访问结束。要撤销记录 + 旧凭证被拒绝的测试"
+      },
+      {
+        "q": "Alder Q1 · 「模型在发回复前检查自己的权限」",
+        "a": "model",
+        "why": "权限必须在模型之外、在工具端强制执行"
+      },
+      {
+        "q": "Alder Q1 · 「退款付出后由 Finance 复核批准记录」",
+        "a": "after",
+        "why": "付款之后才检查，挡不住未授权付款"
+      },
+      {
+        "q": "Alder Q3 · 「依靠模型拒绝来阻止付款和外发」",
+        "a": "model",
+        "why": "拒绝 prompt 不能代替权限检查；检索到的 note 是数据不是授权"
+      },
+      {
+        "q": "Alder Q2 · 「看供应商 model card 有没有列出退款建议为支持用途」",
+        "a": "proxy",
+        "why": "读 model card 不是本地测试；要测 Alder 自己的数据、权限、工具和失败处理"
+      },
+      {
+        "q": "Alder Q5 · 「用 20 个小恢复测试批准有限重启」",
+        "a": "scope",
+        "why": "小测试没覆盖实时权限、session、排队动作和 13 个请求的影响，也没有重启批准和风险接受"
+      },
+      {
+        "q": "Alder Q5 · 「沿用原 pilot 的批准和监控规则重启」",
+        "a": "authority",
+        "why": "原 pilot 批准不覆盖事故后的重启；需要新的重启批准和风险接受"
+      }
+    ]
+  },
+  "who": {
+    "title": "期中复习：这件事该由谁来决定 / 负责？",
+    "options": [
+      {
+        "id": "owner",
+        "label": "业务 / 服务 owner（接受风险、决定发布范围）"
+      },
+      {
+        "id": "data",
+        "label": "Data Owner / Data Steward（批准新字段、新目的）"
+      },
+      {
+        "id": "specific",
+        "label": "记录里指定的专项审批人（Finance、HR、Policy Owner）"
+      },
+      {
+        "id": "operator",
+        "label": "控制执行方（IT、平台安全、工程：执行并留证据）"
+      },
+      {
+        "id": "supplier",
+        "label": "供应商（提供版本、测试范围、来源历史等证据）"
+      },
+      {
+        "id": "audit",
+        "label": "内部审计 / 独立评估者（独立评价，不做管理决定）"
+      }
+    ],
+    "items": [
+      {
+        "q": "Cedar：自动拒绝扩展的剩余风险接受要由谁记录？",
+        "a": "owner",
+        "why": "S1-R1：Events Director 拥有服务结果和剩余风险接受"
+      },
+      {
+        "q": "Mosaic：把会员 ID 和无障碍备注加入上传、改作推广建模",
+        "a": "data",
+        "why": "S2-R1：新输入字段和改变的目的必须经 Data Steward 批准"
+      },
+      {
+        "q": "Alder：18 天的退款例外能不能批",
+        "a": "specific",
+        "why": "只有 Finance 能批准例外；AI 只能建申请"
+      },
+      {
+        "q": "Alder：把 AI 账户的付款权限拿掉、核实实际生效的权限",
+        "a": "operator",
+        "why": "Platform Security 管 connector 权限和 IAM，执行并保留证据"
+      },
+      {
+        "q": "Pine Orchard：替代天气 feed 的来源历史（lineage）和版本变更记录",
+        "a": "supplier",
+        "why": "合同：供应商记录 feed 的来源历史和版本变更——这是证据，不是批准"
+      },
+      {
+        "q": "Pine Orchard：替代 feed 是否适合本地、能否发布",
+        "a": "owner",
+        "why": "合同：客户验证本地适用性并拥有发布批准（manifest 里是 Operations Owner）"
+      },
+      {
+        "q": "SOC 告警排序服务：对照批准范围检查配置和测试记录",
+        "a": "audit",
+        "why": "L2 Slide 27：内部审计独立检查，不接管发布决定"
+      },
+      {
+        "q": "Harbor：顾客自助服务能不能上线",
+        "a": "owner",
+        "why": "L2-A1：Service Director 决定发布"
+      },
+      {
+        "q": "Harbor：把支持工单（含姓名、账号）加入检索",
+        "a": "data",
+        "why": "L2-A1：Data Owner 批准改变的输入和目的，privacy / legal 提供建议"
+      },
+      {
+        "q": "Northstar：HR 政策文件本身的内容",
+        "a": "specific",
+        "why": "HR 批准政策文件；服务 owner 批准服务发布——两份不同的记录"
+      },
+      {
+        "q": "Air Canada 课堂延伸：退票资格规则和例外",
+        "a": "specific",
+        "why": "Business Policy Owner 授权规则和例外；供应商只负责实现"
+      },
+      {
+        "q": "外部评估（如 Aprio）对控制得出结论",
+        "a": "audit",
+        "why": "只在约定的评估范围内负责结论，不负责管理层的发布或风险接受"
+      }
+    ]
   }
 }
