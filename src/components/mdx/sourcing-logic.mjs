@@ -102,6 +102,53 @@ export const OPTION_SETS = {
       { id: "mine", label: "我的权重", note: "价格和依赖都重要，但 Cathay 先要有管理多家供应商的能力。", weights: [4, 4, 3, 3, 3, 4, 3] },
     ],
   },
+  // ISOM 5100 week 5.
+  rollout: {
+    title: "SodaStream Canada：ERP 怎么上线",
+    source: "案例 p.3–5（分数是我的判断）",
+    options: [
+      { id: "bigbang", label: "一次全部上线" },
+      { id: "phased", label: "按功能分阶段" },
+      { id: "pilot", label: "先财务，再订单 + 3PL" },
+    ],
+    criteria: [
+      { id: "deadline", label: "赶上 2021 年 6 月上线", scores: [4, 2, 3] },
+      { id: "risk", label: "出问题时影响面小（订单、发货不中断）", scores: [1, 5, 4] },
+      { id: "global", label: "尽快和全球 NetSuite 一致（CoA、合并报表）", scores: [5, 2, 4] },
+      { id: "bridge", label: "不用在新旧系统之间做临时接口", scores: [5, 1, 3] },
+      { id: "learn", label: "用户（远程 UAT、疫情）有时间适应", scores: [1, 5, 4] },
+      { id: "cost", label: "NetDynamic 的人力和成本", scores: [4, 2, 3] },
+    ],
+    presets: [
+      { id: "equal", label: "同等重要", note: "作为起点。", weights: [2, 2, 2, 2, 2, 2] },
+      { id: "parent", label: "母公司：全球一致", note: "SodaStream 总部要的是集中财务数据和统一的 CoA，越早接入越好。", weights: [4, 2, 5, 3, 1, 2] },
+      { id: "canada", label: "SodaStream Canada：别影响生意", note: "B2B 大单（Canadian Tire 一单可达 $100,000）和 3PL 发货不能断；用户只能远程培训。", weights: [2, 5, 2, 1, 5, 2] },
+      { id: "mine", label: "我的权重", note: "风险和学习时间最重要，但也要尽快把财务并进全球系统。", weights: [3, 4, 4, 2, 4, 2] },
+    ],
+  },
+  hydro: {
+    title: "Norsk Hydro：遭到勒索后怎么应对",
+    source: "案例 p.2–9（分数是我的判断）",
+    options: [
+      { id: "open", label: "拒付 + 公开（Hydro）" },
+      { id: "quiet", label: "拒付 + 低调处理" },
+      { id: "pay", label: "付赎金 + 保密" },
+    ],
+    criteria: [
+      { id: "short", label: "短期恢复快、直接损失小", scores: [2, 2, 4] },
+      { id: "repeat", label: "不被盯上再次勒索", scores: [5, 4, 1] },
+      { id: "ethics", label: "合法合规、不资助犯罪", scores: [5, 5, 1] },
+      { id: "staff", label: "员工能配合（3.5 万人要知道别开电脑）", scores: [5, 2, 2] },
+      { id: "trust", label: "客户、市场和监管的信任", scores: [5, 3, 1] },
+      { id: "control", label: "信息不被攻击者或媒体抢先", scores: [4, 2, 2] },
+    ],
+    presets: [
+      { id: "equal", label: "同等重要", note: "作为起点。", weights: [2, 2, 2, 2, 2, 2] },
+      { id: "cfo", label: "只看这个季度的账", note: "停产每天都在亏钱，赎金看起来比停一周便宜；其他标准几乎不算。只有这样付钱才胜出。", weights: [5, 0, 0, 0, 1, 0] },
+      { id: "hydro", label: "Hydro 管理层", note: "「从来没有付钱这个选项」：付了会再来；靠透明让员工和客户站在自己这边。", weights: [1, 4, 5, 4, 4, 3] },
+      { id: "small", label: "一家没有备份的小医院", note: "恢复速度权重最高，但只要还在乎一点合规和再被勒索，付钱仍然不赢。真正逼医院付钱的是没有备份：那改变的是「短期恢复」这一行的分数（试试把付赎金改成 5、两个拒付改成 1），不是权重。", weights: [5, 1, 1, 1, 1, 0] },
+    ],
+  },
 };
 
 export function weightedScores(set, weights, scores = set.criteria.map((c) => c.scores)) {

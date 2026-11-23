@@ -63,6 +63,7 @@ import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute,
 import { MODELS as CLOUD_MODELS, STACK as CLOUD_STACK, KITCHEN as CLOUD_KITCHEN, ELASTIC_PRESETS, elasticity, elasticityVerdict, TCO_PRESETS, tco, fmtUsd as cloudUsd } from "../../src/components/mdx/cloud-logic.mjs";
 import { OPTION_SETS, weightedScores, PROVIDERS, quoteRow, LAYER_PRESETS, layerCase, CAPACITY_PRESETS, capacityMix, capacityVerdict, fmtEur as sourcingEur } from "../../src/components/mdx/sourcing-logic.mjs";
 import { TCO_PRESETS as HCM_PRESETS, tcoRows as hcmRows, fmtCad, BAND_LABEL as HCM_BAND } from "../../src/components/mdx/hcm-tco-logic.mjs";
+import { FPA_PRESETS, fpa, DELPHI_PRESETS, DELPHI_ESTIMATORS, delphi, RFC_CASES, iccpPath, HRBPS_PRESETS, hrbpsWhatIf, RANSOM_PRESETS, ransomCompare, fmtM as fmtRansomM, fmtUsd as fmtProjUsd } from "../../src/components/mdx/project-logic.mjs";
 import { businessCase as crmCase, CASE_PRESETS as CRM_PRESETS, fmtUsdK as crmUsd } from "../../src/components/mdx/crm-case-logic.mjs";
 import { FLOW_PRESETS as OTIS_PRESETS, whoKnows as otisWhoKnows, flowSvg as otisFlowSvg, toStaticSvg as otisStatic, STAKEHOLDERS as OTIS_ROLES, ATTITUDE as OTIS_ATT } from "../../src/components/mdx/otis-logic.mjs";
 import { RECOVERY_PRESETS, PHASE_LABEL, WAL_DEMOS, WAL_ACTION_LABEL, recover, presetStart, recLine, pageText, runWal } from "../../src/components/mdx/recovery-logic.mjs";
@@ -1035,6 +1036,65 @@ const components = {
       ]),
       para(strong("按案例数字的明细")),
       table(["方案", "费用项", "钱之外的缺口"], hcmRows(HCM_PRESETS[0].x).map((r) => [r.label, [...r.acq.map(([k, v]) => `一次性 · ${k} ${fmtCad(v)}`), ...r.yearly.map(([k, v]) => `每年 · ${k} ${fmtCad(v)}`)].join("；"), r.gaps.join("；")])),
+    ];
+  },
+  FunctionPointLab() {
+    const r1 = (v) => (Math.round(v * 10) / 10).toLocaleString("en-US");
+    return [
+      note("（网页版此处可以改每类组件的数量和复杂度、换算率、人数和月薪；下面是三个预设的结果）"),
+      ...FPA_PRESETS.flatMap((p) => {
+        const r = fpa(p.x);
+        return [
+          para(strong(p.label), text(`：${p.note}`)),
+          table(["Element", "数量", "复杂度", "权重", "Function points"], [...r.rows.map((row) => [row.label, String(row.count), row.level, `× ${row.weight}`, String(row.points)]), [strong("合计"), "", "", "", strong(String(r.total))]]),
+          para(text(`${r.total} FP ÷ ${p.x.rate} = ${r1(r.personMonths)} 人月 → ${p.x.team} 人约 ${r1(r.months)} 个月 → 人工成本约 ${fmtProjUsd(r.cost)}（月薪 ${fmtProjUsd(p.x.wage)}，示意）`)),
+        ];
+      }),
+    ];
+  },
+  DelphiLab() {
+    return [
+      note("（网页版此处可以拖动五位估算者的初始数字、切换是否匿名，看三轮后的收敛；下面是三个预设）"),
+      ...DELPHI_PRESETS.flatMap((p) => {
+        const rows = delphi(p.initial, { rounds: 3, pull: 0.5, anonymous: p.anonymous });
+        return [
+          para(strong(p.label), text(`：${p.note}`)),
+          table(["轮次", ...DELPHI_ESTIMATORS, "中位数", "最大 − 最小"], rows.map((row) => [`第 ${row.round} 轮`, ...row.values.map(String), String(row.median), String(row.spread)])),
+        ];
+      }),
+    ];
+  },
+  ChangeControlLab() {
+    return [
+      note("（网页版此处可以选一个 RFC、切换三个判断点，看它在 Slide 17 泳道图里怎么走；下面是四个 RFC 的路径）"),
+      ...RFC_CASES.flatMap((c) => {
+        const r = iccpPath(c.answers);
+        return [
+          para(strong(c.label), text(`（${c.who}）：${c.desc} 优先级 ${c.priority}，类别 ${c.category}。`)),
+          para(text(r.path.map((s) => `${s.lane}：${s.label}${s.ask ? (s.answer ? " → Yes" : " → No") : ""}`).join(" ⇒ "))),
+          para(strong(r.end === "done" ? "结果：批准并执行。" : "结果：驳回，记入变更日志。"), text(` ${c.why}`)),
+        ];
+      }),
+    ];
+  },
+  HrbpsScopeLab() {
+    const r1 = (v) => (Math.round(v * 10) / 10).toLocaleString("en-US");
+    return [
+      note("（网页版此处可以拖动接受的增强数量和每个增强的工作量；增强的工作量是示意假设，下面是三个预设）"),
+      table(["情景", "说明", "总工期", "工期变化", "预算变化"], HRBPS_PRESETS.map((p) => {
+        const r = hrbpsWhatIf(p.x);
+        return [p.label, p.note, `${r1(r.months)} 个月（原计划 ${r1(r.original)}）`, `+${Math.round(r.schedulePct)}%`, `+${Math.round(r.budgetPct)}%`];
+      })),
+    ];
+  },
+  RansomLab() {
+    return [
+      note("（网页版此处可以拖动赎金、密钥成功率、停产天数等假设，比较付赎金和拒付的账面成本；除「拒付约 $50M」外都是假设，下面是三个预设）"),
+      table(["情景", "付赎金：赎金 + 停产 + 重建 + 再被攻击", "付赎金合计", "拒付：停产 + 重建", "拒付合计", "账面上更便宜"], RANSOM_PRESETS.map((p) => {
+        const r = ransomCompare(p.x);
+        return [p.label, [r.pay.ransom, r.pay.downtime, r.pay.rebuild, r.pay.repeat].map(fmtRansomM).join(" + "), fmtRansomM(r.pay.total), [r.refuse.downtime, r.refuse.rebuild].map(fmtRansomM).join(" + "), fmtRansomM(r.refuse.total), strong(r.cheaper === "pay" ? "付赎金" : "拒付")];
+      })),
+      ...RANSOM_PRESETS.map((p) => para(strong(p.label), text(`：${p.note}`))),
     ];
   },
   CrmRouteLab() {

@@ -406,5 +406,103 @@
       { "q": "1997 年转型时，员工从「自己做」转到「管供应商」很不适应", "a": "B", "why": "管理多家供应商的能力要时间培养" },
       { "q": "每周、每月、每季、半年四层治理会议需要大量管理精力", "a": "B", "why": "供应商越多，治理成本越高" }
     ]
+  },
+  "pmphase": {
+    "title": "这件事属于项目的哪个阶段？（Slide 5）",
+    "options": [
+      { "id": "init", "label": "Project Initiation" },
+      { "id": "plan", "label": "Project Planning" },
+      { "id": "mon", "label": "Monitoring & Control" }
+    ],
+    "items": [
+      { "q": "把 HCM 系统拆成招聘、入职、绩效、培训几个工作包", "a": "plan", "why": "WBS（工作分解结构）是 Planning 的第一步：先定范围，再拆成可估算的任务" },
+      { "q": "管理层比较三个 IT 提案，决定今年只资助其中一个", "a": "init", "why": "Initiation 回答「做不做、给多少资源」" },
+      { "q": "用 Function Point Analysis 估算要多少人月", "a": "plan", "why": "估算工期和成本属于 Planning" },
+      { "q": "每周对比实际花费和预算，发现超支 15% 就调整人手", "a": "mon", "why": "跟踪成本、资源、进度并做调整" },
+      { "q": "给每个任务指派负责人和排时间表", "a": "plan", "why": "Assign resources、set time table" },
+      { "q": "CO7 的 Pouliot 写 business case 请高管批准预算", "a": "init", "why": "决定资助哪个项目，课件 Agenda 把 CO7 放在 Initiation" },
+      { "q": "CAB 审议一个增强请求，决定推迟到第二期", "a": "mon", "why": "ICCP 是执行过程中的控制机制" },
+      { "q": "和用户确认哪些功能在范围内、哪些不在，写进范围说明书", "a": "plan", "why": "Scope 定义在 Planning" },
+      { "q": "决定公司采用什么流程来分配 IT 投资", "a": "init", "why": "Slide 5：Process to be followed for allocating resources" },
+      { "q": "MVP 原定本周交付，只完成 40%，项目经理准备申请延期和追加预算", "a": "mon", "why": "发现偏差、调整计划，HRBPS 的情景" }
+    ]
+  },
+  "estimate": {
+    "title": "这描述的是哪种估算方法？（Slides 9–14）",
+    "options": [
+      { "id": "delphi", "label": "Delphi" },
+      { "id": "fpa", "label": "Function Point Analysis" },
+      { "id": "exp", "label": "Experience（经验类比）" }
+    ],
+    "items": [
+      { "q": "把输入、输出、查询、文件、接口按复杂度加权求和", "a": "fpa", "why": "FPA 的五类组件和权重表（Slide 11）" },
+      { "q": "每位估算者匿名给出数字，汇总后发回去再估一轮", "a": "delphi", "why": "Slide 9 的四步" },
+      { "q": "可以在需求阶段、还没写代码时就估出系统规模", "a": "fpa", "why": "FPA 按功能计数，不依赖代码行数" },
+      { "q": "「5 个 function point = 1 人月」这样的行业换算率", "a": "fpa", "why": "Slide 13：把点数换成工作量" },
+      { "q": "「上次做类似的 CRM 项目用了 9 个月，这次差不多」", "a": "exp", "why": "用过去相似项目类比" },
+      { "q": "避免资深者的意见压倒其他人", "a": "delphi", "why": "匿名的作用" },
+      { "q": "复杂度是 Low 还是 High 由人判断，同一系统不同人算出的点数不同", "a": "fpa", "why": "FPA 的主观性" },
+      { "q": "新技术、组织从没做过的项目上最不可靠", "a": "exp", "why": "没有可类比的过去项目" },
+      { "q": "缺点是耗时、要组织好几轮，而且可能收敛到一个共同的错误", "a": "delphi", "why": "轮数多；收敛不等于准确" }
+    ]
+  },
+  "iccprole": {
+    "title": "在 Slide 17 的泳道图里，这一步由谁做？",
+    "options": [
+      { "id": "ini", "label": "Initiator" },
+      { "id": "scr", "label": "Screener" },
+      { "id": "cab", "label": "CAB" },
+      { "id": "own", "label": "Owner" }
+    ],
+    "items": [
+      { "q": "填写 Request for Change（RFC）表格", "a": "ini", "why": "发起人提出变更" },
+      { "q": "检查 RFC 是否填完整", "a": "scr", "why": "Initial review of RFC → RFC complete?" },
+      { "q": "给变更定优先级（E / H / M / L）和类别", "a": "scr", "why": "Review & assign priority / category" },
+      { "q": "判断自己是否有权批准，没有就上报", "a": "cab", "why": "Authority to make change? → Escalate" },
+      { "q": "按批准的排期实际修改系统", "a": "own", "why": "Make change" },
+      { "q": "RFC 被退回后补充业务理由和影响", "a": "ini", "why": "Collect additional info" },
+      { "q": "更新变更日志、通知所有相关人状态", "a": "scr", "why": "Update change log & schedule → Inform all of status" },
+      { "q": "审议变更并决定批准或驳回", "a": "cab", "why": "Review changes → Change approved?" },
+      { "q": "批准后安排变更的时间", "a": "cab", "why": "Schedule change 在 CAB 泳道" }
+    ]
+  },
+  "ndglobal": {
+    "title": "SodaStream Canada：这一项应该全球统一，还是保留加拿大做法？",
+    "options": [
+      { "id": "g", "label": "全球统一" },
+      { "id": "l", "label": "保留加拿大做法" },
+      { "id": "i", "label": "本地保留 + 接口对接" }
+    ],
+    "items": [
+      { "q": "会计科目表（Chart of Accounts）", "a": "g", "why": "和德国、波兰等子公司对齐，才能合并报表" },
+      { "q": "压缩气瓶被列为危险品，Uber Eats 和 Instacart 不能送", "a": "l", "why": "加拿大的运输法规，只有本地有" },
+      { "q": "3PL（Shandex、Sherway）的拣货、包装、发货", "a": "i", "why": "在 NetSuite 范围之外，由 3PL 做，但订单数据要同步" },
+      { "q": "NetSuite 每 15 分钟一次的数据同步", "a": "i", "why": "要和 3PL 的系统对接，保证订单及时处理" },
+      { "q": "按安全权限查看全集团的财务数据", "a": "g", "why": "这正是母公司换 NetSuite 的目的" },
+      { "q": "return-and-redeem 空瓶回收（Fleet Optics 上门取件）", "a": "l", "why": "加拿大特有的业务流程，要加进 ERP 但不必全球推广" },
+      { "q": "取消各国重复购买的软件许可", "a": "g", "why": "统一平台降低 IT 成本" },
+      { "q": "保留多少年的历史客户、供应商数据", "a": "l", "why": "由 SodaStream Canada 根据业务需要决定，是清理旧数据的机会" },
+      { "q": "B2B 订单依次经过定价、财务、运营审批", "a": "g", "why": "标准流程放进 ERP 自动通知（Exhibit 2），不再各自为政" },
+      { "q": "未来的 Home Exchange 上门换气瓶", "a": "l", "why": "加拿大的 B2C 和可持续发展战略" }
+    ]
+  },
+  "hydroprep": {
+    "title": "Norsk Hydro：这一项是事前准备，还是临场应变？",
+    "options": [
+      { "id": "prep", "label": "事前准备" },
+      { "id": "impr", "label": "临场应变" }
+    ],
+    "items": [
+      { "q": "买了网络保险，定期培训和演练", "a": "prep", "why": "攻击之前就做了" },
+      { "q": "匈牙利的技术员按安全规程把整个网络下线", "a": "prep", "why": "有规程、且人知道规程，是演练的结果" },
+      { "q": "用 Facebook 和 WhatsApp 通知 3.5 万名员工", "a": "impr", "why": "员工通讯录被攻击后才想到的办法" },
+      { "q": "请 white hat 黑客测试防御", "a": "prep", "why": "渗透测试是事前措施" },
+      { "q": "厂长去 Staples 把打印机和纸都买光", "a": "impr", "why": "临时找资源" },
+      { "q": "请退休员工回来操作手工流程", "a": "impr", "why": "临时动员，但前提是这些人还在、还愿意帮忙" },
+      { "q": "有库存可以先发给客户", "a": "prep", "why": "库存缓冲是运营上的事前准备" },
+      { "q": "比利时的销售员一直把订单打印出来放在活页夹里", "a": "impr", "why": "个人习惯，不是公司设计的备份" },
+      { "q": "新网站本来就在开发，一周内提前上线", "a": "prep", "why": "已经在做的项目被加速，不是从零开始" },
+      { "q": "每天开新闻发布会，请记者进控制室", "a": "impr", "why": "透明策略是当天早上决定的" }
+    ]
   }
 }

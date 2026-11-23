@@ -1,0 +1,1640 @@
+---
+title:
+  en: "Week 5 · Managing IT Projects, SodaStream ERP Rollout & Norsk Hydro Ransomware"
+  zh: "第 5 周 · IT 项目管理、SodaStream 的 ERP 上线与 Norsk Hydro 勒索攻击"
+summary:
+  en: "Managing IT projects: the three phases, scope creep, effort estimation (Delphi, function point analysis, experience) and integrative change control. The HRBPS short case on scope creep, and two cases analysed in full: how NetDynamic should roll out NetSuite at SodaStream Canada, and whether Norsk Hydro was right to refuse the ransom and go public."
+  zh: "IT 项目管理：三个阶段、范围蔓延、工作量估算（Delphi、功能点分析、经验）和集成变更控制。HRBPS 范围蔓延短案例；两个案例完整解析：NetDynamic 怎样在 SodaStream Canada 上线 NetSuite，Norsk Hydro 拒付赎金并公开应对是不是对的。"
+week: 5
+date: 2026-11-23
+tags: [Project Management, Scope Creep, Estimation, Delphi, Function Point Analysis, Change Control, ERP Implementation, NetSuite, Ransomware, Norsk Hydro]
+---
+# ISOM 5100 Information Strategy & Management — Week 5 复习笔记
+
+**主题：第一部分 · Managing IT Projects ｜ 第二部分 · 短案例 HRBPS ｜ 第三部分 · NetDynamic × SodaStream Canada ｜ 第四部分 · Northmen vs. Pirates（Norsk Hydro）**
+
+> 优先级标注说明（按考试重要性）：  
+> 🔴 **必考核心** — 考试会直接用到的分析方法和结论  
+> 🟡 **需要理解** — 能讲清逻辑、能举例  
+> 🟢 **了解即可** — 背景知识
+>
+> **优先级依据**：  
+> ① **期末题型**（第 1 周课件 p.24）：open notes，**new short cases / essay questions**。所以案例的分析方法排在定义前面；  
+> ② **课件的提问**：Slides 7、8、9、11、12、13、14、19 都留了讨论问题，第 3–5 节逐一作答；  
+> ③ **课件的 Agenda**（Slides 6、15）把本讲分成 Initiation（CO7，第 4 周已讲）→ Planning（Scope creep、Estimating effort）→ Monitoring & Control（**HRBPS 短案例**、**ICCP**）。HRBPS 就是 ICCP 的反面教材，两者要一起看；  
+> ④ **Northmen vs. Pirates 是课堂小组练习**，三组问题各由一组回答，所以第 8 节给每组问题都准备了正反两方的论证；  
+> ⑤ **NetDynamic 案例**放在本讲的文件夹里，课件没有对应的页，按第 1 周课程地图属于 Project Mgmt. & Implementation 模块，分析时把本讲和第 4 周 ERP 的框架都用上。  
+> 这一版没有你标注的重点，也没有课堂记录，优先级是按上面五点推断的。
+
+> **📌 本笔记里的几种标记**
+>
+> - **课件 / 案例事实** 直接来自 *Managing IT Projects.pptx*、*NetDynamic Consulting Inc.: Managing ERP Implementation at SodaStream Canada*（Ivey W36207）、*Northmen vs. Pirates: Norsk Hydro Says "No" to Hackers*（IMD-7-2366）、*HRBPS Project* 和 *Northmen vs pirates Case*（小组练习说明）。案例内容都是**转述**，不是逐字翻译：案例只授权本课程使用。
+> - **我的解答**：课件讨论题和案例都没有标准答案，分析和建议是我整理的，不是老师的结论。
+> - **推断 / 假设**：从案例事实推出来的结论标「推断」，案例没有、我为了计算补上的数字标「假设」。
+> - **➕ 课外补充**：课件没写、但答题用得上的背景，优先级按 🟢。
+> - 网页版有五个小实验（功能点、Delphi、变更控制、HRBPS 范围蔓延、赎金账）、两组加权打分和五组点选练习，打印版会变成等价的表格。
+
+> **📝 待补充：课堂讨论**
+>
+> - Northmen vs. Pirates 三组的课堂结论、老师对 Slides 7–19 讨论题的总结，发给我后按「课堂答案」加进对应小节。
+> - NetDynamic 案例课件里没有对应的页：如果下一讲才讨论，或者老师给了讨论题，告诉我，我按题目改第 7 节。
+
+---
+
+## 0. 核心地图
+
+| 部分                     | 内容                                                                            | 本笔记     |
+| ---------------------- | ----------------------------------------------------------------------------- | ------- |
+| **第一部分 · 课件**          | 为什么项目会失败 → 三个阶段 → 范围和范围蔓延 → 估算工作量 → 集成变更控制（ICCP）                              | 第 1–5 节 |
+| **第二部分 · HRBPS**       | 一个 HR 出身的项目经理有求必应，MVP 只做出 40%：明天怎么向 CEO 交代                                    | 第 6 节   |
+| **第三部分 · NetDynamic**  | 加拿大一家 50 人的 NetSuite 合作伙伴，替 SodaStream Canada 上线集团统一的 ERP：一次上线还是分阶段，用户的顾虑怎么处理 | 第 7 节   |
+| **第四部分 · Norsk Hydro** | 3.5 万人的铝业公司被 LockerGoga 勒索：拒付、公开、手工生产，值不值                                     | 第 8 节   |
+| 放在一起                   | 四个话题共用的一条线                                                                    | 第 9 节   |
+
+```
+IT 项目花钱多、失败多（80%）
+   → 失败多数发生在「管理」上，不在技术上
+   → Planning：先定范围（WBS），再估工作量（Delphi / FPA / 经验）
+   → Monitoring & Control：范围一定会被要求改变 → 用 ICCP 让每个变更「被看见、被评估、被批准或拒绝」
+
+HRBPS：没有 ICCP 的项目 = 有求必应 → 范围蔓延 → 40% 完成、+45% 工期、+62% 预算
+NetDynamic：全球统一 vs 本地特色，一次上线 vs 分阶段，培训 vs 对话 → 都是范围和变更的问题
+Norsk Hydro：危机里的「项目」：事前准备决定了能不能拒付，透明决定了员工和客户站不站在你这边
+```
+
+**一句话抓住本周**：IT 项目的成败取决于**你能不能控制「要做什么」**：范围要先写清楚，工作量要用不止一种方法估，变化要走正式流程；而危机来临时，能不能做出正确的选择，取决于事先准备了什么。
+
+---
+
+# 第一部分 · Managing IT Projects（课件）
+
+## 1. 🟡 为什么要关心 IT 项目管理（Slides 2–4）
+
+![课程地图：Managing Projects 在公司边界之内（Managing Information Technology）](images/page_02.png)
+
+*课程地图：Managing Projects 在公司边界之内（Managing Information Technology）（Slide 2）*
+
+Slide 2 是课程地图：公司边界**之内**是 Managing Information Technology，本讲是其中的 **Managing Projects**；边界之外是 Managing Technology（Disruptive Technologies、Emerging Opportunities）。
+
+![$3.9 trillion 的投入，80% 的项目被认为失败](images/page_03.png)
+
+*$3.9 trillion 的投入，80% 的项目被认为失败（Slide 3）*
+
+| 课件原文                                                            | 中文                        | 解释                                |
+| --------------------------------------------------------------- | ------------------------- | --------------------------------- |
+| THE SPEND: $3.9 Trillion spent on IT projects worldwide in 2027 | 2027 年全球 IT 项目支出 3.9 万亿美元 | 来源 Inoxoft 2026，数字源自 IDC          |
+| THE OUTCOME: 80% of IT projects are considered failures         | 80% 的 IT 项目被认为失败          | 来源 Gartner（经 Distributed 2023 转引） |
+| That puts roughly $3.1 trillion a year on the line              | 每年约 3.1 万亿美元面临风险          | 3.9 × 80% ≈ 3.1                   |
+
+> **⚠️ ⚠️ 读这个数字要小心**
+>
+> 「80% 失败」里的「失败」通常包括**超预算、超工期、没交付全部功能**，不等于项目被取消。3.1 万亿是「有风险的钱」，不是「损失的钱」。考试引用时写 *"a large share of IT projects miss their budget, schedule or scope targets"* 比写 *"80% of the money is wasted"* 更准确。
+
+### 1.1 🔴 Revlon 收购 Elizabeth Arden 后的 ERP 失败（Slide 4）
+
+![Revlon：$870M 收购、$64M 发货延误损失、单日股价跌 6.9%](images/page_04.png)
+
+*Revlon：$870M 收购、$64M 发货延误损失、单日股价跌 6.9%（Slide 4）*
+
+| 时间         | 发生了什么                                                      |
+| ---------- | ---------------------------------------------------------- |
+| 2016       | Revlon 以 **$870M** 收购化妆品公司 Elizabeth Arden，两边各有一套旧 ERP 要合并 |
+| 2017       | 选定一个统一的 **SAP HANA**（SAP 的内存数据库平台）平台                       |
+| 2018 年 2 月 | 在工厂上线，**订单、库存、发货流程全部出问题**                                  |
+| 结果         | 发货延误损失 **$64M**；消息公布后股价单日下跌 **6.9%**                       |
+
+> **💡 🧠 Revlon 和本周三个案例的关系**
+>
+> Revlon 的情景和 NetDynamic 几乎一样：**收购之后，把子公司各自的 ERP 合并成一个**。区别在于 Revlon 在工厂直接上线，订单到发货整条链一起出问题；NetDynamic 要决定的正是「一次全部上线还是先上一个功能」（第 7 节）。第 4 周 Hershey 的教训也一样：big bang、赶工期、测试不足。
+
+---
+
+## 2. 🔴 项目的三个阶段（Slides 5、6、15）
+
+![Key Phases：Initiation → Planning → Monitoring & Control](images/page_05.png)
+
+*Key Phases：Initiation → Planning → Monitoring & Control（Slide 5）*
+
+| 阶段                                  | 课件原文                                                                       | 中文 / 要回答的问题              | 本课的例子                                  |
+| ----------------------------------- | -------------------------------------------------------------------------- | ------------------------ | -------------------------------------- |
+| **Project Initiation** 立项           | Which projects to fund? Process to be followed for allocating resources    | 资助哪个项目？按什么流程分配资源？        | CO7（第 4 周）：写 business case 选 HCM 方案    |
+| **Project Planning** 计划             | Scope & WBS; Estimate duration and cost & set time table; Assign resources | 定范围、拆工作；估工期和成本、排时间表；分配资源 | Scope creep、Estimating effort（第 3–4 节） |
+| **Project Monitoring & Control** 监控 | Track project costs, resource & schedule; Make adjustments                 | 跟踪成本、资源、进度；做调整           | HRBPS 短案例、ICCP（第 5–6 节）                |
+
+**WBS（Work Breakdown Structure，工作分解结构）**：把项目的全部工作一层层拆成更小的「工作包」，直到每个工作包能估算、能分配给一个人负责。例如「HR 福利平台」→「员工档案」「福利登记」「报表」→「福利登记」再拆成「界面」「规则引擎」「和工资系统的接口」。WBS 是估算的基础：**没拆清楚的东西估不准**。
+
+![Agenda：Initiation（CO7）→ Planning（Scope Creep、Estimating Effort）→ Monitoring & Control](images/page_06.png)
+
+*Agenda：Initiation（CO7）→ Planning（Scope Creep、Estimating Effort）→ Monitoring & Control（Slide 6）*
+
+![Agenda：Monitoring & Control 下面是 HRBPS 短案例和 ICCP](images/page_15.png)
+
+*Agenda：Monitoring & Control 下面是 HRBPS 短案例和 ICCP（Slide 15）*
+
+*（网页版此处是点选练习：这件事属于项目的哪个阶段？（Slide 5）；下表是全部题目和答案）*
+
+| 挑战                                    | 答案                       | 理由                                                      |
+| ------------------------------------- | ------------------------ | ------------------------------------------------------- |
+| 把 HCM 系统拆成招聘、入职、绩效、培训几个工作包            | **Project Planning**     | WBS（工作分解结构）是 Planning 的第一步：先定范围，再拆成可估算的任务               |
+| 管理层比较三个 IT 提案，决定今年只资助其中一个             | **Project Initiation**   | Initiation 回答「做不做、给多少资源」                                |
+| 用 Function Point Analysis 估算要多少人月     | **Project Planning**     | 估算工期和成本属于 Planning                                      |
+| 每周对比实际花费和预算，发现超支 15% 就调整人手            | **Monitoring & Control** | 跟踪成本、资源、进度并做调整                                          |
+| 给每个任务指派负责人和排时间表                       | **Project Planning**     | Assign resources、set time table                         |
+| CO7 的 Pouliot 写 business case 请高管批准预算 | **Project Initiation**   | 决定资助哪个项目，课件 Agenda 把 CO7 放在 Initiation                  |
+| CAB 审议一个增强请求，决定推迟到第二期                 | **Monitoring & Control** | ICCP 是执行过程中的控制机制                                        |
+| 和用户确认哪些功能在范围内、哪些不在，写进范围说明书            | **Project Planning**     | Scope 定义在 Planning                                      |
+| 决定公司采用什么流程来分配 IT 投资                   | **Project Initiation**   | Slide 5：Process to be followed for allocating resources |
+| MVP 原定本周交付，只完成 40%，项目经理准备申请延期和追加预算    | **Monitoring & Control** | 发现偏差、调整计划，HRBPS 的情景                                     |
+
+---
+
+## 3. 🔴 范围和范围蔓延（Slide 7）
+
+![Scope：创造项目产品所需的全部工作；Scope creep：范围在项目期间不断扩大](images/page_07.png)
+
+*Scope：创造项目产品所需的全部工作；Scope creep：范围在项目期间不断扩大（Slide 7）*
+
+| 课件原文                                                                   | 中文                | 小白解释                                  |
+| ---------------------------------------------------------------------- | ----------------- | ------------------------------------- |
+| **Scope**: All the work involved in creating the project's products    | 范围：创造项目产品所涉及的全部工作 | 不只是「要哪些功能」，还包括测试、数据迁移、培训、文档：凡是要花人力的都算 |
+| **Scope creep**: the scope keeps expanding over the project's duration | 范围蔓延：范围在项目期间不断扩大  | 每次只加「一点点」，没人觉得是大事，加起来就把工期和预算拖垮        |
+| A top challenge on IT projects                                         | IT 项目最主要的挑战之一     | HRBPS 就是一个例子                          |
+
+> **📌 我的解答：Slide 7「为什么 IT 项目特别容易范围蔓延？」**
+>
+> 1. **软件看不见、摸不着（intangible）**：用户在看到系统之前很难说清自己要什么，看到 demo 才发现「原来还可以这样」，于是提新要求。HRBPS 的定期 demo 正好放大了这一点。
+> 2. **改代码看起来很便宜**：盖房子时没人会在封顶后要求加一层，但软件「不就是改几行代码吗」。真实成本（重新设计、测试、迁移数据、改文档）被低估。
+> 3. **业务环境在变**：项目要做一两年，期间法规、组织结构、竞争对手都在变，原来的需求过时了。NetDynamic 遇到的 COVID 和 B2C 转向就是这样。
+> 4. **利益相关方多**：ERP、HR 系统影响很多部门，每个部门都想把自己的需求加进来。
+> 5. **开发者「镀金」（gold plating）**：技术人员自己加了没人要求的功能。
+> 6. **没有正式的变更控制**：没人有权说「不」，也没人算每个变更的代价。这是根本原因，第 5 节的 ICCP 就是对策。
+>
+> **怎么控制**：开始时写清楚范围说明书（包括**不做什么**）和 WBS；业务方签字确认；所有变更走 ICCP；把「好主意」放进下一期的待办清单，而不是这一期。
+
+---
+
+## 4. 🔴 估算工作量（Slides 8–14）
+
+![Effort estimation：估算 IT 项目任务需要的工作量](images/page_08.png)
+
+*Effort estimation：估算 IT 项目任务需要的工作量（Slide 8）*
+
+> **📌 我的解答：Slide 8「估算 IT 项目任务的工作量有哪些难处？」**
+>
+> - **需求不清楚而且会变**：估的时候范围还没定（第 3 节）。
+> - **每个项目都不一样**：新技术、新组合，很少有完全相同的历史项目可以对照。
+> - **人的生产率差异很大**：同一个任务，有经验的开发者可能比新人快好几倍。
+> - **看不见的工作**：集成、数据迁移、测试、返工、培训经常被漏掉。
+> - **乐观偏差和政治压力**：估得低更容易拿到预算批准，第一个数字一说出口就成了承诺。
+> - **人和月不能互换**：加人要培训和沟通，工期不会按比例缩短（见 4.2 的课外补充）。
+
+课件给了三种方法：**Delphi**、**Function Point Analysis（FPA）**、**Experience**。
+
+### 4.1 🔴 Delphi Technique（Slide 9）
+
+![Delphi：给范围 → 匿名估算 → 汇总发回 → 重新考虑](images/page_09.png)
+
+*Delphi：给范围 → 匿名估算 → 汇总发回 → 重新考虑（Slide 9）*
+
+| 步骤 | 课件原文                                        | 中文                      |
+| -- | ------------------------------------------- | ----------------------- |
+| 1  | Each estimator given scope of work          | 每位估算者拿到同一份工作范围说明        |
+| 2  | Provide estimates anonymously               | **匿名**给出估算              |
+| 3  | Summarize & circulate results to estimators | 汇总结果（通常是中位数、范围和理由）发回给大家 |
+| 4  | Reconsider                                  | 每个人看了汇总后重新估，重复几轮直到意见接近  |
+
+Delphi 这个名字来自古希腊的德尔斐神谕，1950 年代美国兰德公司（RAND Corporation）用它来做专家预测。
+
+*（网页版此处可以拖动五位估算者的初始数字、切换是否匿名，看三轮后的收敛；下面是三个预设）*
+
+**意见分散**：五个人对同一份范围说明给出很不一样的人月数，匿名几轮后收敛到中位数附近。
+
+| 轮次    | IT 经理（资深） | 开发 A | 开发 B | 测试   | 业务分析师 | 中位数 | 最大 − 最小 |
+| ----- | --------- | ---- | ---- | ---- | ----- | --- | ------- |
+| 第 0 轮 | 12        | 20   | 26   | 30   | 45    | 26  | 33      |
+| 第 1 轮 | 19        | 23   | 26   | 28   | 35.5  | 26  | 16.5    |
+| 第 2 轮 | 22.5      | 24.5 | 26   | 27   | 30.8  | 26  | 8.3     |
+| 第 3 轮 | 24.3      | 25.3 | 26   | 26.5 | 28.4  | 26  | 4.1     |
+
+**不匿名：大家跟着资深经理走**：同样的初始数字，但名字公开：其他人向资深经理的 12 人月靠拢，结果收敛了，却收敛到一个偏低的数。这正是 Delphi 要匿名的原因。
+
+| 轮次    | IT 经理（资深） | 开发 A | 开发 B | 测试   | 业务分析师 | 中位数  | 最大 − 最小 |
+| ----- | --------- | ---- | ---- | ---- | ----- | ---- | ------- |
+| 第 0 轮 | 12        | 20   | 26   | 30   | 45    | 26   | 33      |
+| 第 1 轮 | 12        | 16   | 19   | 21   | 28.5  | 19   | 16.5    |
+| 第 2 轮 | 12        | 14   | 15.5 | 16.5 | 20.3  | 15.5 | 8.3     |
+| 第 3 轮 | 12        | 13   | 13.8 | 14.3 | 16.1  | 13.8 | 4.1     |
+
+**一个人看到了别人没看到的风险**：测试人员给 60 人月，因为他知道要和旧系统做数据迁移。匿名收敛把这个信息「平均掉」了：Delphi 的另一个缺点。要求离群的人写出理由才能补救。
+
+| 轮次    | IT 经理（资深） | 开发 A | 开发 B | 测试   | 业务分析师 | 中位数 | 最大 − 最小 |
+| ----- | --------- | ---- | ---- | ---- | ----- | --- | ------- |
+| 第 0 轮 | 18        | 20   | 22   | 60   | 21    | 21  | 42      |
+| 第 1 轮 | 19.5      | 20.5 | 21.5 | 40.5 | 21    | 21  | 21      |
+| 第 2 轮 | 20.3      | 20.8 | 21.3 | 30.8 | 21    | 21  | 10.5    |
+| 第 3 轮 | 20.6      | 20.9 | 21.1 | 25.9 | 21    | 21  | 5.3     |
+
+> **📌 我的解答：Slide 9「为什么有用？有什么缺点？」**
+>
+> **有用的地方**
+>
+> - **匿名**避免了资深者、老板或嗓门大的人主导结果（anchoring 锚定效应、从众）。
+> - 汇集多个人的知识：测试人员知道测试难，DBA 知道迁移难，比一个人估更全面。
+> - 每轮要写理由，能把隐藏的假设暴露出来（「你为什么估 60？」「因为要迁移旧数据」）。
+> - 有记录、可追溯，以后可以回头校准。
+>
+> **缺点**
+>
+> - **耗时**：要组织好几轮，不适合快速决策。
+> - **收敛不等于准确**：如果大家共享同一个盲点，收敛只会让错误更自信。
+> - **少数人的正确意见可能被「平均掉」**：上面实验里「一个人看到了别人没看到的风险」那个预设。
+> - 依赖估算者的专业水平和对范围的理解；范围本身写得不清楚时，Delphi 救不了。
+> - 匿名也意味着没人对数字负责。
+
+### 4.2 🔴 Function Point Analysis（Slides 10–13）
+
+![FPA：给要建的系统定规模，五类组件，复杂度加权](images/page_10.png)
+
+*FPA：给要建的系统定规模，五类组件，复杂度加权（Slide 10）*
+
+| 课件原文                                                     | 中文           | 解释                    |
+| -------------------------------------------------------- | ------------ | --------------------- |
+| High-level estimate of project effort                    | 项目工作量的高层估算   | 不看代码，在需求阶段就能用         |
+| Size the system being built                              | 给要建的系统定规模    | 先估「有多大」，再换算成「要多少人干多久」 |
+| Components: inputs, outputs, interfaces, enquiries, data | 五类组件         | 见下表                   |
+| How complex is each component?                           | 每个组件有多复杂     | Low / Average / High  |
+| Total function points ≈ system size                      | 总功能点 ≈ 系统规模  | —                     |
+| Adjusted points convert into effort                      | 调整后的点数换算成工作量 | 用行业或公司自己的换算率          |
+
+**五类组件**（以 HRBPS 福利平台为例）：
+
+| 组件                | 意思               | 例子           |
+| ----------------- | ---------------- | ------------ |
+| **Inputs** 输入     | 用户输入、会改变数据的屏幕或表单 | 员工登记福利的表单    |
+| **Outputs** 输出    | 系统算出来、给用户的报告或屏幕  | 每月福利费用报表     |
+| **Inquiries** 查询  | 只查不改的请求          | 员工查自己参加了哪些计划 |
+| **Files** 文件      | 系统内部维护的数据（表）     | 员工主档、福利计划表   |
+| **Interfaces** 接口 | 和其他系统交换的数据       | 把扣款传给工资系统    |
+
+![复杂度权重表](images/page_11.png)
+
+*复杂度权重表（Slide 11）*
+
+| Element    | Low | Average | High |
+| ---------- | --- | ------- | ---- |
+| Inputs     | × 2 | × 3     | × 4  |
+| Outputs    | × 3 | × 6     | × 9  |
+| Inquiries  | × 2 | × 4     | × 6  |
+| Files      | × 5 | × 8     | × 12 |
+| Interfaces | × 5 | × 10    | × 15 |
+
+![例题：Patient Admitting and Billing，总计 660 function points](images/page_12.png)
+
+*例题：Patient Admitting and Billing，总计 660 function points（Slide 12）*
+
+![660 FP ÷ 5 = 132 人月；10 个程序员约 13 个月](images/page_13.png)
+
+*660 FP ÷ 5 = 132 人月；10 个程序员约 13 个月（Slide 13）*
+
+**课件的例题（Slides 12–13）**：一个病人入院和计费系统。
+
+| Element    | 数量 | 复杂度     | 权重 | 点数      |
+| ---------- | -- | ------- | -- | ------- |
+| Inputs     | 15 | Low     | 2  | 30      |
+| Outputs    | 5  | Average | 6  | 30      |
+| Inquiries  | 10 | Average | 4  | 40      |
+| Files      | 30 | High    | 12 | 360     |
+| Interfaces | 20 | Average | 10 | 200     |
+| **合计**     |    |         |    | **660** |
+
+然后：行业换算率 **5 function points = 1 person-month**（人月：一个人工作一个月）→ 660 ÷ 5 = **132 人月** → 10 个程序员约 **13 个月**（132 ÷ 10 = 13.2）→ 成本 = 132 × 月薪。
+
+*（网页版此处可以改每类组件的数量和复杂度、换算率、人数和月薪；下面是三个预设的结果）*
+
+**Slide 12：Patient Admitting and Billing**：课件的例题：15 个低复杂度输入、5 个中等输出、10 个中等查询、30 个高复杂度文件、20 个中等接口；行业比率 5 FP = 1 人月，10 个程序员。工资是示意数字。
+
+| Element       | 数量 | 复杂度     | 权重   | Function points |
+| ------------- | -- | ------- | ---- | --------------- |
+| Inputs 输入     | 15 | Low     | × 2  | 30              |
+| Outputs 输出    | 5  | Average | × 6  | 30              |
+| Inquiries 查询  | 10 | Average | × 4  | 40              |
+| Files 文件      | 30 | High    | × 12 | 360             |
+| Interfaces 接口 | 20 | Average | × 10 | 200             |
+| **合计**        |    |         |      | **660**         |
+
+660 FP ÷ 5 = 132 人月 → 10 人约 13.2 个月 → 人工成本约 $1,056,000（月薪 $8,000，示意）
+
+**同一系统，文件只算 Average**：只把 30 个文件从 High 改成 Average（×12 → ×8）：总点数少 120，工期少两个多月。复杂度评级是主观判断，这就是 FPA 的弱点。
+
+| Element       | 数量 | 复杂度     | 权重   | Function points |
+| ------------- | -- | ------- | ---- | --------------- |
+| Inputs 输入     | 15 | Low     | × 2  | 30              |
+| Outputs 输出    | 5  | Average | × 6  | 30              |
+| Inquiries 查询  | 10 | Average | × 4  | 40              |
+| Files 文件      | 30 | Average | × 8  | 240             |
+| Interfaces 接口 | 20 | Average | × 10 | 200             |
+| **合计**        |    |         |      | **540**         |
+
+540 FP ÷ 5 = 108 人月 → 10 人约 10.8 个月 → 人工成本约 $864,000（月薪 $8,000，示意）
+
+**人数翻倍到 20 人**：公式上工期减半到约 6.6 个月。现实里加人要沟通和上手，工期不会按比例缩短（Brooks 定律，见课外补充）。
+
+| Element       | 数量 | 复杂度     | 权重   | Function points |
+| ------------- | -- | ------- | ---- | --------------- |
+| Inputs 输入     | 15 | Low     | × 2  | 30              |
+| Outputs 输出    | 5  | Average | × 6  | 30              |
+| Inquiries 查询  | 10 | Average | × 4  | 40              |
+| Files 文件      | 30 | High    | × 12 | 360             |
+| Interfaces 接口 | 20 | Average | × 10 | 200             |
+| **合计**        |    |         |      | **660**         |
+
+660 FP ÷ 5 = 132 人月 → 20 人约 6.6 个月 → 人工成本约 $1,056,000（月薪 $8,000，示意）
+
+> **🎯 🎯 Slide 11「权重是从哪里来的？」和 Slide 12「总功能点代表什么？」**
+>
+> - **权重**来自对大量历史项目的统计校准：IBM 的 Allan Albrecht 在 1979 年提出 FPA，后来由国际功能点用户组 **IFPUG**（International Function Point Users Group）把计数规则和权重标准化。意思是「平均来说，一个高复杂度的文件要花的工作量约是一个低复杂度输入的 6 倍」。所以权重是**经验平均值**，不一定适合你的公司。
+> - **总功能点**代表**系统的功能规模（functional size）**：从用户角度看系统要做多少事。它**不直接**等于工作量：还要乘上换算率，而换算率取决于团队、技术和工具。同样 660 点，用低代码平台和从零写 Java 差别很大。
+
+> **📌 我的解答：Slide 13「你怎么评价这个方法？」**
+>
+> **优点**：在需求阶段就能用，不需要先写代码；和编程语言无关；规则标准化，可以在项目之间比较；把「拍脑袋」变成可以检查的计算，每个数字都能被追问。
+>
+> **缺点**：
+>
+> - **复杂度评级是主观的**：上面实验把 30 个文件从 High 改成 Average，总点数就少 120，工期少两个多月。
+> - **换算率**（5 FP / 人月）是行业平均，未必适合你的团队；
+> - 只算功能，不算**非功能需求**（性能、安全、可用性）和集成、数据迁移这类工作；
+> - 计数本身要培训和时间；
+> - 最后一步「人数 × 月 = 人月」假设人和时间可以互换，这在现实中不成立。
+
+> **➕ 课外补充：Brooks 定律**
+>
+> Fred Brooks 在《人月神话》（*The Mythical Man-Month*，1975）里说：**给一个已经延误的软件项目加人，只会让它更晚**（Adding manpower to a late software project makes it later）。新人要上手，老人要花时间教；人数 n 增加时，沟通渠道按 n(n−1)/2 增长。所以 Slide 13 的「10 个程序员 → 13 个月」只是纸面计算，20 个人不会 6.6 个月就做完。
+
+### 4.3 🔴 三种方法比较（Slide 14）
+
+![三种估算方法：Delphi、FPA、Experience](images/page_14.png)
+
+*三种估算方法：Delphi、FPA、Experience（Slide 14）*
+
+| 方法                | 怎么做          | 适合                | 主要弱点              |
+| ----------------- | ------------ | ----------------- | ----------------- |
+| **Delphi**        | 多位专家匿名估、几轮收敛 | 新类型、没有历史数据、需要多方知识 | 耗时；收敛不等于准确        |
+| **FPA**           | 数功能、加权、换算    | 需求已经比较清楚的信息系统     | 复杂度评级主观；换算率不一定适用  |
+| **Experience** 经验 | 和过去类似项目类比    | 公司做过很多相似项目        | 新技术、新组合时没法类比；记忆偏差 |
+
+> **📌 我的解答：Slide 14「你对这些估算方法的整体看法？」**
+>
+> 没有一种方法单独可靠，**最好的做法是用两三种方法互相印证（triangulation）**：用 FPA 估规模，用经验数据校准换算率，用 Delphi 让团队审查假设。两个方法的结果差很远时，差距本身就是信号：说明范围还不清楚，需要先澄清再承诺数字。还要记住，估算是一个**区间**，应该随着项目推进而更新，而不是开始时报一个数就当成承诺。
+
+*（网页版此处是点选练习：这描述的是哪种估算方法？（Slides 9–14）；下表是全部题目和答案）*
+
+| 挑战                                   | 答案                          | 理由                      |
+| ------------------------------------ | --------------------------- | ----------------------- |
+| 把输入、输出、查询、文件、接口按复杂度加权求和              | **Function Point Analysis** | FPA 的五类组件和权重表（Slide 11） |
+| 每位估算者匿名给出数字，汇总后发回去再估一轮               | **Delphi**                  | Slide 9 的四步             |
+| 可以在需求阶段、还没写代码时就估出系统规模                | **Function Point Analysis** | FPA 按功能计数，不依赖代码行数       |
+| 「5 个 function point = 1 人月」这样的行业换算率  | **Function Point Analysis** | Slide 13：把点数换成工作量       |
+| 「上次做类似的 CRM 项目用了 9 个月，这次差不多」         | **Experience（经验类比）**        | 用过去相似项目类比               |
+| 避免资深者的意见压倒其他人                        | **Delphi**                  | 匿名的作用                   |
+| 复杂度是 Low 还是 High 由人判断，同一系统不同人算出的点数不同 | **Function Point Analysis** | FPA 的主观性                |
+| 新技术、组织从没做过的项目上最不可靠                   | **Experience（经验类比）**        | 没有可类比的过去项目              |
+| 缺点是耗时、要组织好几轮，而且可能收敛到一个共同的错误          | **Delphi**                  | 轮数多；收敛不等于准确             |
+
+---
+
+## 5. 🔴 Integrative Change Control Process（ICCP，Slides 16–19）
+
+![ICCP 的定义和六项关键活动](images/page_16.png)
+
+*ICCP 的定义和六项关键活动（Slide 16）*
+
+| 课件原文                                                                                | 中文                                | 解释                                         |
+| ----------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------ |
+| A formal process to approve and manage all project document and deliverable changes | 一个**正式流程**，批准和管理项目文件和交付物的**所有**变更 | 「Integrative」= 一个变更会同时影响范围、进度、成本、质量，要放在一起看 |
+| Identify that a change is needed or has occurred                                    | 识别需要变更或已经发生的变更                    | —                                          |
+| Govern how changes are reviewed and approved                                        | 规定变更怎么审、怎么批                       | 谁有权批什么                                     |
+| Manage approved changes as they occur                                               | 管理已批准变更的执行                        | —                                          |
+| Keep project artifacts intact                                                       | 保持项目文件的完整                         | 需求、设计、计划要同步更新                              |
+| Communicate to all stakeholders                                                     | 通知所有利益相关方                         | —                                          |
+| Configuration management                                                            | 配置管理                              | 记录每一版需求、代码和文档，知道现在是哪个版本、改过什么               |
+
+### 5.1 🔴 流程图（Slide 17）
+
+![ICCP 泳道图：Initiator → Screener → CAB → Owner](images/page_17.png)
+
+*ICCP 泳道图：Initiator → Screener → CAB → Owner（Slide 17）*
+
+| 泳道                | 角色                    | 步骤                                                                        |
+| ----------------- | --------------------- | ------------------------------------------------------------------------- |
+| **Initiator** 发起人 | 提出变更的人（用户、业务方、团队成员）   | Create RFC；被退回时 Collect additional info                                   |
+| **Screener** 筛选人  | 通常是项目经理或项目办公室         | Initial review → RFC complete?（否 → 退回发起人）→ 定优先级 → 定类别 → 更新变更日志和排期 → 通知所有人 |
+| **CAB** 变更顾问委员会   | Change Advisory Board | Review changes → 有权限吗？（否 → Escalate 上报）→ 批准吗？（否 → 记录驳回；是 → 排期）            |
+| **Owner** 执行人     | 负责实施的人或团队             | Make change                                                               |
+
+**RFC** = Request for Change，变更请求；**CAB** = Change Advisory Board。
+
+### 5.2 🔴 RFC 表格（Slide 18）
+
+![RFC-042：月度财务报告的变更请求](images/page_18.png)
+
+*RFC-042：月度财务报告的变更请求（Slide 18）*
+
+| 栏目         | 内容                                                                                |
+| ---------- | --------------------------------------------------------------------------------- |
+| 编号         | Form RFC-042，Change Req. # CR-2026-114                                            |
+| 项目         | Monthly Financial Status Reports（月度财务状况报告）                                        |
+| 提交人 / 日期   | Sally Jones（Finance Systems），2026 年 9 月 19 日；状态 Pending review                    |
+| 优先级        | **High**（可选 E = Emergency、H、M、L）                                                  |
+| 类别         | **Minor**（可选 Major、Significant、Minor、Operational）                                 |
+| 变更描述       | 报告生成的时间不对：存货持有成本在报告生成**之后**才录入，所以财务报表有错。要求推迟月报生成，直到最新成本数据录入，并加一个系统检查，确认成本数据在才运行报告 |
+| 业务理由（成本收益） | 提高月报准确性，让决策基于可靠的数字，而且更快                                                           |
+| 不批准的影响     | 继续用不准确的成本和存货信息，做出迟的或差的决定                                                          |
+| 影响的方面      | Scope、Schedule、Risk、**Cost ✓**、HR、**Quality ✓**                                   |
+| 需要的批准      | Jim Golden、Mark Kane、Mike Rogers                                                  |
+
+> **💡 🧠 一张好的 RFC 回答四个问题**
+>
+> 改什么？为什么（业务理由）？不改会怎样？影响范围、进度、成本、质量中的哪些？HRBPS 的 22 个增强请求如果都填了这张表，项目经理就会发现其中两个要改数据模型，影响的是**所有**方面。
+
+*（网页版此处可以选一个 RFC、切换三个判断点，看它在 Slide 17 泳道图里怎么走；下面是四个 RFC 的路径）*
+
+**Slide 18：RFC-042 月度财务报告**（Sally Jones（Finance Systems））：存货持有成本在报告生成之后才录入，月报出错。要求推迟生成月报，并加一个「成本数据齐了才运行」的检查。 优先级 High，类别 Minor。
+
+Initiator：Create RFC 提交变更请求 ⇒ Screener：Initial review of RFC 初审 ⇒ Screener：RFC complete? 信息齐全吗？ → Yes ⇒ Screener：Review & assign priority 定优先级（E / H / M / L） ⇒ Screener：Review & assign category 定类别（Major / Significant / Minor / Operational） ⇒ Screener：Update change log & schedule 登记并排期 ⇒ Screener：Inform all of status 通知所有人 ⇒ CAB：Review changes CAB 审议 ⇒ CAB：Authority to make change? CAB 有权决定吗？ → Yes ⇒ CAB：Change approved? 批准吗？ → Yes ⇒ CAB：Schedule change 排期 ⇒ Owner：Make change 执行变更（结束）
+
+**结果：批准并执行。** 信息齐全；影响面小（Minor），在 CAB 的权限内；不改会继续拿错误数字做决策，所以批准。
+
+**HRBPS：要改数据模型的增强请求**（HR 用户（经项目经理转交））：22 个增强请求里的 2 个：用户觉得很有价值，但要改底层数据模型。系统架构师还没评估。 优先级 Medium，类别 Major。
+
+Initiator：Create RFC 提交变更请求 ⇒ Screener：Initial review of RFC 初审 ⇒ Screener：RFC complete? 信息齐全吗？ → No ⇒ Initiator：Collect additional info 补充信息 ⇒ Screener：Initial review of RFC 初审 ⇒ Screener：RFC complete? 信息齐全吗？ → Yes ⇒ Screener：Review & assign priority 定优先级（E / H / M / L） ⇒ Screener：Review & assign category 定类别（Major / Significant / Minor / Operational） ⇒ Screener：Update change log & schedule 登记并排期 ⇒ Screener：Inform all of status 通知所有人 ⇒ CAB：Review changes CAB 审议 ⇒ CAB：Authority to make change? CAB 有权决定吗？ → No ⇒ CAB：Escalate 上报（发起人 / 指导委员会） ⇒ CAB：Change approved? 批准吗？ → No ⇒ Screener：Update change log 记录驳回（结束）
+
+**结果：驳回，记入变更日志。** 第一次提交缺少架构师的影响评估，要退回补充。改数据模型是 Major，超出 CAB 权限，要上报给发起人（CEO）。在项目已经超支 62%、MVP 还没交付的情况下，合理的结论是放进第二期，而不是现在做。
+
+**HRBPS：把一个按钮的文字改清楚**（试点用户）：福利登记页面上「Submit」改成「Submit enrollment」，避免用户以为已经提交。 优先级 Low，类别 Operational。
+
+Initiator：Create RFC 提交变更请求 ⇒ Screener：Initial review of RFC 初审 ⇒ Screener：RFC complete? 信息齐全吗？ → Yes ⇒ Screener：Review & assign priority 定优先级（E / H / M / L） ⇒ Screener：Review & assign category 定类别（Major / Significant / Minor / Operational） ⇒ Screener：Update change log & schedule 登记并排期 ⇒ Screener：Inform all of status 通知所有人 ⇒ CAB：Review changes CAB 审议 ⇒ CAB：Authority to make change? CAB 有权决定吗？ → Yes ⇒ CAB：Change approved? 批准吗？ → Yes ⇒ CAB：Schedule change 排期 ⇒ Owner：Make change 执行变更（结束）
+
+**结果：批准并执行。** 改动小、不影响范围和进度，CAB（甚至可以授权项目经理）直接批准。ICCP 不是要拒绝所有变更，而是让每个变更都被看见、被记录、按影响大小走不同的审批层级。
+
+**SodaStream Canada：把 Home Exchange 流程加进 ERP**（SodaStream Canada 业务团队）：未来可能推出的上门换气瓶计划，要求现在就在 NetSuite 里建好流程。 优先级 Low，类别 Significant。
+
+Initiator：Create RFC 提交变更请求 ⇒ Screener：Initial review of RFC 初审 ⇒ Screener：RFC complete? 信息齐全吗？ → Yes ⇒ Screener：Review & assign priority 定优先级（E / H / M / L） ⇒ Screener：Review & assign category 定类别（Major / Significant / Minor / Operational） ⇒ Screener：Update change log & schedule 登记并排期 ⇒ Screener：Inform all of status 通知所有人 ⇒ CAB：Review changes CAB 审议 ⇒ CAB：Authority to make change? CAB 有权决定吗？ → Yes ⇒ CAB：Change approved? 批准吗？ → No ⇒ Screener：Update change log 记录驳回（结束）
+
+**结果：驳回，记入变更日志。** 信息齐全，CAB 有权决定。但这个计划还只是「potential」，在 2021 年 6 月上线前加进来会扩大范围、挤占核心流程的测试时间，所以驳回或推迟到上线后，并记录在变更日志里。
+
+### 5.3 🔴 谁有权批准（Slide 19）
+
+![Change authority 和 CAB 的组成](images/page_19.png)
+
+*Change authority 和 CAB 的组成（Slide 19）*
+
+| 课件原文                                                           | 中文                                |
+| -------------------------------------------------------------- | --------------------------------- |
+| Every requested change is accepted or rejected by an authority | 每个变更请求都由一个**有权的机构**接受或拒绝          |
+| That authority: the CAB or Change Control Board (CCB)          | 这个机构叫 CAB 或 CCB（变更控制委员会）          |
+| Cross-functional, drawn from key user teams                    | **跨职能**，成员来自主要的用户团队               |
+| Chaired by the project sponsor or their designate              | 由项目**发起人**（出钱、对项目结果负责的高管）或其指定的人主持 |
+| Chair, membership and size depend on the project               | 主席、成员和人数视项目而定                     |
+| Meeting frequency depends on project needs                     | 开会频率视项目需要而定                       |
+
+> **📌 我的解答：Slide 19「ICCP 的优缺点？」**
+>
+> **优点**
+>
+> - **控制范围蔓延**：每个变更都要说明理由和代价，「顺便加一下」不再免费。
+> - **决策透明、有记录**：变更日志说明了为什么做、为什么不做，以后不会扯皮。
+> - **从整体看影响**：一个变更对范围、进度、成本、质量的影响一起评估。
+> - **用户仍然有发声渠道**：不是拒绝所有变更，而是把变更排进合适的时间（例如第二期）。
+> - **把「说不」的责任交给有权的人**：项目经理不用一个人顶住所有用户的压力（HRBPS 的项目经理恰恰缺这个）。
+>
+> **缺点**
+>
+> - **官僚、慢**：小改动也要走流程，紧急情况下可能耽误事（所以要有 Emergency 优先级和授权项目经理直接批准小改动）。
+> - **占用管理时间**：CAB 成员要开会。
+> - **可能扼杀好的想法**：太严格时，用户觉得「反正提了也没用」，系统上线后不被接受。
+> - **和敏捷开发有张力**：敏捷本来就欢迎变化，靠每个迭代的待办清单（backlog）排序来控制，而不是正式的委员会。
+>
+> **平衡的做法**：按影响大小分级授权：Operational / Minor 由项目经理批，Significant 由 CAB 批，Major 上报发起人。
+
+*（网页版此处是点选练习：在 Slide 17 的泳道图里，这一步由谁做？；下表是全部题目和答案）*
+
+| 挑战                           | 答案            | 理由                                                  |
+| ---------------------------- | ------------- | --------------------------------------------------- |
+| 填写 Request for Change（RFC）表格 | **Initiator** | 发起人提出变更                                             |
+| 检查 RFC 是否填完整                 | **Screener**  | Initial review of RFC → RFC complete?               |
+| 给变更定优先级（E / H / M / L）和类别    | **Screener**  | Review & assign priority / category                 |
+| 判断自己是否有权批准，没有就上报             | **CAB**       | Authority to make change? → Escalate                |
+| 按批准的排期实际修改系统                 | **Owner**     | Make change                                         |
+| RFC 被退回后补充业务理由和影响            | **Initiator** | Collect additional info                             |
+| 更新变更日志、通知所有相关人状态             | **Screener**  | Update change log & schedule → Inform all of status |
+| 审议变更并决定批准或驳回                 | **CAB**       | Review changes → Change approved?                   |
+| 批准后安排变更的时间                   | **CAB**       | Schedule change 在 CAB 泳道                            |
+
+---
+
+# 第二部分 · 短案例：HRBPS Project
+
+## 6. 🔴 HRBPS Project（Slide 15 的短案例）
+
+> **📌 这一节怎么读**
+>
+> HRBPS 是一页的短案例，课件放在 Monitoring & Control 下面，紧接着讲 ICCP。它的作用是**让你自己发现为什么需要 ICCP**。案例没有说 HRBPS 的全称，从内容看是 **HR Benefits Platform System**（推断）。
+
+### 6.0 🔴 要回答的题目
+
+| 原文                                                                                                 | 中文                                |
+| -------------------------------------------------------------------------------------------------- | --------------------------------- |
+| What would you do differently, if anything, given the chance to start this project all over again? | 如果有机会让这个项目从头再来，你会有什么不同的做法（如果有的话）？ |
+
+### 6.1 🟡 原文导读
+
+**第一段：你是谁。** 你是 HRBPS 团队的项目经理，这个团队负责做公司新的**云端人力资源福利管理平台**（员工登记医疗保险、退休金等福利的系统）。你做的 business case 报告非常成功，被高管团队公开表扬：CEO **Margaret Weston** 说，终于有人不讲技术术语、而是用业务语言讲数字化转型项目了。你能同时和产品工程师、业务方沟通，所以拿到了这个职位。你是公司**第一个来自职能部门（HR）而不是 IT 部门**的项目经理。
+
+**第二段：项目一直很顺。** 用户（大多是你以前的 HR 同事）非常支持，这主要归功于你懂 HR、对利益相关方友好。你**有意**通过定期 demo 和开放的反馈渠道征求用户意见，并且**尽可能满足**增强请求。首席系统分析师 **Erik Dinos** 反对：「你必须锁定范围，不然范围蔓延会拖垮我们。」你把他的意见当成「工程团队的牢骚」：那些人从来受不了一点不确定。你以前在别的系统实施项目里当过利益相关方，所以你深信**用户不满意是系统没人用的最快途径**。
+
+**第三段：问题暴露。** 现在你开始怀疑自己的决定。原计划**本周晚些时候**要把最小可行产品（MVP, Minimum Viable Product：只有核心功能、能让用户试用的第一版）交给试点用户测试，但**已批准的功能只做了 40%**。团队还面对一个 **22 个增强请求**的待办清单，其中 **2 个**用户认为很有价值的请求要**改底层数据模型**。如果不做这些增强，完成项目**还要 7 个月**，比原计划**多 45%**。
+
+**第四段：钱也不够。** 现在才看清，原预算本来就**不足**。按已批准的需求完成项目，预算要比原来**增加 62%**。如果还要做那 22 个增强，要再多花多少不清楚，因为系统架构师还没评估。
+
+**第五段：明天的会。** 你明天下午要向 Weston 汇报进度，但还没想好怎么办。唯一确定的是你必须在会上**申请延期和追加预算**。你的计划是汇报现状、描绘最终产品的样子、争取支持。
+
+### 6.2 🔴 一段话讲清楚
+
+一家公司的 HR 福利平台项目由一位**HR 出身**的项目经理负责。他（她）为了让用户满意，定期 demo、有求必应，拒绝了首席系统分析师「锁定范围」的警告。结果在 MVP 原定交付的这一周，只完成了 40% 的已批准功能，还有 22 个增强请求排着队；完成原定范围要再加 7 个月（+45%）和 62% 的预算。明天下午就要见 CEO，必须申请延期和追加预算。题目问的是：**如果重来，你会怎么做？**
+
+### 6.3 🟡 人物
+
+| 人物                  | 角色             | 想要 / 担心                      | 立场                     |
+| ------------------- | -------------- | ---------------------------- | ---------------------- |
+| **你**（项目经理）         | 第一位来自 HR 的项目经理 | 用户满意、系统被采用；现在担心延期和超支         | 一直站在用户一边，开始怀疑          |
+| **Margaret Weston** | CEO，项目的最终决策人   | 曾公开表扬你的 business case；明天要听进度 | 未知：她的支持是你最大的资产，也是最大的风险 |
+| **Erik Dinos**      | 首席系统分析师        | 担心范围蔓延拖垮项目                   | 一开始就要求锁定范围，被你忽视        |
+| **HR 用户**           | 你以前的同事、试点用户    | 想要更多功能                       | 很支持，提了 22 个增强          |
+| **系统架构师**           | 技术设计负责人        | —                            | 还没评估 22 个增强            |
+
+关系：你向 CEO 汇报；Dinos 和架构师在你的团队里，但你没有采纳他们的意见；HR 用户是你的老同事，你和他们的关系比和工程团队更近。
+
+### 6.4 🔴 问题到底是什么
+
+**症状**（案例的证据）：
+
+| 症状   | 数字                                 |
+| ---- | ---------------------------------- |
+| 进度落后 | MVP 本周应交付，已批准功能只完成 **40%**         |
+| 工期超  | 还要 **7 个月** = 原计划的 **45%**         |
+| 预算超  | 完成已批准范围要 **+62%**                  |
+| 范围失控 | **22 个**增强请求待处理，**2 个**要改数据模型，代价未知 |
+| 团队不和 | 首席分析师的警告被当成「牢骚」                    |
+
+**根本原因**：
+
+1. **没有变更控制（ICCP）**：增强请求直接进入开发，没人评估代价，也没人有权说「不」。这是范围蔓延的直接原因。
+2. **把「用户满意」等同于「满足所有请求」**：项目经理把用户参与（好事）和范围管理（必须）对立起来了。用户参与应该通过排优先级来体现，而不是有求必应。
+3. **计划阶段就有问题**：案例说原预算本来就**不足（underfunded）**。即使没有增强，已批准的范围也要 +62% 预算，说明**估算本身就偏低**。这是第 4 节的问题：可能只用了一种方法，或者为了让 business case 好看而压低了数字。
+4. **项目经理的经验和角色**：第一位非 IT 出身的项目经理，擅长沟通，但没有管理技术风险的经验，也没有让技术团队的意见进入决策。
+5. **过晚发现**：如果有正常的 Monitoring & Control（跟踪进度和成本），40% 的问题应该早几个月就被看到。
+
+### 6.5 🔴 数字（推断）
+
+案例说「再要 7 个月（比原计划多 45%）」。所以：
+
+- 原计划 ≈ 7 ÷ 0.45 ≈ **15.6 个月**；新的总工期 ≈ 15.6 + 7 ≈ **22.6 个月**。
+- MVP 本该在这周交付，只完成了已批准功能的 40%：如果 MVP 原本就是整个已批准范围的一部分，实际进度落后得更多（推断）。
+- 预算 +62% 而工期 +45%：**每个月的花费也比计划高**（1.62 ÷ 1.45 ≈ 1.12，每月多约 12%），说明不只是时间拉长，团队规模或单价也被低估了（推断）。
+
+*（网页版此处可以拖动接受的增强数量和每个增强的工作量；增强的工作量是示意假设，下面是三个预设）*
+
+| 情景          | 说明                                              | 总工期               | 工期变化  | 预算变化  |
+| ----------- | ----------------------------------------------- | ----------------- | ----- | ----- |
+| 只完成已批准的范围   | 案例给的数字：再要 7 个月（+45%），预算 +62%。由此倒推原计划约 15.6 个月。  | 22.6 个月（原计划 15.6） | +45%  | +62%  |
+| 22 个增强全部接受  | 假设 20 个小改动各 1.5 周、2 个数据模型改动各 8 周（示意）：工期接近翻倍。    | 33.2 个月（原计划 15.6） | +113% | +138% |
+| 只接受两个数据模型改动 | 用户最看重的两个：每个都牵动底层设计、测试和数据迁移，单这两项就再加约 3.7 个月（示意）。 | 26.3 个月（原计划 15.6） | +69%  | +89%  |
+
+### 6.6 🔴 明天开会前有哪些选项
+
+| 选项                 | 内容                                              | 好处                   | 坏处                               | 谁支持     |
+| ------------------ | ----------------------------------------------- | -------------------- | -------------------------------- | ------- |
+| **A. 全要**          | 申请延期和预算，覆盖已批准范围 + 22 个增强                        | 用户最满意                | 代价未知（架构师没评估），等于请 CEO 签空白支票；会失去信誉 | HR 用户   |
+| **B. 冻结范围、分期**     | 已批准范围按新计划完成（+7 个月、+62%）；22 个增强全部走 ICCP，评估后放进第二期 | 数字是已知的；给 CEO 一个可控的计划 | 用户要等；仍然是大幅超支                     | Dinos   |
+| **C. 缩小范围、先上 MVP** | 和用户一起把已批准范围再砍一刀，尽快交付一个更小的 MVP 给试点用户，再按反馈排后续     | 最快拿到真实用户的反馈；降低风险     | 需要用户接受「少一些」；有些功能被推迟              | 可能是 CEO |
+| **D. 暂停 / 重新立项**   | 停下来重新做 business case 和估算                        | 承认原计划有问题，从源头修        | 浪费已投入的成本，团队士气受打击                 | —       |
+
+### 6.7 🔴 我的建议：B + C（冻结范围、缩小 MVP、建立 ICCP）
+
+> **📌 我的解答：明天怎么跟 CEO 说**
+>
+> 1. **先承认问题，不要「描绘最终产品的样子」**。原计划是汇报现状、描绘愿景、争取支持，这会让人觉得在回避问题。CEO 欣赏你的原因是你讲业务语言，那就用业务语言讲清楚：已完成多少、还要多少、为什么。
+> 2. **立即冻结范围**：已批准的需求以外不再接受新增。
+> 3. **成立 CAB**：由 CEO 或她指定的人主持，HR 用户代表、Dinos、架构师参加。22 个增强逐个填 RFC，由架构师评估代价，CAB 决定哪些进第二期。
+> 4. **重新定义 MVP**：和用户一起选出最核心的功能，尽快交给试点用户，而不是等 40% 变成 100%。
+> 5. **重新估算**：用不止一种方法（FPA + Delphi + 团队的经验数据）给出一个**区间**，而不是一个数。
+> 6. **申请的是有条件的资金**：按里程碑分批拨款，每个阶段结束时复盘。
+>
+> **为什么不是 A**：22 个增强的代价还不知道，现在申请等于签空白支票；而且其中 2 个要改数据模型，会让已经做好的 40% 也要返工。
+>
+> **反方最强的论点**：用户采用确实是 IT 项目失败的主要原因之一（第 1 周 OTISLINE 的 People 维度）。如果现在突然冻结，用户会觉得被背叛，项目经理也会失去最大的支持者。**回应**：不是拒绝用户，而是让他们进入 CAB、参与排序，他们的请求进入第二期而不是消失。用户参与（参与决策）和有求必应（直接改范围）是两回事。
+>
+> **什么会改变答案**：如果那两个数据模型改动是**法规要求**或者不做系统就没法用，那么它们应该现在做，其他增强推迟。
+
+### 6.8 🔴 题目：如果重来，我会怎么做
+
+| 阶段         | 原来的做法                  | 重来会怎么做                                  | 对应课件         |
+| ---------- | ---------------------- | --------------------------------------- | ------------ |
+| Initiation | business case 很漂亮，预算不足 | 预算包含应急储备（contingency），估算给区间             | Slide 5      |
+| Planning   | 范围没有锁定                 | 写范围说明书（包括「不做什么」）和 WBS，用户签字；Dinos 和架构师参与 | Slide 7      |
+| Planning   | 估算偏低                   | 用 FPA + Delphi + 经验三种方法互相印证             | Slides 9–14  |
+| Monitoring | 开放反馈渠道，有求必应            | 保留 demo 和反馈渠道，但所有请求进 ICCP；成立 CAB        | Slides 16–19 |
+| Monitoring | 到 MVP 前一周才发现 40%       | 每周跟踪挣值（完成了多少 vs 花了多少），偏差超过阈值就上报         | Slide 5      |
+| People     | 把技术团队的警告当牢骚            | 技术负责人有否决权或至少有正式的风险登记                    | —            |
+| 交付方式       | 一个大 MVP                | 小步迭代，先交付最小的可用功能                         | —            |
+
+> **💡 🧠 HRBPS 的核心悖论**
+>
+> 这位项目经理的**长处**（懂业务、亲近用户）正是让项目失控的原因。好的 IT 项目经理既要倾听用户，又要保护范围。用户参与是必要的，但必须通过一个**有边界的流程**（ICCP），否则「倾听」就变成了「什么都答应」。
+
+### 6.9 🔴 答题模板（英文）
+
+> **What I would do differently.** I would keep the strong user engagement but channel it through formal scope control. First, I would lock the scope at the start with a signed scope statement and a work breakdown structure, and involve the lead systems analyst and the architect in planning rather than dismissing their concerns. Second, I would estimate effort with more than one method, such as function point analysis checked by a Delphi round, and present the budget as a range with contingency, since the project was underfunded from the outset. Third, I would set up an integrative change control process: every enhancement request becomes an RFC, the architect assesses its impact, and a change advisory board chaired by the sponsor decides whether it enters this release or a later phase. Finally, I would deliver a smaller MVP earlier and track progress against the plan every week, so that a 40 per cent completion rate would surface months before the deadline.
+
+---
+
+# 第三部分 · 案例：NetDynamic Consulting × SodaStream Canada
+
+## 7. 🔴 NetDynamic Consulting Inc.: Managing ERP Implementation at SodaStream Canada
+
+> **📌 这一节怎么读**
+>
+> 这一节的目标是**不读原文也能完全看懂这个案例**：
+>
+> - **原文导读（7.1–7.2）**：按原文章节顺序转述每一段的事实和数字，Exhibits 重建成表格。
+> - **分析（7.3 起）**：一段话、背景、人物、经过、问题、数字、选项、分析、建议、可能的考题。
+>
+> 案例编号 Ivey **W36207**，作者 Ramasastry Chandrasekhar（指导教授 Ting Li、Derrick Neufeld），2024 年版。金额是美元（案例没有注明币种，PepsiCo 和 Oracle 的收购价是美元）。
+
+### 7.0 🔴 要回答的题目
+
+案例没有附讨论题，问题写在开头和最后的「Decisions」一节：
+
+| 原文（转述）                                                                                                                                                                                           | 中文                                              |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------- |
+| Tariq had to create a comprehensive overview of the advantages and disadvantages of the initiative for the top management team to evaluate.                                                      | Tariq 要为高管团队写一份这个项目的**利弊总览**。                   |
+| Should he opt for a full-system launch or begin with a specific function?                                                                                                                        | 上线时应该**整个系统一次上线**，还是**先上一个功能**？                 |
+| Should the team expend time and money on providing open channels for dialogue with users, or should they focus on training users first and then deal with their concerns in a follow-up process? | 团队应该花时间和钱给用户开**对话渠道**，还是**先培训**，再在后续流程里处理用户的顾虑？ |
+| What general lessons could NetDynamic draw from the SodaStream implementation that it could potentially apply to future projects with other clients?                                             | NetDynamic 能从这个项目学到哪些可以用在其他客户身上的**一般性经验**？      |
+| Kim suspected that identifying a prioritized list of key considerations throughout the project's progression could prove an invaluable, long-term resource.                                      | CEO Kim 认为，整理一份按**优先级排序**的项目关键考虑清单，会是长期有价值的资源。  |
+
+### 7.1 🟡 原文导读：正文
+
+#### 开场（p.1）
+
+**2019 年 11 月下旬**，**NetDynamic Consulting Inc.**（在安大略省 Mississauga，多伦多旁边的城市）的专业服务总监 **Belal Tariq** 刚和客户 **SodaStream Canada** 开完一个关键的电话会。项目是一个跨国的**企业资源计划（ERP）**整合项目，目的是把 SodaStream Canada 的业务流程集中和优化。截止期限迫近：ERP 要在 **2021 年 6 月上线（go live）**。经过几个月关于系统需求和实施方式的细致讨论，合作终于敲定。
+
+但 Tariq 面临一个难题：怎样既保证 ERP 流程在**全球一致**（见 Exhibit 1），又保留 SodaStream Canada 特有的做法。这是**整合与个性**之间的平衡，他必须同时照顾集团的全球愿景和加拿大子公司的具体需要。在向 NetDynamic 的 CEO **Christopher Kim** 汇报进展之前，他要写一份利弊总览给高管团队评估。他深吸一口气，拿出了一张白纸。
+
+#### NetDynamic: Company Overview 公司概况（p.1）
+
+- **2009 年**由 Kim 创立，专做数字化，特别擅长**金融服务**。
+- **2018 年**和 **Oracle NetSuite** 建立合作，用 NetSuite 平台给客户开发和实施定制的 ERP 方案。
+- 到 **2022 年**，**50 名员工**，在各行业完成了 **100 多个项目**，客户在北美、欧洲和中国。
+- 做法：先到客户现场做一系列评估，再用 NetSuite 的模块，偶尔集成第三方工具，满足客户的特定需求。
+- NetDynamic 是 Oracle NetSuite 的 **alliance partner（联盟合作伙伴）**。**2019 年 12 月**和 SodaStream Canada 签了 ERP 实施合同，之后一直由 Tariq 领导。**ERP 模块的基础配置已经完成**，团队正在确保顺利实施和按时交付。
+
+#### NetSuite（p.2）
+
+- **1998 年**成立，比 Salesforce 稍早，是**云端软件平台的先驱**。
+- **模块化设计**：企业可以按需组合 ERP，包括会计、人力资源、客户关系管理（CRM）等。
+- 被 **Oracle** 以 **93 亿美元**收购（正文写 2018 年，脚注引用的是 2016 年 7 月的新闻，见 7.6），改名 **Oracle NetSuite**，作为子公司保留独立品牌。
+- 安全标准：符合 **PCI DSS**（支付卡行业数据安全标准）和 **ISO 27001**（信息安全管理国际标准）；每年接受外部审计 **SOC 1 Type 2** 和 **SOC 2 Type 2**（会计师对服务商内部控制的审计报告，Type 2 表示检查了一段时间内控制是否持续有效）。
+- 除了直接卖给客户（尤其是中小企业），还有 **100 多家第三方联盟合作伙伴**。
+
+#### Alliance Partnerships 联盟合作伙伴（p.2）
+
+- **NetSuite Alliance Partner 计划**让第三方公司提供配套服务，帮客户定制和优化软件，也保证主要企业系统之间的**技术兼容**。
+- 合作伙伴（例如 NetDynamic）可以使用 NetSuite 的资源发展业务、扩展服务。NetDynamic 靠的是**咨询服务**赚钱，**不是转售** NetSuite 产品。
+- SAP、Oracle、Microsoft 等大平台都和其他厂商建立战略合作，让各自的组件在数据、应用、业务流程上**互操作（interoperable）**，平台和合作伙伴都受益。
+- **合同的来龙去脉**：**2017 年**，Oracle NetSuite 和母公司 **SodaStream International Ltd.** 签了总合同：**10 个国际子公司**都要用 NetSuite ERP，分阶段推广，顺序是**德国 → 奥地利 → 波兰 → Benelux（比利时、荷兰、卢森堡）→ 加拿大 → 西班牙 → 美国 → 法国 → 意大利 → 日本**。
+- 在加拿大，NetSuite 要取代 **Microsoft Navision**（微软的一个 ERP 产品，后来叫 Dynamics NAV）。
+- 德国的合作伙伴 **Alta Via Consulting** 已经完成了德国、奥地利、波兰和 Benelux；**加拿大由 NetDynamic 负责**。
+
+#### SodaStream: Company Overview 公司概况（p.3）
+
+- **1903 年**创立，是**家用气泡水机**的领先品牌：用户在家里把自来水打成气泡水或做饮料。
+- **2018 年 12 月**被 **PepsiCo** 以 **33 亿美元**收购，PepsiCo 由此进入家用气泡水市场，迎合对**可持续、可定制饮料**的需求。
+- 主要工厂在**以色列**，有 **10 个全球子公司**，主打环保：替代瓶装饮料。
+
+#### ERP Integration at SodaStream 集团的 ERP 整合（p.3）
+
+- **原来每个子公司各用各的 ERP**，数据是割裂的。例如 SodaStream Canada 用 Navision，只能看到自己的账，看不到其他子公司的。
+- 母公司换成 NetSuite，把德国、波兰、奥地利、美国、加拿大、西班牙、日本子公司的**财务数据集中**起来，有安全权限的人可以看到全集团的数据。SodaStream Canada 也能看到全集团的财务数据，有助于决策、财务管理和数据分析。
+- 其他好处：加强**组织控制**；**流程标准化**；降低 IT 基础设施成本（例如取消**重复的软件许可**）；子公司之间**协作**更好。总体上提高效率、绩效和成本效益，给公司带来全球竞争优势。
+
+#### NetDynamic's Role NetDynamic 的角色（p.3）
+
+SodaStream Canada 选 NetDynamic 有三个原因：
+
+1. 在定制 NetSuite ERP 模块上**经验深厚**，在不同环境里有成功记录；
+2. 投标时得到了 **NetSuite 的强力推荐**；
+3. 作为**初创公司**，报价有竞争力，SodaStream Canada 负担得起。
+
+#### Run-up to Implementation 上线前的准备（p.3–4）
+
+**2021 年 2 月**，Tariq 面对三个主要挑战，处理得好不好决定整合能否成功：
+
+**① 统一会计科目表（Standardizing the Chart of Accounts, CoA）**
+
+CoA 是公司总账（general ledger）里所有账户类别的完整清单（例如「现金」「应收账款」「销售收入」「运费」，每个有一个编号）。SodaStream Canada 的 CoA 要和已经用 NetSuite 的子公司（例如德国、波兰）**对齐**，这样全集团对财务交易有统一的理解，全球财务报告也更顺畅。
+
+**② 历史数据管理（Historical Data Management）**
+
+换系统时要做一个**业务决策**：哪些历史数据要保留、搬进新系统，才能支持日常业务。换系统是**清理记录**、删掉过时供应商和客户资料的机会，但也要决定旧数据保留多少。
+
+**③ 用户验收测试（User Acceptance Testing, UAT）**
+
+UAT 是交接的**最后一步**：NetDynamic 团队要到 SodaStream 的实际地点，让最终用户（end users）试用新系统、熟悉它。但这次 UAT 发生在 **COVID-19 疫情**期间，有社交距离限制。为了团队和用户的安全，Tariq 安排了**远程 UAT**，把复杂的细节讲清楚，这对整合成功非常重要。
+
+#### Implementation 实施中的三件事（p.4–5）
+
+上线过程中，Tariq 要突出系统的好处、简化流程、尽量减少对 SodaStream Canada 业务的干扰。三个方面：
+
+**① 用 ERP 简化内部流程：销售订单审批（Streamlining Internal Processes）**
+
+- 订单收到后先到**配送中心**，再转给各地区**门店**送货。最终送货前要经过内部审批（Exhibit 2 对比了上 ERP 前后的流程）。
+- 审批顺序：**定价团队**核对订单准确性 → **财务团队**在某些条件下审查（例如客户接近**信用额度**或付款期限）→ **运营团队**排生产计划。
+- 大单例子：**Canadian Tire**（加拿大大型零售连锁）的订单可达 **$100,000**，财务团队要做信用检查、审核定价、确保符合公司的盈利政策。
+- **所有 B2B（企业对企业）订单都必须依次经过这三个团队的审批**。
+
+**② 整合供应链物流（Integrating Supply Chain Logistics）**
+
+- 德国、奥地利子公司**自己管仓库**；**SodaStream Canada 把仓储外包**给本地的第三方物流公司（**3PL**, third-party logistics）**Shandex Group** 和 **Sherway Group**。3PL 再和本地货运公司合作，SodaStream Canada 要付仓储、包装、贴标签和零售配送的费用。
+- 上 ERP 后，SodaStream Canada 的**销售订单会像其他子公司一样集中在 NetSuite**；但**拣货、包装、发货在 NetSuite 范围之外**，仍由 SodaStream Canada（通过 3PL）负责。
+- 难点：NetSuite 每 **15 分钟**同步一次数据，要和 3PL 的系统**同步**才能顺畅处理订单。把 3PL 物流和 NetSuite 对齐是系统整合成败的关键。
+
+**③ 让 ERP 适应加拿大的 B2C 和可持续需求（Adapting ERP for B2C and Sustainability Needs）**
+
+- Tariq 团队要预见未来的需要。SodaStream Canada 看到市场向 **B2C（直接卖给消费者）**和**可持续**转移，认为家用气泡水是有价值的产品：比买含糖饮料便宜（虽然机器要先花钱，但长期在家做气泡水的成本只是在店里买的零头），还省去跑商店的麻烦。
+- **加拿大特有的难题**：**Uber Eats、Instacart** 这类平台**不准运送压缩气瓶**，因为运输法规把它们列为**危险品（dangerous goods）**。
+- 为此 SodaStream 推出了 **return-and-redeem（回收兑换）**计划：疫情期间顾客可以通过物流公司 **Fleet Optics** 预约上门取走空气瓶。未来还可能推出 **Home Exchange**：在门口把空瓶换成满瓶。
+- Tariq 团队要把这些**独特流程**放进 ERP，配合 SodaStream Canada 不断变化的业务策略。
+
+#### Decisions 决策（p.5）
+
+- **Tariq** 要决定 ERP 怎么在 SodaStream Canada 上线：**全系统一次上线**，还是**先从某个功能开始**？他觉得两种都有利有弊。
+- 他还要想办法**有效处理用户的顾虑**：是花时间和钱开放和用户**对话的渠道**，还是**先培训用户**，再在后续流程里处理他们的顾虑？
+- **CEO Kim** 想了解这个项目带来的「大局」机会和挑战：NetDynamic 能从 SodaStream 项目学到哪些**可以用在其他客户上的一般性经验**？他认为，整理一份**按优先级排序的关键考虑清单**会是很有价值的长期资源。
+
+### 7.2 🟡 原文导读：Exhibits
+
+#### Exhibit 1：ERP 的历史（p.6）
+
+| 时期        | 发展                                                                                                               |
+| --------- | ---------------------------------------------------------------------------------------------------------------- |
+| 1960 年代   | 原型是 **MRP**（Material Requirements Planning，物料需求计划），为制造业优化采购、生产和交货计划                                              |
+| 1980 年代   | 制造越来越复杂，发展成 **MRP II**（Manufacturing Resource Planning，制造资源计划），更细地管理制造流程                                         |
+| 1990 年代   | **Gartner** 提出「enterprise resource planning」这个词：一套覆盖企业所有核心职能的应用。之前每个部门各有各的软件（筒仓 silos），ERP 把它们统一在**一个数据库**上      |
+| 2000 年代   | 范围扩大到商业智能（BI）、销售自动化、CRM；供应商开始提供完整的 ERP 套件，支持实时计划和客户响应                                                            |
+| 1990 年代末起 | 互联网时代：**NetSuite** 是云 ERP 的开拓者，Salesforce 随后进入。**本地部署（on-premises）**装在客户自己的设备上；**云 ERP（SaaS）**由供应商管理，通常更省钱、更容易扩展 |
+| 挑战        | 很多企业还在用过时版本；相当多 ERP 项目有**预算和对齐**问题；成功需要和企业自己的流程**仔细对齐**                                                          |
+
+#### Exhibit 2：销售订单审批流程，上 ERP 前后（p.7）
+
+五个环节都一样：**配送中心**收单（Order receipt）→ **定价团队**验证（Order validation）→ **财务团队**审核（Order review）→ **运营团队**排产（Production schedule planning）→ **地区门店**授权送货（Delivery authorization）。不同的是信息怎么传：
+
+| 环节   | 筒仓方式（Siloed）                                                          | ERP 方式                                            |
+| ---- | --------------------------------------------------------------------- | ------------------------------------------------- |
+| 收单   | 手工录入，存到 **Inventory IS**（订单明细、订单状态）                                   | **自动**录入                                          |
+| 验证   | 手工录入，存到 **Sales IS**（订单明细、定价明细）                                       | **自动**录入                                          |
+| 审核   | 手工录入，存到 **Finance IS**（订单明细、付款明细）                                     | 手工录入 / 更新                                         |
+| 排产   | 手工录入，存到 **Manufacturing IS**（订单明细、物料库存）                               | 手工录入 / 更新                                         |
+| 授权送货 | 手工录入，存到 **Order Fulfilment IS**（送货地址、收货单）                             | **自动**录入                                          |
+| 环节之间 | 用电子或纸质方式「Send info」，**每一步都有 Delay（延误）**；库存状态、收货确认、SKU 信息要从最后一个系统传回第一个 | **Auto notification（自动通知）**，所有环节读写**同一个 ERP 数据库** |
+| 结果   | 系统割裂、数据不一致和重复、信息不及时、**库存成本高**                                         | ERP ① 执行流程，② 捕获和存储流程数据，③ 监控流程绩效                   |
+
+> 读法：「订单明细」在筒仓方式里被录入了**五次**，存在五个系统里，这就是数据不一致的来源。ERP 方式下只录一次。
+
+### 7.3 🔴 一段话讲清楚
+
+2021 年初，加拿大一家 50 人的 NetSuite 实施合作伙伴 **NetDynamic** 的专业服务总监 **Belal Tariq**，正在替 **SodaStream Canada**（PepsiCo 旗下家用气泡水机公司的加拿大子公司）把旧的 Microsoft Navision 换成集团统一的 **Oracle NetSuite** ERP。母公司 2017 年就决定 10 个子公司都上 NetSuite，德国等四个已经由另一家伙伴做完。系统要在 **2021 年 6 月上线**，基础配置已经完成，但还有三件难事：会计科目要和全球对齐、历史数据要决定留多少、用户验收测试因为疫情只能远程做。实施中还要处理三件事：B2B 订单的三级审批、外包给 3PL 的仓储如何和 NetSuite 每 15 分钟同步、加拿大特有的危险品运输限制和气瓶回收流程。Tariq 要决定两件事：**一次全部上线还是先上一个功能**；**先培训再处理顾虑，还是花钱开对话渠道**。他还要给 CEO Kim 写一份利弊总览，Kim 想要一份可以用在以后项目上的、**按优先级排序的经验清单**。核心矛盾是**全球一致 vs 本地特色**。
+
+### 7.4 🟡 公司和行业背景
+
+**NetDynamic 怎么赚钱**：它不卖软件，卖的是**实施服务**。Oracle NetSuite 卖订阅，NetDynamic 作为联盟合作伙伴，靠客户付的咨询费（现场评估、配置、集成、培训、测试）赚钱。这种生意的关键资产是**声誉和 NetSuite 的推荐**：这次能拿下合同，一半靠 NetSuite 的背书，一半靠价格低。所以 SodaStream 这个项目对 NetDynamic 的意义不只是一笔收入：做好了是一个跨国品牌客户的案例，可以拿去争取更多大客户；做砸了会影响 NetSuite 以后的推荐（推断）。规模上，2022 年 50 人、100 多个项目，客户在北美、欧洲、中国，平均每个项目的规模不大（推断）。
+
+**SodaStream 是什么样的客户**：一家有百年历史的消费品公司，2018 年底被 PepsiCo 收购。主要工厂在以色列，10 个子公司负责各国的销售和分销。被大集团收购之后，统一财务数据、加强控制是很自然的要求，所以 2017 年（收购前）就已经开始的 NetSuite 全球推广，在 PepsiCo 时代更重要（推断）。
+
+**SodaStream Canada 的特点**（和德国、奥地利不同）：
+
+- **仓储外包**给两家 3PL，自己不管仓库；
+- B2B 大客户（例如 Canadian Tire）的订单金额大，要严格的信用审核；
+- 正在向 **B2C** 和可持续方向转移，但受**危险品运输法规**限制，要有特殊的回收和换瓶流程。
+
+**行业力量**：
+
+- **ERP 从本地部署转向云（SaaS）**：NetSuite 是开拓者。云 ERP 的好处是成本低、扩展快，坏处是**定制空间有限**，客户要更多地改流程去适应软件。
+- **平台 + 合作伙伴生态**：大厂商（SAP、Oracle、Microsoft）靠合作伙伴做实施。客户的风险是合作伙伴的水平参差不齐。
+- **全球推广（global rollout）**：跨国公司常用「模板 + 本地化」的方式：先在一个国家建立全球模板（global template），然后在各国复制，只允许必要的本地差异。SodaStream 就是这样：德国先做，加拿大第五批（课外补充 + 推断）。
+- **COVID-19**：2020–2021 年，现场培训和测试都受限制。
+
+### 7.5 🔴 人物
+
+| 人物                                | 角色                           | 想要 / 担心                              | 对决策的立场                            |
+| --------------------------------- | ---------------------------- | ------------------------------------ | --------------------------------- |
+| **Belal Tariq**                   | NetDynamic 专业服务总监，项目负责人      | 按时（2021 年 6 月）上线；平衡全球一致和加拿大特色；处理用户顾虑 | 在两种上线方式之间犹豫，「怀疑两种都有利有弊」           |
+| **Christopher Kim**               | NetDynamic 创始人、CEO           | 「大局」：机会、挑战、可以复用到其他客户的经验              | 要一份按优先级排序的关键考虑清单                  |
+| **SodaStream International**（母公司） | 2017 年和 Oracle NetSuite 签总合同 | 集中财务数据、标准化、降低 IT 成本                  | 要全球一致（推断）                         |
+| **SodaStream Canada**             | 客户                           | 业务不中断；保留 3PL 和 B2C 的特殊流程             | 要本地特色（推断）                         |
+| **定价、财务、运营团队**                    | SodaStream Canada 的最终用户      | B2B 订单审批要顺畅                          | 未知；新系统会改变他们的工作方式                  |
+| **Oracle NetSuite**               | 软件供应商                        | 推广顺利                                 | 投标时强力推荐了 NetDynamic               |
+| **Alta Via Consulting**           | 德国的 NetSuite 合作伙伴            | —                                    | 已经完成德、奥、波、Benelux，等于建立了「全球模板」（推断） |
+| **Shandex、Sherway**               | 3PL                          | 订单数据要及时                              | 系统要和 NetSuite 同步                  |
+| **Fleet Optics**                  | 物流公司                         | —                                    | 负责 return-and-redeem 的上门取件        |
+
+关系：Tariq 向 Kim 汇报，同时对客户 SodaStream Canada 负责；SodaStream Canada 要服从母公司和 Oracle NetSuite 的总合同。**谁有否决权**：案例没说，但全球一致的要求来自母公司的合同，加拿大子公司和 NetDynamic 都不能单方面改变（推断）。
+
+### 7.6 🔴 事情经过
+
+| 时间            | 事件                                                                   |
+| ------------- | -------------------------------------------------------------------- |
+| 1998          | NetSuite 成立                                                          |
+| 2009          | Kim 创立 NetDynamic                                                    |
+| 2016 / 2018   | Oracle 以 $9.3B 收购 NetSuite（正文写 2018，脚注是 2016 年 7 月的报道）               |
+| 2017          | Oracle NetSuite 和 SodaStream International 签总合同：10 个子公司分阶段上 NetSuite |
+| 2018          | NetDynamic 成为 NetSuite 合作伙伴                                          |
+| 2018 年 12 月   | PepsiCo 以 $3.3B 收购 SodaStream                                        |
+| 之前            | Alta Via 完成德国、奥地利、波兰、Benelux                                         |
+| 2019 年 11 月下旬 | 关键电话会，合作敲定                                                           |
+| 2019 年 12 月   | NetDynamic 和 SodaStream Canada 签实施合同                                 |
+| 2020–2021     | COVID-19：UAT 改为远程；return-and-redeem 计划                               |
+| 2021 年 2 月    | 三个挑战：CoA、历史数据、UAT                                                    |
+| 2021 年 6 月    | 计划上线                                                                 |
+| 2022          | NetDynamic 50 人、100 多个项目                                             |
+
+**因果关系**：每个子公司各自的 ERP 造成数据割裂，母公司看不到全局 → 2017 年决定统一 NetSuite → 按国家分批推广，加拿大排第五 → 加拿大的旧系统（Navision）和业务模式（外包仓储、B2C、危险品）都和先做的欧洲子公司不同 → 全球模板未必适合加拿大 → Tariq 要在两者之间平衡。疫情又让培训和测试只能远程，用户的准备程度更不确定 → 于是有了「怎么上线」和「怎么处理用户顾虑」两个决策。
+
+> **⚠️ ⚠️ 案例里几个对不上的地方**
+>
+> - **Oracle 收购 NetSuite 的年份**：正文写 2018 年，脚注引用的是 TechCrunch **2016 年 7 月**的报道（实际是 2016 年宣布、同年完成）。
+> - **时间线跳跃**：开头是「2019 年 11 月下旬，Tariq 正准备开始实施」，但同一页又说「基础配置**已经**完成」，「上线前的准备」一节的时间是 **2021 年 2 月**。读的时候把「现在」理解成 2021 年初比较合理。
+> - **子公司名单不一致**：推广顺序列了 10 个（含 Benelux、法国、意大利），集中财务数据那一段只列了 7 个国家。
+> - **NetDynamic 是「初创公司」**：但 2009 年成立，到 2022 年已经 50 人。可能指它和 NetSuite 合作的业务还新（2018 年开始）。
+> - **Exhibit 2 的注释**写「IS = inventory status; ERP = enterprise resource management」，但图里的 IS 明显是 **information system**（Sales IS、Finance IS），ERP 也应该是 enterprise resource **planning**。
+> - 案例**没有给任何项目预算、成本或用户人数**，所以选项只能定性比较。
+
+### 7.7 🔴 问题到底是什么
+
+**症状**（案例证据）：
+
+| 症状            | 证据                                                                  |
+| ------------- | ------------------------------------------------------------------- |
+| 全球标准和本地需求冲突   | 开头就说「整合与个性之间的平衡」；CoA 要和德国、波兰对齐，但加拿大有自己的 3PL 和 B2C 流程                |
+| 业务流程超出 ERP 范围 | 拣货、包装、发货在 NetSuite 之外；NetSuite 每 15 分钟同步，3PL 要跟上                    |
+| 用户准备度不确定      | 疫情下只能远程 UAT；Decisions 一节专门问怎么处理用户顾虑                                 |
+| 范围在扩大         | 除了替换 Navision，还要把 return-and-redeem 和**未来可能的** Home Exchange 加进 ERP |
+| 数据质量          | 要决定保留多少历史数据，清理过时的客户和供应商资料                                           |
+| 关键流程风险高       | B2B 订单要依次经过三个团队审批，单笔可达 $100,000；出问题直接影响收入                           |
+| 时间压力          | 2021 年 6 月的固定上线日期                                                   |
+
+**根本原因**：
+
+1. **集团推广的模板和子公司的业务模式不一样**（Structure）：德国自己管仓库，加拿大外包；欧洲模板没有为加拿大的情况设计。
+2. **范围没有边界**（Process / 本讲第 3 节）：「预见未来的需要」听起来好，但把**还不存在**的 Home Exchange 放进第一期，就是范围蔓延。
+3. **变革管理受限**（People）：用户只能远程培训和测试，新流程（自动通知、统一审批）改变了他们的工作方式。
+4. **多方依赖**（Complexity）：母公司、Oracle、NetDynamic、SodaStream Canada、两家 3PL、Fleet Optics，任何一方的接口出问题都会影响订单到发货的整条链。
+
+### 7.8 🔴 Exhibits 和数字说明了什么
+
+- **Exhibit 1**（ERP 历史）告诉读者：ERP 的价值在于**一个数据库**，而成功的条件是**和企业的流程仔细对齐**。这句话正好是 Tariq 的难题：对齐**全球**流程还是**加拿大**流程？
+- **Exhibit 2**（订单审批）是全案最重要的图：ERP 方式下，「收单」「验证」「送货授权」三步被**自动化**，「审核」「排产」仍然要人录入。这意味着：① 定价团队和配送中心的工作内容变化最大，最可能抵触或需要重新培训（推断）；② 所有环节依赖同一个数据库，**一旦上线出错，五个团队同时受影响**，这正是 Revlon 的教训（Slide 4）。
+- **数字**：B2B 单笔 **$100,000**（Canadian Tire）说明订单流程是现金流的命脉；**15 分钟**同步间隔说明和 3PL 的接口是技术上最脆弱的一环；**10 个子公司、加拿大第五个**说明加拿大可以借鉴前四个国家的经验，但也要服从已经定型的模板。
+
+### 7.9 🔴 选项
+
+#### 决策 1：怎么上线
+
+**选项 A：一次全部上线（Big bang / full-system launch）**
+
+- **意思**：在某个日期（例如 2021 年 6 月的一个周末）关掉 Navision，所有模块（财务、订单、库存、和 3PL 的接口）同时切换到 NetSuite。
+- **好处**：只有一次切换，不用在新旧系统之间做**临时接口**；数据只迁移一次；马上和全球一致；项目时间短，NetDynamic 的人力成本低（推断）。
+- **坏处**：一旦出问题，订单到发货**整条链**一起停（Revlon、Hershey）；用户要一次学会所有东西，而培训只能远程；没有回退的余地。
+- **谁支持**：母公司（要尽快统一）；可能还有预算（推断）。
+
+**选项 B：按功能分阶段（Phased by function / module）**
+
+- **意思**：先上一个模块，稳定后再上下一个。例如先上**财务**（CoA、总账、合并报表），再上**订单管理和 3PL 接口**，最后上 B2C 和回收流程。
+- **好处**：每次影响面小，出问题容易定位；用户一批一批地学；可以先拿到集团最想要的东西（财务数据集中）。
+- **坏处**：新旧系统要**并存**一段时间，需要临时接口（例如订单还在 Navision，财务已经在 NetSuite，两边要对账）；总工期更长；可能赶不上 2021 年 6 月的完整上线。
+- **谁支持**：SodaStream Canada 的业务团队（推断）。
+
+**还可以考虑**：**按地点或用户群分阶段**（pilot），例如先让一部分 B2B 客户的订单走新系统。但加拿大子公司规模不大，按地点分的意义有限（推断）。
+
+#### 决策 2：怎么处理用户顾虑
+
+**选项 X：先培训，再在后续流程处理顾虑（Train first, follow up later）**
+
+- 集中做培训（远程），上线后通过支持工单或问题清单处理反馈。
+- **好处**：便宜、快；用户先学会用标准流程，避免一开始就被个别抱怨带着走。
+- **坏处**：用户的真实顾虑（例如「新的审批会拖慢大客户订单」）可能要到上线后才暴露，那时修改的代价最大；用户觉得被忽视，抵触变成「不用」或「绕着用」。
+
+**选项 Y：开放对话渠道（Open channels for dialogue）**
+
+- 上线前后都有固定的渠道（例如每周问答会、每个团队的关键用户 key user、反馈论坛），让用户提出顾虑，团队回应。
+- **好处**：早发现问题；用户有参与感，更愿意接受；在疫情下远程沟通尤其需要多一些渠道。
+- **坏处**：花时间和钱；**如果没有边界，会变成 HRBPS**：每个顾虑都变成一个增强请求，范围失控。
+
+### 7.10 🔴 选项比较
+
+|       | A 一次上线           | B 按功能分阶段     | X 先培训   | Y 开放对话  |
+| ----- | ---------------- | ------------ | ------- | ------- |
+| 风险    | 高：全链同时出错         | 低：每次影响一块     | 中：问题晚暴露 | 低：问题早暴露 |
+| 成本    | 低（一次切换）          | 高（临时接口、多次切换） | 低       | 高       |
+| 时间    | 短                | 长            | 短       | 长       |
+| 和全球一致 | 马上               | 逐步           | —       | —       |
+| 用户接受度 | 低（一次学太多）         | 高            | 中       | 高       |
+| 主要陷阱  | Revlon / Hershey | 新旧系统对账       | 用户抵触    | 范围蔓延    |
+
+*（网页版此处可以改权重和 1–5 分，看哪个方案胜出、什么会改变结论；分数是我的判断，下面是几组权重的结果）*
+
+| 标准                          | 一次全部上线 | 按功能分阶段 | 先财务，再订单 + 3PL |
+| --------------------------- | ------ | ------ | ------------- |
+| 赶上 2021 年 6 月上线             | 4      | 2      | 3             |
+| 出问题时影响面小（订单、发货不中断）          | 1      | 5      | 4             |
+| 尽快和全球 NetSuite 一致（CoA、合并报表） | 5      | 2      | 4             |
+| 不用在新旧系统之间做临时接口              | 5      | 1      | 3             |
+| 用户（远程 UAT、疫情）有时间适应          | 1      | 5      | 4             |
+| NetDynamic 的人力和成本           | 4      | 2      | 3             |
+
+| 权重视角                    | 一次全部上线 | 按功能分阶段 | 先财务，再订单 + 3PL | 得分最高                     |
+| ----------------------- | ------ | ------ | ------------- | ------------------------ |
+| 同等重要                    | 40     | 34     | 42            | **先财务，再订单 + 3PL**        |
+| 母公司：全球一致                | 67     | 40     | 59            | **一次全部上线**               |
+| SodaStream Canada：别影响生意 | 41     | 63     | 63            | **按功能分阶段、先财务，再订单 + 3PL** |
+| 我的权重                    | 58     | 60     | 69            | **先财务，再订单 + 3PL**        |
+
+### 7.11 🔴 分析
+
+#### 用第 1 周的 Structure / Complexity / People / Process 看实施挑战
+
+| 维度                 | SodaStream Canada 的情况                                                               |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| **Structure** 结构   | 决策权从子公司移向母公司（全球统一的 CoA 和流程）；子公司能看到全集团数据，透明度上升；NetDynamic 对客户负责，但要服从 Oracle 和母公司的总合同 |
+| **Complexity** 复杂度 | 替换 Navision；和两家 3PL 的 15 分钟同步；危险品法规下的回收流程；历史数据迁移；多方参与                               |
+| **People** 人       | 远程 UAT 和培训；定价和配送团队的工作被自动化；用户顾虑怎么处理是 Tariq 的决策之一                                     |
+| **Process** 流程     | B2B 三级审批从「逐个传递」变成「同一个数据库 + 自动通知」（Exhibit 2）；CoA 标准化；拣货、包装、发货留在 ERP 外面               |
+
+#### 用第 4 周的 ERP 决策看
+
+- **配置 vs 修改**（第 4 周 Slides 29–32）：CoA、审批流程、自动通知都是**配置**；3PL 接口是**增强**（在 NetSuite 外面加接口）；return-and-redeem 和 Home Exchange 如果要在 NetSuite 里专门开发，就接近**修改**，要谨慎。原则：**不是差异化来源的流程，改流程适应软件**；只有真正的本地差异（法规、外包仓储）才在外面加接口。
+- **执行方式**（第 4 周 Slide 43）：big bang vs phased，正是决策 1。
+- **别让顾问告诉你需要什么**（第 4 周 Slide 24）：这次的「顾问」是 NetDynamic 自己。Tariq 想「预见未来」把 Home Exchange 加进去，对 NetDynamic 是更多的咨询收入，对客户却是范围扩大。
+
+#### 用本讲的范围和变更控制看
+
+- **范围**：第一期的范围应该是「替换 Navision + 和全球对齐 + 不中断现有业务」。Home Exchange 还只是 potential，应该写进「不做什么」，放进以后的 RFC。
+- **ICCP**：用户的顾虑和本地需求都可以走 RFC：标准化能解决的拒绝，法规要求的批准，未来的业务放进下一期。这样「开放对话」就不会变成 HRBPS（第 6 节）。
+
+*（网页版此处是点选练习：SodaStream Canada：这一项应该全球统一，还是保留加拿大做法？；下表是全部题目和答案）*
+
+| 挑战                                        | 答案              | 理由                                     |
+| ----------------------------------------- | --------------- | -------------------------------------- |
+| 会计科目表（Chart of Accounts）                  | **全球统一**        | 和德国、波兰等子公司对齐，才能合并报表                    |
+| 压缩气瓶被列为危险品，Uber Eats 和 Instacart 不能送      | **保留加拿大做法**     | 加拿大的运输法规，只有本地有                         |
+| 3PL（Shandex、Sherway）的拣货、包装、发货             | **本地保留 + 接口对接** | 在 NetSuite 范围之外，由 3PL 做，但订单数据要同步       |
+| NetSuite 每 15 分钟一次的数据同步                   | **本地保留 + 接口对接** | 要和 3PL 的系统对接，保证订单及时处理                  |
+| 按安全权限查看全集团的财务数据                           | **全球统一**        | 这正是母公司换 NetSuite 的目的                   |
+| return-and-redeem 空瓶回收（Fleet Optics 上门取件） | **保留加拿大做法**     | 加拿大特有的业务流程，要加进 ERP 但不必全球推广             |
+| 取消各国重复购买的软件许可                             | **全球统一**        | 统一平台降低 IT 成本                           |
+| 保留多少年的历史客户、供应商数据                          | **保留加拿大做法**     | 由 SodaStream Canada 根据业务需要决定，是清理旧数据的机会 |
+| B2B 订单依次经过定价、财务、运营审批                      | **全球统一**        | 标准流程放进 ERP 自动通知（Exhibit 2），不再各自为政      |
+| 未来的 Home Exchange 上门换气瓶                   | **保留加拿大做法**     | 加拿大的 B2C 和可持续发展战略                      |
+
+### 7.12 🔴 我的建议
+
+> **📌 我的解答：决策 1，按功能分两步上线**
+>
+> **建议**：**分两步**，而不是一次上线，也不是拆得很碎。
+>
+> 1. **第一步（2021 年 6 月前）**：财务（统一的 CoA、总账、合并报表）+ 历史数据迁移。这是集团最想要的，也是和全球模板最一致、加拿大本地差异最少的部分。
+> 2. **第二步（稳定后，例如 2–3 个月）**：订单管理（B2B 三级审批、自动通知）+ 和两家 3PL 的同步接口 + return-and-redeem。这部分本地差异最大、技术风险最高，要在财务稳定后、用更多测试时间来做。
+> 3. **不在这次范围内**：Home Exchange 等未来计划，列入变更日志，等业务真的推出时再走 RFC。
+>
+> **理由**：
+>
+> - 订单到发货是现金流的命脉（单笔 $100,000 的 B2B 订单），而它恰恰依赖最脆弱的 3PL 接口。把它和财务一起在疫情下、只靠远程 UAT 一次上线，重复的是 Revlon 的错误。
+> - 财务先上，母公司马上能看到加拿大的数据，这是整个推广的目的；加拿大是第五个国家，可以直接用前四个国家的 CoA 模板，风险最小。
+> - 分两步而不是更多步，是为了控制临时接口的成本：只需要「订单在 Navision、财务在 NetSuite」这一段过渡。
+>
+> **最强的反方论点**：分阶段意味着新旧系统要并存，订单数据要从 Navision 传到 NetSuite 记账，这个**临时接口本身就是风险**，而且可能拖过 2021 年 6 月的期限，让母公司不满意。前四个国家大概率是一次上线的（推断），模板已经成熟。
+>
+> **回应**：前四个国家自己管仓库，没有 3PL 接口这个最大的变数；加拿大的情况不同，模板成熟不代表加拿大的接口成熟。
+>
+> **什么会改变答案**：如果 3PL 接口在上线前已经完整测试过、关键用户的远程 UAT 通过率很高、Navision 的许可在 6 月到期不能延续，那么一次上线是合理的，但要准备好回退计划（rollback plan）和上线后几周的现场支持。
+
+> **📌 我的解答：决策 2，先培训，但从第一天就开一个有边界的对话渠道**
+>
+> 不是二选一。**培训和对话都要，但对话要有边界**：
+>
+> - 每个团队（定价、财务、运营、配送）指定一名**关键用户（key user / super user）**，参加 UAT、在团队里答疑、把顾虑汇总上来。这比对所有人开放论坛便宜，也比「上线后再说」早。
+> - 每个顾虑分成三类：① 培训问题（用户不会用）→ 补培训；② 流程问题（标准流程确实不适合）→ 走 RFC，由 CAB 决定；③ 新需求 → 放进下一期。
+> - 疫情下只能远程，更需要固定的对话时间，否则用户只能在上线后抱怨。
+>
+> **理由**：只培训不对话，问题会在上线后才暴露，代价最大（People 维度）；只对话不设边界，会变成 HRBPS 的范围蔓延。关键用户 + RFC 把两者接起来。
+
+> **📌 我的解答：给 Kim 的「按优先级排序的关键考虑清单」**
+>
+> | 优先级 | 考虑                                                                    | 为什么排这里                 |
+> | --- | --------------------------------------------------------------------- | ---------------------- |
+> | 1   | **先分清全球标准和本地差异**：项目开始时就列出哪些必须统一（CoA、主数据、权限）、哪些允许本地化（法规、外包流程），由客户母公司签字 | 这是跨国 ERP 的核心矛盾，晚了就要返工  |
+> | 2   | **锁定第一期范围，所有变更走正式流程**                                                 | 防止「预见未来」变成范围蔓延（HRBPS）  |
+> | 3   | **上线方式按风险定，不按习惯定**：业务关键、接口复杂的流程不和别的模块一起 big bang                      | Revlon、Hershey         |
+> | 4   | **外部接口（3PL、物流）尽早测试**                                                  | ERP 范围之外的流程最容易被忽视      |
+> | 5   | **数据迁移是业务决策**：客户决定保留什么，借机清理                                           | 脏数据搬进新系统，ERP 的价值大打折扣   |
+> | 6   | **变革管理和关键用户机制**，远程情况下更要固定对话                                           | 用户不接受 = 系统失败           |
+> | 7   | **借用已完成国家的模板和经验**：和其他合作伙伴（Alta Via）交流                                 | 加拿大是第五个，不必从零开始         |
+> | 8   | **对 NetDynamic 自己**：低价拿单要算清楚利润和风险，不要靠追加范围来赚钱                          | 声誉和 NetSuite 的推荐是最大的资产 |
+>
+> **大局的机会**：一个跨国消费品牌的成功案例，可以争取其他跨国公司的子公司项目；积累「全球模板 + 本地化」的方法论。**大局的挑战**：作为小公司，要服从母公司和 Oracle 的决定，话语权有限；低价策略和高质量交付之间的张力（推断）。
+
+### 7.13 🔴 课上可能怎么问
+
+**Tariq 的核心难题是什么？用一句话说。**
+
+> 在集团要求的**全球一致**（统一的 NetSuite、CoA、流程）和 SodaStream Canada 的**本地特色**（外包给 3PL 的仓储、B2C、危险品法规下的气瓶回收）之间取得平衡，同时在疫情下按时（2021 年 6 月）上线。
+
+**ERP 给 SodaStream 集团带来哪些好处？**
+
+> 集中财务数据、全集团可见（有权限的人）；加强组织控制；流程标准化；取消重复的软件许可，降低 IT 成本；子公司之间协作更好。Exhibit 2 还显示订单审批从逐个传递变成同一个数据库 + 自动通知，减少延误、数据不一致和库存成本。
+
+**一次上线和分阶段上线各自的利弊？**
+
+> 一次上线：只切换一次、没有临时接口、马上和全球一致、时间短；但出错时全链同时停、用户一次要学所有东西、没有退路。分阶段：每次影响面小、用户分批学、可以先交付最有价值的部分；但新旧系统要并存、要临时接口、总时间长、可能赶不上期限。
+
+**为什么 3PL 是这个项目的技术难点？**
+
+> 拣货、包装、发货在 NetSuite 的范围之外，由 Shandex 和 Sherway 负责；NetSuite 每 15 分钟同步一次，3PL 的系统要跟上，订单才能及时处理。德国、奥地利自己管仓库，没有这个问题，所以全球模板没有现成的方案。
+
+**Tariq 想把 Home Exchange 放进 ERP，你怎么看？**
+
+> 这是范围蔓延的风险。Home Exchange 还只是「可能的未来计划」，现在加进去会占用测试时间、增加上线风险。应该在第一期的范围说明里写明「不做」，等业务真的推出时提 RFC，由变更委员会评估。可以在设计时保留扩展的可能（例如数据结构上预留），但不开发。
+
+**英文答题模板**：
+
+> **Recommendation.** NetDynamic should roll out NetSuite in two phases rather than as a big bang. Phase one, before June 2021, should cover finance, a harmonised chart of accounts and historical data migration: this is what the parent company needs, it matches the template already used in four countries, and it carries the least local variation. Phase two should add order management, the sequential B2B approvals and the 15-minute synchronisation with the two third-party logistics providers, once finance is stable and the interface has been tested end to end. Future programmes such as Home Exchange should be excluded from this scope and handled later through change control. To address user concerns, the team should train users first but appoint a key user in each department from the start, classify every concern as a training issue, a process issue for the change board, or a future requirement, and so keep dialogue open without letting the scope creep. The strongest argument against phasing is the cost and risk of a temporary interface between Navision and NetSuite; I accept it because a failure in order-to-delivery, as Revlon experienced, would cost far more.
+
+---
+
+# 第四部分 · 案例：Northmen vs. Pirates（Norsk Hydro）
+
+## 8. 🔴 Northmen vs. Pirates: Norsk Hydro Says "No" to Hackers
+
+> **📌 这一节怎么读**
+>
+> - **原文导读（8.1–8.2）**：按原文章节顺序转述，Exhibit 重建成表格。
+> - **分析（8.3 起）**：一段话、背景、人物、经过、问题、数字、选项、分析、三组问题的答案、可能的考题。
+>
+> 案例编号 IMD-7-2366，作者 Öykü Işik 教授和 Lisa Simone Duke 博士，IMD 2026 年。标题里 **Northmen**（北方人，指挪威的维京人）对 **Pirates**（海盗，指黑客）。案例说明作者用 ChatGPT 和 Gemini 辅助找题和审稿，内容由作者核实。
+
+### 8.0 🔴 要回答的题目（课堂小组练习）
+
+练习说明：分成作业小组，每组被分配三组问题中的**一组**；讨论和准备共 **15 分钟**；老师每组问题请一个小组用实物投影（visualizer）展示，纸要横着写。
+
+| # | 原文                                                                                                                           | 中文                                                          |
+| - | ---------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
+| 1 | Should a firm in Norsk Hydro's position pay a ransom? Defend your position.                                                  | 处在 Norsk Hydro 位置的公司应该付赎金吗？为你的立场辩护。                         |
+| 2 | Was Hydro's radical transparency the right strategy, and would it work for every cyberattack? Take a position and defend it. | Hydro 的「彻底透明」是正确的策略吗？对所有网络攻击都适用吗？表明立场并辩护。                   |
+| 3 | Did Hydro's preparation or its improvisation save it, and what must every firm build in advance to survive a similar attack? | 救了 Hydro 的是它的**事前准备**还是**临场应变**？每家公司必须**事先**建好什么，才能挺过类似的攻击？ |
+
+案例最后也提了三个问题：Hydro 的做法对吗（考虑到金钱和时间资源上的代价）？极端开放的政策行得通吗？对所有网络攻击都是最好的做法吗？
+
+### 8.1 🟡 原文导读：正文
+
+#### 开场（p.2）
+
+**2019 年 3 月 18 日**晚上，**Hilde Merete Aasheim** 入睡时松了一口气：市场和媒体都欢迎她将成为 **Norsk Hydro** 下一任 CEO 的消息。Hydro 是总部在**挪威**的**可再生能源和铝**生产商，在 **40 个国家有 170 个工厂和办公地点**，欧洲和美洲共 **35,000 名员工**。
+
+**凌晨 2 点**，Hydro **匈牙利**运营部门的一位技术员发现电脑行为异常。他立刻按**安全规程**把 Hydro **整个网络下线**（邮件、工资、网站、运营系统等全部断开）。但已经太晚：服务器和电脑已经被 **LockerGoga** 勒索软件（ransomware：把数据加密、要求付钱才给解密钥匙的恶意软件）感染。**凌晨 4 点**，Aasheim 和其他高管被电话叫醒，要立刻去办公室。这不是演习：屏幕上闪着勒索信息，大意是「你们的安全系统有严重漏洞，庆幸利用它的是『认真的人』而不是新手，新手可能会因为失误或好玩把你们的数据全毁了」。
+
+勒索信息让公司发邮件到一个地址商量赎金，赎金用**比特币（Bitcoin）**付，换取恢复系统的**解密钥匙**；最终金额取决于 Hydro **多快联系**黑客。
+
+Hydro 对网络安全并不天真：买了**网络保险**，培训员工并定期**演练**，还请「**白帽**」黑客（white hat：受雇来测试防御的合法黑客）试图攻入系统。尽管如此，**几个月前**，黑客成功把一个**特洛伊木马**（Trojan horse：伪装成正常文件的恶意程序）附在 Hydro 一名员工和一家**受信任客户**的员工之间的**邮件往来**里。然后黑客耐心等待，花了几个月在员工目录（employee directory）里一步步渗透，直到拿到**管理员权限**，可以在 Hydro 的系统里自由移动。这时才植入勒索软件，在**黑客选定的时间**用一段代码启动。
+
+很多公司被攻击后会**很快付钱并保密**，以免名誉受损，有的把停机说成「系统故障（outage）」。但在凌晨的紧急会议上，Hydro 团队决定**不走这条路**：拒付赎金，请 **Microsoft** 和**挪威国家网络安全中心**（Norwegian National Cyber Security Centre）帮助调查和解决。Hydro 决定和黑客**对抗到底**。
+
+#### The Attack 攻击（p.3–4）
+
+- Aasheim 确认「**从来就没有付赎金这个选项**」：团队认为付了只会让同样的事再发生。团队也决定**不对员工和公众隐瞒**。
+- 传播与公共事务负责人 **Inger Sethov** 说：沟通上很早就定了两个原则：**透明（transparency）**和**频繁（frequency）**。选择透明很容易，因为早就看出这是最好的路；要让员工的行为能限制财务和运营上的影响，就要让他们**参与进来、知道风险**。
+- **全面关闭网络**，以便识别可疑活动。要立刻通知 **35,000 名员工**不要登录电脑或网络，以免传播恶意软件。但**员工通讯录**也被攻击拿下了，很难联系所有人。团队改用 **Facebook 和 WhatsApp**，再靠口耳相传。办公室和工厂的门、电梯、楼梯间都贴了**手写告示**，提醒员工别开电脑。
+- LockerGoga 不仅瘫痪了 IT 系统，还让各制造工厂**停产**。团队决定转为**手工操作**以控制病毒并维持运转，但没有订单和数据指引，这非常难。各工厂行动起来：**销售人员到车间帮忙**，**退休员工自愿回来**（他们有操作手工系统的经验）。员工加班、周末加班帮公司恢复。
+- **受影响最严重**的是美国宾夕法尼亚州的 **Cresson** 工厂：Hydro 最大的铝工厂，客户包括 **Tesla 和 Ford**，**1,180 名员工**，**24/7** 运转。平时由软件告诉员工用哪个压铸模具（die cast）来完成哪个订单，没有电脑就**没人知道该生产什么**。员工打电话给客户，请他们把订单发短信或发到**个人邮箱**；团队汇总手机号，用群发短信沟通；厂长跑去本地办公用品店 **Staples**，把打印机、墨盒和纸**全买了**；用仓库里存着的**旧电脑**把订单打印出来交给车间技术员。
+- 在**比利时**的一个工厂，一名销售员成了英雄：他承认自己**一直把订单打印出来放在活页夹里**。
+- 有的工厂继续运转（慢一些），有的只能**暂时停产**；能做到的地方，至少用**库存**来供货。
+
+#### The Attack（续）：透明和恢复（p.4）
+
+- 为了兑现透明的承诺，高管在奥斯陆总部**每天开新闻发布会**，高层每天给员工**内部简报**回答问题，这被称为「**cyber heroes（网络英雄）**」策略。
+- Hydro 当时**还没有可用的对外网站**，但客户和媒体一直要信息。幸好新网站**本来就在开发中**，传播团队把它**加速**，**一周内**上线，方便定期对外沟通。公司的 Facebook 页面也频繁更新。还**邀请记者进入运营控制室**，看公司怎么应对。
+- 媒体关系高级副总裁 **Halvor Molland** 解释：频繁透明的更新是为了让公众更了解黑客的阴暗手法，也希望**其他行业从我们的经验中学习**，更好地准备，不必经历我们经历的事。
+- **CIO Jo De Vleigher** 负责恢复。他和 Microsoft 的网络安全响应团队、挪威国家网络安全中心一起组建了**三个团队，并行工作**：调查系统里的病毒破坏、恢复日常运营、重建 Hydro 的网络。工作包括检查**所有员工和服务账号**有没有恶意活动，然后隔离、清理、监控。**制造和其他关键系统用了三周**重建；不那么关键的（例如员工目录和云服务）用了**三个月**。
+
+#### The Ransomware Business Model: Threat Actors 勒索软件的商业模式：威胁行为者（p.4–5）
+
+- 勒索软件是**恶意软件（malware）**的一种。malware 是任何为了破坏、干扰或入侵设备而设计的程序。勒索软件被看作一种**犯罪商业模式**：攻击者把受害者的数据、基础设施、经济产出、知识产权甚至隐私「劫为人质」以谋利，本质上是最纯粹的**敲诈（extortion）**。
+- **2018 年后**勒索攻击大幅增加。网络安全研究公司 **CyberEdge** 估计，到 2022 年全球近 **70%** 的组织受害过，而且趋势持续（Exhibit 1）。
+- 以前的黑客多是**独行侠（lone wolf）**；到 2010 年代变得有组织，出现「**网络卡特尔（cyber cartels）**」：一群人合作、汇集专长，发动更复杂的攻击、要更高的赎金。
+- 估计 **74%** 的勒索收入流向**和俄罗斯有关**的黑客，很多卡特尔在俄罗斯或独联体（CIS，前苏联国家）运作。
+- 这些团伙除了自己作案，还提供「**勒索软件即服务（RaaS, Ransomware-as-a-Service）**」：高水平的开发者把勒索软件卖给其他个人和团伙（称为 **affiliates 附属成员**），由他们去勒索。卡特尔有名字（Maze、DarkSide、Abaddon、Conti、Phobos、REvil），在暗网上像企业一样运作。
+- 黑客越来越专业，在系统**后台**积累专长，攻击更复杂、更难发现。Fortinet 的 **Derek Manky** 说，网络犯罪分子的水平已经接近**国家级攻击者**，像**零日漏洞（zero-day：还没被发现或修补的漏洞，可能要几周才能修好）**这样的手段现在犯罪分子也在用。
+- **RaaS 让技术不高的人也能入行**：直接买程序代码就能开张。通常按**月订阅**出售，有时可以成为卡特尔的附属成员、从成功收到的赎金里拿**佣金**。订阅还附带「用户论坛、24/7 技术支持、用户评价和后续购买折扣」。
+
+#### Cryptocurrencies: Enabling Ransomware's "Vicious Cycle" 加密货币：推动勒索的恶性循环（p.5–7）
+
+- **加密货币**让赎金更难追踪。一位分析师称加密货币是勒索软件世界的「通用货币」。美国的 **Ransomware Task Force**（由执法、私营部门和政府的网络安全专家组成的联盟）认为两者**本质上相连**：勒索软件成为赚钱的犯罪产业，和比特币等用**分布式账本**（例如区块链）记录交易的加密货币的兴起紧密相关。
+- **Cybereason** 联合创始人 **Yonatan Striem-Amit** 说：现在可以在**几秒钟**内跨国转移价值几百万美元的加密货币，这是犯罪分子洗钱的强大工具，在某种意义上无法追踪，而且**完全无法控制**。
+- **以前**：黑客用**礼品卡或支付卡**收赎金，操作麻烦，所以金额小，攻击是「撒网式」的（攻击大量随机用户，希望有很多人上当）。或者设空壳公司收信用卡或预付现金卡，但会留下调查人员可以追踪的痕迹。
+- **加密货币像「火上浇油」**：匿名、跨境、在主流银行体系之外，不受监管和审查。对身处政府不积极追捕的国家的黑客来说，勒索是一个**低风险、高回报、很难被抓**的职业。
+- 加密货币的**账本是公开的**，但钱包和地址没有名字，只有随机数字，很难（但不是不可能）找出所有者；黑客还用几百个钱包和地址转移资金。一个罕见的成功例子：**FBI** 追回了一笔 **440 万美元**赎金的**一半多一点**，但花了大量资源，不可能对每次攻击都这样做。
+- 区块链研究公司 **Chainalysis** 估计，企业用加密货币付的赎金增长了 **341%**，到 **2020 年达 4.12 亿美元**；这很可能被低估，因为很多组织付了钱没报告。新币不断推出，黑客可以先收一种币，再通过**混币服务（mixing service）**换成另一种，在几百种加密货币之间「**分叉**（forking）」转移，调查人员要同时监控多种货币。Manky 说黑客甚至可以把钱「印」在一张纸或 U 盘上：只要有哈希地址和密钥，钱就是他们的。
+- **增长速度**：2021 年上半年，可疑的勒索付款达 **5.9 亿美元**，超过 2020 年全年。
+- **监管的回应**：美国财政部表示要让加密行业对打击勒索负起责任；美国制裁了捷克的加密交易所 **Suex OTC**（被指协助勒索付款）；英国金融行为监管局（FCA）禁止了被怀疑用来洗赎金的交易所 **Binance**。但监管加密货币仍然困难，一位分析师认为最有效的办法是干脆「**禁止加密货币**」。
+
+#### Insurance: The Endless Pot of Money 保险：取之不尽的钱罐（p.7–8）
+
+- **网络保险**也是勒索产业兴旺的原因之一。保险业本身成了目标：黑客既向保险公司勒索，又**窃取投保人的数据**去诈骗，这叫**双重勒索（double extortion）**。
+- 例子：**Maze** 声称加密了保险公司 **Chubb** 的数据；**Avaddon** 据称从 **AXA** 亚洲分公司偷了 **3 TB** 客户数据后发动勒索；**CNA Financial** 的数据据称被 **Phoenix** 偷走以确保会付钱，员工也被锁在电脑外，CNA 承认付了 **4,000 万美元**；**Arthur J Gallagher** 被未知团伙攻击，被偷走投保人的医疗记录、护照、社保和银行信息。
+- **DarkSide** 被认为是攻击美国 **Colonial Pipeline**（输油管道公司）的团伙，Colonial 为 2021 年 5 月付的 **440 万美元**加密货币赎金提出了保险理赔。有说法认为 DarkSide 会在入侵的系统里**查找受害者的网络保险额度**，再按额度定赎金。还有三家投保人在保险公司把它们的名字公布在网站上后被攻击。REvil 的一名黑客「Unknown」被问是否专门攻击有保险的组织时说：是的，这是「最美味的部分之一」，尤其是**先黑保险公司拿到客户名单**，按名单逐个攻击，最后再攻击保险公司本身。
+- 有分析认为网络保险**加剧**了问题。英国国家网络安全中心前负责人担心勒索「**接近失控**」。前 FBI 探员 **James Turgal** 说，卡特尔把保险看成「**取之不尽的钱罐**」，他见过黑客从受害者自己的系统里截取网络保险的封面页给受害者看：「你有保险，没有理由不付」。
+- 一位顾问讲了一个例子：某美国公司的保险公司算出从备份恢复要几周，于是**要求**公司付赎金，因为付钱对保险公司更便宜：「网络保险是勒索软件活下去的原因，这是一种扭曲的关系。只要比必须赔的营收损失便宜，它们付多少都愿意。」
+- **保险公司在调整**：2021 年 5 月，**AXA** 宣布在**法国**不再承保赎金（法国在勒索损失上仅次于美国）。其他保险公司没跟进，但通过降低保额、提高保费转嫁成本：美国和加拿大的网络保费在 2020 年 12 月到 2021 年 1 月涨了 **29%**，1 月到 2 月涨 **32%**，2 月到 3 月涨 **39%**。到 2021 年 9 月，保险公司开始协调应对，成立了网络保险组织 **CyberAcuView**，并通过美国财产意外险协会（APCIA）开会。
+
+#### Communications Management 沟通管理（p.8–9）
+
+- Hydro 继续坚持透明，不只是发布进展，还分享**学到的教训**帮助其他组织。在 YouTube 上发了几个视频：攻击两周后挪威 **Magnor** 工厂员工如何维持生产；法国 **Toulouse** 工厂如何一边重建 IT、一边转为手工；还有一个讲透明的重要性和高管的决策。
+- Aasheim 回顾说，Hydro 尽了最大努力「**不让客户陷入困境**」。公司的应对受到称赞：执法机构和网络安全业界称之为「**黄金标准（gold standard）**」。市场也表示信心：攻击公开后**股价立即上涨**。案例说这证实了 Aasheim 团队选择开放透明而不是付钱是对的。
+- **2021 年 10 月**（攻击两年半后），**Europol**（欧洲刑警组织）宣布在**乌克兰和瑞士**突袭，针对 **12 人**，拘留了这次攻击背后的黑客，但没说他们是否被逮捕或起诉。
+- Hydro 高层**甚至没有回复黑客**，而是专注沟通和恢复，尽快回到正常业务。估计这次攻击（让两大洲的工厂停产**近一周**）让 Hydro 损失**超过 5,000 万美元**。很多公司干脆付钱、保密。结尾问：考虑到金钱和时间资源的代价，Hydro 的做法对吗？极端开放的政策行得通吗？是不是对所有网络攻击都是最好的做法？
+
+### 8.2 🟡 原文导读：Exhibit
+
+#### Exhibit 1：全球受勒索攻击的组织比例，2018–2025（p.10，来源 Statista / CyberEdge 2024）
+
+| 年份      | 2018  | 2019  | 2020  | 2021  | 2022  | 2023      | 2024  | 2025  |
+| ------- | ----- | ----- | ----- | ----- | ----- | --------- | ----- | ----- |
+| 受影响组织比例 | 55.1% | 56.1% | 62.4% | 68.5% | 71.0% | **72.7%** | 64.1% | 62.6% |
+
+读法：Hydro 受攻击的 2019 年，**一半以上**的组织都受过勒索攻击；2023 年达到顶峰（72.7%），之后略降但仍在 60% 以上。意思是：**被攻击不是「会不会」的问题，而是「什么时候」的问题**，准备比预防更重要。
+
+### 8.3 🔴 一段话讲清楚
+
+2019 年 3 月 19 日凌晨，挪威铝业和可再生能源公司 **Norsk Hydro**（40 国、170 个地点、3.5 万员工）被 **LockerGoga** 勒索软件攻击：黑客几个月前通过一封客户往来邮件里的木马潜入，拿到管理员权限后加密了全公司的系统，要求用比特币付赎金。新任 CEO **Hilde Merete Aasheim**（任命刚公布一天）和高管在凌晨 4 点开会，必须马上决定：**付不付钱？公不公开？怎么让工厂继续运转？**Hydro 选择**拒付、彻底透明、转为手工生产**，请 Microsoft 和挪威国家网络安全中心帮忙，三周恢复关键系统，三个月恢复全部。代价是停产近一周、损失超过 5,000 万美元；收获是「黄金标准」的评价和上涨的股价。课堂上要讨论的是：这个选择对**任何**公司都对吗？
+
+### 8.4 🟡 公司和行业背景
+
+**Norsk Hydro**：挪威的**铝**生产商（从铝土矿、氧化铝、电解铝到铝挤压和压铸件），同时是**可再生能源**（主要是水电）公司。铝业是**高度依赖自动化系统**的连续生产行业：Cresson 工厂靠软件告诉员工用哪个模具做哪个订单。所以 IT 瘫痪 = 生产瘫痪。客户是 Tesla、Ford 这样的汽车厂商，它们按准时制（just-in-time）安排生产，供应商停一天影响很大（推断）。
+
+**为什么 Hydro 是一个「好目标」**：规模大、能付得起赎金、停产的代价高，所以按勒索的逻辑，它付钱的动机很强（推断）。
+
+**行业环境（勒索软件产业）**：案例用一半篇幅说明为什么勒索在 2018 年后爆发：
+
+| 推动力         | 机制                            | 对 Hydro 决策的意义      |
+| ----------- | ----------------------------- | ------------------ |
+| **有组织的卡特尔** | 从独行侠到团伙，专业化、像企业一样运作           | 对手是专业的，付钱是在资助一个产业  |
+| **RaaS**    | 开发者卖工具，附属成员去攻击，按订阅和佣金分钱       | 门槛降低，攻击者更多         |
+| **加密货币**    | 匿名、跨境、难追踪、可以混币                | 付了钱几乎追不回来          |
+| **网络保险**    | 保险公司算账后宁愿付赎金；黑客按保额定价，甚至先黑保险公司 | 有保险的公司更容易被盯上、被要求付钱 |
+
+### 8.5 🔴 人物
+
+| 人物                       | 角色           | 想要 / 担心           | 立场                         |
+| ------------------------ | ------------ | ----------------- | -------------------------- |
+| **Hilde Merete Aasheim** | 刚被任命的新 CEO   | 保护公司、客户、声誉        | 「从来没有付钱这个选项」               |
+| **Inger Sethov**         | 传播与公共事务负责人   | 让员工知道风险、配合行动      | 两个原则：透明、频繁                 |
+| **Halvor Molland**       | 媒体关系高级副总裁    | 让公众了解黑客手法、帮别的行业学习 | 主动公开、分享教训                  |
+| **Jo De Vleigher**       | CIO，负责恢复     | 调查、恢复运营、重建网络      | 三个并行团队                     |
+| **匈牙利的技术员**              | 第一个发现异常的人    | —                 | 按规程立刻断网                    |
+| **Cresson 厂长和员工**        | 最大工厂，1,180 人 | 继续给 Tesla、Ford 供货 | 手工操作、买打印机、用个人手机和邮箱         |
+| **比利时的销售员**              | —            | —                 | 一直打印订单，成了「英雄」              |
+| **退休员工**                 | 自愿回来         | —                 | 懂手工流程                      |
+| **Microsoft、挪威国家网络安全中心** | 外部支援         | —                 | 帮助调查和恢复                    |
+| **黑客（LockerGoga）**       | 攻击者          | 赎金，越快联系越便宜        | 没得到任何回复；2021 年被 Europol 突袭 |
+
+关系：CEO 和高管团队在凌晨会议上集体决定；CIO 负责技术恢复，传播团队负责沟通，两条线并行；工厂层面靠员工自发的临场应变。
+
+### 8.6 🔴 事情经过
+
+| 时间               | 事件                                             |
+| ---------------- | ---------------------------------------------- |
+| 攻击前              | 买网络保险、培训演练、白帽测试                                |
+| 几个月前             | 木马通过一封和客户的邮件往来进入；黑客在员工目录里逐步提权，拿到管理员权限          |
+| 2019 年 3 月 18 日晚 | Aasheim 被任命为下任 CEO 的消息公布                       |
+| 3 月 19 日 02:00   | 匈牙利技术员发现异常，按规程让整个网络下线；系统已被加密                   |
+| 04:00            | 高管被叫醒，看到勒索信息；紧急会议决定拒付、公开、找 Microsoft 和国家网络安全中心 |
+| 当天起              | Facebook、WhatsApp、手写告示通知员工；工厂转手工；每日新闻发布会和内部简报  |
+| 一周内              | 新网站提前上线；工厂停产近一周                                |
+| 两周后              | Magnor 工厂的视频                                   |
+| 三周               | 制造和关键系统恢复                                      |
+| 三个月              | 员工目录、云服务等非关键系统恢复                               |
+| 2021 年 10 月      | Europol 在乌克兰和瑞士突袭 12 人                         |
+| 总计               | 损失超过 $50M；股价上涨；被称为「gold standard」              |
+
+**因果关系**：邮件钓鱼 + 黑客耐心提权 → 防御（保险、演练、白帽测试）没能阻止入侵 → 但演练让技术员**立刻断网**，限制了扩散 → 系统和员工通讯录都被锁 → 只能用社交媒体和手写告示 → IT 瘫痪导致生产瘫痪 → 手工流程、退休员工、个人习惯（打印订单）让部分工厂继续 → 拒付意味着要自己重建 → 并行的三个团队按关键程度分批恢复 → 透明让员工配合、客户理解、市场放心。
+
+### 8.7 🔴 问题到底是什么
+
+**症状**：全公司系统被加密；员工通讯录失效；工厂不知道该生产什么；客户和媒体要信息但没有网站；黑客催促尽快联系。
+
+**真正要做的决定**有三个，而且必须在几个小时内做出：
+
+1. **付不付赎金**（问题 1）；
+2. **公开还是保密**（问题 2）；
+3. **怎么在没有 IT 的情况下继续运转和恢复**（问题 3）。
+
+**根本原因**（为什么会到这一步）：
+
+- **入侵**：社会工程（social engineering：骗人而不是破解技术）+ 供应链信任（来自受信任客户的邮件）；防御再好也有漏洞。
+- **横向移动和提权**：黑客能在几个月里在员工目录里移动、拿到管理员权限，说明内部监控没有发现异常（推断）。
+- **业务高度依赖 IT**：订单、模具选择、通讯录都在系统里，**没有设计好的手工后备**（比利时销售员的活页夹是个人习惯，不是公司设计）。
+
+### 8.8 🔴 数字
+
+| 数字                                    | 意义                               |
+| ------------------------------------- | -------------------------------- |
+| 35,000 员工、170 个地点、40 国                | 通知所有人别开电脑本身就是一个巨大的挑战             |
+| 02:00 发现 → 04:00 高管开会                 | 关键决定在几个小时内做出，说明事先有立场（「从来没有这个选项」） |
+| Cresson：1,180 人、24/7、Tesla 和 Ford     | 最大工厂、最重要客户，手工应变的主战场              |
+| 3 周 / 3 个月                            | 按关键程度分批恢复                        |
+| 近一周停产、> $50M 损失                       | 拒付的代价                            |
+| 股价上涨                                  | 透明的回报（至少在市场眼中）                   |
+| 2.5 年后 Europol 行动                     | 拒付 + 配合执法，最终追到人（但案例没说定罪）         |
+| 70%（2022）、72.7%（2023）                 | 被攻击是常态                           |
+| 341%、$412M（2020）；$590M（2021 上半年）      | 赎金产业的增长                          |
+| CNA 付 $40M；Colonial 付 $4.4M、FBI 追回一半多 | 付钱的例子；追回很难                       |
+| 保费月增 29%、32%、39%                      | 保险在收紧，「有保险就付」越来越不可持续             |
+
+> **⚠️ ⚠️ 案例里几个对不上的地方**
+>
+> - 好几条参考文献（Hydro 讲透明的 YouTube 视频）标注的日期是 **2018 年 10 月 28 日**，早于 2019 年 3 月的攻击，不可能是同一事件的视频，日期应该有误。
+> - 损失「超过 **5,000 万美元**」，但引用的 BBC 报道标题是「**4,500 万英镑**」，两个数字的币种和金额不同。
+> - 案例说 Hydro 当时「**没有对外网站**」，但开头说网络下线时也断了「网站」：更合理的理解是原网站因攻击不可用，新网站正好在开发。
+> - 「FBI 追回一笔 440 万美元赎金的一半多一点」没说是哪个案子，从后文看是 **Colonial Pipeline**（同样是 440 万）。
+> - Exhibit 1 到 2025 年，但正文的数字大多停在 2021–2022 年。
+
+### 8.9 🔴 选项
+
+| 选项                        | 内容                          | 好处                                            | 坏处 / 风险                                                                  |
+| ------------------------- | --------------------------- | --------------------------------------------- | ------------------------------------------------------------------------ |
+| **A. 拒付 + 公开**（Hydro 的选择） | 不和黑客联系，自己重建；每天向员工、客户、媒体公开进展 | 不资助犯罪、不被标记为「会付钱」；员工能配合（知道别开电脑）；客户理解、市场信任；帮助执法 | 停产和重建的直接成本高（> $50M）；公开可能暴露弱点、引来诉讼或监管关注；需要强大的恢复能力                         |
+| **B. 拒付 + 低调**            | 不付钱，但对外说是「系统故障」，尽量少说        | 不资助犯罪；短期少一些媒体压力                               | 3.5 万员工不知道风险，可能继续传播病毒；真相泄露后信任崩塌；客户不知道为什么延误                               |
+| **C. 付赎金 + 保密**           | 联系黑客、讨价还价、用比特币付，拿钥匙解密       | 可能更快恢复；短期账面损失可能较小                             | 钥匙不一定有效；系统已被管理员权限控制，付了也要重建；被标记为会付钱的目标，可能再被攻击；可能违反制裁（如果黑客在被制裁名单上）；道德上资助犯罪 |
+| **D. 付赎金 + 公开**           | 付钱但承认                       | 诚实                                            | 兼有付钱和公开的坏处：公开承认会付钱，等于邀请下一次攻击                                             |
+
+*（网页版此处可以拖动赎金、密钥成功率、停产天数等假设，比较付赎金和拒付的账面成本；除「拒付约 $50M」外都是假设，下面是三个预设）*
+
+| 情景           | 付赎金：赎金 + 停产 + 重建 + 再被攻击     | 付赎金合计  | 拒付：停产 + 重建   | 拒付合计  | 账面上更便宜  |
+| ------------ | --------------------------- | ------ | ------------ | ----- | ------- |
+| 接近 Hydro 的情况 | $10M + $25.5M + $15M + $12M | $62.5M | $35M + $15M  | $50M  | **拒付**  |
+| 只看短期账        | $10M + $15M + $0M + $0M     | $25M   | $35M + $15M  | $50M  | **付赎金** |
+| 没有可用的备份      | $10M + $60M + $15M + $12M   | $97M   | $150M + $15M | $165M | **付赎金** |
+
+**接近 Hydro 的情况**：案例只给了结果：拒付，工厂停产近一周，总损失超过 $50M。其余数字是假设：赎金 $10M、密钥 70% 能用、付了之后仍要重建系统（攻击者有管理员权限、潜伏了几个月）。
+
+**只看短期账**：如果相信密钥一定有效、付了就不用重建、不会再被攻击：付钱看起来便宜。很多公司就是这样算的。
+
+**没有可用的备份**：如果没有离线备份，不付钱就要从零重建，停机可能是一个月：这时付钱在账面上明显更便宜，这就是「事前准备」决定了能不能说不。
+
+*（网页版此处可以改权重和 1–5 分，看哪个方案胜出、什么会改变结论；分数是我的判断，下面是几组权重的结果）*
+
+| 标准                   | 拒付 + 公开（Hydro） | 拒付 + 低调处理 | 付赎金 + 保密 |
+| -------------------- | -------------- | --------- | -------- |
+| 短期恢复快、直接损失小          | 2              | 2         | 4        |
+| 不被盯上再次勒索             | 5              | 4         | 1        |
+| 合法合规、不资助犯罪           | 5              | 5         | 1        |
+| 员工能配合（3.5 万人要知道别开电脑） | 5              | 2         | 2        |
+| 客户、市场和监管的信任          | 5              | 3         | 1        |
+| 信息不被攻击者或媒体抢先         | 4              | 2         | 2        |
+
+| 权重视角       | 拒付 + 公开（Hydro） | 拒付 + 低调处理 | 付赎金 + 保密 | 得分最高               |
+| ---------- | -------------- | --------- | -------- | ------------------ |
+| 同等重要       | 52             | 36        | 22       | **拒付 + 公开（Hydro）** |
+| 只看这个季度的账   | 15             | 13        | 21       | **付赎金 + 保密**       |
+| Hydro 管理层  | 99             | 69        | 31       | **拒付 + 公开（Hydro）** |
+| 一家没有备份的小医院 | 30             | 24        | 25       | **拒付 + 公开（Hydro）** |
+
+### 8.10 🔴 分析
+
+本讲的课件没有讲安全，第 1 周的课程地图把 Hydro 放在 **IT Security** 模块。这里用三个角度分析：
+
+**① 用项目管理的眼光看恢复**：恢复本身就是一个紧急的 IT 项目。
+
+| 本讲概念                     | Hydro 的做法                                            |
+| ------------------------ | ---------------------------------------------------- |
+| 范围（Scope）                | 先恢复**制造和关键系统**（3 周），员工目录、云服务后做（3 个月）：按业务关键程度定范围和顺序   |
+| 资源（Assign resources）     | 三个**并行团队**（调查、恢复运营、重建网络），外部专家（Microsoft、国家网络安全中心）补能力 |
+| 监控（Monitoring & Control） | 每天的内部简报和新闻发布会，等于每天的进度报告                              |
+| 变更控制                     | 检查所有员工和服务账号、隔离、清理、监控后才放回网络：不是「先恢复再说」                 |
+
+**② 事件响应的四个阶段**（➕ 课外补充：NIST SP 800-61，你在 ISOM 5280 学过）：
+
+| 阶段                                               | Hydro                             |
+| ------------------------------------------------ | --------------------------------- |
+| **Preparation** 准备                               | 保险、培训演练、白帽测试；有断网规程；新网站在开发；有库存     |
+| **Detection & Analysis** 发现和分析                   | 凌晨 2 点技术员发现；但黑客已经潜伏几个月没被发现（准备的漏洞） |
+| **Containment, Eradication & Recovery** 遏制、清除、恢复 | 全网下线；检查、隔离、清理所有账号；3 周 / 3 个月分批恢复  |
+| **Post-incident Activity** 事后                    | 公开分享教训、视频；配合 Europol              |
+
+**③ 利益相关方**：员工要知道别开电脑（**内部透明是操作上的必要，不只是公关**）；客户（Tesla、Ford）要知道订单会延迟、要能用别的方式下单；市场和监管要相信公司在控制局面；执法机构需要信息追查黑客。
+
+*（网页版此处是点选练习：Norsk Hydro：这一项是事前准备，还是临场应变？；下表是全部题目和答案）*
+
+| 挑战                                | 答案       | 理由                   |
+| --------------------------------- | -------- | -------------------- |
+| 买了网络保险，定期培训和演练                    | **事前准备** | 攻击之前就做了              |
+| 匈牙利的技术员按安全规程把整个网络下线               | **事前准备** | 有规程、且人知道规程，是演练的结果    |
+| 用 Facebook 和 WhatsApp 通知 3.5 万名员工 | **临场应变** | 员工通讯录被攻击后才想到的办法      |
+| 请 white hat 黑客测试防御                | **事前准备** | 渗透测试是事前措施            |
+| 厂长去 Staples 把打印机和纸都买光             | **临场应变** | 临时找资源                |
+| 请退休员工回来操作手工流程                     | **临场应变** | 临时动员，但前提是这些人还在、还愿意帮忙 |
+| 有库存可以先发给客户                        | **事前准备** | 库存缓冲是运营上的事前准备        |
+| 比利时的销售员一直把订单打印出来放在活页夹里            | **临场应变** | 个人习惯，不是公司设计的备份       |
+| 新网站本来就在开发，一周内提前上线                 | **事前准备** | 已经在做的项目被加速，不是从零开始    |
+| 每天开新闻发布会，请记者进控制室                  | **临场应变** | 透明策略是当天早上决定的         |
+
+### 8.11 🔴 三组问题的答案
+
+> **📌 我的解答：问题 1，处在 Hydro 位置的公司应该付赎金吗？**
+>
+> **立场：不应该付，但这个结论有条件。**
+>
+> **理由**：
+>
+> 1. **付了也解决不了问题**：黑客已经有管理员权限、潜伏了几个月，即使拿到钥匙解密，系统也**不可信**，仍然要检查、清理、重建。Hydro 的「三个团队、检查所有账号」无论付不付都要做。
+> 2. **钥匙不一定有效**：犯罪分子没有义务交付，解密工具可能有错误或者很慢。
+> 3. **会被再次攻击**：付钱的公司被标记为「会付钱」，团伙之间会分享名单（案例里 REvil 专门挑有保险的目标）。Aasheim 的判断「付了只会再发生」有依据。
+> 4. **法律和道德**：付钱资助有组织犯罪（74% 流向和俄罗斯有关的团伙），如果对方在制裁名单上还可能违法。
+> 5. **Hydro 有能力不付**：大公司、有保险、有外部专家支持、有手工流程可以退、有库存缓冲。
+>
+> **条件（什么时候答案会变）**：如果没有可用的备份、关键系统关系到生命安全（医院、电网）、拖延的损失远超公司能承受的范围，付钱可能是**最不坏**的选择（上面实验的「没有可用的备份」预设）。但即使付，也要同时重建系统、报告执法机构。
+>
+> **反方最强的论点**：拒付让 Hydro 损失超过 $50M，而赎金可能只是一小部分；股东的钱应该用在损失最小的方案上。**回应**：这只算了第一次的账，没算再被攻击的期望损失、重建的成本（付不付都要）和声誉。
+
+> **📌 我的解答：问题 2，「彻底透明」是正确的策略吗？对所有攻击都适用吗？**
+>
+> **立场：对 Hydro 是正确的，但不是对所有攻击都适用。**
+>
+> **为什么对 Hydro 有效**：
+>
+> 1. **操作上必需**：3.5 万人要立刻知道别开电脑，通讯录又被锁了，只能公开、广泛地传播。保密等于让病毒继续传。
+> 2. **工厂停了，瞒不住**：Tesla、Ford 的订单延误，客户迟早会知道；主动说比被发现好。
+> 3. **把公司放在「受害者」而不是「失职者」的位置**：每天发布会、请记者进控制室，让公众看到公司在努力，「网络英雄」的叙事团结了员工。
+> 4. **结果**：股价上涨、被称为黄金标准、帮助了执法。
+> 5. **Hydro 没有付钱**，所以没有什么需要隐瞒的。
+>
+> **为什么不一定对所有攻击都适用**：
+>
+> 1. **涉及个人数据泄露**（例如 AXA 的 3 TB 客户数据、Arthur J Gallagher 的医疗和护照记录）：公开的细节可能伤害受害者、引来诉讼，要在法律顾问指导下按法规通知，而不是「彻底」透明。
+> 2. **攻击还在进行时**：公开太多技术细节可能告诉黑客你的应对和弱点。
+> 3. **国家级攻击或涉及国家安全**：执法和情报机构可能要求保密。
+> 4. **公司付了赎金**：透明等于宣布自己会付钱。
+> 5. **公司没有恢复能力**：透明需要「好消息」来支撑，如果每天的更新都是坏消息，可能引起恐慌和挤兑（例如金融机构）。
+>
+> **结论**：透明是一个**原则**（不撒谎、不把攻击说成故障、及时通知受影响的人），而**透明的程度和节奏**要根据攻击类型、法律义务和恢复能力调整。
+
+> **📌 我的解答：问题 3，救了 Hydro 的是准备还是应变？每家公司要事先建好什么？**
+>
+> **立场：准备让 Hydro「能」做出拒付的选择，应变让它「熬过」了那一周。两者都需要，但准备更根本。**
+>
+> **准备做了什么**：技术员按规程**立刻断网**（演练的结果），限制了扩散；网络保险分担损失；新网站本来就在开发；有库存；有外部专家可以叫。最重要的是，管理层**事先就有立场**：「从来没有付钱这个选项」，所以凌晨 4 点能马上决定。
+>
+> **应变做了什么**：Facebook 和 WhatsApp、手写告示、退休员工、Staples 的打印机、个人手机和邮箱、比利时销售员的活页夹。这些很英勇，但很多是**运气**：如果没有退休员工、没有旧电脑、没有那个销售员呢？
+>
+> **准备的漏洞**：黑客潜伏了几个月没被发现；员工通讯录只在被锁的系统里；没有设计好的手工流程；订单数据没有离线备份。这些都只能靠应变去补。
+>
+> **每家公司要事先建好的**：
+>
+> | 要建的                                                                    | Hydro 的教训                 |
+> | ---------------------------------------------------------------------- | ------------------------- |
+> | **离线、不可改的备份**（offline / immutable backup），并且定期测试恢复                     | 没有备份就没有拒付的底气              |
+> | **事件响应计划和演练**：谁做决定、几点开会、谁对外说话                                          | 技术员知道断网，高管凌晨就能决策          |
+> | **事先定好的赎金立场**（董事会批准）                                                   | 危机中没时间争论道德问题              |
+> | **系统外的沟通渠道**：纸质或离线的紧急联系人名单、预设的群组                                       | 通讯录被锁，只能靠社交媒体             |
+> | **手工后备流程**（business continuity / manual workaround）：关键订单和生产指令能打印、能手工运转 | 比利时销售员的活页夹应该是公司的制度，不是个人习惯 |
+> | **按业务关键程度排好的恢复顺序**（BIA：哪些系统几天内必须恢复）                                    | 3 周 / 3 个月的分批             |
+> | **外部支援的事先约定**：事件响应公司、执法和国家网络安全机构的联系方式                                  | Microsoft 和国家网络安全中心       |
+> | **检测横向移动和提权的监控**                                                       | 黑客潜伏几个月                   |
+> | **沟通预案**：内部和外部的模板、发言人                                                  | 每日发布会、「网络英雄」叙事            |
+
+### 8.12 🔴 课上可能怎么问
+
+**为什么 Hydro 很快就能决定不付钱？**
+
+> 管理层事先就有立场（「从来没有这个选项」），认为付了只会再发生；同时有保险、有外部专家、有部分手工后备和库存，有能力承受停产。决定在凌晨 4 点的会上就做出了。
+
+**网络保险为什么被说成「问题的一部分」？**
+
+> 保险公司算账后，常常发现付赎金比赔偿几周的停产损失便宜，于是要求或鼓励投保人付钱；黑客反过来查找受害者的保额、按保额定价，甚至先攻击保险公司拿客户名单。结果是有保险的公司更容易成为目标，赎金被抬高。保险业开始调整：AXA 在法国不再承保赎金，保费大幅上涨。
+
+**加密货币为什么推动了勒索？**
+
+> 匿名、跨境、不经过银行、可以通过混币和在几百种币之间转换来洗钱，追踪极难（FBI 追回 Colonial 的一半赎金花了大量资源）。以前用礼品卡或信用卡收钱，金额小、留痕迹。加密货币让勒索变成低风险、高回报的生意。
+
+**Hydro 的透明在操作上有什么作用（不只是公关）？**
+
+> 员工通讯录被锁，3.5 万人必须马上知道不要开电脑，公开传播是唯一办法；工厂要转手工，需要员工（包括销售、退休员工）主动配合；客户要用短信和个人邮箱下单，需要知道发生了什么。透明让所有人能采取正确的行动。
+
+**英文答题模板**：
+
+> **Position on the ransom.** A firm in Hydro's position should not pay. The attackers held administrator rights for months, so even a working decryption key would leave systems that cannot be trusted; every account would still have to be inspected and rebuilt, as Hydro's three parallel teams did. Paying offers no guarantee of a usable key, marks the firm as willing to pay, funds organised crime and may breach sanctions. Hydro could afford to refuse because it had insurance, outside expertise, stock buffers and staff able to run manual operations. The answer changes only when a firm has no usable backups and the outage threatens lives or survival; even then it should rebuild and report to law enforcement. **On transparency,** Hydro's openness was an operational necessity as well as good public relations: with the directory encrypted, 35,000 employees had to be warned publicly not to log on, and customers needed to know how to keep ordering. Transparency should be a principle (no lies, timely notification) whose depth is adjusted when personal data is leaked, an attack is still under way, or authorities request confidentiality. **On preparation,** preparation made refusal possible and improvisation bought time, so every firm should build offline backups, a rehearsed response plan, a board-approved ransom stance, out-of-band communications and documented manual workarounds before an attack happens.
+
+---
+
+## 9. 🔴 放在一起：本周的四个话题
+
+|      | 课件                    | HRBPS            | NetDynamic             | Norsk Hydro    |
+| ---- | --------------------- | ---------------- | ---------------------- | -------------- |
+| 核心问题 | 怎样控制 IT 项目的范围、工作量和变更  | 有求必应导致范围蔓延       | 全球一致 vs 本地特色；怎么上线      | 付不付、公不公开、怎么熬过去 |
+| 范围   | Scope、WBS、scope creep | 22 个增强、2 个改数据模型  | Home Exchange 要不要放进第一期 | 先恢复关键系统，再恢复其他  |
+| 估算   | Delphi、FPA、经验         | 原预算就不足，+62%      | 案例没有数字                 | 停产和重建的成本 vs 赎金 |
+| 控制   | ICCP、CAB              | 没有 ICCP，项目经理一个人扛 | 关键用户 + RFC             | 每日简报、按规程断网     |
+| 人    | —                     | 用户满意 vs 技术团队的警告  | 远程培训、用户顾虑              | 员工、退休员工、客户的配合  |
+| 教训   | 估算用多种方法；变更走正式流程       | 用户参与 ≠ 有求必应      | 按风险分阶段；先分清标准和差异        | 事先准备决定了能不能说「不」 |
+
+> **🎯 🎯 期末短案例的通用结构（项目和实施类）**
+>
+> 1. **诊断**：区分症状（延期、超支、抱怨）和根本原因（没有范围控制、估算偏低、没有变更流程、用户没参与或参与没边界）。
+> 2. **框架**：Structure / Complexity / People / Process（第 1 周）+ 项目三阶段（本周 Slide 5）+ ERP 的四个决策（第 4 周）。
+> 3. **选项**：至少两个，说清代价和风险，给比较表。
+> 4. **建议**：明确、有条件（「如果……就……」），带上监控和变更控制的安排。
+> 5. **反方**：最强的反对理由和你的回应。
+
+---
+
+## 🔴 综合速查表
+
+| 缩写 / 术语                      | 全称                                                    | 一句话                              |
+| ---------------------------- | ----------------------------------------------------- | -------------------------------- |
+| **Scope**                    | —                                                     | 创造项目产品所需的全部工作                    |
+| **Scope creep**              | —                                                     | 范围在项目期间不断扩大                      |
+| **WBS**                      | Work Breakdown Structure                              | 把工作拆成可估算、可分配的工作包                 |
+| **Person-month**             | 人月                                                    | 一个人工作一个月的工作量                     |
+| **Delphi**                   | —                                                     | 匿名估算 → 汇总 → 再估，几轮收敛              |
+| **FPA**                      | Function Point Analysis                               | 数输入、输出、查询、文件、接口，按复杂度加权得系统规模      |
+| **IFPUG**                    | International Function Point Users Group              | 制定功能点计数标准的组织（课外）                 |
+| **Brooks 定律**                | —                                                     | 给延误的项目加人只会更晚（课外）                 |
+| **ICCP**                     | Integrative Change Control Process                    | 批准和管理所有项目变更的正式流程                 |
+| **RFC**                      | Request for Change                                    | 变更请求表                            |
+| **CAB / CCB**                | Change Advisory / Control Board                       | 跨职能的变更审批委员会，发起人主持                |
+| **Configuration management** | —                                                     | 记录每一版需求、代码、文档                    |
+| **MVP**                      | Minimum Viable Product                                | 只有核心功能、可以给用户试用的第一版               |
+| **ERP**                      | Enterprise Resource Planning                          | 一个数据库整合企业的核心流程                   |
+| **MRP / MRP II**             | Material / Manufacturing Resource Planning            | ERP 的前身                          |
+| **CoA**                      | Chart of Accounts                                     | 会计科目表                            |
+| **UAT**                      | User Acceptance Testing                               | 最终用户验收测试，交接的最后一步                 |
+| **3PL**                      | Third-Party Logistics                                 | 第三方物流（仓储、包装、配送外包）                |
+| **B2B / B2C**                | Business-to-Business / -Consumer                      | 企业客户 / 个人消费者                     |
+| **Big bang / Phased**        | —                                                     | 一次全部上线 / 分阶段上线                   |
+| **Alliance partner**         | —                                                     | 软件厂商认证的实施合作伙伴，靠服务赚钱              |
+| **PCI DSS**                  | Payment Card Industry Data Security Standard          | 支付卡数据安全标准                        |
+| **ISO 27001**                | —                                                     | 信息安全管理体系国际标准                     |
+| **SOC 1 / SOC 2 Type 2**     | System and Organization Controls                      | 对服务商内部控制的审计报告，Type 2 检查一段时间内是否有效 |
+| **Ransomware**               | —                                                     | 加密数据、勒索赎金换钥匙的恶意软件                |
+| **Malware**                  | Malicious software                                    | 任何破坏、干扰或入侵设备的程序                  |
+| **Trojan horse**             | —                                                     | 伪装成正常文件的恶意程序                     |
+| **Zero-day**                 | —                                                     | 还没被发现或修补的漏洞                      |
+| **RaaS**                     | Ransomware-as-a-Service                               | 开发者卖勒索工具，附属成员去攻击、分佣金             |
+| **Double extortion**         | —                                                     | 既加密数据，又威胁公开或利用偷来的数据              |
+| **White hat**                | —                                                     | 受雇测试防御的合法黑客                      |
+| **Mixing service**           | —                                                     | 混币，把加密货币来源打乱以洗钱                  |
+| **Europol**                  | European Union Agency for Law Enforcement Cooperation | 欧洲刑警组织                           |
+
+---
+
+## 模拟自测题
+
+**1. 项目的三个阶段分别要回答什么问题？**
+
+> Initiation：资助哪个项目、按什么流程分配资源。Planning：范围和 WBS、估算工期和成本、排时间表、分配资源。Monitoring & Control：跟踪成本、资源、进度，做调整。
+
+**2. 为什么 IT 项目特别容易范围蔓延？**
+
+> 软件看不见，用户看到 demo 才知道要什么；改代码看起来便宜；项目期间业务在变；利益相关方多；开发者镀金；最根本的是没有正式的变更控制，没人有权说「不」。
+
+**3. Delphi 为什么要匿名？它的主要缺点是什么？**
+
+> 匿名避免资深者或老板的数字成为锚点，让每个人独立表达。缺点：耗时；收敛不等于准确（共同的盲点）；少数人的正确意见可能被平均掉；依赖范围说明的质量。
+
+**4. 用 FPA 算：20 个中等输入、10 个高复杂度输出、5 个低复杂度查询、8 个中等文件、4 个高复杂度接口，总功能点是多少？按 5 FP / 人月、8 个人，要多久？**
+
+> 20 × 3 = 60；10 × 9 = 90；5 × 2 = 10；8 × 8 = 64；4 × 15 = 60；合计 **284 FP**。284 ÷ 5 = 56.8 人月；÷ 8 ≈ **7.1 个月**（纸面计算，未考虑 Brooks 定律）。
+
+**5. 总功能点代表什么？为什么不等于工作量？**
+
+> 代表系统的功能规模。工作量还取决于换算率（团队、技术、工具），而且 FPA 不算非功能需求、集成和数据迁移。
+
+**6. ICCP 的流程里，Screener 做什么？CAB 什么时候要上报？**
+
+> Screener 初审 RFC 是否完整（不完整退回发起人补充），定优先级和类别，更新变更日志和排期，通知所有人。CAB 审议时如果没有权限批准（例如重大变更），就上报（Escalate）给发起人或更高层。
+
+**7. ICCP 有什么缺点？怎样缓和？**
+
+> 官僚、慢，占用管理时间，可能扼杀好想法，和敏捷有张力。缓和：按影响大小分级授权（小改动项目经理直接批，重大变更才上 CAB 或发起人），设紧急通道。
+
+**8. HRBPS 的原计划大约多长？依据是什么？**
+
+> 案例说再要 7 个月是原计划的 45%，所以原计划 ≈ 7 ÷ 0.45 ≈ 15.6 个月，新总工期约 22.6 个月。
+
+**9. HRBPS 项目经理最大的错误是什么？**
+
+> 把用户满意等同于满足所有请求，没有建立变更控制，忽视首席系统分析师「锁定范围」的警告。同时原预算本来就不足，说明估算也有问题。
+
+**10. SodaStream 集团为什么要统一用 NetSuite？**
+
+> 每个子公司各用各的 ERP，数据割裂，加拿大只能看自己的账。统一后可以集中财务数据、加强控制、标准化流程、取消重复许可、改善子公司协作。
+
+**11. Tariq 在 2021 年 2 月面对的三个挑战是什么？**
+
+> 统一会计科目表（和德国、波兰等对齐）；决定保留哪些历史数据（顺便清理）；在疫情下远程做用户验收测试。
+
+**12. SodaStream Canada 和德国子公司最大的业务差异是什么？对 ERP 有什么影响？**
+
+> 加拿大把仓储外包给 3PL（Shandex、Sherway），德国、奥地利自己管仓库。拣货、包装、发货在 NetSuite 之外，NetSuite 每 15 分钟要和 3PL 同步，全球模板没有现成的方案，是技术上最脆弱的一环。
+
+**13. Exhibit 2 中，上 ERP 前后订单审批有什么不同？**
+
+> 前：五个团队各有自己的系统，手工录入、电子或纸质传递，每一步都有延误，数据重复和不一致，库存成本高。后：所有环节读写同一个 ERP 数据库，环节之间自动通知，收单、验证、送货授权自动化；ERP 执行流程、存储数据、监控绩效。
+
+**14. Hydro 是怎么被入侵的？**
+
+> 几个月前，黑客把木马附在一名员工和受信任客户之间的邮件往来里；之后耐心地在员工目录里渗透，拿到管理员权限，再植入 LockerGoga，在选定的时间启动。
+
+**15. Hydro 的哪些做法属于事前准备，哪些属于临场应变？**
+
+> 准备：网络保险、培训演练、白帽测试、断网规程、在开发的新网站、库存。应变：Facebook / WhatsApp 通知、手写告示、退休员工、买光 Staples 的打印机、个人手机和邮箱下单、比利时销售员的活页夹。
+
+**16. 为什么说付了赎金也要重建系统？**
+
+> 黑客有管理员权限、潜伏了几个月，即使解密，系统也可能留有后门，不可信；Hydro 本来就要检查、隔离、清理所有账号。所以「付钱就能快速恢复」低估了成本。
+
+---
+
+## 考试形式练习
+
+**\[Long Question · 15 marks · 300–400 words] A regional bank is replacing its loan-origination system. Six months in, the vendor reports that 55 per cent of the agreed functions are built, the go-live date will slip by four months, and the budget must rise by 40 per cent. Branch managers, who see a demo every two weeks, have submitted 30 change requests, and the project manager has accepted most of them to keep the branches happy. The original estimate was produced by the vendor alone in one afternoon. As the project sponsor, what went wrong, and what would you do now?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[3 分] 诊断：区分症状（延期、超支）和根本原因（没有变更控制、有求必应、估算只用一种方法且由供应商单独做）  
+> ☐ \[3 分] 范围：冻结范围；30 个请求逐个填 RFC、评估影响、分期  
+> ☐ \[3 分] ICCP：成立由发起人主持的跨职能 CAB，分级授权，项目经理不再一个人决定  
+> ☐ \[3 分] 重新估算：FPA / Delphi / 经验多种方法，给区间和应急储备；资金按里程碑拨付  
+> ☐ \[3 分] 保留用户参与：关键用户进入 CAB；先交付更小的 MVP；每周跟踪进度和成本
+>
+> **English**
+>
+> **Diagnosis.** The delay and overrun are symptoms. The root causes are an unreliable baseline and uncontrolled scope. The estimate came from the vendor alone, in one afternoon, with no independent check, so the budget was probably understated from the start. Then thirty change requests flowed straight into development because the project manager accepted them to please users; nobody assessed their impact, and nobody with authority could refuse them.
+>
+> **Immediate actions.** As sponsor I would freeze the scope at the agreed functions. Every outstanding request would be written up as a request for change, assessed by the architect for its effect on scope, schedule, cost and quality, and sent to a change advisory board that I chair, with branch, IT and risk representatives. Minor operational changes could be delegated to the project manager; anything that alters the data model or the schedule would come to the board, and most requests would move to a second release.
+>
+> **Re-planning.** I would ask for a new estimate built from more than one method, such as function point analysis checked by a Delphi round with our own staff, expressed as a range with contingency. Further funding would be released in tranches tied to milestones, and progress against plan would be reported weekly.
+>
+> **Keeping users on side.** Branch managers would stay involved through a key-user seat on the board and an earlier, smaller pilot release, so their engagement shapes priorities instead of expanding scope.
+>
+> **中文解析**
+>
+> 这道题是 HRBPS 换了行业：**demo + 有求必应 = HRBPS 的定期 demo 和开放反馈渠道**。额外的考点是「估算由供应商单独一个下午做出」：要指出只用一种方法、没有独立核对，并用 Slides 9–14 的方法来修正。
+
+**\[Short Question · 8 marks · 120–160 words] A multinational wants one global ERP template for all subsidiaries. One subsidiary outsources its warehousing to third-party logistics firms and must follow local dangerous-goods rules, so its processes differ from the template. Should the subsidiary go live in one step or in phases, and how should it handle local differences?**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[3 分] 分阶段：先上和模板一致、风险低的部分（财务、CoA），再上本地差异大的订单和 3PL 接口  
+> ☐ \[3 分] 本地差异：标准化能解决的改流程；法规和外包仓储在 ERP 外用接口对接；未来需求走变更控制  
+> ☐ \[2 分] 风险控制：端到端测试接口、关键用户、回退计划；引用 Revlon 或 Hershey
+>
+> **English**
+>
+> I would recommend a phased go-live. Finance and a harmonised chart of accounts should go first, because they match the global template, deliver the visibility headquarters wants, and carry little local variation. Order management and the interfaces with the logistics providers should follow once finance is stable and the interfaces have been tested end to end, because a failure there stops revenue, as Revlon found. Local differences should be sorted: where a difference is only habit, the subsidiary adapts to the template; where it is required by law or by the outsourcing model, it is handled through an interface outside the core, not by modifying the ERP; and future programmes enter later through change control. Key users in each department and a rollback plan reduce the remaining risk.
+>
+> **中文解析**
+>
+> 这就是 NetDynamic。得分关键：说出**为什么先上财务**（和模板一致、母公司最想要、风险低），以及**本地差异的三种处理**（改流程 / 接口 / 以后再说）。
+
+**\[Short Question · 8 marks · 120–160 words] A manufacturer's systems have been encrypted by ransomware. The attackers demand payment in Bitcoin and warn that the price rises every hour. The CFO argues that the ransom is smaller than one week of lost production. Advise the CEO.**
+
+*（网页版此处有作答框：先自己写，再点开参考答案，按得分点自评）*
+
+> **得分点 / Scoring points**
+>
+> ☐ \[3 分] 指出 CFO 的账漏了什么：钥匙不一定有效、付了也要重建（攻击者有权限）、再被攻击、制裁和道德  
+> ☐ \[3 分] 建议：不付或至少先不付；断网、找外部专家和执法；转手工、按关键程度恢复；透明沟通让员工配合  
+> ☐ \[2 分] 条件：没有备份或危及生命时答案可能改变；引用 Hydro
+>
+> **English**
+>
+> The CFO compares the ransom with one week of downtime, but the comparison is incomplete. A key may not work, decryption can be slow, and attackers who held administrator rights leave systems that must be inspected and rebuilt anyway, so most of the downtime remains. Payment also marks the firm for repeat attacks, funds organised crime and may breach sanctions. I would advise the CEO not to pay: keep the network isolated, bring in incident-response specialists and law enforcement, switch critical plants to manual operations, and restore systems in order of business criticality, as Norsk Hydro did in three weeks for core systems. Open communication is needed so employees know not to log on and customers can keep ordering. The advice would change only if no usable backups exist or lives are at risk.
+>
+> **中文解析**
+>
+> 关键是**拆开 CFO 的账**：他只比较了赎金和停产，没算「付了也要重建」和「再被攻击」。网页上的赎金实验正好演示这一点。
