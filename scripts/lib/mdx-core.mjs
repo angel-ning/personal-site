@@ -58,6 +58,7 @@ import { EIGRP_PRESETS, dual as eigrpDual, failover as eigrpFailover, ROLE_LABEL
 import { ACL_PRESETS, runPreset as runAclPreset, WILDCARD_PRESETS, ipToInt, intToIp, wcCompare, wcSummary, prefixToMask as aclPrefixToMask, maskToWildcard, rangeToWildcard } from "../../src/components/mdx/acl-logic.mjs";
 import { VLAN_PRESETS, emptyState as vlanEmpty, sendVlan, routerTable as vlanRouterTable, TRUNK_PRESETS, TRUNK_MODES, sendTrunk, interSwitchLinks } from "../../src/components/mdx/vlan-logic.mjs";
 import { PREFIX_SETS, longestMatch } from "../../src/components/mdx/prefix-logic.mjs";
+import { NAT_SCRIPTS, runScript as runNatScript, entryLocal as natLocal, entryGlobal as natGlobal, fmtPair as natPair } from "../../src/components/mdx/nat-logic.mjs";
 import { upgradeCost as zaraCost, networkTradeoff as zaraNet, UPGRADE_PRESETS as ZARA_PRESETS, fmtEur } from "../../src/components/mdx/zara-logic.mjs";
 import { CALLERS as CRM_CALLERS, ROUTE_STEPS as CRM_STEPS, routeFor as crmRoute, routeNote as crmRouteNote } from "../../src/components/mdx/crm-logic.mjs";
 import { MODELS as CLOUD_MODELS, STACK as CLOUD_STACK, KITCHEN as CLOUD_KITCHEN, ELASTIC_PRESETS, elasticity, elasticityVerdict, TCO_PRESETS, tco, fmtUsd as cloudUsd } from "../../src/components/mdx/cloud-logic.mjs";
@@ -1272,6 +1273,20 @@ const components = {
         return [
           para(strong(m.label), text(`：交换机之间 ${interSwitchLinks(v, m.id).length} 根线；收到的 PC：${r.reached.join("、")}`)),
           table(["一段", "线上的帧", "发生了什么"], r.segs.map((sg) => [`${sg.from} → ${sg.to}`, ic(sg.frame.map((f) => (f.v ? `${f.k}(${f.v})` : f.k)).join(" | ")), sg.note])),
+        ];
+      }),
+    ];
+  },
+  NatLab() {
+    const TYPE = { static: "静态", dynamic: "动态", pat: "PAT" };
+    return [
+      note("（网页版此处可交互：选 Static / Dynamic / PAT，让内部主机往外发包、对方回包、外面主动连进来，看 NAT 表和被改掉的字段；下面是几个预设的结果）"),
+      ...NAT_SCRIPTS.flatMap((sc) => {
+        const r = runNatScript(sc);
+        return [
+          para(strong(sc.title)),
+          table(["包", "翻译前 IP (S, D)", "翻译前 Port (S, D)", "翻译后 IP (S, D)", "翻译后 Port (S, D)", "说明"], r.rows.map((x) => [x.label, natPair(x.before.ip), natPair(x.before.port), x.after ? strong(natPair(x.after.ip)) : strong("丢弃"), x.after ? natPair(x.after.port) : "—", x.notes.join(" ")])),
+          table(["Inside Local", "Inside Global", "类型"], r.table.map((e) => [natLocal(e), natGlobal(e), TYPE[e.type]])),
         ];
       }),
     ];

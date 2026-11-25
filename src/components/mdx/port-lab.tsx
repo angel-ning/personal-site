@@ -11,7 +11,7 @@ const pair = (p: Pair) => `(${p[0]}, ${p[1]})`;
 
 // Classify a port number, then open browser windows to the board's two web servers and watch
 // how source ports keep the conversations apart (multiplexing / demultiplexing).
-export function PortLab() {
+export function PortLab({ board = "板书 p.5", slide = "Slide 17" }: { board?: string; slide?: string }) {
   const [text, setText] = useState("80");
   const [opened, setOpened] = useState<string[]>(["UST", "FB"]);
   const [dport, setDport] = useState("49153");
@@ -48,7 +48,7 @@ export function PortLab() {
         </p>
       )}
 
-      <p className="mt-4 text-[13px] font-semibold">板书 p.5：Client (IP-1 / MAC-1) 同时打开几个浏览器窗口</p>
+      <p className="mt-4 text-[13px] font-semibold">{board}：Client (IP-1 / MAC-1) 同时打开几个浏览器窗口</p>
       <div className="lab-controls">
         {SERVERS.map((s) => (
           <button key={s.id} type="button" className="lab-btn" disabled={opened.length >= 6} onClick={() => setOpened([...opened, s.id])}>
@@ -109,7 +109,7 @@ export function PortLab() {
         <b>{target ? `交给窗口 #${target.n}（访问 ${target.server.id} 的那个）` : "没有应用在用这个端口 → 丢弃"}</b>
         <span>
           {target
-            ? `IP 层只负责把包送到 IP-1 这台电脑；传输层看目的端口 ${target.cport}，才知道该交给哪个窗口（Slide 17：Hey TCP, destination port is … give the data to Browser2!）。`
+            ? `IP 层只负责把包送到 IP-1 这台电脑；传输层看目的端口 ${target.cport}，才知道该交给哪个窗口（${slide}：Hey TCP, destination port is … give the data to Browser2!）。`
             : "两个 web server 都用 80，区分不同对话靠的是客户端这边各不相同的源端口。"}
         </span>
       </p>

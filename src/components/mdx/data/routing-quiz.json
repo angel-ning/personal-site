@@ -202,5 +202,47 @@
       { "q": "在原始帧里面插入 4 字节标签（不是外面再包一层）", "a": "q", "why": "课外补充：802.1Q 是 insert 式，插在源 MAC 后面" },
       { "q": "把没用的端口放进一个低权限的默认 VLAN", "a": "vlan", "why": "Slide 10：VLANs Improve Network Security" }
     ]
+  },
+  "natterm": {
+    "title": "NAT 四个地址术语：这是哪一个？",
+    "options": [
+      { "id": "il", "label": "Inside Local" },
+      { "id": "ig", "label": "Inside Global" },
+      { "id": "ol", "label": "Outside Local" },
+      { "id": "og", "label": "Outside Global" }
+    ],
+    "items": [
+      { "q": "Slide 15 里内部 web server 自己网卡上配的 10.0.0.10", "a": "il", "why": "Slide 16：assigned to a host inside a network，通常是 RFC 1918 私有地址" },
+      { "q": "Slide 15 里外部用户在浏览器里输入的 179.9.8.10", "a": "ig", "why": "代表内部主机出现在外面世界的合法地址" },
+      { "q": "PC100 自己配的 200.3.4.6（板书 p.1），由它的主人分配", "a": "og", "why": "Slide 16：assigned to a host on the outside network. The owner of the host assigns this address" },
+      { "q": "Slide 22 里三台主机共用的 200.1.1.2", "a": "ig", "why": "一个 Inside Global 代表多个 Inside Local（one or more inside local IP address）" },
+      { "q": "内部主机眼里外部服务器的地址（没做 outside NAT 时和对方真实地址相同）", "a": "ol", "why": "Slide 16：The IP address of an outside host as it known to the hosts in the inside network" },
+      { "q": "Slide 18 里发包的 10.1.1.1", "a": "il", "why": "内部主机的私有地址，NAT 表左边那一列" },
+      { "q": "Slide 18 地址池里被拿走的 200.1.1.1", "a": "ig", "why": "NAT 表右边那一列：翻译后的公网地址" },
+      { "q": "Slide 5 的 www.cisco.com 自己的地址 170.1.1.1", "a": "og", "why": "外部主机由它的主人分配的真实地址" },
+      { "q": "Slide 20 NAT 表左边的 10.20.20.3", "a": "il", "why": "Inside Local 列" }
+    ]
+  },
+  "nattype": {
+    "title": "NAT 这一章：说的是哪一种？",
+    "options": [
+      { "id": "static", "label": "Static NAT" },
+      { "id": "dynamic", "label": "Dynamic NAT" },
+      { "id": "pat", "label": "PAT / Overload" },
+      { "id": "none", "label": "都不是 / NAT 的通病" }
+    ],
+    "items": [
+      { "q": "公司的 web server 必须让 Internet 上的人随时用同一个公网地址访问", "a": "static", "why": "Slide 19：particularly useful for hosts which must have a consistent address that is accessible from the Internet" },
+      { "q": "池子里 5 个公网地址都被占了，第 6 台主机的包被直接丢掉", "a": "dynamic", "why": "Slide 17：all the pooled IP addresses are in use, the router simply discards the packet" },
+      { "q": "用不同的源端口号区分翻译，多个私有地址共用一个公网地址", "a": "pat", "why": "Slide 23：PAT uses unique source port numbers on the inside global IP address" },
+      { "q": "转换会增加延迟，CPU 要看每一个包决定要不要翻译", "a": "none", "why": "Slide 26：Issues with NAT，所有 NAT 都有" },
+      { "q": "条目一段时间不用就超时（默认 24 小时）", "a": "dynamic", "why": "Slide 17：Dynamic translations are temporary and they eventually time out" },
+      { "q": "完全不省 IP 地址，但也不会因为地址不够而丢包", "a": "static", "why": "Slide 19：No conservation of IP addresses · No packets dropped due to lack of addresses" },
+      { "q": "源端口被占了就找第一个可用端口；这个 IP 端口用完了就换池子里的下一个 IP", "a": "pat", "why": "Slide 24" },
+      { "q": "板书：one public → 4,000 private", "a": "pat", "why": "一个公网 IP 靠端口号带几千台内部主机" },
+      { "q": "定义一个地址池 + 一个「哪些内部地址要翻译」的条件（如 10.1.1.0 – 10.1.1.255）", "a": "dynamic", "why": "Slide 17–18：sets up a pool … and defines criteria for the set of inside local IP addresses" },
+      { "q": "Internet 上的人很难追踪到包的原始源地址（loss of end-to-end IP traceability）", "a": "none", "why": "Slide 25 列为 NAT Benefits：所有 NAT 都隐藏内部地址" },
+      { "q": "不用 PAT 的话，同时上网的主机数最多 = 池子里的地址数", "a": "dynamic", "why": "Slide 23 最后一条：Without PAT, NAT can concurrently support only the number of hosts defined in the NAT pool" }
+    ]
   }
 }

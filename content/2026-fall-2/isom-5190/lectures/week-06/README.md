@@ -1,0 +1,868 @@
+---
+title:
+  en: "Week 6 · NAT & PAT: Address Hiding and Perimeter Protection"
+  zh: "第 6 周 · NAT 与 PAT：地址隐藏与边界保护"
+summary:
+  en: "Module 6 Address Hiding and Perimeter Protection Using NAT and PAT, slide by slide: public vs private (RFC 1918) addresses, why NAT exists, TCP/UDP port numbers (well-known, registered, dynamic) and multiplexing, the four NAT address terms, dynamic NAT with a pool, static NAT, PAT / overloading and its port-selection rules, and NAT's benefits and costs."
+  zh: "Module 6 Address Hiding and Perimeter Protection Using NAT and PAT 逐页解析：公网 vs 私网地址（RFC 1918）、为什么需要 NAT、TCP / UDP 端口号（well-known、registered、dynamic）和多路复用、NAT 的四个地址术语、带地址池的 Dynamic NAT、Static NAT、PAT / Overloading 和它选端口的规则、NAT 的好处与代价。"
+week: 6
+date: 2026-12-02
+tags: [NAT, PAT, Private Address, RFC 1918, Port Numbers, Inside Local, Inside Global, Overloading]
+---
+# ISOM 5190 Network Security Management — Week 6 复习笔记
+
+**主题：Module 6 Address Hiding and Perimeter Protection Using NAT and PAT — 公网 / 私网地址 · NAT 的作用 · 端口号与多路复用 · Inside Local / Inside Global 等四个术语 · Dynamic NAT · Static NAT · PAT（Overloading）· NAT 的好处和问题**
+
+> 优先级标注说明（按考试重要性）：  
+> 🔴 **必考核心** — 概念名称、定义、结构必须能背出来  
+> 🟡 **需要理解** — 需要懂逻辑关系，能举例说明  
+> 🟢 **了解即可** — 背景知识，考试大概率不会细抠
+>
+> **优先级依据**：  
+> ① **老师的手写补充（5190M06 supp）**：p.1 是一张 PC1–PC8 + 三台路由器 A、B、C 的拓扑，「Starting with 192.168.1.0」，**C 是 NAT router**，外面是 PC100（200.3.4.6）；要填 **NAT Table（Private IP | Public IP）**，写 **PC1 → PC100、PC100 → PC1 的 IP (S, D)**，最后一行是「**NAT → PAT：One public → 4,000 private**」。p.2 是一台 Client（IP-1 / MAC-1）同时开两个浏览器窗口访问 **UST web server** 和 **FB server**，要写四个方向的 **IP (S, D)、MAC (S, D)**。这两页就是本周的考法；  
+> ② **篇幅**：26 页里 NAT 的三种类型（Slides 14–24）占了一半以上，**Dynamic / Static / PAT 的区别**和 **Inside Local / Inside Global** 是选择题和画表题的素材；  
+> ③ 端口号（Slides 6–12）是 PAT 的前提，**三个端口范围**和 **Slide 12 的常用端口表**要背。
+
+> **📌 本笔记里的几种标记**
+>
+> - 每一页课件都有对应的解析，按 **📄 Slide N** 标出来，可以对着课件一页一页看。
+> - **✍️ 老师板书** — 来自 *5190M06 supp*，放在对应课件内容旁边。这份是**空白版**（NAT 表、IP (S, D) 都没填，每个网段的地址和公网地址也没给），下面的答案全部是 **「我的解答」**，用到的假设都写在旁边；拿到课堂照片或 Completed 版后再对照改成「课堂答案」。
+> - **➕ 课外补充** — 课件没写、但理解或答题会用到的背景知识，考试优先级按 🟢 处理。
+> - 网页版有两个可以点的小实验：**端口号与多路复用**（板书 p.2）和 **NAT 路由器**（Static / Dynamic / PAT 三种模式下发包、回包、从外面连进来，看 NAT 表和被改掉的字段），另有两组点选练习；打印版会变成等价的表格。
+
+> **📝 这份笔记是课前做的**
+>
+> 按课表排在 12 月 2 日。上完课以后，把老师强调的点、板书的课堂答案告诉我，再对照改。
+
+---
+
+## 0. 核心地图（先建立整体框架）
+
+上周的 VLAN 是「在内部把网络分开」，这周的 NAT 是「**站在公司网络和 Internet 的边界上，把内部地址藏起来**」。
+
+```
+IPv4 公网地址不够用 → 公司内部用私有地址（Slides 2–3）
+   10.0.0.0 · 172.16.0.0–172.31.0.0 · 192.168.0.0–192.168.255.0
+   Internet 路由器看到私有地址直接丢 → 出去之前必须换成公网地址
+                              │
+NAT 路由器（站在 Inside 和 Outside 中间，Slides 4–5、14–15）
+   往外：改源 IP（私有 → 公网）    往里：改目的 IP（公网 → 私有）
+   翻译表 NAT Table 存在路由器 RAM 里
+   四个术语：Inside Local · Inside Global · Outside Local · Outside Global（Slide 16）
+                              │
+三种 NAT
+   ├─ Static NAT：一对一、事先配好，外面能主动访问（服务器用）（Slides 19–20）
+   ├─ Dynamic NAT：一个公网地址池，先到先得，用完就丢包，会超时（Slides 17–18）
+   └─ PAT / Overload：一个公网 IP + 不同的源端口 → 几千台主机共用（Slides 21–24）
+          前提：端口号区分同一台机器上的不同会话（Slides 6–12）
+                              │
+好处：省地址 · 换 ISP 不用改内部地址 · 隐藏内部拓扑（Slide 25）
+代价：翻译带来延迟 · CPU 要看每个包 · 失去端到端可追踪性（Slides 25–26）
+```
+
+**一句话抓住本周**：NAT 路由器把出去的包的私有源地址换成公网地址并记在表里，回来的包按表换回去；PAT 再加上端口号，让一个公网 IP 带几千台内部主机，而外面的人看不到、也不能主动连到内部主机。
+
+> **💼 为什么标题叫 Address Hiding and Perimeter Protection**
+>
+> **Address hiding（地址隐藏）**：外面只看得到 NAT 路由器的公网地址，看不到内部有几台机器、各自是什么地址、网络怎么分段（Slide 25）。  
+> **Perimeter protection（边界保护）**：动态 NAT 和 PAT 只给「内部先发出去」的会话建条目，外面主动发进来的包在表里查不到，路由器就丢掉。这是一种「顺带」的保护，不等于防火墙（第 9 节课外补充）。前几周学的 **ACL** 也挂在同一台边界路由器上，两者常常一起用。
+
+---
+
+## 1. 🔴 公网地址 vs 私有地址（Slides 1–4）
+
+**📄 Slide 1 · 封面**：Module 6 *Address Hiding and Perimeter Protection Using NAT and PAT*，Prof. Percy Dias。课件图片来自 Cisco。
+
+**📄 Slide 2 · Public and Private Address**
+
+| 课件原文                                                                                                                                      | 中文 / 小白解释                              |
+| ----------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------- |
+| **Public IP addresses are unique**                                                                                                        | 公网地址全球唯一                               |
+| No two machines that connect to a public network can have the same IP address                                                             | 连上 Internet 的两台机器不能用同一个地址，否则路由器不知道送给谁  |
+| Private networks that are **not connected to the Internet** can have any valid address as long as it is unique within the private network | 不上网的内部网，地址只要在内部不重复就行                   |
+| Grabbing "just any address" is **strongly discouraged** because that network might eventually be connected to the Internet                | 但不要随便拿一个地址用：哪天接上 Internet，就会和别人的公网地址撞车 |
+
+> **💡 为什么「随便拿一个地址」会出事**
+>
+> 假设公司内部随手用了 170.1.1.0/24，后来接上了 Internet。员工要访问 [www.cisco.com（170.1.1.1，Slide](http://www.cisco.com（170.1.1.1，Slide) 5），自己的电脑却认为 170.1.1.1 和自己「在同一个网段」，直接在内网 ARP，永远到不了真正的 Cisco 服务器。所以内部网要用**专门留出来的私有地址**（Slide 3）。
+
+**📄 Slide 3 · Private IP Addresses**
+
+![Internet routers immediately discard private addresses；下面是三类私有地址的范围和网络数](images/page_03.png)
+
+*Internet routers immediately discard private addresses；下面是三类私有地址的范围和网络数（Slide 3）*
+
+| Class | 私有地址范围（Range of Network Numbers） | 网络数 | 课外：CIDR 写法     |
+| ----- | -------------------------------- | --- | -------------- |
+| A     | 10.0.0.0                         | 1   | 10.0.0.0/8     |
+| B     | 172.16.0.0 – 172.31.0.0          | 16  | 172.16.0.0/12  |
+| C     | 192.168.0.0 – 192.168.255.0      | 256 | 192.168.0.0/16 |
+
+**Internet routers immediately discard private addresses**：Internet 上的路由器看到源或目的是私有地址的包直接丢掉。因为全世界几百万个公司都在用 10.x、192.168.x，这些地址在 Internet 上不唯一，没法路由。
+
+> **🎯 考点：私有地址三个范围**
+>
+> - **10.0.0.0**（A 类，1 个网络）· **172.16.0.0 – 172.31.0.0**（B 类，16 个）· **192.168.0.0 – 192.168.255.0**（C 类，256 个）。
+> - 坑：**172.32.0.0 不是私有地址**，172.15.x.x 也不是；192.169.x.x 也不是。
+> - 定义它们的文件叫 **RFC 1918**（Slide 16 提到了这个名字）。
+
+**📄 Slide 4 · NAT and Private IP Networks**
+
+| 课件原文                                                                                                                                                           | 中文 / 小白解释                    |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
+| Connecting a network to the Internet using private addresses requires **translating the private address to public address**: Network Address Translation (NAT) | 用私有地址的网络要上网，出口处必须把私有地址换成公网地址 |
+| NAT allows a company to use **a few registered IP addresses** instead of an entire network                                                                     | 公司只要向 ISP 申请几个公网地址，不用一整个网段   |
+| Hosts inside the company network typically use private IP addresses                                                                                            | 内部主机一般都用私有地址                 |
+
+---
+
+## 2. 🔴 NAT 是怎么换地址的（Slide 5）
+
+**📄 Slide 5 · Network Address Translation (NAT)**
+
+![Client 10.1.1.1 → Private → NAT → Internet → Server www.cisco.com 170.1.1.1；下面四个框是同一个包在两边、来回两个方向的源 / 目的地址](images/page_05.png)
+
+*Client 10.1.1.1 → Private → NAT → Internet → Server www\.cisco.com 170.1.1.1；下面四个框是同一个包在两边、来回两个方向的源 / 目的地址（Slide 5）*
+
+把图里的四个框按时间顺序排：
+
+| 顺序  | 在哪一段        | Source        | Destination   | 发生了什么                                                 |
+| --- | ----------- | ------------- | ------------- | ----------------------------------------------------- |
+| ① 去 | Private（左）  | **10.1.1.1**  | 170.1.1.1     | Client 发出的原始包                                         |
+| ② 去 | Internet（右） | **200.1.1.1** | 170.1.1.1     | NAT 把**源地址**换成公网地址 200.1.1.1，记下「10.1.1.1 ↔ 200.1.1.1」 |
+| ③ 回 | Internet（右） | 170.1.1.1     | **200.1.1.1** | 服务器只知道 200.1.1.1，就回给它                                 |
+| ④ 回 | Private（左）  | 170.1.1.1     | **10.1.1.1**  | NAT 查表，把**目的地址**换回 10.1.1.1                           |
+
+> **🎯 考点：往外改源，往里改目的**
+>
+> - **出去（inside → outside）**：只改 **Source IP**，目的地址不动（Slide 14：NAT changes the source IP）。
+> - **回来（outside → inside）**：只改 **Destination IP**，源地址不动。
+> - 服务器从头到尾只看到 200.1.1.1，**不知道 10.1.1.1 的存在**——这就是 address hiding。
+> - 和第 1 周的规律对比：经过普通路由器时 **IP 不变、MAC 每段都换**；经过 NAT 路由器时 **IP 也会变**（当然 MAC 照样每段换）。
+
+---
+
+## 3. 🟡 端口号（Slides 6–12 + 板书 p.2）
+
+NAT 一个公网地址换一台主机，地址很快就不够了。PAT（第 7 节）要靠端口号来区分，所以课件先回顾端口号。
+
+**📄 Slide 6 · Port Numbers**（分节页）
+
+**📄 Slide 7 · TCP and UDP Port Numbers**
+
+| 课件原文                                                                                                                                                                                                   | 中文 / 小白解释                      |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
+| **Internet layer** delivers data (packets) from one computer to another, but it does not think about **which application** sent the data or which application on the receiving computer needs the data | IP 层只负责「送到哪台电脑」，不管「交给电脑上的哪个程序」 |
+| If you have **five web-browser windows open**, the internet layer delivers the data to the computer, but the **transport layer** works to ensure that each browser gets the data destined for it       | 开了五个浏览器窗口，靠传输层把数据分给对的那个窗口      |
+| TCP and UDP use **port numbers** to pass information to the upper layers                                                                                                                               | 端口号 = 传输层给应用层的「门牌号」            |
+| Port numbers keep track of **different conversations** crossing the network at the same time                                                                                                           | 同一时间的多个会话靠端口号分开                |
+
+**📄 Slide 8 · Using Port Numbers to Identify the Correct Application Process**
+
+![Keith's Computer 上开着 Browser1（49152）、Browser2（49153）、E-Mail Client（49154）、FTP Client（49155）；收到 Dest. Port = 49153 的 TCP 段 → TCP 软件交给 Browser2](images/page_08.png)
+
+*Keith's Computer 上开着 Browser1（49152）、Browser2（49153）、E-Mail Client（49154）、FTP Client（49155）；收到 Dest. Port = 49153 的 TCP 段 → TCP 软件交给 Browser2（Slide 8）*
+
+读图三步：① 一个 TCP 段到达，**Dest. Port = 49153**；② TCP 软件看目的端口：「49153 → 交给 Browser2」；③ 数据送进 Browser2。IP 地址只能把包送到 Keith 的电脑，**送到哪个程序靠端口号**。
+
+**📄 Slide 9 · Well-Known Ports**
+
+| 课件原文                                                                                                                          | 中文 / 小白解释                             |
+| ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| Most TCP/IP applications use a **client/server model**                                                                        | 客户端 / 服务器模式                           |
+| **Servers cannot use dynamic port numbers** because clients must know ahead of time what port numbers servers use             | 服务器端口必须固定，否则客户端不知道往哪个端口发              |
+| Numbers **below 1024** are considered well-known port numbers                                                                 | 0 – 1023 = well-known                 |
+| Well-known ports are used by **servers**, other port numbers used by **clients**                                              | 服务器用 well-known，客户端用别的                |
+| **Each client on the same host uses a different port number**, but **a server uses the same port number for all connections** | 一台电脑上每个客户端程序一个端口；服务器所有连接都用同一个端口（如 80） |
+| Well-known ports are controlled by **IANA** (Internet Assigned Numbers Authority)                                             | 由 IANA 管理                             |
+
+**📄 Slide 10 · Registered and Dynamic Ports**
+
+| 范围                | 名称                      | 谁用                              |
+| ----------------- | ----------------------- | ------------------------------- |
+| **0 – 1023**      | Well-known ports        | 服务器（Slide 9）                    |
+| **1024 – 49151**  | Registered ports        | 用户自己安装的应用；没被服务器占用时，客户端也可以拿来当源端口 |
+| **49152 – 65535** | Dynamic / private ports | 动态分配给客户端应用                      |
+
+最后一条：**By each process having its own port number, a PC can have multiple conversations with other PCs（multiplexing）**——每个进程一个端口，一台电脑就能同时和很多台电脑对话，这叫**多路复用**。
+
+**📄 Slide 11 · Client Connecting to Well-Known Port of a Web Server (80)**
+
+![① Keith 的新浏览器 Browser2 选了一个没用的端口 49152 当源端口，目的端口 80；② Web server 回包：Source Port = 80，Dest. Port = 49152](images/page_11.png)
+
+*① Keith 的新浏览器 Browser2 选了一个没用的端口 49152 当源端口，目的端口 80；② Web server 回包：Source Port = 80，Dest. Port = 49152（Slide 11）*
+
+| 方向                | Source Port | Dest. Port | 为什么                             |
+| ----------------- | ----------- | ---------- | ------------------------------- |
+| ① Client → Server | **49152**   | **80**     | 客户端临时挑一个没用的端口；web server 永远用 80 |
+| ② Server → Client | 80          | 49152      | 回包时 (S, D) **对调**               |
+
+**📄 Slide 12 · Popular Well-Known Port Numbers**
+
+![常用 well-known 端口表](images/page_12.png)
+
+*常用 well-known 端口表（Slide 12）*
+
+| 端口  | 协议           | 应用          | 记忆              |
+| --- | ------------ | ----------- | --------------- |
+| 20  | TCP          | FTP data    | FTP 两个端口：20 传数据 |
+| 21  | TCP          | FTP control | 21 传命令          |
+| 23  | TCP          | Telnet      | 远程登录（明文）        |
+| 25  | TCP          | SMTP        | 发邮件             |
+| 53  | **TCP, UDP** | DNS         | 唯一一个两种都用的       |
+| 69  | **UDP**      | TFTP        | Trivial FTP，简化版 |
+| 80  | TCP          | HTTP (WWW)  | 网页              |
+| 110 | TCP          | POP3        | 收邮件             |
+| 161 | **UDP**      | SNMP        | 网管              |
+
+> **💡 口诀**
+>
+> **20 / 21 FTP，23 Telnet，25 发信，53 问路（DNS），69 小 FTP，80 上网，110 收信，161 网管**。用 UDP 的只有 **53（也用 TCP）、69、161** 三个。
+
+![Client（IP-1 / MAC-1）上开了两个浏览器窗口；同一个 LAN 上有 UST Web Server（IP-2 / MAC-2）和 FB Server（IP-3 / MAC-3）；下面要填 PC → UST、PC → FB、UST → PC、FB → PC 四个方向的 IP (S, D) 和 MAC (S, D)](images/BOARD_PORTS.png)
+
+*✍️ Client（IP-1 / MAC-1）上开了两个浏览器窗口；同一个 LAN 上有 UST Web Server（IP-2 / MAC-2）和 FB Server（IP-3 / MAC-3）；下面要填 PC → UST、PC → FB、UST → PC、FB → PC 四个方向的 IP (S, D) 和 MAC (S, D)（5190M06 supp p.2（已旋转））*
+
+> **✍️ 我的解答：板书 p.2（假设窗口 1 → UST 用源端口 49152，窗口 2 → FB 用 49153）**
+>
+> 三台机器在**同一个 LAN** 上，不经过路由器，所以 MAC 地址就是两端机器自己的。
+>
+> | 方向       | IP (S, D)    | MAC (S, D)     | Port (S, D)（板书没问，但这是重点） |
+> | -------- | ------------ | -------------- | ----------------------- |
+> | PC → UST | (IP-1, IP-2) | (MAC-1, MAC-2) | (49152, 80)             |
+> | PC → FB  | (IP-1, IP-3) | (MAC-1, MAC-3) | (49153, 80)             |
+> | UST → PC | (IP-2, IP-1) | (MAC-2, MAC-1) | (80, 49152)             |
+> | FB → PC  | (IP-3, IP-1) | (MAC-3, MAC-1) | (80, 49153)             |
+>
+> - 回包的每一对 (S, D) 都和去的方向**对调**。
+> - 两个服务器都用 **80**；PC 收到包时，**IP 都是 IP-1**，能区分「这是 UST 窗口的还是 FB 窗口的」只有**目的端口 49152 / 49153**（Slide 8 的 demultiplexing）。
+> - 如果同一个窗口里再开一个 UST 的标签页，会再拿一个新的源端口（如 49154）：同一台主机、同一个服务器，也是两个不同的会话（Slide 9：Each client on the same host uses a different port number）。
+
+*（网页版此处可以输入任意端口号分类，并打开多个浏览器窗口观察源端口怎样区分对话）*
+
+| 端口        | 范围                                    | 常见用途            |
+| --------- | ------------------------------------- | --------------- |
+| **21**    | Well-known port（0 – 1023）             | TCP FTP control |
+| **53**    | Well-known port（0 – 1023）             | TCP, UDP DNS    |
+| **80**    | Well-known port（0 – 1023）             | TCP HTTP (WWW)  |
+| **161**   | Well-known port（0 – 1023）             | UDP SNMP（网管）    |
+| **3389**  | Registered port（1024 – 49151）         | —               |
+| **49152** | Dynamic / private port（49152 – 65535） | —               |
+| **65535** | Dynamic / private port（49152 – 65535） | —               |
+
+| 方向       | IP (S, D)    | MAC (S, D)     | Port (S, D) |
+| -------- | ------------ | -------------- | ----------- |
+| PC → UST | (IP-1, IP-2) | (MAC-1, MAC-2) | (49152, 80) |
+| UST → PC | (IP-2, IP-1) | (MAC-2, MAC-1) | (80, 49152) |
+| PC → FB  | (IP-1, IP-3) | (MAC-1, MAC-3) | (49153, 80) |
+| FB → PC  | (IP-3, IP-1) | (MAC-3, MAC-1) | (80, 49153) |
+
+---
+
+## 4. 🔴 NAT 的工作方式和四个地址术语（Slides 13–16）
+
+**📄 Slide 13 · NAT and PAT**（分节页）
+
+**📄 Slide 14 · Network Address Translation (NAT)**
+
+| 课件原文                                                                                                        | 中文 / 小白解释                         |
+| ----------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Device that **sits between an internal network and the public network**, such as a firewall router uses NAT | NAT 设备站在内网和公网的交界处（边界路由器 / 防火墙）    |
+| **Translation**: packet passes from internal to external – rewriting of IP addresses                        | 包从内往外经过时，改写 IP 地址                 |
+| **Translation Table** – kept by IOS **in RAM**                                                              | 翻译表放在路由器内存里（重启就没了，静态的除外，因为它写在配置里） |
+| **NAT changes the source IP**                                                                               | 往外的包改的是源 IP                       |
+
+**📄 Slide 15 · NAT（Inside / Outside 示意图）**
+
+![Inside：web server 10.0.0.10、PC 10.0.0.2；Outside：Internet 上的用户访问 http://179.9.8.10；包的目的地址在外面是 179.9.8.10，进来后变成 10.0.0.10；NAT Table：10.0.0.2 ↔ 179.9.8.80，10.0.0.10 ↔ 179.9.8.10（高亮）](images/page_15.png)
+
+*Inside：web server 10.0.0.10、PC 10.0.0.2；Outside：Internet 上的用户访问 http\://179.9.8.10；包的目的地址在外面是 179.9.8.10，进来后变成 10.0.0.10；NAT Table：10.0.0.2 ↔ 179.9.8.80，10.0.0.10 ↔ 179.9.8.10（高亮）（Slide 15）*
+
+这张图讲的是**往里**的方向：
+
+1. 外面的用户在浏览器输入 `http://179.9.8.10`，包的 **DA（Destination Address）= 179.9.8.10**；
+2. NAT 路由器查表：179.9.8.10 ↔ **10.0.0.10**（高亮的那一行）；
+3. 把目的地址换成 10.0.0.10，送给内部的 web server。
+
+外面的人只知道 179.9.8.10，不知道服务器真正的地址。这两条映射是**事先配好的**，所以外面能主动访问——这是 Static NAT（第 6 节）的典型用法。
+
+**📄 Slide 16 · NAT Terms**
+
+| 术语                 | 课件定义                                                                                                        | 小白解释                         | Slide 15 的例子                               |
+| ------------------ | ----------------------------------------------------------------------------------------------------------- | ---------------------------- | ------------------------------------------ |
+| **Inside Local**   | IP address assigned to a host **inside** a network; likely an **RFC 1918 private** address                  | 内部主机**自己网卡上**的地址             | 10.0.0.10                                  |
+| **Inside Global**  | A **legitimate** IP address that represents **one or more** inside local addresses **to the outside world** | 内部主机**在外面的人眼里**的地址（翻译后的公网地址） | 179.9.8.10                                 |
+| **Outside Local**  | IP address of an **outside** host **as it is known to the hosts in the inside** network                     | 内部主机**眼里**外部主机的地址            | 外部用户的地址（没做 outside NAT 时 = Outside Global） |
+| **Outside Global** | IP address **assigned to a host on the outside** network; the **owner** of the host assigns this address    | 外部主机**真正的**地址                | 外部用户的真实公网地址                                |
+
+> **💡 怎么记：前一个词看「是谁的地址」，后一个词看「从哪边看」**
+>
+> - **Inside / Outside** = 这个地址属于**哪台主机**：内部的还是外部的。
+> - **Local / Global** = **站在哪边看**：Local = 从内网看，Global = 从 Internet 看。
+> - 所以 NAT 表左列叫 Inside Local、右列叫 Inside Global：**同一台内部主机，内网里叫它 10.0.0.10，Internet 上叫它 179.9.8.10**。
+> - 课件里的 NAT 都只翻译内部地址，所以 **Outside Local = Outside Global**（外部主机的地址不变）。
+
+*（网页版此处是点选练习：NAT 四个地址术语：这是哪一个？；下表是全部题目和答案）*
+
+| 情景                                        | 答案                 | 理由                                                                                             |
+| ----------------------------------------- | ------------------ | ---------------------------------------------------------------------------------------------- |
+| Slide 15 里内部 web server 自己网卡上配的 10.0.0.10 | **Inside Local**   | Slide 16：assigned to a host inside a network，通常是 RFC 1918 私有地址                                 |
+| Slide 15 里外部用户在浏览器里输入的 179.9.8.10         | **Inside Global**  | 代表内部主机出现在外面世界的合法地址                                                                             |
+| PC100 自己配的 200.3.4.6（板书 p.1），由它的主人分配      | **Outside Global** | Slide 16：assigned to a host on the outside network. The owner of the host assigns this address |
+| Slide 22 里三台主机共用的 200.1.1.2               | **Inside Global**  | 一个 Inside Global 代表多个 Inside Local（one or more inside local IP address）                        |
+| 内部主机眼里外部服务器的地址（没做 outside NAT 时和对方真实地址相同） | **Outside Local**  | Slide 16：The IP address of an outside host as it known to the hosts in the inside network      |
+| Slide 18 里发包的 10.1.1.1                    | **Inside Local**   | 内部主机的私有地址，NAT 表左边那一列                                                                           |
+| Slide 18 地址池里被拿走的 200.1.1.1               | **Inside Global**  | NAT 表右边那一列：翻译后的公网地址                                                                            |
+| Slide 5 的 www\.cisco.com 自己的地址 170.1.1.1  | **Outside Global** | 外部主机由它的主人分配的真实地址                                                                               |
+| Slide 20 NAT 表左边的 10.20.20.3              | **Inside Local**   | Inside Local 列                                                                                 |
+
+---
+
+## 5. 🔴 Dynamic NAT（Slides 17–18）
+
+**📄 Slide 17 · Dynamic NAT**
+
+| 课件原文                                                                                                                                                        | 中文 / 小白解释                         |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- |
+| Map a private IP address to a public address. **Any IP address from a pool** of public IP addresses is assigned to a network host                           | 一个私有地址换一个公网地址，从**地址池**里随便拿一个      |
+| Dynamic translations are **temporary** and they eventually **time out** (period of non use, **default 24 hours**)                                           | 条目是临时的，一段时间不用就删（默认 24 小时）         |
+| Mapping of an inside local address to an inside global address **happens dynamically**                                                                      | 第一次有包出去时才建立映射                     |
+| Sets up **a pool of possible inside global addresses** and defines **criteria for the set of inside local IP addresses** whose traffic should be translated | 要配两样东西：**公网地址池** + **哪些内部地址需要翻译** |
+| If all the pooled IP addresses are in use, the router **simply discards the packet**. The user must try again until a NAT entry times out                   | 池子用完了，新来的主机的包**直接丢掉**，要等别人的条目超时   |
+
+**📄 Slide 18 · Dynamic NAT（图）**
+
+![① 10.1.1.1 发出 SA 10.1.1.1 的包；② 符合 Criteria 10.1.1.0 – 10.1.1.255；③ 从 NAT Pool（200.1.1.1 – 200.1.1.5）拿 200.1.1.1；④ 出去时 SA 变成 200.1.1.1；NAT 表从「空」变成 10.1.1.1 ↔ 200.1.1.1](images/page_18.png)
+
+*① 10.1.1.1 发出 SA 10.1.1.1 的包；② 符合 Criteria 10.1.1.0 – 10.1.1.255；③ 从 NAT Pool（200.1.1.1 – 200.1.1.5）拿 200.1.1.1；④ 出去时 SA 变成 200.1.1.1；NAT 表从「空」变成 10.1.1.1 ↔ 200.1.1.1（Slide 18）*
+
+| 步骤 | 发生了什么                                                                                                |
+| -- | ---------------------------------------------------------------------------------------------------- |
+| ①  | 10.1.1.1 发包到 170.1.1.1，到达 NAT 路由器时 **SA = 10.1.1.1**                                                 |
+| ②  | 路由器检查 **Criteria for Hosts to NAT：10.1.1.0 – 10.1.1.255** → 10.1.1.1 在范围里，要翻译                        |
+| ③  | NAT 表里还没有 10.1.1.1（**NAT Table Before First Packet** 是空的）→ 从 **NAT Pool** 拿第一个空闲地址 **200.1.1.1**，写进表 |
+| ④  | 包从外面那一侧出去，**SA = 200.1.1.1**                                                                         |
+
+> **🎯 考点：Dynamic NAT 的三个特征**
+>
+> 1. **一对一，但不固定**：今天 10.1.1.1 拿到 200.1.1.1，超时后再上网可能拿到 200.1.1.3；
+> 2. **同时上网的主机数 = 池子里的地址数**（Slide 23 最后一条），第 6 台主机在 5 个地址的池子下会被丢包；
+> 3. **外面不能主动连进来**：没有条目就查不到，而且映射会变，外面也不知道该连哪个地址。
+
+---
+
+## 6. 🔴 Static NAT（Slides 19–20）
+
+**📄 Slide 19 · Static NAT**
+
+| 课件原文                                                                                                                                                   | 中文 / 小白解释                                                                                    |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------- |
+| **One-to-one mapping** of local and global addresses                                                                                                   | 一个私有地址固定对一个公网地址                                                                              |
+| Particularly useful for hosts which must have a **consistent address that is accessible from the Internet** (enterprise servers or networking devices) | 适合要让外面访问的**服务器**：地址永远不变，DNS 才能指向它                                                            |
+| **No conservation of IP addresses**                                                                                                                    | 不省地址：几台主机就要几个公网地址                                                                            |
+| **No packets dropped** due to lack of addresses                                                                                                        | 不会因为地址不够而丢包（每台都有专属地址）                                                                        |
+| **Eliminates building of dynamic translation**                                                                                                         | 不用临时建条目                                                                                      |
+| Static map created – maps routable IP address to internal address                                                                                      | 管理员事先写好映射                                                                                    |
+| **Limited level of security** – direct access is not available to outside world                                                                        | 课件说安全性「有限」：外部只能访问到被映射的那几台主机，其他内部主机外面还是看不到；但被映射的那台对 Internet 一直敞开，所以服务器本身要靠 ACL / 防火墙保护（我的理解） |
+
+**📄 Slide 20 · Static NAT（图）**
+
+![10.20.20.2、.3、.4 三台主机经过 NATBOX，源地址分别固定换成 209.165.200.227、.228、.229](images/page_20.png)
+
+*10.20.20.2、.3、.4 三台主机经过 NATBOX，源地址分别固定换成 209.165.200.227、.228、.229（Slide 20）*
+
+| Inside Local | Inside Global   |
+| ------------ | --------------- |
+| 10.20.20.2   | 209.165.200.227 |
+| 10.20.20.3   | 209.165.200.228 |
+| 10.20.20.4   | 209.165.200.229 |
+
+三台主机三个公网地址，一一对应、永远不变。
+
+---
+
+## 7. 🔴 PAT / Overloading（Slides 21–24 + 板书 p.1）
+
+**📄 Slide 21 · Three TCP Connections: From Three Different Hosts, and from One Host**
+
+![上：三台 PC（10.1.1.1:1024、10.1.1.2:1024、10.1.1.3:1033）各一个连接到 170.1.1.1:80；下：一台 PC 200.1.1.2 用端口 1024、1025、1026 开三个连接到 170.1.1.1:80](images/page_21.png)
+
+*上：三台 PC（10.1.1.1:1024、10.1.1.2:1024、10.1.1.3:1033）各一个连接到 170.1.1.1:80；下：一台 PC 200.1.1.2 用端口 1024、1025、1026 开三个连接到 170.1.1.1:80（Slide 21）*
+
+这页是 PAT 的「伏笔」：
+
+- **上半**：三台不同的主机，各自一个连接。
+- **下半**：**一台**主机 200.1.1.2 开三个连接，靠**源端口 1024 / 1025 / 1026** 区分（Slide 9：每个客户端用不同的端口）。
+- 对服务器 170.1.1.1 来说，下半这种情况完全正常。PAT 的想法就是：**把上半的三台主机伪装成下半的「一台主机开了三个连接」**。
+
+**📄 Slide 22 · Port Address Translation (PAT)（图）**
+
+![三台主机 → NAT → 都变成 200.1.1.2，源端口分别是 1024、1025、1033；Dynamic NAT Table, With Overloading：10.1.1.1:1024 ↔ 200.1.1.2:1024，10.1.1.2:1024 ↔ 200.1.1.2:1025，10.1.1.3:1033 ↔ 200.1.1.2:1033](images/page_22.png)
+
+*三台主机 → NAT → 都变成 200.1.1.2，源端口分别是 1024、1025、1033；Dynamic NAT Table, With Overloading：10.1.1.1:1024 ↔ 200.1.1.2:1024，10.1.1.2:1024 ↔ 200.1.1.2:1025，10.1.1.3:1033 ↔ 200.1.1.2:1033（Slide 22）*
+
+| Inside Local  | Inside Global      | 为什么是这个端口（对照 Slide 24）                    |
+| ------------- | ------------------ | ---------------------------------------- |
+| 10.1.1.1:1024 | 200.1.1.2:**1024** | 1024 在 200.1.1.2 上还没人用 → **保留原端口**       |
+| 10.1.1.2:1024 | 200.1.1.2:**1025** | 1024 已经被 10.1.1.1 占了 → 找**第一个可用端口** 1025 |
+| 10.1.1.3:1033 | 200.1.1.2:**1033** | 1033 没人用 → 保留原端口                         |
+
+> **⚠️ 注意 Slide 22 第三行被老师改过**
+>
+> Cisco 原图第三行翻译成了 200.1.1.2:**1026**，老师把它**改成了 1033**（图上 1033 是另外贴上去的粗体字）。按 Slide 24 的规则「PAT tries to preserve the source port」，1033 在 200.1.1.2 上没人用，就应该保留 1033。考试里遇到这种题，**先看原端口有没有被占，没被占就不改**。
+
+**📄 Slide 23 · Port Address Translation (PAT)**
+
+| 课件原文                                                                                                        | 中文 / 小白解释                             |
+| ----------------------------------------------------------------------------------------------------------- | ------------------------------------- |
+| **Overloading**, or PAT, maps **multiple private IP addresses to a single public IP address**               | 多个私有地址共用一个公网地址（Cisco 命令里叫 `overload`） |
+| PAT uses **unique source port numbers** on the inside global IP address to distinguish between translations | 在同一个公网 IP 上，用不同的源端口区分                 |
+| Each private address is **tracked by a port number**                                                        | 每个私有地址 + 端口对应公网 IP 上的一个端口             |
+| **Without PAT, NAT can concurrently support only the number of hosts defined in the NAT pool**              | 不用 PAT，同时上网的主机数受地址池大小限制               |
+
+**📄 Slide 24 · PAT 选端口的规则**
+
+```
+要翻译一个新的 (内部 IP, 源端口)
+  1. 先试着保留原来的源端口           (PAT tries to preserve the source port)
+  2. 这个端口在当前公网 IP 上已被占用 → 找第一个可用端口
+  3. 这个公网 IP 上没有可用端口了     → 换池子里的第二个 IP，再找端口
+                                       (PAT can also use a pool of addresses)
+  4. 所有 IP 的所有端口都用完         → 丢包
+```
+
+![PC1–PC8 接在路由器 A、B、C 上（PC1、PC2 一个 LAN 接 A；PC3、PC4 接 A；PC5、PC6 接 B；PC7、PC8 接 C）；Starting with 192.168.1.0；NAT router；外面是云和 PC100（200.3.4.6）；NAT Table（Private IP | Public IP）；PC1 → PC100、PC100 → PC1 各写 IP (S, D)；NAT → PAT：One public → 4,000 private](images/BOARD_NAT.png)
+
+*✍️ PC1–PC8 接在路由器 A、B、C 上（PC1、PC2 一个 LAN 接 A；PC3、PC4 接 A；PC5、PC6 接 B；PC7、PC8 接 C）；Starting with 192.168.1.0；NAT router；外面是云和 PC100（200.3.4.6）；NAT Table（Private IP | Public IP）；PC1 → PC100、PC100 → PC1 各写 IP (S, D)；NAT → PAT：One public → 4,000 private（5190M06 supp p.1（已旋转））*
+
+> **✍️ 我的解答：板书 p.1**
+>
+> **先给网络编址（假设）**。「Starting with 192.168.1.0」= 从 192.168.1.0 开始按顺序给每个网络一个 /24。图里有 6 个网络：
+>
+> | # | 网络               | 网段（我的假设）                                |
+> | - | ---------------- | --------------------------------------- |
+> | 1 | PC1、PC2 的 LAN（A） | 192.168.1.0/24：A = .1，PC1 = .2，PC2 = .3 |
+> | 2 | PC3、PC4 的 LAN（A） | 192.168.2.0/24：A = .1，PC3 = .2，PC4 = .3 |
+> | 3 | PC5、PC6 的 LAN（B） | 192.168.3.0/24                          |
+> | 4 | PC7、PC8 的 LAN（C） | 192.168.4.0/24                          |
+> | 5 | A – B 之间的线       | 192.168.5.0/24                          |
+> | 6 | B – C 之间的线       | 192.168.6.0/24                          |
+>
+> **C 是 NAT router**（它连着外面的云）。C 朝外的接口有一个 ISP 给的公网地址，板书没写，我假设是 **200.1.1.1**。整个内部网（192.168.x.x）在 C 的 inside，Internet 和 PC100 在 outside。
+>
+> **NAT Table（先按一对一 NAT 写）**
+>
+> | Private IP（Inside Local） | Public IP（Inside Global） |
+> | ------------------------ | ------------------------ |
+> | 192.168.1.2（PC1）         | 200.1.1.1                |
+>
+> **PC1 → PC100**
+>
+> | 段                        | IP (S, D)                              |
+> | ------------------------ | -------------------------------------- |
+> | 内部（PC1 → A → B → C）      | (192.168.1.2, 200.3.4.6)               |
+> | 外部（C → Internet → PC100） | (**200.1.1.1**, 200.3.4.6) ← C 改了**源** |
+>
+> **PC100 → PC1（回包）**
+>
+> | 段             | IP (S, D)                                        |
+> | ------------- | ------------------------------------------------ |
+> | 外部（PC100 → C） | (200.3.4.6, **200.1.1.1**) ← PC100 只知道 200.1.1.1 |
+> | 内部（C → PC1）   | (200.3.4.6, 192.168.1.2) ← C 查表改了**目的**          |
+>
+> - 内部的 A、B 是普通路由器，**不改 IP**；只有站在边界上的 C 改。
+> - PC100 永远看不到 192.168.1.2。
+>
+> **NAT → PAT：One public → 4,000 private。** 如果只有一个公网地址 200.1.1.1，一对一 NAT 同时只能让一台 PC 上网。换成 PAT 后，NAT 表要多记端口：
+>
+> | Private IP : Port      | Public IP : Port                   |
+> | ---------------------- | ---------------------------------- |
+> | 192.168.1.2:49152（PC1） | 200.1.1.1:49152                    |
+> | 192.168.2.2:49152（PC3） | 200.1.1.1:1024（49152 被占 → 第一个可用端口） |
+> | 192.168.3.2:49152（PC5） | 200.1.1.1:1025                     |
+>
+> 一个公网 IP 上有六万多个端口，所以**一个公网地址可以带几千台内部主机**（老师写的 4,000 是常用的经验数字）。
+
+*（网页版此处可交互：选 Static / Dynamic / PAT，让内部主机往外发包、对方回包、外面主动连进来，看 NAT 表和被改掉的字段；下面是几个预设的结果）*
+
+**板书 p.1 用 Static NAT：PC1 → PC100，再 PC100 → PC1**
+
+| 包               | 翻译前 IP (S, D)            | 翻译前 Port (S, D) | 翻译后 IP (S, D)                | 翻译后 Port (S, D) | 说明                                                                                                                       |
+| --------------- | ------------------------ | --------------- | ---------------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+| PC1 → PC100     | (192.168.1.2, 200.3.4.6) | (49152, 80)     | **(200.1.1.1, 200.3.4.6)**   | (49152, 80)     | 静态表里早就有 192.168.1.2 ↔ 200.1.1.1，直接换源地址（Slide 19：static map created）。 出去时只改源 IP（Slide 14：NAT changes the source IP）；端口不动。 |
+| PC100 → PC1（回包） | (200.3.4.6, 200.1.1.1)   | (80, 49152)     | **(200.3.4.6, 192.168.1.2)** | (80, 49152)     | 查表：200.1.1.1 ↔ 192.168.1.2 → 把目的 IP 换回内部地址，源地址不动。 静态映射永远在表里，所以外面可以主动访问这台内部主机（Slide 19：适合要从 Internet 访问的服务器）。             |
+
+| Inside Local | Inside Global | 类型 |
+| ------------ | ------------- | -- |
+| 192.168.1.2  | 200.1.1.1     | 静态 |
+| 192.168.1.3  | 200.1.1.2     | 静态 |
+| 192.168.2.2  | 200.1.1.3     | 静态 |
+
+**板书 p.1 用 Dynamic NAT（池子 3 个地址）：四台 PC 同时上网**
+
+| 包           | 翻译前 IP (S, D)            | 翻译前 Port (S, D) | 翻译后 IP (S, D)              | 翻译后 Port (S, D) | 说明                                                                                                                          |
+| ----------- | ------------------------ | --------------- | -------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| PC1 → PC100 | (192.168.1.2, 200.3.4.6) | (49152, 80)     | **(200.1.1.1, 200.3.4.6)** | (49152, 80)     | 192.168.1.2 符合翻译条件、表里没有它 → 从地址池拿第一个空闲的 200.1.1.1，写进 NAT 表（Slide 18 ②③）。 出去时只改源 IP（Slide 14：NAT changes the source IP）；端口不动。 |
+| PC3 → PC100 | (192.168.2.2, 200.3.4.6) | (49152, 80)     | **(200.1.1.2, 200.3.4.6)** | (49152, 80)     | 192.168.2.2 符合翻译条件、表里没有它 → 从地址池拿第一个空闲的 200.1.1.2，写进 NAT 表（Slide 18 ②③）。 出去时只改源 IP（Slide 14：NAT changes the source IP）；端口不动。 |
+| PC5 → PC100 | (192.168.3.2, 200.3.4.6) | (49152, 80)     | **(200.1.1.3, 200.3.4.6)** | (49152, 80)     | 192.168.3.2 符合翻译条件、表里没有它 → 从地址池拿第一个空闲的 200.1.1.3，写进 NAT 表（Slide 18 ②③）。 出去时只改源 IP（Slide 14：NAT changes the source IP）；端口不动。 |
+| PC7 → PC100 | (192.168.4.2, 200.3.4.6) | (49152, 80)     | **丢弃**                     | —               | 地址池 3 个公网地址都被占了 → 路由器直接丢包，用户只能等某个条目超时再试（Slide 17）。                                                                          |
+
+| Inside Local | Inside Global | 类型 |
+| ------------ | ------------- | -- |
+| 192.168.1.2  | 200.1.1.1     | 动态 |
+| 192.168.2.2  | 200.1.1.2     | 动态 |
+| 192.168.3.2  | 200.1.1.3     | 动态 |
+
+**板书 p.1 用 PAT（一个公网 IP 200.1.1.1）：同样四台 PC 都能上网**
+
+| 包                        | 翻译前 IP (S, D)            | 翻译前 Port (S, D) | 翻译后 IP (S, D)                | 翻译后 Port (S, D) | 说明                                                                                                               |
+| ------------------------ | ------------------------ | --------------- | ---------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------- |
+| PC1 → PC100              | (192.168.1.2, 200.3.4.6) | (49152, 80)     | **(200.1.1.1, 200.3.4.6)**   | (49152, 80)     | 200.1.1.1 上端口 49152 没人用 → 保留原来的源端口（Slide 24：PAT tries to preserve the source port）。 出去时改的是源 IP 和源端口；目的地址、目的端口不动。 |
+| PC3 → PC100              | (192.168.2.2, 200.3.4.6) | (49152, 80)     | **(200.1.1.1, 200.3.4.6)**   | (1024, 80)      | 200.1.1.1 上端口 49152 已被别的内部主机占用 → 找第一个空闲端口 1024（Slide 24）。 出去时改的是源 IP 和源端口；目的地址、目的端口不动。                           |
+| PC5 → PC100              | (192.168.3.2, 200.3.4.6) | (49152, 80)     | **(200.1.1.1, 200.3.4.6)**   | (1025, 80)      | 200.1.1.1 上端口 49152 已被别的内部主机占用 → 找第一个空闲端口 1025（Slide 24）。 出去时改的是源 IP 和源端口；目的地址、目的端口不动。                           |
+| PC7 → PC100              | (192.168.4.2, 200.3.4.6) | (49152, 80)     | **(200.1.1.1, 200.3.4.6)**   | (1026, 80)      | 200.1.1.1 上端口 49152 已被别的内部主机占用 → 找第一个空闲端口 1026（Slide 24）。 出去时改的是源 IP 和源端口；目的地址、目的端口不动。                           |
+| PC100 → PC7（回包）          | (200.3.4.6, 200.1.1.1)   | (80, 1026)      | **(200.3.4.6, 192.168.4.2)** | (80, 49152)     | 查表：200.1.1.1:1026 ↔ 192.168.4.2:49152 → 把目的 IP 和目的端口换回去。                                                         |
+| PC100 主动连 200.1.1.1:3389 | (200.3.4.6, 200.1.1.1)   | (80, 3389)      | **丢弃**                       | —               | NAT 表里没有 200.1.1.1:3389 这一项 → 路由器不知道该交给内部哪台主机，丢弃。外面的人不能主动连进来——这就是「地址隐藏」。                                         |
+
+| Inside Local      | Inside Global   | 类型  |
+| ----------------- | --------------- | --- |
+| 192.168.1.2:49152 | 200.1.1.1:49152 | PAT |
+| 192.168.2.2:49152 | 200.1.1.1:1024  | PAT |
+| 192.168.3.2:49152 | 200.1.1.1:1025  | PAT |
+| 192.168.4.2:49152 | 200.1.1.1:1026  | PAT |
+
+**Slide 22：三台主机共用 200.1.1.2**
+
+| 包                 | 翻译前 IP (S, D)         | 翻译前 Port (S, D) | 翻译后 IP (S, D)              | 翻译后 Port (S, D) | 说明                                                                                                              |
+| ----------------- | --------------------- | --------------- | -------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------- |
+| 10.1.1.1 → Server | (10.1.1.1, 170.1.1.1) | (1024, 80)      | **(200.1.1.2, 170.1.1.1)** | (1024, 80)      | 200.1.1.2 上端口 1024 没人用 → 保留原来的源端口（Slide 24：PAT tries to preserve the source port）。 出去时改的是源 IP 和源端口；目的地址、目的端口不动。 |
+| 10.1.1.2 → Server | (10.1.1.2, 170.1.1.1) | (1024, 80)      | **(200.1.1.2, 170.1.1.1)** | (1025, 80)      | 200.1.1.2 上端口 1024 已被别的内部主机占用 → 找第一个空闲端口 1025（Slide 24）。 出去时改的是源 IP 和源端口；目的地址、目的端口不动。                           |
+| 10.1.1.3 → Server | (10.1.1.3, 170.1.1.1) | (1033, 80)      | **(200.1.1.2, 170.1.1.1)** | (1033, 80)      | 200.1.1.2 上端口 1033 没人用 → 保留原来的源端口（Slide 24：PAT tries to preserve the source port）。 出去时改的是源 IP 和源端口；目的地址、目的端口不动。 |
+
+| Inside Local  | Inside Global  | 类型  |
+| ------------- | -------------- | --- |
+| 10.1.1.1:1024 | 200.1.1.2:1024 | PAT |
+| 10.1.1.2:1024 | 200.1.1.2:1025 | PAT |
+| 10.1.1.3:1033 | 200.1.1.2:1033 | PAT |
+
+**Slide 15：外部用户访问 http\://179.9.8.10**
+
+| 包                      | 翻译前 IP (S, D)           | 翻译前 Port (S, D) | 翻译后 IP (S, D)              | 翻译后 Port (S, D) | 说明                                                                                                          |
+| ---------------------- | ----------------------- | --------------- | -------------------------- | --------------- | ----------------------------------------------------------------------------------------------------------- |
+| 外部用户 主动连 179.9.8.10:80 | (150.1.1.1, 179.9.8.10) | (49152, 80)     | **(150.1.1.1, 10.0.0.10)** | (49152, 80)     | 查表：179.9.8.10 ↔ 10.0.0.10 → 把目的 IP 换回内部地址，源地址不动。 静态映射永远在表里，所以外面可以主动访问这台内部主机（Slide 19：适合要从 Internet 访问的服务器）。 |
+
+| Inside Local | Inside Global | 类型 |
+| ------------ | ------------- | -- |
+| 10.0.0.2     | 179.9.8.80    | 静态 |
+| 10.0.0.10    | 179.9.8.10    | 静态 |
+
+> **💡 试一试**
+>
+> - 选「板书 p.1」+ **Dynamic NAT**，让 PC1、PC3、PC5、PC7 依次发送：第四个被丢（池子只有 3 个地址）。点「时间过去」再发一次就成功了。
+> - 切到 **PAT**：同样四台全部成功，看 NAT 表里的端口。再选「每个公网 IP 只给 2 个端口」，看它怎样换到第二个 IP、最后丢包（Slide 24）。
+> - 在 ② 里让 PC100 主动连 200.1.1.1：Dynamic / PAT 下都被丢；切到 **Static**、选「Slide 15」连 179.9.8.10:80，就能进来。
+
+> **🎯 考点：三种 NAT 对照**
+>
+> |           | Static NAT | Dynamic NAT    | PAT（Overload）         |
+> | --------- | ---------- | -------------- | --------------------- |
+> | 映射        | 一对一，固定     | 一对一，从池子临时拿     | **多对一**，靠端口区分         |
+> | NAT 表记什么  | IP ↔ IP    | IP ↔ IP        | **IP:Port ↔ IP:Port** |
+> | 什么时候建条目   | 管理员事先配置    | 第一个包出去时        | 每个新会话出去时              |
+> | 会超时吗      | 不会         | 会（默认 24 小时）    | 会                     |
+> | 省地址吗      | 不省         | 有一点（不是所有人同时上网） | **最省**                |
+> | 地址不够时     | 不会发生       | **丢包**         | 端口 / IP 全用完才丢包        |
+> | 外面能主动连进来吗 | **能**      | 不能             | 不能                    |
+> | 典型用途      | 服务器        | 一小批主机轮流上网      | 家用路由器、公司员工上网          |
+
+*（网页版此处是点选练习：NAT 这一章：说的是哪一种？；下表是全部题目和答案）*
+
+| 情景                                                           | 答案                 | 理由                                                                                                               |
+| ------------------------------------------------------------ | ------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| 公司的 web server 必须让 Internet 上的人随时用同一个公网地址访问                  | **Static NAT**     | Slide 19：particularly useful for hosts which must have a consistent address that is accessible from the Internet |
+| 池子里 5 个公网地址都被占了，第 6 台主机的包被直接丢掉                               | **Dynamic NAT**    | Slide 17：all the pooled IP addresses are in use, the router simply discards the packet                           |
+| 用不同的源端口号区分翻译，多个私有地址共用一个公网地址                                  | **PAT / Overload** | Slide 23：PAT uses unique source port numbers on the inside global IP address                                     |
+| 转换会增加延迟，CPU 要看每一个包决定要不要翻译                                    | **都不是 / NAT 的通病**  | Slide 26：Issues with NAT，所有 NAT 都有                                                                               |
+| 条目一段时间不用就超时（默认 24 小时）                                        | **Dynamic NAT**    | Slide 17：Dynamic translations are temporary and they eventually time out                                         |
+| 完全不省 IP 地址，但也不会因为地址不够而丢包                                     | **Static NAT**     | Slide 19：No conservation of IP addresses · No packets dropped due to lack of addresses                           |
+| 源端口被占了就找第一个可用端口；这个 IP 端口用完了就换池子里的下一个 IP                      | **PAT / Overload** | Slide 24                                                                                                         |
+| 板书：one public → 4,000 private                                | **PAT / Overload** | 一个公网 IP 靠端口号带几千台内部主机                                                                                             |
+| 定义一个地址池 + 一个「哪些内部地址要翻译」的条件（如 10.1.1.0 – 10.1.1.255）          | **Dynamic NAT**    | Slide 17–18：sets up a pool … and defines criteria for the set of inside local IP addresses                       |
+| Internet 上的人很难追踪到包的原始源地址（loss of end-to-end IP traceability） | **都不是 / NAT 的通病**  | Slide 25 列为 NAT Benefits：所有 NAT 都隐藏内部地址                                                                          |
+| 不用 PAT 的话，同时上网的主机数最多 = 池子里的地址数                               | **Dynamic NAT**    | Slide 23 最后一条：Without PAT, NAT can concurrently support only the number of hosts defined in the NAT pool         |
+
+---
+
+## 8. 🔴 NAT 的好处和问题（Slides 25–26）
+
+**📄 Slide 25 · NAT Benefits**
+
+| 课件原文                                                                                                                                                                               | 中文 / 小白解释                                        |
+| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Eliminates re-assigning each host a new IP address **when changing to a new ISP**                                                                                                  | 换 ISP 时只要改 NAT 路由器上的公网地址，内部几千台主机不用动              |
+| **Conserves addresses** through application port-level multiplexing                                                                                                                | 靠端口复用（PAT）省公网地址                                  |
+| **Protects network security** (private networks do not advertise their addresses or internal topology)                                                                             | 内部地址和拓扑不对外公开                                     |
+| It becomes much more difficult to trace packets (**loss of end-to-end IP traceability**); hackers who want to obtain original source or destination address will find it difficult | 外面的人追不到原始地址。注意这一条**既是好处也是代价**：对攻击者是障碍，对排错和取证也是障碍 |
+
+**📄 Slide 26 · Issues With NAT**
+
+| 课件原文                                                                       | 中文 / 小白解释            |
+| -------------------------------------------------------------------------- | -------------------- |
+| NAT **increases delay** because of the translation                         | 每个包都要改地址、重算校验和，多一点延迟 |
+| **CPU must look at every packet** to decide whether it has to translate it | 路由器 CPU 负担变重         |
+
+> **➕ 课外补充：NAT 还会带来的其他问题**
+>
+> - **破坏端到端连接**：外面的主机不能直接发起到内部主机的连接，P2P、VoIP、在线游戏要额外的穿透技术（如 STUN、端口转发）。
+> - **在载荷里写了 IP 的协议会出错**：例如主动模式 FTP 在数据里告诉服务器「连我的 10.1.1.1:端口」，NAT 只改了 IP 头，没改数据，服务器就会连一个私有地址。路由器要做 ALG（Application Layer Gateway）专门处理。
+> - **IPsec AH** 对整个 IP 头做完整性校验，NAT 改了地址校验就失败（这和 ISOM 5280 学的 VPN 有关）。
+> - 日志里只看到 NAT 路由器的地址 → 要追查是内部哪台机器做的，必须保存 **NAT 翻译日志**（时间 + 公网端口 → 内部 IP）。
+
+---
+
+## 9. 🟢 课外补充：配置命令和「NAT 不是防火墙」
+
+> **➕ Cisco 路由器上配 NAT（课件还没讲到）**
+>
+> ```
+> ! 先标出 inside / outside 接口
+> R(config)#interface g0/0
+> R(config-if)#ip nat inside
+> R(config)#interface s0/0/0
+> R(config-if)#ip nat outside
+>
+> ! Static NAT：内部 web server 固定对外
+> R(config)#ip nat inside source static 10.0.0.10 179.9.8.10
+>
+> ! Dynamic NAT：地址池 + 哪些内部地址要翻译（ACL 定义 Criteria）
+> R(config)#ip nat pool MYPOOL 200.1.1.1 200.1.1.5 netmask 255.255.255.0
+> R(config)#access-list 1 permit 10.1.1.0 0.0.0.255
+> R(config)#ip nat inside source list 1 pool MYPOOL
+>
+> ! PAT：在 dynamic 后面加 overload；或直接用出口接口的地址
+> R(config)#ip nat inside source list 1 interface s0/0/0 overload
+>
+> R#show ip nat translations
+> R#clear ip nat translation *
+> ```
+>
+> Slide 17 说的「criteria for the set of inside local IP addresses」在命令里就是一条 **standard ACL**——第 4 周学的通配符掩码又用上了。
+
+> **➕ NAT 能挡住攻击吗？**
+>
+> 动态 NAT / PAT 让外面**不能主动连进来**，看起来像防火墙，但它只是「查不到表就丢」：
+>
+> - **内部主机主动连出去的会话**（比如员工点了钓鱼链接、木马回连 C2 服务器）NAT 照样放行，回包也照样进来；
+> - Static NAT 映射出去的服务器对 Internet **完全敞开**；
+> - NAT 不看包的内容，也不检查会话状态是否合理。
+>
+> 所以 NAT 只是「地址隐藏」，真正的边界保护还要靠 **ACL**（第 4 周）和**状态防火墙**。IPv6 地址足够多，原则上不需要 NAT，这时候这层「顺带的保护」就没有了，更要靠防火墙。
+
+---
+
+## 🔴 综合缩写速查表
+
+| 缩写 / 术语                | 全称                                  | 一句话                                                     |
+| ---------------------- | ----------------------------------- | ------------------------------------------------------- |
+| NAT                    | Network Address Translation         | 在边界路由器上把私有地址和公网地址互相翻译                                   |
+| PAT                    | Port Address Translation            | 也叫 Overloading：多个私有地址共用一个公网 IP，用端口区分                    |
+| RFC 1918               | —                                   | 定义三段私有地址的文件：10.0.0.0/8 · 172.16.0.0/12 · 192.168.0.0/16 |
+| Inside Local           | —                                   | 内部主机自己的（私有）地址                                           |
+| Inside Global          | —                                   | 内部主机在 Internet 上的（公网）地址                                 |
+| Outside Local          | —                                   | 内部主机眼里的外部主机地址                                           |
+| Outside Global         | —                                   | 外部主机真正的地址                                               |
+| NAT Pool               | —                                   | Dynamic NAT 可以分配的一组公网地址                                 |
+| NAT Table              | Translation table                   | Inside Local ↔ Inside Global 的对照表，存在路由器 RAM 里           |
+| Port number            | —                                   | 16 位，0 – 65535，区分同一台主机上的不同应用 / 会话                       |
+| Well-known port        | —                                   | 0 – 1023，服务器用，IANA 管理                                   |
+| Registered port        | —                                   | 1024 – 49151                                            |
+| Dynamic / private port | —                                   | 49152 – 65535，客户端临时用                                    |
+| IANA                   | Internet Assigned Numbers Authority | 管理 well-known 端口和地址分配的机构                                |
+| Multiplexing           | —                                   | 一台主机靠不同的端口同时进行多个会话                                      |
+| DA / SA                | Destination / Source Address        | 课件图里的目的 / 源地址                                           |
+
+---
+
+## 模拟自测题
+
+**下列哪个是私有 IP 地址？**
+
+- A. 172.32.1.1
+- B. 192.169.1.1
+- C. 11.0.0.1
+- D. 172.20.5.5
+
+> **答案：D**
+>
+> Slide 3：B 类私有地址是 172.16.0.0 – 172.31.0.0，172.20.5.5 在里面。172.32 超出了范围；192.169 不是 192.168；11.x 不是 10.x。
+
+**Internet 上的路由器收到一个源地址是 10.1.1.1 的包，会怎样？**
+
+- A. 直接丢弃
+- B. 正常转发
+- C. 自动做 NAT 再转发
+- D. 发 ICMP 让主机改地址
+
+> **答案：A**
+>
+> Slide 3：Internet routers immediately discard private addresses。
+
+**一个包从内部主机发往 Internet，经过 NAT 路由器时被改写的是？**
+
+- A. 源 IP
+- B. 目的 IP
+- C. IP 都不变，只改 MAC
+- D. 只改 TTL
+
+> **答案：A**
+>
+> Slide 14：NAT changes the source IP。回来的包才改目的 IP。
+
+**Slide 15 里，外部用户在浏览器输入的 179.9.8.10 属于哪种地址？**
+
+- A. Inside Local
+- B. Outside Local
+- C. Inside Global
+- D. Outside Global
+
+> **答案：C**
+>
+> 179.9.8.10 是内部 web server（10.0.0.10）在外面世界的合法地址 → Inside Global（Slide 16）。
+
+**哪种 NAT 最适合公司要让 Internet 用户访问的 web server？**
+
+- A. Dynamic NAT
+- B. Static NAT
+- C. PAT
+- D. 不用 NAT，直接用私有地址
+
+> **答案：B**
+>
+> Slide 19：Static NAT 一对一固定映射，particularly useful for hosts which must have a consistent address that is accessible from the Internet。
+
+**Dynamic NAT 的地址池有 5 个地址，都被占了，第 6 台主机发包，结果是？**
+
+- A. 路由器丢弃这个包，主机要等某个条目超时再试
+- B. 路由器自动改用 PAT
+- C. 路由器把包排队等待
+- D. 路由器用私有地址直接发出去
+
+> **答案：A**
+>
+> Slide 17：the router simply discards the packet. The user must try again until a NAT entry times out。
+
+**Dynamic NAT 条目默认多久不用会超时？**
+
+- A. 30 秒
+- B. 24 小时
+- C. 5 分钟
+- D. 永不超时
+
+> **答案：B**
+>
+> Slide 17：period of non use, default 24 hours。
+
+**PAT 靠什么区分共用同一个公网 IP 的不同内部主机？**
+
+- A. 源端口号
+- B. MAC 地址
+- C. VLAN 标签
+- D. TTL
+
+> **答案：A**
+>
+> Slide 23：PAT uses unique source port numbers on the inside global IP address to distinguish between translations。
+
+**PAT 要翻译 10.1.1.2:1024，但公网 IP 200.1.1.2 上的 1024 已经被 10.1.1.1 用了。PAT 会？**
+
+- A. 丢弃这个包
+- B. 覆盖 10.1.1.1 的条目
+- C. 换池子里的下一个 IP
+- D. 在 200.1.1.2 上找第一个可用端口
+
+> **答案：D**
+>
+> Slide 24：If source port unavailable – PAT searches for first available port。只有这个 IP 上没有端口了，才换第二个 IP（Slide 22：变成 200.1.1.2:1025）。
+
+**下列哪一项不是 Slide 25 列出的 NAT 好处？**
+
+- A. 换 ISP 时内部主机不用重新编址
+- B. 提高转发速度
+- C. 通过端口复用节省地址
+- D. 不对外公布内部地址和拓扑
+
+> **答案：B**
+>
+> NAT 反而**增加延迟**（Slide 26：NAT increases delay because of the translation）。
+
+**哪两个端口号用的是 UDP（Slide 12）？**
+
+- A. 69 TFTP
+- B. 23 Telnet
+- C. 161 SNMP
+- D. 110 POP3
+- E. 25 SMTP
+
+> **答案：A、C**
+>
+> Slide 12：69 TFTP 和 161 SNMP 用 UDP；53 DNS 两种都用；其他都是 TCP。
+
+**客户端访问 web server，客户端发出的段 Port (S, D) 最可能是？**
+
+- A. (80, 49152)
+- B. (49152, 49152)
+- C. (49152, 80)
+- D. (80, 80)
+
+> **答案：C**
+>
+> Slide 11：客户端用一个没用的动态端口当源端口，目的端口是 web 的 well-known port 80；回包时对调成 (80, 49152)。
+
+**端口 3389 属于哪个范围？**
+
+- A. Well-known（0 – 1023）
+- B. Registered（1024 – 49151）
+- C. Dynamic / private（49152 – 65535）
+- D. 不是合法端口
+
+> **答案：B**
+>
+> Slide 10：Registered ports 1024 to 49151。
+
+**不用 PAT 时，Dynamic NAT 同时能支持多少台主机上网？**
+
+- A. 65535 台
+- B. 只有 1 台
+- C. 和地址池里的地址数一样
+- D. 和内部主机数一样
+
+> **答案：C**
+>
+> Slide 23：Without PAT, NAT can concurrently support only the number of hosts defined in the NAT pool。
+
+**板书 p.1：假设各网络从 192.168.1.0 开始编号，PC1 = 192.168.1.2，NAT router C 的公网地址是 200.1.1.1。写出 PC1 → PC100 和 PC100 → PC1 在 NAT 两边的 IP (S, D)，以及 NAT 表。**
+
+> PC1 → PC100：内部 (192.168.1.2, 200.3.4.6)，过了 C 变成 (200.1.1.1, 200.3.4.6)。  
+> PC100 → PC1：外部 (200.3.4.6, 200.1.1.1)，过了 C 变成 (200.3.4.6, 192.168.1.2)。  
+> NAT 表：Private IP 192.168.1.2 ↔ Public IP 200.1.1.1。  
+> 往外改源、往里改目的；A、B 不改 IP。（我的解答，地址是我的假设。）
+
+**板书 p.1 下面写着「NAT → PAT：One public → 4,000 private」，这是什么意思？**
+
+> 一对一 NAT 下，一个公网地址同时只能给一台内部主机用；PAT 在公网地址后面再加上端口号（IP:Port），每个内部会话占一个端口，一个公网 IP 有六万多个端口，所以一个公网地址可以让几千台私有地址的主机同时上网（Slides 23–24）。
+
+**板书 p.2：Client（IP-1 / MAC-1）开两个窗口分别访问 UST（IP-2 / MAC-2）和 FB（IP-3 / MAC-3），都在同一个 LAN。写出四个方向的 IP (S, D)、MAC (S, D)。PC 怎么知道回来的包属于哪个窗口？**
+
+> PC → UST：IP (IP-1, IP-2)，MAC (MAC-1, MAC-2)；PC → FB：IP (IP-1, IP-3)，MAC (MAC-1, MAC-3)；UST → PC：IP (IP-2, IP-1)，MAC (MAC-2, MAC-1)；FB → PC：IP (IP-3, IP-1)，MAC (MAC-3, MAC-1)。  
+> 两个窗口的源端口不同（例如 49152、49153），服务器都用 80。回包的目的 IP 都是 IP-1，PC 靠**目的端口**交给对的窗口（Slide 8）。（我的解答，端口号是假设。）
+
+**比较 Static NAT、Dynamic NAT 和 PAT：映射方式、是否省地址、外面能否主动访问。**
+
+> Static：一对一固定，事先配置；不省地址；外面能主动访问（适合服务器）。  
+> Dynamic：一对一，从地址池临时分配，会超时；同时上网数 = 池子大小，池子用完就丢包；外面不能主动访问。  
+> PAT：多对一，用 IP:Port 区分；最省地址；端口用完才丢包；外面不能主动访问（Slides 17–24）。
+
+**为什么说 NAT 能起到边界保护的作用？它为什么又不能代替防火墙？**
+
+> 动态 NAT / PAT 只为内部主动发出的会话建翻译条目，外面主动发来的包在 NAT 表里查不到，路由器就丢掉；内部地址和拓扑也不对外公开（Slide 25）。  
+> 但 NAT 不检查内容：内部主机主动连出去的恶意会话（木马回连）照样能通，Static NAT 的服务器对外完全开放。所以还需要 ACL 和防火墙（我的理解）。

@@ -148,6 +148,7 @@ tags: [IPv4, NAT, DHCP]
 | `<WildcardLab start="match\|mask\|range" />` | 通配符掩码：地址 + 通配符 + 包的地址逐位比较（要比的位、第一个不同的位）/ 子网 → 通配符（255.255.255.255 − 掩码）/ 一段范围 → 通配符（是否对齐）（`acl-logic.mjs`）。`<RoutingSortQuiz set="aclnum\|acl" />` 是本周两组点选练习 |
 | `<VlanLab preset="flat\|board\|v3" />` | ISOM 5190 第 5 周：一台交换机 E0–E3 分 VLAN + 路由器接 E4 / E5，发单播 / 广播，看每个 VLAN 一张 MAC 表、ARP 和广播只在本 VLAN 泛洪、跨 VLAN 两段 MAC (S, D) / IP (S, D)、没有网关的 VLAN 出不去（`vlan-logic.mjs`） |
 | `<TrunkLab />` | 两台交换机、PC1–PC8 分 VLAN：每个 VLAN 一根线 / 802.1Q / ISL，看每一段线上的帧（标签在哪里加、在哪里去掉）和需要几根线（`vlan-logic.mjs`）。`<RoutingSortQuiz set="vlan" />` 是本周点选练习 |
+| `<NatLab preset="board\|s18\|s20\|s15\|s22" />` | ISOM 5190 第 6 周：Static / Dynamic / PAT 三种模式，内部主机发包（翻译前后 IP / Port (S, D)，改掉的字段高亮）、对方回包、外面主动连某个公网地址:端口，看 NAT 表、地址池用完丢包、PAT 保留源端口 / 找第一个可用端口 / 换下一个 IP（可设「每个 IP 只给 2 个端口」示意）、动态条目超时（`nat-logic.mjs`）。`<RoutingSortQuiz set="natterm\|nattype" />` 是本周两组点选练习；`<PortLab board="板书 p.2" slide="Slide 8" />` 可改板书 / 课件页码标签 |
 | `<WeightedOptionLab set="method\|cohere" />` | ISOM 5100 第 3 周：多方案加权打分，权重和 1–5 分都可改，显示谁胜出、改哪个权重会翻盘；预设是案例里不同角色的视角（`sourcing-logic.mjs`，分数是判断，不是案例数据） |
 | `<IntegrationLayerLab />` | Method 案例 Exhibit 5–6：中间层结构图、三家报价的人周单价、回本年限、以后换 SaaS 的成本（除报价外都是示意假设） |
 | `<CapacityMixLab />` | Cohere 案例：算力在 CoreWeave 和 Hyperscaler 之间怎么分，五种情景下的延误、成本和用不完的承诺（示意指数） |
