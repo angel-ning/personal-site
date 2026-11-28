@@ -1,0 +1,116 @@
+{
+  "claim": {
+    "title": "这份证据支持的是 Design、Implementation 还是 Operation？（Slide 12）",
+    "options": [
+      { "id": "design", "label": "Design（规则能应对风险）" },
+      { "id": "impl", "label": "Implementation（规则已落地、可用）" },
+      { "id": "op", "label": "Operation（一段时间里真的照做）" },
+      { "id": "none", "label": "都不直接证明（只是线索 / 说法）" }
+    ],
+    "items": [
+      { "q": "抽取 2025 年 6 月到 2026 年 3 月的 25 份 DPIA，每份都有高级人员签名且日期早于系统首次使用", "a": "op", "why": "在一段时间里抽样看实际发生的记录，证明人们一直照规则做——这是 Operation" },
+      { "q": "政策文件写明：所有 DPIA 必须由高级人员批准后才能部署", "a": "design", "why": "只证明有一条针对风险的规则，没说明它是否落地或被遵守" },
+      { "q": "一位员工在访谈里说：「我们每次都会先找高级人员签字」", "a": "none", "why": "访谈是线索，要用记录印证。专业怀疑（professional scepticism）：找能挑战这个说法的事实" },
+      { "q": "审计员看了一次 demo：审批系统里不经高级人员签批就无法把 DPIA 状态改为 approved", "a": "impl", "why": "证明控制已经配置好、可以用（in place and ready to use）；一次 demo 不说明过去一年每次都走了这个流程" },
+      { "q": "Harbourleaf 抽 30 条已过 30 天的翻译记录，查到对应的删除日志", "a": "op", "why": "证明「30 天后删除」这条规则在运行中真的执行了" },
+      { "q": "警队提交了一份整改计划（action plan），列出下季度要补的审批步骤", "a": "none", "why": "计划 ≠ 完成。ICO 报告只说会安排跟进审计，没说每项行动都完成了" },
+      { "q": "翻译服务的存储设置截图：只写入批准的存储，保留期设为 30 天", "a": "impl", "why": "设置证明规则已落地；要证明它一直生效、真的删了，还要删除记录（Operation）" },
+      { "q": "Harbourleaf 的政策：顾客内容只能放在批准的工具里", "a": "design", "why": "这是规则本身，也是审计的标准（criterion）" },
+      { "q": "问卷回答：「我只用批准的工具处理顾客咨询」", "a": "none", "why": "Slide 8：同一个人在访谈里承认把两条咨询贴进了个人 AI 摘要工具。说法要用其他证据核对" }
+    ]
+  },
+  "sample": {
+    "title": "哪种抽样方法？（Slide 20）",
+    "options": [
+      { "id": "random", "label": "Random sampling（简单随机）" },
+      { "id": "stratified", "label": "Stratified sampling（分层随机）" },
+      { "id": "judgmental", "label": "Judgmental sampling（判断抽样）" }
+    ],
+    "items": [
+      { "q": "从一份完整的发票清单里随机抽 50 张，每张被抽中的机会相同", "a": "random", "why": "Slide 20 弹窗的例子：每条记录有已知的、相同的被抽中机会" },
+      { "q": "故意挑金额特别大或异常的发票来检查", "a": "judgmental", "why": "针对已知风险有用；但观察到的失败率不能代表全部发票" },
+      { "q": "Harbourleaf：要比较三种语言、改前改后两期的翻译准确率，6 组每组各随机抽一些", "a": "stratified", "why": "每一组都要覆盖才能比较；估计整体比例时要按各组权重加权。这是我对 Slide 20 BRAINSTORM 的解答" },
+      { "q": "专门挑「改后 + 粤语 + 例外申请」的记录，看必需的转人工有没有发生", "a": "judgmental", "why": "已知的高风险条件，故意选。适合找失败，不能估计整体失败率" },
+      { "q": "把发票按业务单位分开，每个单位里各随机抽一些", "a": "stratified", "why": "Slide 20 弹窗的例子：先分层，再在每层里随机" },
+      { "q": "1,000 条里随机抽 30 条，结果改后的粤语、普通话都只抽到 1–2 条", "a": "random", "why": "简单随机的缺点：小样本可能漏掉不常见的类别（Slide 20 弹窗）" },
+      { "q": "另外设计一批合成测试输入，覆盖边界条件（例外、混合语言、非工作时间转交）", "a": "judgmental", "why": "Slide 20：Separate synthetic tests——按已知风险条件设计，是判断选择；它们不在 1,000 条真实事件里，结果要分开报告" }
+    ]
+  },
+  "outcome": {
+    "title": "TP / FP / TN / FN？（Positive = 送到 Human Agent，Slide 23）",
+    "options": [
+      { "id": "TP", "label": "TP（该转，转了）" },
+      { "id": "FP", "label": "FP（不该转，转了）" },
+      { "id": "TN", "label": "TN（不该转，没转）" },
+      { "id": "FN", "label": "FN（该转，没转）" }
+    ],
+    "items": [
+      { "q": "粤语例外申请，复核人判定要 Human Agent；AI Assistant 直接给了建议", "a": "FN", "why": "Slide 23 左边：漏掉的升级。伤害：顾客在没有受训人员复核的情况下拿到个案建议" },
+      { "q": "普通话常规问题，应由 AI 解释；结果被送进 Human Agent 队列", "a": "FP", "why": "Slide 23 右边：不必要的升级。伤害：排队、成本、顾客多等" },
+      { "q": "英语资格争议，被送进 Human Agent 队列", "a": "TP", "why": "正确升级。但只证明进了队列，不证明 Human Agent 处理完了" },
+      { "q": "英语常规问题（问截止日期），AI 直接解释", "a": "TN", "why": "路由正确。内容对不对是另一项检查（pilot 里 2/40 截止日期错）" },
+      { "q": "同一个粤语例外请求第 2 次跑，AI 给了建议", "a": "FN", "why": "Slide 21：queue / advice / queue。同样条件下也会失败——非确定性" },
+      { "q": "一位顾客只是问积分怎么用，却被转到 Human Agent", "a": "FP", "why": "不需要人工的请求被升级" },
+      { "q": "非工作时间的例外申请被送进 Human Agent 队列，但第二天早上才有人接", "a": "TP", "why": "路由判断本身是 TP；「进队列到被处理」的延迟是另一项检查（Slide 24 的等待时间）" }
+    ]
+  },
+  "iso": {
+    "title": "ISO 42001 检查清单：记成哪种结果？（Slide 10 弹窗）",
+    "options": [
+      { "id": "met", "label": "Met（符合）" },
+      { "id": "notmet", "label": "Not met（不符合）" },
+      { "id": "insufficient", "label": "Insufficient evidence（证据不足）" },
+      { "id": "na", "label": "Not applicable（不适用，写理由）" }
+    ],
+    "items": [
+      { "q": "约定「100 条里至少 95 条翻译正确」，随机抽 100 条，97 条正确", "a": "met", "why": "Slide 18 Example 1：达到约定标准。下结论前还要看 3 个错误和抽样局限" },
+      { "q": "政策要求「30 天后删除」，但存储期限和删除记录都缺失", "a": "insufficient", "why": "没有证据 ≠ 不符合。只能说无法确认，并在报告里写明" },
+      { "q": "约定「每一个争议都要先到 Human Agent」，20 条争议里 19 条转了", "a": "notmet", "why": "Slide 18 Example 2：一个失败就是 not met。调查原因，服务负责人修，审计再测" },
+      { "q": "A.10 供应商与客户关系：这项服务完全自建，没有任何外部供应商或客户方义务（假设）", "a": "na", "why": "确实不适用时记 not applicable，并写明理由；Harbourleaf 用了外部翻译服务，所以对它不能这样记" },
+      { "q": "抽样 DPIA，发现几个案例没有按规定由高级人员批准", "a": "notmet", "why": "ICO 的发现（Slide 12）：规则在，但运行中没被一贯遵守" },
+      { "q": "供应商条款写「不用顾客 prompt 训练」，审计要确认的是「翻译服务不保留顾客文本」", "a": "insufficient", "why": "条款来自模型供应商、说的是训练，不是翻译服务的存储。证据和说法对不上" },
+      { "q": "AI 政策有批准记录、年度复核记录和员工传达记录", "a": "met", "why": "A.2 Policy 的检查：inspect approval, review and communication records" }
+    ]
+  },
+  "edpb": {
+    "title": "这一步属于 EDPB 端到端 AI 审计的哪一步？（Slide 11）",
+    "options": [
+      { "id": "card", "label": "1 Model card" },
+      { "id": "map", "label": "2 System map" },
+      { "id": "review", "label": "3 Bias review" },
+      { "id": "tests", "label": "4 Bias tests" },
+      { "id": "adv", "label": "5 Adversarial audit（可选）" },
+      { "id": "report", "label": "6 Audit report" }
+    ],
+    "items": [
+      { "q": "画出顾客请求 → 翻译 → 模型 → 路由 → AI 回复或 Human Agent 的路径，标出谁在哪里做决定", "a": "map", "why": "System map：数据准备、模型运行、人的决定、受影响的人" },
+      { "q": "比较粤语、普通话、英语请求被正确转人工的比例，调查差异", "a": "tests", "why": "Bias tests：选相关的组、参照结果和公平指标，调查差异" },
+      { "q": "收集系统用途、负责人、数据、模型版本和已有的评估结果", "a": "card", "why": "Model card：第一步，先搞清楚系统是什么" },
+      { "q": "写清楚测了什么、发现了什么、建议做什么，以及哪些没测", "a": "report", "why": "Audit report：findings, limits and actions" },
+      { "q": "用粤英夹杂、故意含糊的说法去试路由会不会出错", "a": "adv", "why": "Adversarial audit：在选定的困难条件下挑战系统行为（可选步骤）" },
+      { "q": "列出伤害可能出现在哪里：训练数据缺粤语、实现时每种语言一条规则、使用时顾客不知道可以要人工", "a": "review", "why": "Bias review：在数据、实现、使用三处找可能的伤害" },
+      { "q": "在没有额外测试的前提下，先确认负责人、数据来源和模型提供方", "a": "card", "why": "仍然是 Model card 收集信息的范围" }
+    ]
+  },
+  "inv": {
+    "title": "这条信息该记在 AI 库存的哪个字段？（Slide 6 弹窗）",
+    "options": [
+      { "id": "model", "label": "Model identity and history" },
+      { "id": "data", "label": "Data origins and permissions" },
+      { "id": "use", "label": "Business use and risk" },
+      { "id": "life", "label": "Lifecycle status" },
+      { "id": "people", "label": "Accountable people" },
+      { "id": "perf", "label": "Performance and change" }
+    ],
+    "items": [
+      { "q": "这个服务处于受限的 live trial 阶段", "a": "life", "why": "开发中 / 测试中 / 使用中 / 已退役" },
+      { "q": "Service Director 负责服务控制，Customer Operations 负责顾客数据", "a": "people", "why": "业务负责人、技术负责人、监督的人" },
+      { "q": "模型名称、版本、类型、提供方，以及每次变更", "a": "model", "why": "Model identity and history：变更要可追溯" },
+      { "q": "pilot 结果 38/40、漂移告警、复核历史", "a": "perf", "why": "评估结果、监控指标、drift alerts、review history" },
+      { "q": "用途：解释福利资格和申领期限；不能批准福利或付款；可能的伤害：错过期限", "a": "use", "why": "目的、用户、受影响的决定、潜在伤害" },
+      { "q": "训练、验证、测试数据的来源，使用权，是否含个人数据", "a": "data", "why": "Data origins and permissions" },
+      { "q": "路由规则从「一条规则」改为「每种语言一条规则」", "a": "perf", "why": "Performance and change 保留变更和复核历史；Slide 7 也把 routing 列在 Versions and change 里" },
+      { "q": "翻译服务的接入与顾客文本流向", "a": "data", "why": "数据来源与权限；Slide 6 弹窗还说翻译服务和 Human Agent 队列都属于服务记录（依赖关系）" }
+    ]
+  }
+}

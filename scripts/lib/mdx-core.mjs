@@ -84,6 +84,7 @@ import { CRITERIA as DQ_CRITERIA, NEEDS_LABEL as DQ_NEEDS, checkRows as dqCheckR
 import { ACC_PRESETS, METHODS as ACC_METHODS, confusion as accConfusion, pct as accPct, representation as accRep } from "../../src/components/mdx/accuracy-trap-logic.mjs";
 import { CHANGE_PRESETS, CHANGES as CI_CHANGES, STATUS as CI_STATUS, assessChange } from "../../src/components/mdx/change-impact-logic.mjs";
 import { ACTIONS as AL_ACTIONS, CALLERS as AL_CALLERS, DESIGNS as AL_DESIGNS, GATE_CASES, RELEASE_CHECKS, RESTART_ITEMS, SCORE_PRESETS, TIMELINE as AL_TIMELINE, evaluateCall, evaluateScores } from "../../src/components/mdx/alder-logic.mjs";
+import { CLAIM_LEVELS as AU_LEVELS, CLAIM_PRESETS as AU_CLAIMS, METHODS as AU_METHODS, ROUTE_CASES as AU_ROUTES, SAMPLE_CHECKS as AU_CHECKS, ASSUMED_ERROR as AU_ERR, STRATA as AU_STRATA, checkResult as auCheck, drawSample as auDraw, evaluateClaim as auClaim, pct as auPct, routeOutcome as auOutcome, routeSummary as auRoutes } from "../../src/components/mdx/audit-logic.mjs";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
 const readJson = (p) => JSON.parse(fs.readFileSync(path.join(root, p), "utf8"));
 const osi = readJson("src/components/mdx/data/osi.json");
@@ -112,6 +113,7 @@ const govQuiz = readJson("src/components/mdx/data/gov-quiz.json");
 const privacyQuiz = readJson("src/components/mdx/data/privacy-quiz.json");
 const lifecycleQuiz = readJson("src/components/mdx/data/lifecycle-quiz.json");
 const lec4Quiz = readJson("src/components/mdx/data/lec4-quiz.json");
+const lec5Quiz = readJson("src/components/mdx/data/lec5-quiz.json");
 const note = (t) => para({ type: "emphasis", children: [text(t)] });
 const relTable = (r) => table(r.cols, r.rows.map((row) => row.map(String)));
 
@@ -1703,6 +1705,46 @@ const components = {
       table(["时间", "发生了什么", "记录"], AL_TIMELINE.map((t) => [t.t, t.what, t.rec])),
       table(["类别", "检查", "必需 / 陷阱"], RESTART_ITEMS.map((i) => [i.group, i.label, i.trap ? `陷阱：${i.trap}` : "必需"])),
     ];
+  },
+  Lec5SortQuiz(_node, a) {
+    const set = lec5Quiz[a.set] ?? lec5Quiz.claim;
+    const label = (id) => set.options.find((o) => o.id === id).label;
+    return [note(`（网页版此处是点选练习：${set.title}；下表是全部题目和答案）`), table(["情景", "答案", "理由"], set.items.map((it) => [it.q, strong(label(it.a)), it.why]))];
+  },
+  SampleDesignLab() {
+    const out = [note("（网页版此处可以选抽样方法和样本量、重新抽样；下表是样本量 60、第 1 次抽样的结果。各组真实错误率是假设，不是讲义数据）")];
+    out.push(table(["组", "总体", "假设的真实错误率"], AU_STRATA.map((x) => [x.zh, String(x.n), auPct(AU_ERR[x.id])])));
+    for (const m of AU_METHODS) {
+      const r = auDraw({ method: m.id, size: 60, seed: 1 });
+      out.push(para(strong(m.label), text(`：${m.zh}`)));
+      out.push(table(["组", "抽中", "样本里的错误", "权重"], r.rows.map((x) => [x.zh, String(x.k), x.k ? `${x.errs} / ${x.k}` : "—", m.id === "judgmental" || x.weight === null ? "—" : x.weight.toFixed(1)])));
+      out.push(para(text(`直接合计 ${auPct(r.unweighted)} · 加权 ${r.weighted === null ? "算不了" : auPct(r.weighted)} · 真实整体（假设）${auPct(r.trueOverall)}。${r.verdict}`)));
+    }
+    return out;
+  },
+  SampleCheckLab() {
+    return [
+      note("（网页版此处可以改通过数，看结果变化）"),
+      table(["例子", "抽样设计", "约定标准", "结果", "结论"], AU_CHECKS.map((c) => { const r = auCheck(c); return [c.label, c.design, c.rule, `${c.k} / ${c.n} → ${r.met ? "Met" : "Not met"}`, r.text]; })),
+    ];
+  },
+  RouteOutcomeLab() {
+    const s = auRoutes();
+    return [
+      note("（网页版此处可以先自己判断每一行再看答案，也可以改实际路由；下表是讲义情形的答案）"),
+      table(["测试请求", "应该", "实际", "结果", "伤害 / 说明"], AU_ROUTES.map((c) => [c.label, c.need === "agent" ? "Human Agent" : "AI 建议", c.seen === "agent" ? "Human Agent queue" : "AI Assistant advice", strong(auOutcome(c.need, c.seen)), c.harm])),
+      para(text(`合计：TP ${s.counts.TP} · FP ${s.counts.FP} · TN ${s.counts.TN} · FN ${s.counts.FN}。${s.verdict}`)),
+    ];
+  },
+  ClaimEvidenceLab() {
+    const out = [note("（网页版此处可以勾选拿到的证据、是否取得额外访问批准、是否发现例外，看支持到哪一层和 ISO 42001 的结果类别）")];
+    for (const p of AU_CLAIMS) {
+      out.push(para(strong(p.label), text(`：${p.zh}`)));
+      out.push(table(["证据", "支持的层面", "访问", "说明"], p.evidence.map((e) => [e.label, e.level ? AU_LEVELS.find((l) => l.id === e.level).label : "不直接证明", e.access === "in" ? "授权内" : e.access === "approval" ? "要另行批准" : "超出授权", e.note])));
+      const all = auClaim(p.id, p.evidence.map((e) => e.id), false, false);
+      out.push(para(text(`只用授权内的证据：${all.result}。${all.why}`)));
+    }
+    return out;
   },
   LifecycleSortQuiz(_node, a) {
     const set = lifecycleQuiz[a.set] ?? lifecycleQuiz.quality;

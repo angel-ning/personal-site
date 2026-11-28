@@ -1,0 +1,1451 @@
+---
+title:
+  en: "Lecture 5 · Plan the Audit, Test the Claim"
+  zh: "第 5 讲 · 规划审计，检验说法"
+summary:
+  en: "AAIA 3A–3B through one fictional case, Harbourleaf Retail's multilingual customer-benefits assistant. 3A planning: the service is more than the model, so the AI inventory records the whole service (purpose, owners, data, connections, controls); check claims against other evidence (Shadow AI, Community Bank); keep the inventory current with discovery signals; a repeatable audit (ISO/IEC 42001 Annex A checklist, met / not met / insufficient evidence / not applicable); the EDPB end-to-end method; design vs implementation vs operation (ICO police facial-recognition audits); the right expert; verify tool outputs before relying on them; a focused audit within access rights. 3B testing: define the population, random / stratified / judgmental sampling, repeat tests for non-determinism, training vs held-out results, false negatives vs false positives in routing, outliers. Audit supports the decision; management decides on release."
+  zh: "用一个虚构案例——Harbourleaf Retail 的多语言客户福利助手——串起 AAIA 3A–3B。3A 规划：服务不只是模型，AI inventory 要记录整个服务（用途、负责人、数据、连接、控制）；用其他证据核对说法（Shadow AI、Community Bank）；用发现信号保持库存更新；可重复的审计（ISO/IEC 42001 Annex A 检查清单，符合 / 不符合 / 证据不足 / 不适用）；EDPB 端到端审计方法；设计 vs 落地 vs 运行（ICO 警方人脸识别审计）；请对的专家；工具输出先核实再依赖；在访问授权内做聚焦的审计。3B 测试：先定义总体，随机 / 分层 / 判断抽样，非确定性要重复测，训练 vs 留出数据的结果，路由里的漏报与误报，异常值。审计支持决定，发布由管理层决定。"
+week: 5
+date: 2026-11-28
+tags: [AI Audit, Audit Planning, AI Inventory, Shadow AI, ISO 42001, EDPB, Design vs Operating Effectiveness, Professional Scepticism, Audit Sampling, Stratified Sampling, Population, Non-determinism, Holdout Data, False Negative, Outlier, AAIA]
+---
+# ISOM 6200C AI in Cybersecurity — Lecture 5 复习笔记
+
+**主题：Plan the audit. Test the claim.（AAIA 3A–3B）· 贯穿案例：Harbourleaf Retail 的客户福利 AI 助手 · Define the scope. Test the claim. State the limits.**
+
+> 优先级标注说明：  
+> 🔴 **必考核心** — 考试题干会直接用到  
+> 🟡 **需要理解** — 题干里会出现，要能判断  
+> 🟢 **了解即可** — 背景、出处
+>
+> **优先级依据**：  
+> ① 本讲开头就是 **midterm**（Slide 1：纸笔、20 题、每题一个最佳答案、50 分钟、覆盖第 1–4 讲）。之后的评估形式讲义没说，**假设**仍然是「给一份案例记录 → choose one best answer」，所以第 23 节按这个风格出题；  
+> ② 课件自己的结构：Slide 3 的三件事——**Planning and design（3A）· Testing and sampling（3B）· Limit the conclusion**，以及 Slide 26 的五步总结；  
+> ③ 课件里每个 **BRAINSTORM / UNDERSTANDING CHECK** 都围绕 Harbourleaf，是最直接的考点信号；  
+> ④ 这是 **pre-class 版**：没有老师答案，下文所有解答都标 **「我的解答」**，post-class 版出来后再对照。
+
+> **📌 本笔记里的几种标记**
+>
+> - **我的解答** = 我推的，讲义没有答案；**课堂答案** 目前没有（等 post-class 版）。
+> - **推断** / **假设** = 不是案例给的事实，是我推出来的或为了讲清楚而设定的。
+> - **➕ 课外补充** — 课件没写的背景，优先级按 🟢，考试以课件为准。
+> - 页码 = pre-class 讲义的页码（`page_NN` 截图同号）。讲义里「View case records」等弹窗的内容都已整理进正文。
+> - 网页版有五个小实验（三种抽样、先约定标准再看结果、路由的 TP / FP / TN / FN、证据支持哪一层说法、训练 vs 测试误差）和六组点选练习，打印版会变成等价的表格。
+
+> **📝 pre-class 版：等 post-class 讲义出来后要对照**
+>
+> 本讲 BRAINSTORM 共 9 处（Slides 5、8、12、14、15、20、21、24、25）和一个 Understanding check（Slide 23）。下文的解答都是「我的解答」；拿到 post-class 版后，把老师的答案标成「课堂答案」补进对应小节，不一致的地方写出来。
+
+---
+
+## 0. 核心地图（先建立整体框架）
+
+第 1–4 讲是「**管理者**怎么治理和运营 AI 服务」；第 5 讲换了角色，站到**审计员**的位置：管理层说「这个服务可以给更多顾客用了」，审计员要回答——**这个说法有什么证据？证据能支持到哪里？哪些没测？**
+
+```
+贯穿案例：Harbourleaf Retail 的客户福利助手 —— 英 / 粤 / 普三语，只解释资格和期限，不能批准
+   管理层想扩大开放；路由规则刚从「一条」改成「每种语言一条」
+   → 3A Planning and design（Slides 4–15）
+        先划服务边界：服务 ≠ 模型 → AI inventory 记录整个服务
+        说法要用其他证据核对：问卷 vs 访谈 vs 采购 / 连接 / 数据流记录（Shadow AI）
+        库存保持更新：变更 → 发现 → 负责人确认 → 带日期更新
+        可重复的审计：ISO/IEC 42001 检查清单；scope · evidence · procedures · criteria 先约定
+        EDPB 六步：model card → system map → bias review → bias tests →（对抗审计）→ report
+        三种说法：Design（规则对）· Implementation（规则在）· Operation（一直照做）
+        团队：对的专家 + 审计负责人保留责任；工具输出先核实再依赖；访问授权划出能查的范围
+   → 3B Testing and sampling（Slides 17–25）
+        先定义总体（1,000 条事件）和它漏掉的东西 → 选抽样方法（随机 / 分层 / 判断）
+        先约定什么算失败 → 关键风险重点测、重复测（非确定性）
+        训练结果 ≠ 新数据表现；FN（该转没转）vs FP（不该转却转）；异常值先查是不是记录错
+   → Limit the conclusion
+        结论只覆盖测过的范围和证据；审计支持决定，发布由管理层决定
+```
+
+**一句话抓住本周**：*Define the scope. Test the claim. State the limits.* ——先划清楚要审的服务和说法，用独立的测试检验它，再说清楚证据支持什么、没测什么、谁来决定（Slide 27）。
+
+![The conclusion to take away：划定范围、检验说法、说明局限；审计支持决定，管理层决定是否发布](images/page_27.png)
+
+*The conclusion to take away：划定范围、检验说法、说明局限；审计支持决定，管理层决定是否发布（Slide 27）*
+
+---
+
+## 1. 🟢 Midterm 安排与本讲在 AAIA 路线里的位置（Slides 1、3）
+
+![Mid-term quiz：纸笔 · 20 题单选 · 50 分钟（含交卷）· 覆盖第 1–4 讲](images/page_01.png)
+
+*Mid-term quiz：纸笔 · 20 题单选 · 50 分钟（含交卷）· 覆盖第 1–4 讲（Slide 1）*
+
+| Slide 1 原文                                                                                    | 中文                                 |
+| --------------------------------------------------------------------------------------------- | ---------------------------------- |
+| Paper-based quiz · 20 questions · One best answer each                                        | 纸笔小测，20 题，每题选一个最佳答案                |
+| Duration (including submission) 50 minutes · Coverage Lectures 1–4                            | 50 分钟（含交卷）；范围第 1–4 讲               |
+| Printed official L1–4 student slides and your own notes only                                  | 只能带打印的官方第 1–4 讲学生版讲义和自己的笔记（开卷但限纸质） |
+| No electronic devices, messaging, collaboration or AI                                         | 不能用电子设备、通讯、合作或 AI                  |
+| Write one capital letter (A–D) per question; hand in both the Answer Sheet and question paper | 每题写一个大写字母 A–D；答题纸和试卷都要交            |
+
+![Where Lecture 5 fits：Domain 3 Audit and assurance 的 3A–3B](images/page_03.png)
+
+*Where Lecture 5 fits：Domain 3 Audit and assurance 的 3A–3B（Slide 3）*
+
+| 讲次     | AAIA      | 内容                                         |
+| ------ | --------- | ------------------------------------------ |
+| L1     | 1A–1C     | Service boundary · Governance · Risk       |
+| L2     | 1D–1E     | Data governance · Ethics                   |
+| L3     | 2A–2C     | Data · Lifecycle · Change                  |
+| L4     | 2D–2G     | Supervision · Testing · Threats · Response |
+| **L5** | **3A–3B** | **Audit planning · Testing · Sampling**    |
+| L6     | 3C–3E     | Evidence · Analytics · Reporting           |
+
+**今天三件事**（Slide 3）：**Link the claim, service boundary and evidence**（把说法、服务边界、证据连起来）。
+
+1. **Planning and design · 3A** — Inventory, audit aims, rules, team skills and access rights（库存、审计目标、规则、团队技能、访问权限）
+2. **Testing and sampling · 3B** — Independent tests, event lists and key risks（独立测试、事件清单、关键风险）
+3. **Limit the conclusion** — Say what the evidence shows and what was not tested（说清楚证据显示了什么、什么没测）
+
+> **🧠 Domain 3 和前两个 Domain 的区别**
+>
+> Domain 1–2 问的是「**怎么把 AI 服务管好**」（设权限、测试、监控、响应），说话的人是 service owner、risk owner。Domain 3 问的是「**怎么证明它被管好了**」，说话的人是审计员：他不设计控制，也不决定发布，只就「某个说法」给出有证据、有边界的结论。所以本讲反复出现两个词：**claim**（说法 / 声称）和 **evidence**（证据）。
+
+---
+
+## 2. 🔴 贯穿案例：Harbourleaf Retail 的客户福利助手（完整案例分析）
+
+![What would you audit?：顾客问题 → AI Assistant（依据批准的政策）→ 常规问题给政策解释，争议 / 例外转 Human Agent](images/page_05.png)
+
+*What would you audit?：顾客问题 → AI Assistant（依据批准的政策）→ 常规问题给政策解释，争议 / 例外转 Human Agent（Slide 5）*
+
+Harbourleaf 是老师虚构的公司，整讲都用它（Slides 5、6、8、13–15、19–25）。这一节先把案例讲完整：读完这一节，后面每一页的 BRAINSTORM 你都能看懂。
+
+### 2.0 原文导读（按讲义里的案例记录顺序）
+
+讲义没有一份连续的案例文档，案例分散在几页的正文和弹窗里。下面按出现顺序重述。
+
+**① Company and service（公司和服务，Slide 5 "View case records"）**。Harbourleaf Retail 经营一个**客户福利计划（customer-benefits programme）**。它的 **AI Assistant**（AI 助手）用**英语、粤语、普通话**向顾客解释两件事：**哪些福利适用（eligibility，资格）**和**什么时候之前要申领（claim deadlines，申领期限）**。AI Assistant **不能批准福利，也不能批准付款**。
+
+**② Required route（必须走的路线）**。一个**路由（routing）**环节决定：一条请求由 AI Assistant 回答，还是送进 **Human Agent 队列**（人工客服队列）。规定是：**争议（disputes）和例外（exceptions）必须先到一位受过训练的 Human Agent，之后才能就顾客的个案给建议**。讲义特意加了一句：**请求进了队列，不能证明有 Human Agent 处理过它**。
+
+**③ Decision and change（要做的决定和刚发生的变更）**。服务目前在**受限的线上试运行（restricted live trial）**。管理层提议**扩大顾客访问范围（wider customer access）**。变更：**之前**一条路由规则同时管英语、粤语、普通话；**之后**每种语言各用一条路由规则。**模型、政策和访问权限都没有变**。
+
+**④ Earlier pilot（早前的试点）**。路由变更**之前**，测了 **40 条英语常规请求**：**38 条解释正确，2 条把截止日期说错了**。试点**没有测其他语言、没有测例外、也没有测转人工是否完成**。
+
+**⑤ 服务的全貌（Slide 6）**。完整的路径是：顾客请求 → **翻译服务（translation service）** → **模型（model）**（依据 approved policy；可读取 **customer account**，但只限授权的记录）→ **路由控制（routing control）** → 要么 **AI explanation**，要么 **Human Agent → completed handling**（处理完成）。这整条路径才是审计边界。
+
+**⑥ 翻译服务的证据（Slide 8）**。签过字的 **AI 库存（AI inventory）漏掉了翻译服务**；但**采购记录**显示买了翻译服务，**连接记录**显示有一个在用的端点（endpoint），**数据流记录**显示「文本 → 翻译 → 模型」——三份记录共同确认了这个依赖。另外，一份**问卷**里员工答「我处理顾客咨询只用批准的工具」，但在**访谈**里同一位员工说「我把两条顾客咨询的文字贴进了我个人的 AI 摘要工具」。政策：**顾客内容只能放进批准的工具**。
+
+**⑦ 审计团队用的工具（Slide 14）**。审计用的是一个**批准的工具**，只给了**假名化的审计记录（pseudonymised audit records）**；而且工具只拿到了**选出来的元数据（selected metadata）**，不是全部请求记录。手上还有：**模型供应商的原始条款**「供应商不用顾客 prompt 训练」；**工具输出的两句结论**「翻译服务不保留顾客文本」「所有请求都只用了批准的工具」。
+
+**⑧ 规划记录（Slide 15 "View planning records"）**：
+
+| 栏目                     | 内容                                                                                                                         |
+| ---------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| Service and owners     | 翻译服务**在用**。**Service Director** 负责服务控制；**Customer Operations** 负责顾客数据                                                      |
+| Policy criterion（审计标准） | 顾客文本**只存在批准的系统里**；**30 天后删除**                                                                                              |
+| Records and gaps       | 签字的库存漏了翻译；采购、发现（discovery）、数据流记录确认它在用。**存储期限（storage durations）和删除记录（deletion records）缺失**。有一份**隐私评审摘要**，但它的**附件要另外的访问批准** |
+| Audit authority（审计授权）  | 访问只包括**假名化的审计记录**；**不包括原始对话记录（raw transcripts）和员工的个人工具账户**                                                                 |
+
+**⑨ 测试阶段的数据（Slides 19–24）**：
+
+| 内容             | 数字                                                                                                           |
+| -------------- | ------------------------------------------------------------------------------------------------------------ |
+| 事件清单（Slide 19） | **1,000 条请求事件**，登记册和导出的总数一致。改前 600：英语 360、粤语 120、普通话 120；改后 400：英语 240、粤语 80、普通话 80                          |
+| 清单之外（Slide 19） | 没被记录的个人工具使用（不知道漏了多少）；合成测试（设计的输入，不是真实事件）                                                                      |
+| 重复测试（Slide 21） | 路由变更后，同一条**粤语例外请求**、同样的模型 / 政策 / 路由 / 访问权限 / context，跑 3 次：**Human Agent 队列 / 建议 / Human Agent 队列**          |
+| 路由比对（Slide 23） | 粤语例外：应为 Human Agent 队列，实际是 **AI Assistant 建议**；普通话常规：应为 AI 建议，实际进了 **Human Agent 队列**。应走的路由由一位**合格的领域复核人**设定 |
+| 等待时间（Slide 24） | 三条例外请求到达 Human Agent 队列的分钟数：**4、6、61**。请求和队列的时间戳已关联，时区一致，**没有规定响应时限**                                        |
+
+**⑩ 最后的汇总（Slide 25 "View case evidence"）**。讲义把所有事实重新列了一遍，并加了一条：**合格的复核人说那个粤语例外需要 Human Agent，AI Assistant 却给了建议**；三次重复测试的结果只显示**到达队列或给了建议，不显示 Human Agent 完成了工作**；审计的访问只覆盖**顾客标识被替换过的记录**；核对过的清单有 1,000 条请求。结尾一句：**审计结论只限于测过的范围和证据；是否发布由管理层决定**。
+
+**⑪ 讲义里的问题（按顺序）**：
+
+| Slide | 英文原题                                                                                                                                                                                                     | 中文                                                  |
+| ----- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- |
+| 5     | What could go wrong for customers? What does the pilot show? What would you audit, and why?                                                                                                              | 顾客这边可能出什么问题？试点说明了什么？你会审计什么，为什么？                     |
+| 8     | Does the interview show that the employee broke the tool-use policy? How would you check how common this use is?                                                                                         | 访谈能证明这位员工违反了工具使用政策吗？怎么查这种用法有多普遍？                    |
+| 12    | How would you check whether senior staff approved the required privacy-risk assessments? What could the records confirm, and what would you still need to check?                                         | 怎么核实高级人员批准了所需的隐私风险评估？记录能确认什么，还要查什么？                 |
+| 14    | Do these records show that the translation service stored no customer text and every request used only approved tools? What evidence is missing?                                                         | 这些记录能证明翻译服务没有存顾客文本、每条请求都只用了批准的工具吗？缺什么证据？            |
+| 15    | What should this audit test, and which parts of the service should it cover? What evidence can you check within your access rights? What can you conclude without storage durations or deletion records? | 这次审计该测什么、覆盖服务的哪些部分？在访问授权内能查哪些证据？没有存储期限和删除记录，能下什么结论？ |
+| 20    | Which sampling method would you use for Harbourleaf's translation service? Why?                                                                                                                          | Harbourleaf 的翻译服务你会用哪种抽样方法？为什么？                     |
+| 21    | When would you have enough evidence to stop testing this service? What would you do if a required handoff still failed?                                                                                  | 什么时候证据足够、可以停止测试？如果必需的转交还是失败，怎么办？                    |
+| 23    | Which request shows a false negative, and which shows a false positive? What harm could each mistake cause?                                                                                              | 哪个请求是漏报（FN）、哪个是误报（FP）？各自会造成什么伤害？                    |
+| 24    | How would you check the 61-minute wait for the Human Agent queue? Which records could show a real delay or a recording error?                                                                            | 怎么核查那个 61 分钟的等待？哪些记录能区分真实延迟和记录错误？                   |
+| 25    | How do the routing and translation records affect your original audit scope? Which test would you do first, and why choose it over another? What would the test still not prove?                         | 路由和翻译的记录怎样改变了你原来的审计范围？先做哪个测试、为什么选它？这个测试仍然证明不了什么？    |
+
+每一题的「我的解答」放在对应章节里。
+
+### 2.1 一段话讲清楚
+
+**Harbourleaf Retail 的管理层想把一个三语客户福利 AI 助手从受限试运行扩大到更多顾客**，审计员要在这之前就「这个服务可以安全扩大」这个说法给出有证据的意见。助手只解释资格和期限，不能批准任何东西；但规定要求争议和例外必须先到受训的 Human Agent。手上唯一的正面证据是一次**路由变更之前**、只有**英语常规请求**的 40 条试点（38 对）；而变更恰好改的是**每种语言的路由**——也就是试点完全没覆盖的部分。同时发现库存漏了**翻译服务**，它处理顾客文本，存储和删除没有记录；审计的访问权限又只到假名化记录。约束是：审计员不决定发布（管理层决定），只能在访问授权内取证，结论必须限于测过的范围。
+
+### 2.2 公司和业务背景
+
+Harbourleaf 是一家零售商，经营顾客福利 / 会员计划（讲义只说 retail 和 customer-benefits programme；具体业态是**推断**）。这类计划的顾客问题大多是「我能不能领这个福利」「最晚哪天申请」——重复、量大，适合让 AI 回答。但其中有一小部分是**争议**（「为什么说我不符合资格」）和**例外**（超出常规规则的个案），这些需要有人看具体情况、对结果负责，所以政策规定它们必须先到受训的人工。
+
+服务在香港语境下用三种语言（英语、粤语、普通话）。这一点让风险变复杂：顾客可能粤英夹杂，翻译服务在模型前面处理文本，而且路由规则刚改成「每种语言一条」——一种语言的规则写错，只有那种语言的顾客受影响，看英语的结果完全看不出来。
+
+AI Assistant 不能批准福利或付款，所以最坏的情况不是「AI 乱发钱」，而是：**顾客在需要人的时候没有得到人**（例如争议被 AI 直接解释掉，顾客以为没希望就放弃了申领），以及**顾客文本被存到不该存的地方**（翻译服务、员工个人工具）。
+
+### 2.3 人物
+
+| 角色                                         | 职责               | 关心什么          | 在决定里的立场                             |
+| ------------------------------------------ | ---------------- | ------------- | ----------------------------------- |
+| **管理层（Management）**                        | 决定是否扩大开放         | 服务覆盖面、效率      | 提议扩大；**最终的发布决定人**（Slide 27）         |
+| **Service Director**                       | 拥有服务控制（路由、工具、配置） | 服务能稳定运行       | 被审计对象；要提供存储期限等记录                    |
+| **Customer Operations**                    | 拥有顾客数据           | 数据放在哪、保留多久    | 对「30 天删除」负责                         |
+| **Human Agent**（受训的人工客服）                   | 处理争议和例外          | 队列不要太长、拿到足够信息 | 政策要求的人工环节                           |
+| **审计负责人（Audit lead）**                      | 规划审计、下结论         | 证据够不够、结论有没有越界 | 不决定发布；对审计结论负责                       |
+| **合格的双语复核人（Qualified bilingual reviewer）** | 判断一条请求「应该」走哪条路由  | 语言和政策判断准确     | 外部专家，为审计提供专业判断；要检查技能和利益冲突（Slide 13） |
+| **员工（问卷 / 访谈对象）**                          | 处理顾客咨询           | 工作方便          | 承认用过个人 AI 工具（Shadow AI 线索）          |
+
+关系：Service Director 和 Customer Operations 是两个不同的负责人——一个管服务控制，一个管顾客数据；审计在两边都要取证。复核人只回答「这条请求需不需要 Human Agent」这一个专业问题，**审计负责人要检查复核人的理由、记录分歧，并保留审计责任**（Slide 13）。审计负责人的结论交给管理层，管理层决定发布。
+
+### 2.4 事情经过
+
+1. **试运行和试点**：服务在受限范围上线；早前用 40 条英语常规请求做了试点，38 条对、2 条截止日期错。试点只回答了「英语常规问题的解释大体正确」。
+2. **路由变更**：路由规则从一条（三语共用）改成每种语言一条。模型、政策、权限不变——但这正是会出错的地方：每种语言的规则要各自判断「是不是争议 / 例外」，而试点完全没测这个。
+3. **管理层提议扩大开放**：这触发了审计——扩大之前，需要知道「扩大」这个说法有没有证据。
+4. **规划时的发现**：服务比库存写的更大——翻译服务在用却没登记；有员工把顾客文本贴进个人 AI 工具；工具给出的「不保留文本」「只用批准工具」两句结论没有经过核实；存储期限和删除记录缺失；审计访问只到假名化记录。
+5. **测试时的发现**：1,000 条事件清单（总数核对过）；同一条粤语例外请求三次里有一次被 AI 直接给了建议；粤语例外被漏转（FN）、普通话常规被多转（FP）；一条例外请求等了 61 分钟才进队列。
+6. **现在要决定**：审计的范围要不要因此改？先测什么？结论能说到哪里？（Slide 25）
+
+| 顺序 | 事件                                | 证据           |
+| -- | --------------------------------- | ------------ |
+| 1  | 受限 live trial                     | Slide 5 案例记录 |
+| 2  | 试点：40 条英语常规，38 对、2 错              | Slide 5      |
+| 3  | 路由：一条规则 → 每语言一条                   | Slide 5、25   |
+| 4  | 管理层提议扩大访问                         | Slide 5      |
+| 5  | 发现翻译服务没进库存；员工承认用个人工具              | Slide 8      |
+| 6  | 1,000 条事件（改前 600 + 改后 400）        | Slide 19     |
+| 7  | 粤语例外：3 次 → queue / advice / queue | Slide 21     |
+| 8  | 一条例外请求 61 分钟才进队列                  | Slide 24     |
+
+### 2.5 问题到底是什么
+
+**症状（有记录为证）**：
+
+- 试点只有英语常规请求，而且在路由变更之前；变更之后没有正式的覆盖性测试（Slide 5）。
+- 粤语例外被 AI 直接给了建议，违反「先到 Human Agent」的政策（Slides 23、25）。
+- 同一请求、同样条件，三次结果不同（Slide 21）。
+- 普通话常规请求被多余地转了人工（Slide 23）。
+- 签字的库存漏了翻译服务；存储期限和删除记录缺失（Slides 8、15）。
+- 一位员工承认把顾客文本贴进个人 AI 工具，而他在问卷里说没有（Slide 8）。
+- 一条例外请求 61 分钟才进队列，原因未知（Slide 24）。
+
+**根本原因（我的分析）**：
+
+| 根因                                                     | 体现                      |
+| ------------------------------------------------------ | ----------------------- |
+| **服务边界画错了**：大家把「AI 服务」当成「模型」，翻译、路由、Human Agent 队列都在视野外 | 库存漏翻译；试点只测模型的解释，不测路由和转交 |
+| **测试证据和要做的决定对不上**：试点测的是「改前、英语、常规」，决定的是「改后、三语、包括例外」     | 38/40 被当成整体证据的风险        |
+| **控制「有」不等于「一直在用」**：政策有了，但没人检查运行记录                      | 30 天删除没有删除记录；问卷说法和实际不符  |
+| **非确定性被忽略**：一次通过就当作通过                                  | 三次里一次失败                 |
+
+### 2.6 关键数字
+
+| 数字                                  | 出处          | 说明了什么                                        |
+| ----------------------------------- | ----------- | -------------------------------------------- |
+| **38 / 40**（95%）                    | Slide 5     | 只覆盖改前、英语、常规；对例外、其他语言、转交完成**什么也没说**（不是失败，是没测） |
+| **1,000 = 600 + 400**               | Slide 19    | 定义好的总体；登记册和导出总数一致，可以从这里抽样                    |
+| **360 / 120 / 120 · 240 / 80 / 80** | Slide 19    | 英语占六成；简单随机的小样本很可能抽不到几条改后的粤语 / 普通话（第 16 节小实验） |
+| **queue / advice / queue**          | Slide 21    | 同样条件 3 次 1 次失败：必需的转交**不可靠**                  |
+| **4、6、61 分钟**                       | Slide 24    | 61 是异常值：先查是真实延迟（如非工作时间）还是记录错误                |
+| **30 天**                            | Slide 15    | 删除标准；没有删除记录 → 只能写「证据不足」                      |
+| **97/100（≥ 95）· 19/20（每一个）**        | Slide 18 弹窗 | 同样「大部分对」，前者 met，后者 not met：取决于事先约定的标准        |
+
+**对不上 / 要小心的地方**：38/40 和后面的数字**不能比较**——试点在路由变更之前、只有英语常规。Slide 23 的两个例子是**刻意挑的**，不能用来估计错误率（Slide 23 弹窗原话的意思：两条刻意选的个案检查不能估计服务整体的比率）。Slide 24 说「没有规定响应时限」，所以 61 分钟本身**不构成违规**，只是需要解释的异常。
+
+### 2.7 选项（审计范围怎么定、先测什么）
+
+审计员手上的选择不是「发不发布」（那是管理层的），而是**审计的范围和顺序**。
+
+| 选项                    | 具体做什么                                                                                                                               | 优点              | 缺点 / 风险                        |
+| --------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | --------------- | ------------------------------ |
+| **A. 沿用试点，补测英语**      | 在改后的英语常规请求上再抽一批，确认解释正确率                                                                                                             | 最快；和试点可比        | 和「扩大开放」的风险对不上：例外、其他语言、转交、翻译全没碰 |
+| **B. 只审模型回答的准确性（三语）** | 分层抽三语常规请求，查解释是否正确                                                                                                                   | 覆盖语言差异          | 仍然漏掉路由和转交这个最严重的风险；也漏掉翻译的数据处理   |
+| **C. 整个服务，按风险排序**     | 范围 = 翻译 → 模型 → 路由 → AI 回答 / Human Agent 处理完成；先做**改后每种语言的例外 / 争议路由**定向测试（含重复跑），再做**分层抽样**比较三语、前后两期的翻译与解释，同时在授权内查**翻译的存储和删除**，必要时申请扩权 | 和决定对得上；先测最严重的伤害 | 工作量大；部分证据（删除记录、原始记录）要另外取得授权    |
+| **D. 先停下来，等所有记录齐了再审** | 要求 Service Director 先补齐库存、存储期限、删除记录                                                                                                 | 证据完整            | 拖延；而且「记录缺失」本身就是一个应该报告的发现       |
+
+### 2.8 分析（用本讲框架）
+
+- **服务边界（Slide 6）**：审计边界是**整个服务**，不是模型。翻译服务、路由控制、Human Agent 的「处理完成」都在边界里。所以 A、B 都画小了。
+- **Design / Implementation / Operation（Slide 12）**：「争议先到人工」这条规则的 **Design** 有（政策写了）；**Implementation** 有（路由规则存在）；**Operation** 有反证（粤语例外漏转、三次一失败）。「30 天删除」只有 Design 的证据。
+- **总体与抽样（Slides 19–20）**：1,000 条是定义好的总体，可以分层（语言 × 前后两期）随机抽样比较；例外是少数但严重的风险，用判断选择 + 重复测试去找失败，不拿它估计比例。
+- **FN vs FP（Slide 23）**：漏转（FN）的伤害比多转（FP）严重，所以测试优先找 FN；政策是「每一个都要」，所以一个 FN 就是 not met。
+- **限定结论（Slides 25–27）**：拿不到的证据写成「未测 / 证据不足」，不写成「通过」也不写成「失败」。
+
+用第 9 节的 `ClaimEvidenceLab`、第 16 节的 `SampleDesignLab` 和第 19 节的 `RouteOutcomeLab` 可以把这三步自己走一遍。
+
+### 2.9 建议和反方
+
+**我的建议**：选 **C**。第一个测试做**改后、每种语言的例外 / 争议路由定向测试，每条重复跑几次**。理由：(1) 这是伤害最重、试点完全没覆盖、又正是这次变更改动的地方；(2) 已经有一条失败（粤语例外），先确定它是偶发还是系统性；(3) 政策是「每一个都要」，所以不用大样本——找到失败就足以下「not met」。同时在授权内核对翻译的存储设置，并为删除记录申请访问；拿不到就在报告里写「证据不足」，并把库存遗漏作为发现。
+
+**最强的反方**：选 D——审计的基础是可靠的总体和完整的记录，库存都漏了一个服务、删除记录也没有，现在测出来的东西不知道代表什么，不如先让管理层补齐记录。我的回应：1,000 条事件的总数已经核对过（Slide 19），路由测试可以在这个总体上做；而「记录缺失」本身就是要报告的发现，等它补齐会让管理层在没有任何审计意见的情况下做扩大决定。
+
+**什么会改变答案**：如果定向测试在三种语言的例外上重复多次都正确，并且能证明 Human Agent 完成了处理，那么路由风险的优先级会下降，重心转到翻译的数据处理和三语的解释准确率（B 的部分）。如果删除记录拿到后显示有文本超过 30 天，翻译就变成第一优先。
+
+### 2.10 课上 / 考试可能怎么问
+
+**试点 40 条里 38 条正确，管理层说「准确率 95%，可以扩大」。审计员怎么回应？**
+
+> 38/40 只覆盖**路由变更之前、英语、常规**请求。扩大开放涉及**改后、三语、争议和例外、转交是否完成**——这些都没测。所以结论只能是：「在测过的范围内，解释大体正确；扩大所涉及的主要风险没有证据。」没测 ≠ 失败，也 ≠ 通过。
+
+**English answer template：What would you audit first at Harbourleaf, and why?**
+
+> *I would first test the required handoff after the routing change.* The change gave each language its own routing rule, yet the only evidence (38/40) covers routine English requests before the change. Disputes and exceptions must reach a trained Human Agent before case-specific advice, and a Cantonese exception already received AI advice in one of three identical runs. I would select exception and dispute requests in every language on purpose, run each several times, and treat any missed handoff as "not met". In parallel, I would check translation storage settings within my access rights and request access to deletion records. The test would still not prove that Human Agents completed the work, or estimate a service-wide error rate. Management decides on wider access.
+
+**翻译服务、员工个人工具、路由测试——这三件事分别属于本讲哪个概念？**
+
+> - 翻译服务没进库存 → **AI inventory / 服务边界**（Slides 6–9）：服务不只是模型。
+> - 员工把顾客文本贴进个人 AI 工具 → **Shadow AI**（Slide 8）：要用其他证据核对说法，并查普遍程度。
+> - 粤语例外漏转、三次一失败 → **测关键风险 + 重复测（非确定性）+ FN**（Slides 21、23）。
+
+---
+
+## 3. 🟡 Chapter 3A · Planning and design 概览（Slide 4）
+
+![3A Planning and design：Service boundary · Testable question · Prepared audit team](images/page_04.png)
+
+*3A Planning and design：Service boundary · Testable question · Prepared audit team（Slide 4）*
+
+| 课件原文                                                                          | 中文                        | 对应本讲       |
+| ----------------------------------------------------------------------------- | ------------------------- | ---------- |
+| **Service boundary** — Inventory and independent evidence                     | 服务边界：靠库存 + 独立证据确定         | 第 4–6 节    |
+| **Testable question** — Audit aim, scope, rules and tests                     | 可检验的问题：审计目标、范围、规则（标准）、测试  | 第 7–9、12 节 |
+| **Prepared audit team** — Team skills, access rights and checked tool outputs | 准备好的审计团队：技能、访问权限、核实过的工具输出 | 第 10–11 节  |
+
+> **💡 「可检验的问题」是什么意思**
+>
+> 「这个 AI 安全吗？」不能检验。「**改后的路由，是否把每一条粤语、普通话、英语的争议和例外请求都先送到了 Human Agent？**」可以检验：有明确的总体（改后的请求）、明确的标准（每一条都要）、明确的证据（路由记录 + 复核人的判定）。审计规划就是把管理层的说法改写成这种问题。
+
+> **🎯 Slide 5 BRAINSTORM · 我的解答**
+>
+> **What could go wrong for customers?**
+>
+> - 争议或例外被 AI 直接回答，没有受训人员看个案 → 顾客可能被错误告知「不符合资格」或错过申领期限；
+> - 截止日期说错（试点里就有 2 条）→ 顾客错过申领；
+> - 某种语言的路由规则写错 → 只有那种语言的顾客受影响（公平问题）；
+> - 转进了队列但没人处理 → 顾客以为有人在跟进，其实没有；
+> - 顾客文本被翻译服务或员工个人工具存下来 → 隐私风险。
+>
+> **What does the pilot show?** 只说明：**路由变更前，40 条英语常规请求里 38 条解释正确、2 条截止日期错**。它不说明其他语言、例外、转交是否完成，也不说明变更后的情况。
+>
+> **What would you audit, and why?** 改后每种语言的争议 / 例外路由（政策要求、伤害最大、变更正好改了这里、试点没覆盖）；转交是否完成；三语的解释准确率；翻译服务的数据处理。理由见 2.9。
+
+---
+
+## 4. 🔴 服务不只是模型：AI inventory（Slides 6–7）
+
+![The service is more than the model：整个服务（顾客请求 → 翻译 → 模型 → 路由 → AI 回答 / Human Agent 处理完成）才是审计边界](images/page_06.png)
+
+*The service is more than the model：整个服务（顾客请求 → 翻译 → 模型 → 路由 → AI 回答 / Human Agent 处理完成）才是审计边界（Slide 6）*
+
+**AI inventory（AI 库存 / AI 清单）** 的定义（Slide 6 翻面，出自 OneTrust）：一份**集中的、当前的记录**，列出组织的 **AI 系统、AI agent、模型、应用、供应商和用途**；记录**每个用途由谁负责、用了什么数据和连接、服务于什么业务目的**。
+
+Slide 6 的核心句：*An AI inventory records the **whole service**: its purpose, owners, data, connections and controls.*
+
+| 服务里的组件（Slide 6 图）                        | 为什么要在审计边界里                                  |
+| ---------------------------------------- | ------------------------------------------- |
+| Customer request                         | 起点；语言、内容决定路由                                |
+| **Translation service**                  | 处理顾客文本 → 存储、删除、供应商条款都是风险；Harbourleaf 的库存漏了它 |
+| Model + Approved policy                  | 生成解释；依据哪个版本的政策                              |
+| Customer account（Authorised record only） | 只能读授权的记录                                    |
+| **Routing control**                      | 决定 AI 回答还是转人工——本次变更的地方                      |
+| AI explanation                           | 顾客看到的结果                                     |
+| **Human Agent → completed handling**     | 政策要求的人工环节；要证明「处理完成」，不只是「进了队列」               |
+
+![Why an AI inventory matters：See the use · Assign responsibility · Keep oversight current；六类库存信息](images/page_07.png)
+
+*Why an AI inventory matters：See the use · Assign responsibility · Keep oversight current；六类库存信息（Slide 7）*
+
+**为什么重要（Slide 7 三件事）**：
+
+| 课件原文                                                               | 中文                    |
+| ------------------------------------------------------------------ | --------------------- |
+| **See the use.** Find AI services and their data connections.      | 看见用途：找到 AI 服务和它们的数据连接 |
+| **Assign responsibility.** Name owners and prioritise risks.       | 分配责任：指定负责人，排出风险优先级    |
+| **Keep oversight current.** Track changes, reviews and retirement. | 让监督保持最新：跟踪变更、复核和退役    |
+
+库存要记录的六类信息（Slide 7 中间图）：Purpose, users, impact · Accountable owners（service · data · policy）· Versions and change（model · policy · routing）· Data and permissions · Licence and suppliers · Dependencies and integrations。结论：*A current AI inventory supports **risk review**, clear **ownership** and ongoing oversight.*
+
+**库存字段详表（Slide 6 弹窗）**：
+
+| Inventory field                  | 记录或检查什么                                                               |
+| -------------------------------- | --------------------------------------------------------------------- |
+| **Model identity and history**   | 模型名称、版本、类型、提供方；变更可追溯                                                  |
+| **Data origins and permissions** | 训练、验证、测试数据的来源，使用权，个人数据，相关群体                                           |
+| **Business use and risk**        | 目的、用户、受影响的决定、潜在伤害                                                     |
+| **Lifecycle status**             | 在开发、测试、使用还是已退役                                                        |
+| **Accountable people**           | 业务负责人、技术负责人、负责监督的人                                                    |
+| **Performance and change**       | 评估结果、监控指标、漂移告警（drift alerts）、复核历史                                     |
+| Service record in practice       | 还要记录**供应商条款、访问权限和依赖**。**翻译服务和 Human Agent 队列都属于服务记录**                 |
+| Keeping the record useful        | AI 系统少而稳定时，一张电子表格就够；用途增多后，要把**发现信号**接到**负责人复核**；**一份签过字的登记册本身不能证明完整** |
+
+> **⚠️ 踩坑：签了字 ≠ 完整**
+>
+> Harbourleaf 的库存是**签过字的**，还是漏了翻译服务。审计员不能把「有负责人签字」当作「库存完整」的证据，要用采购、连接、数据流等**独立记录**去对（第 5 节）。
+
+*（网页版此处是点选练习：这条信息该记在 AI 库存的哪个字段？（Slide 6 弹窗）；下表是全部题目和答案）*
+
+| 情景                                                 | 答案                               | 理由                                                                           |
+| -------------------------------------------------- | -------------------------------- | ---------------------------------------------------------------------------- |
+| 这个服务处于受限的 live trial 阶段                            | **Lifecycle status**             | 开发中 / 测试中 / 使用中 / 已退役                                                        |
+| Service Director 负责服务控制，Customer Operations 负责顾客数据 | **Accountable people**           | 业务负责人、技术负责人、监督的人                                                             |
+| 模型名称、版本、类型、提供方，以及每次变更                              | **Model identity and history**   | Model identity and history：变更要可追溯                                            |
+| pilot 结果 38/40、漂移告警、复核历史                           | **Performance and change**       | 评估结果、监控指标、drift alerts、review history                                        |
+| 用途：解释福利资格和申领期限；不能批准福利或付款；可能的伤害：错过期限                | **Business use and risk**        | 目的、用户、受影响的决定、潜在伤害                                                            |
+| 训练、验证、测试数据的来源，使用权，是否含个人数据                          | **Data origins and permissions** | Data origins and permissions                                                 |
+| 路由规则从「一条规则」改为「每种语言一条规则」                            | **Performance and change**       | Performance and change 保留变更和复核历史；Slide 7 也把 routing 列在 Versions and change 里 |
+| 翻译服务的接入与顾客文本流向                                     | **Data origins and permissions** | 数据来源与权限；Slide 6 弹窗还说翻译服务和 Human Agent 队列都属于服务记录（依赖关系）                        |
+
+---
+
+## 5. 🔴 用其他证据核对说法；Shadow AI（Slide 8）
+
+![Check a claim with other evidence：库存漏了翻译 vs 采购 / 连接 / 数据流确认在用；问卷 vs 访谈](images/page_08.png)
+
+*Check a claim with other evidence：库存漏了翻译 vs 采购 / 连接 / 数据流确认在用；问卷 vs 访谈（Slide 8）*
+
+**两组对照**：
+
+| 说法                  | 其他证据                                                                    | 结论                                         |
+| ------------------- | ----------------------------------------------------------------------- | ------------------------------------------ |
+| 库存（signed）：没有翻译服务   | **Purchase**（买了翻译服务）+ **Connection**（端点在用）+ **Data flow**（文本 → 翻译 → 模型） | 三份独立记录互相印证 → **Confirmed dependency**，库存漏了 |
+| 问卷：「我处理顾客咨询只用批准的工具」 | 访谈：「我把两条顾客咨询的文字贴进了我个人的 AI 摘要工具」                                         | 说法互相矛盾；访谈是线索，还要核实                          |
+
+**Shadow AI（影子 AI）**：*AI used at work without organisational approval or oversight.* 工作中使用、但没有经过组织批准或监督的 AI。**未被跟踪的工具可能泄露公司数据，并绕过风险检查。**
+
+**真实案例：Community Bank（Slide 8 弹窗，TechCrunch，2026-05-12）**
+
+| 栏目       | 内容                                                                                                                     |
+| -------- | ---------------------------------------------------------------------------------------------------------------------- |
+| 背景       | Community Bank 发现有人用一个**未经批准的 AI 应用**处理了客户的私人信息                                                                        |
+| 涉及的数据    | 姓名、**社会安全号码（SSN）**、出生日期                                                                                                |
+| 应对       | 银行采取措施保护信息，并请外部网络安全顾问开始调查；母公司 **CB Financial Services** 在 2026-05-11 向 **SEC** 提交了**重大事件报告（material-incident report）** |
+| AI 库存的作用 | 记录 AI 工具、负责人、数据和允许的用途；**把库存和实际工具使用做对比**，找出未经批准的服务和数据流                                                                  |
+
+> **🎯 Slide 8 BRAINSTORM · 我的解答**
+>
+> **访谈能证明这位员工违反了工具使用政策吗？** 不能单凭访谈下结论，但它是**强烈的线索**，而且和问卷矛盾，要进一步核实：
+>
+> - 他说的「两条顾客咨询」里有没有政策定义的**顾客内容**（姓名、账户号码等）？
+> - 他的「个人 AI 摘要工具」是不是**批准名单**之外的？
+> - 有没有日志、浏览器 / 网络流量、工单时间可以印证？
+> - 政策在那个时间点已经生效、并且传达给他了吗？  
+>   如果这几点都成立，才能写「违反政策」；访谈本身证明的是「他自己这样说」。注意第 12 节：审计授权**不包括个人工具账户**，所以不能自己去翻，需要另外授权或交给有权限的人。
+>
+> **怎么查这种用法有多普遍？**
+>
+> - 用**发现工具**看网络流量里出现了哪些 AI 应用、多少人在用（第 6 节：Cloudflare One、AI Gateway 日志）；
+> - 对照**采购和报销记录**（个人订阅被报销）；
+> - 用**有代表性的抽样**访谈 / 问卷，但问卷说法要用流量证据核对（这个案例就说明问卷不可靠）；
+> - 明确**总体**：哪些团队、哪段时间；没被记录的个人工具使用要写成「不知道漏了多少」（Slide 19）。
+
+---
+
+## 6. 🟡 保持库存更新（Slide 9）
+
+![Keep the inventory up to date：Change → Discover → Confirm → Update](images/page_09.png)
+
+*Keep the inventory up to date：Change → Discover → Confirm → Update（Slide 9）*
+
+| 步骤           | 课件原文                     | 中文            |
+| ------------ | ------------------------ | ------------- |
+| **Change**   | New tool, model or route | 出现新工具、新模型或新路由 |
+| **Discover** | Compare use with records | 把实际使用和记录对比    |
+| **Confirm**  | Owner checks the entry   | 负责人核对这一条记录    |
+| **Update**   | Keep a dated history     | 更新，并保留带日期的历史  |
+
+**什么时候改记录**：**采用（adoption）、重大变更（material change）、退役（retirement）**时都要更新。定期复核按风险定：「每季度检查 + 每年全面对账」只是**一种可能的政策，不是通用规则**。
+
+**结论句**：*Use discovery signals to update the inventory; **owners confirm** the record and **audit checks** it.* —— 发现信号负责找，负责人负责确认，审计负责检查。三个角色不能互相替代。
+
+**发现工具（Slide 9 弹窗）**：
+
+| 工具                        | 能看到什么                                                                                               | 局限                       |
+| ------------------------- | --------------------------------------------------------------------------------------------------- | ------------------------ |
+| **Cloudflare AI Gateway** | 把模型调用都经过一个服务转发；日志和分析显示用了哪些模型、提供方、用量                                                                 | 只看到**经过网关**的调用；其他应用要另外发现 |
+| **Cloudflare One**        | 被监控的网络流量里出现了哪些 AI 应用；比较用量和批准状态                                                                      | 可见性取决于**流量覆盖和日志设置**      |
+| **MCP server portals**    | **MCP（Model Context Protocol）** 把 AI 应用连接到工具和数据；portal 把注册过的 MCP 服务器和工具归在一起，并记录请求；经过 Gateway 还可以加检查 | 只覆盖**注册过的** MCP 服务器      |
+
+**从发现到受控更新**：新的提供方、模型或工具的信号 → 进入库存工作流 → 负责人确认用途、数据和权限、批准这一条、保留历史；同时对账采购和员工记录。**没有哪个 portal 或 gateway 能自动发现所有 AI 系统，或证明库存是完整的。**
+
+> **➕ ➕ 课外补充：MCP 是什么**
+>
+> MCP（Model Context Protocol）是一种开放协议，让 AI 应用以统一的方式调用外部工具和数据源（例如「查订单」「读文件」）。从审计角度看，每接一个 MCP 服务器，AI 就多了一种能力和一条数据通路，所以它们也应该进库存。
+
+---
+
+## 7. 🔴 可重复的审计：ISO/IEC 42001（Slide 10）
+
+![Build a repeatable AI audit：一份审计计划 → 一致的范围 · 可辩护的证据 · 可重复的程序 · 清楚的标准](images/page_10.png)
+
+*Build a repeatable AI audit：一份审计计划 → 一致的范围 · 可辩护的证据 · 可重复的程序 · 清楚的标准（Slide 10）*
+
+**ISO/IEC 42001:2023** 是 **AI 管理体系（AI management system, AIMS）** 的国际标准，结构类似 ISO 27001（信息安全管理体系）：组织建立 AI 政策、角色、风险评估和控制，并可以被审核认证。
+
+| 课件原文                                                              | 中文                | 为什么                 |
+| ----------------------------------------------------------------- | ----------------- | ------------------- |
+| **Consistent scope** — Use the same scope and checklist order     | 一致的范围：同样的范围和检查顺序  | 不同审计员、不同时间审出来可比较    |
+| **Defensible evidence** — Request records before testing          | 可辩护的证据：测试前先要记录    | 证据来源清楚，经得起质疑        |
+| **Repeatable procedures** — Keep steps another auditor can follow | 可重复的程序：另一位审计员能照着做 | 结论可以被复核             |
+| **Clear criteria** — Compare results with a stated rule           | 清楚的标准：和写明的规则比较    | 没有标准就无法判断「符合 / 不符合」 |
+
+结论句：**Agree the scope, evidence, procedures and criteria before testing.** ——测试**之前**先约定这四样。
+
+**ISO 42001 参考检查清单（Slide 10 弹窗，改编自 ISMS.online，Annex A）**：
+
+| Annex A            | 审计问题             | 证据 / 程序                         |
+| ------------------ | ---------------- | ------------------------------- |
+| A.1 General        | 怎么使用 Annex A     | 看 AI 风险如何指导控制的选择；实施细节参考 Annex B |
+| A.2 Policy         | AI 政策是否批准并复核？    | 查批准、复核、传达记录                     |
+| A.3 Roles          | 责任是否分配并履行？       | 把一个问题追到它的负责人                    |
+| A.4 Resources      | 数据、工具和技能是否有记录？   | 查系统资源和员工能力                      |
+| A.5 Impacts        | 是否评估了对人的影响？      | 查一份评估；追踪纠正措施                    |
+| A.6 Lifecycle      | 开发、变更、退役是否受控？    | 追踪设计、测试、变更、退役的证据                |
+| A.7 Data           | 来源、质量、准备过程是否有记录？ | 查数据来源、检查和准备历史                   |
+| A.8 Information    | 用户是否得到需要的信息？     | 看用户指引和事件通知                      |
+| A.9 Use            | 实际使用是否符合预期用途？    | 比较实际用途和批准用途                     |
+| A.10 Relationships | 供应商和客户的责任是否清楚？   | 查供应商条款和分配的责任                    |
+
+**怎么用这份清单（三步）**：
+
+1. **Plan**：约定范围、标准、**独立的审计员**、批准的访问；风险变化时复核覆盖范围。
+2. **Test and assess**：查证据、重复测试。每项记录为 **met（符合）/ not met（不符合）/ insufficient evidence（证据不足）/ not applicable（不适用，要写理由）**。
+3. **Report and follow up**：保留结果、分配纠正措施、**核实完成**。
+
+> **🎯 四种结果的区别（高频）**
+>
+> - **Not met** 要有**反面证据**：查到了违反标准的情况（例如 20 条争议里 1 条没转人工）。
+> - **Insufficient evidence** 是**没证据**：记录缺失、拿不到（例如 Harbourleaf 没有删除记录）。不能写成 not met，更不能写成 met。
+> - **Not applicable** 必须**写理由**（例如服务没有任何外部供应商时 A.10 不适用）。
+> - **Met** 也只在**测过的范围内**成立。
+
+*（网页版此处是点选练习：ISO 42001 检查清单：记成哪种结果？（Slide 10 弹窗）；下表是全部题目和答案）*
+
+| 情景                                          | 答案                              | 理由                                                                |
+| ------------------------------------------- | ------------------------------- | ----------------------------------------------------------------- |
+| 约定「100 条里至少 95 条翻译正确」，随机抽 100 条，97 条正确      | **Met（符合）**                     | Slide 18 Example 1：达到约定标准。下结论前还要看 3 个错误和抽样局限                      |
+| 政策要求「30 天后删除」，但存储期限和删除记录都缺失                 | **Insufficient evidence（证据不足）** | 没有证据 ≠ 不符合。只能说无法确认，并在报告里写明                                        |
+| 约定「每一个争议都要先到 Human Agent」，20 条争议里 19 条转了    | **Not met（不符合）**                | Slide 18 Example 2：一个失败就是 not met。调查原因，服务负责人修，审计再测                |
+| A.10 供应商与客户关系：这项服务完全自建，没有任何外部供应商或客户方义务（假设）  | **Not applicable（不适用，写理由）**     | 确实不适用时记 not applicable，并写明理由；Harbourleaf 用了外部翻译服务，所以对它不能这样记       |
+| 抽样 DPIA，发现几个案例没有按规定由高级人员批准                  | **Not met（不符合）**                | ICO 的发现（Slide 12）：规则在，但运行中没被一贯遵守                                  |
+| 供应商条款写「不用顾客 prompt 训练」，审计要确认的是「翻译服务不保留顾客文本」 | **Insufficient evidence（证据不足）** | 条款来自模型供应商、说的是训练，不是翻译服务的存储。证据和说法对不上                                |
+| AI 政策有批准记录、年度复核记录和员工传达记录                    | **Met（符合）**                     | A.2 Policy 的检查：inspect approval, review and communication records |
+
+---
+
+## 8. 🟡 EDPB 端到端 AI 审计方法（Slide 11）
+
+![Follow an end-to-end AI audit：Model card → System map → Bias review → Bias tests →（Adversarial audit）→ Audit report](images/page_11.png)
+
+*Follow an end-to-end AI audit：Model card → System map → Bias review → Bias tests →（Adversarial audit）→ Audit report（Slide 11）*
+
+**EDPB**（European Data Protection Board，欧洲数据保护委员会）通过它的 **Support Pool of Experts（SPE，专家支持库）** 发布了一套端到端 AI 审计方法。注意讲义的说明：这是**专家撰写、由 EDPB 托管的交付物，不一定代表 EDPB 的官方立场**；完整方法是**迭代**的（不是一次走完）。
+
+| 步骤                          | 正面                             | 翻面（具体做什么）                |
+| --------------------------- | ------------------------------ | ------------------------ |
+| **1 Model card**            | Purpose, owner, data and model | 收集系统用途、负责人、数据、模型信息和已有的评估 |
+| **2 System map**            | People, data and decision path | 追踪数据准备、模型运行、人的决定、受影响的人   |
+| **3 Bias review**           | Where harm could arise         | 在数据、实现、使用三处找可能的伤害        |
+| **4 Bias tests**            | Compare relevant outcomes      | 选相关的群体、参照结果和公平指标；调查差异    |
+| **5 Adversarial audit（可选）** | Challenge difficult conditions | 在选定的困难条件下挑战系统行为          |
+| **6 Audit report**          | Findings, limits and actions   | 记录证据、发现和建议；**写明缺口和局限**   |
+
+结论句：*Review the system **in context**, test its **impacts** and report **evidence-backed findings**.*
+
+> **💡 用到 Harbourleaf 上**
+>
+> - Model card → 2.0 的 ①–④；System map → Slide 6 的整条路径；
+> - Bias review → 每种语言一条路由规则：粤语、普通话的顾客会不会更容易被漏转？
+> - Bias tests → 按语言比较「必需转交」的正确率（分层抽样，第 16 节）；
+> - Adversarial audit → 粤英夹杂、措辞含糊的例外请求（Slide 13 那句粤语就是这一类）；
+> - Audit report → 写明访问限制、没拿到的删除记录、刻意挑选的案例不能估计比率。
+
+*（网页版此处是点选练习：这一步属于 EDPB 端到端 AI 审计的哪一步？（Slide 11）；下表是全部题目和答案）*
+
+| 情景                                                       | 答案                          | 理由                                        |
+| -------------------------------------------------------- | --------------------------- | ----------------------------------------- |
+| 画出顾客请求 → 翻译 → 模型 → 路由 → AI 回复或 Human Agent 的路径，标出谁在哪里做决定 | **2 System map**            | System map：数据准备、模型运行、人的决定、受影响的人           |
+| 比较粤语、普通话、英语请求被正确转人工的比例，调查差异                              | **4 Bias tests**            | Bias tests：选相关的组、参照结果和公平指标，调查差异           |
+| 收集系统用途、负责人、数据、模型版本和已有的评估结果                               | **1 Model card**            | Model card：第一步，先搞清楚系统是什么                  |
+| 写清楚测了什么、发现了什么、建议做什么，以及哪些没测                               | **6 Audit report**          | Audit report：findings, limits and actions |
+| 用粤英夹杂、故意含糊的说法去试路由会不会出错                                   | **5 Adversarial audit（可选）** | Adversarial audit：在选定的困难条件下挑战系统行为（可选步骤）   |
+| 列出伤害可能出现在哪里：训练数据缺粤语、实现时每种语言一条规则、使用时顾客不知道可以要人工            | **3 Bias review**           | Bias review：在数据、实现、使用三处找可能的伤害             |
+| 在没有额外测试的前提下，先确认负责人、数据来源和模型提供方                            | **1 Model card**            | 仍然是 Model card 收集信息的范围                    |
+
+---
+
+## 9. 🔴 三种不同的控制说法：Design · Implementation · Operation（Slide 12）
+
+![Three different control claims：ICO 对英格兰和威尔士警方人脸识别的审计](images/page_12.png)
+
+*Three different control claims：ICO 对英格兰和威尔士警方人脸识别的审计（Slide 12）*
+
+| 说法                 | 课件原文                                  | 中文               | 典型证据                 |
+| ------------------ | ------------------------------------- | ---------------- | -------------------- |
+| **Design**         | A rule that addresses the risk        | 有一条**针对风险**的规则   | 政策、流程文件              |
+| **Implementation** | The rule is in place and ready to use | 规则**已经落地、可以用**   | 系统配置、表单、demo、走查      |
+| **Operation**      | People follow the rule over time      | 人们**在一段时间里**一直照做 | 抽样的运行记录（带日期的批准、删除日志） |
+
+**Professional scepticism（职业怀疑）**：*check the evidence, look for gaps and seek facts that challenge the claim.* 查证据、找缺口、主动找**能挑战这个说法**的事实——不是只找支持它的。
+
+**ICO 案例（Slide 12 弹窗）**：
+
+| 栏目           | 内容                                                                                                                                    |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 来源和审计期间      | **ICO（Information Commissioner's Office，英国信息专员办公室）** 在 2026-08-18 发布概览：2025 年 6 月到 2026 年 3 月，对**英格兰和威尔士警方使用人脸识别技术（FRT）**做了**五次自愿审计** |
+| 发现（报告 p.15）  | 警队描述了**数据保护影响评估（DPIA）由高级人员批准**的流程；ICO 发现**有些案例里员工没有正确遵守**这些流程                                                                         |
+| 审计方法（报告 p.5） | 抽选的政策和记录审阅；员工访谈和演示；作为证据提交的文件                                                                                                          |
+| 跟进（报告 p.28）  | 警队提交了**整改计划**；报告安排了**跟进审计**，**没有说每项行动都已完成**                                                                                           |
+
+**DPIA（Data Protection Impact Assessment，数据保护影响评估）**：GDPR / 英国数据保护法要求，在处理可能对个人造成高风险时先做的评估。Slide 12 说的「privacy-risk assessments」就是它。
+
+用 ICO 套三层：**Design** 有（书面规定要高级人员批准）；**Implementation** 有（有流程，可以走）；**Operation** 失败（有些案例没照做）。三层是**分开的结论**，前两层成立不能推出第三层。
+
+> **🎯 Slide 12 BRAINSTORM · 我的解答**
+>
+> **怎么核实高级人员批准了所需的隐私风险评估？**
+>
+> 1. 先定**总体**：审计期间内所有需要 DPIA 的人脸识别部署 / 变更（从部署记录、变更记录中列出，核对总数）。
+> 2. **抽样**（或全查，如果数量少）：每一项找到对应的 DPIA。
+> 3. 每份 DPIA 查：有没有**高级人员的批准**（签名人是否真的是规定的级别）、**批准日期是否早于首次使用**、内容是否完整。
+> 4. 用访谈和 demo 补充理解流程，但**不当作执行的证据**。
+>
+> **记录能确认什么？** 能确认：规定存在（Design）；流程和表单存在（Implementation）；被抽到的那些案例有没有按时、由合格的人批准（Operation，限于样本）。
+>
+> **还要查什么？** 总体是否完整（有没有根本没做 DPIA 的部署——它们不会出现在 DPIA 记录里）；签名人的身份和授权；批准是不是「补签」（日期晚于使用）；整改计划是否真的执行了（报告只说会跟进）。
+
+*（网页版此处可以勾选拿到的证据、是否取得额外访问批准、是否发现例外，看支持到哪一层和 ISO 42001 的结果类别）*
+
+**ICO · 警方人脸识别（Slide 12）**：高级人员在使用前批准了所需的隐私风险评估（DPIA）
+
+| 证据                          | 支持的层面          | 访问  | 说明                    |
+| --------------------------- | -------------- | --- | --------------------- |
+| 书面规定：DPIA 需高级人员批准           | Design         | 授权内 | 只证明规则存在、针对这个风险        |
+| 审批流程 / 表单里有高级签批步骤，demo 能走通  | Implementation | 授权内 | 证明规则落地、可以用；不证明每次都用了   |
+| 员工访谈：「我们都会先批」               | 不直接证明          | 授权内 | 访谈是线索，要用记录印证；本身不证明执行  |
+| 抽样：每个 DPIA 有高级人员签名，日期早于首次使用 | Operation      | 授权内 | 这才是运行有效性的证据（要先定义抽样总体） |
+| 各警队提交的整改计划（action plans）    | 不直接证明          | 授权内 | 计划 ≠ 完成；报告只说会安排跟进审计   |
+
+只用授权内的证据：Met (within the tested scope)。设计、落地、运行三层都有证据。结论仍只覆盖抽样的总体和期间。
+
+**Harbourleaf · 翻译服务（Slides 14–15）**：送去翻译的顾客文本只存在批准的系统里，30 天后删除
+
+| 证据                                 | 支持的层面          | 访问    | 说明                                        |
+| ---------------------------------- | -------------- | ----- | ----------------------------------------- |
+| 采购、连接、数据流记录：翻译服务在用                 | 不直接证明          | 授权内   | 证明服务在范围内、库存漏了它；不证明存储合规                    |
+| 模型供应商条款：「不用顾客 prompt 训练」           | 不直接证明          | 授权内   | 是模型供应商的条款，说的是训练，不是翻译服务的存储或删除              |
+| 工具输出：「翻译服务不保留顾客文本」                 | 不直接证明          | 授权内   | 工具只拿到部分元数据，没对照原始来源核实前不能依赖                 |
+| 政策：只存批准的系统，30 天删除                  | Design         | 授权内   | 这是审计标准（criterion），也是设计层面的证据               |
+| 翻译服务的存储位置与保留期设置（Storage durations） | Implementation | 要另行批准 | 讲义说缺失；要向 Service Director 要（假设可在去标识记录里查看） |
+| 抽样的删除记录（deletion records）          | Operation      | 要另行批准 | 讲义说缺失；这是唯一能证明「真的删了」的证据                    |
+| 隐私评审摘要的附件                          | 不直接证明          | 要另行批准 | 附件需要另外的访问批准                               |
+| 原始对话记录 / 员工个人工具账户                  | 不直接证明          | 超出授权  | 超出审计授权：不能自己去查，要申请扩权或在报告里写明限制              |
+
+只用授权内的证据：Insufficient evidence。还缺 Implementation / Operation 层面的证据。没有证据 ≠ 不符合，也不能写成「符合」。
+
+*（网页版此处是点选练习：这份证据支持的是 Design、Implementation 还是 Operation？（Slide 12）；下表是全部题目和答案）*
+
+| 情景                                                         | 答案                           | 理由                                                                |
+| ---------------------------------------------------------- | ---------------------------- | ----------------------------------------------------------------- |
+| 抽取 2025 年 6 月到 2026 年 3 月的 25 份 DPIA，每份都有高级人员签名且日期早于系统首次使用 | **Operation（一段时间里真的照做）**     | 在一段时间里抽样看实际发生的记录，证明人们一直照规则做——这是 Operation                         |
+| 政策文件写明：所有 DPIA 必须由高级人员批准后才能部署                              | **Design（规则能应对风险）**          | 只证明有一条针对风险的规则，没说明它是否落地或被遵守                                        |
+| 一位员工在访谈里说：「我们每次都会先找高级人员签字」                                 | **都不直接证明（只是线索 / 说法）**        | 访谈是线索，要用记录印证。专业怀疑（professional scepticism）：找能挑战这个说法的事实            |
+| 审计员看了一次 demo：审批系统里不经高级人员签批就无法把 DPIA 状态改为 approved          | **Implementation（规则已落地、可用）** | 证明控制已经配置好、可以用（in place and ready to use）；一次 demo 不说明过去一年每次都走了这个流程 |
+| Harbourleaf 抽 30 条已过 30 天的翻译记录，查到对应的删除日志                   | **Operation（一段时间里真的照做）**     | 证明「30 天后删除」这条规则在运行中真的执行了                                          |
+| 警队提交了一份整改计划（action plan），列出下季度要补的审批步骤                      | **都不直接证明（只是线索 / 说法）**        | 计划 ≠ 完成。ICO 报告只说会安排跟进审计，没说每项行动都完成了                                |
+| 翻译服务的存储设置截图：只写入批准的存储，保留期设为 30 天                            | **Implementation（规则已落地、可用）** | 设置证明规则已落地；要证明它一直生效、真的删了，还要删除记录（Operation）                         |
+| Harbourleaf 的政策：顾客内容只能放在批准的工具里                             | **Design（规则能应对风险）**          | 这是规则本身，也是审计的标准（criterion）                                         |
+| 问卷回答：「我只用批准的工具处理顾客咨询」                                      | **都不直接证明（只是线索 / 说法）**        | Slide 8：同一个人在访谈里承认把两条咨询贴进了个人 AI 摘要工具。说法要用其他证据核对                   |
+
+---
+
+## 10. 🔴 请对的专家（Slide 13）
+
+![Bring in the right expert：合格的双语复核人判断请求是否需要受训的 Human Agent；审计负责人检查理由并保留责任](images/page_13.png)
+
+*Bring in the right expert：合格的双语复核人判断请求是否需要受训的 Human Agent；审计负责人检查理由并保留责任（Slide 13）*
+
+审计团队要覆盖四类知识：**Business · Governance · Risk · Technology**。
+
+Slide 13 的例子：政策是「**有争议的资格 → 先到受训 Human Agent，再给建议**」。一条顾客消息：
+
+> 「我唔係要改資料，我係想你再睇下點解話我唔符合資格。」  
+> "I am not changing my details. Please review why I was told I do not qualify."
+
+意思：「我不是要改资料，我是想你再看一下为什么说我不符合资格。」——这是对资格判定的**争议**，按政策要转人工。但它是**粤语口语**，表面上又提到「改资料」，路由规则或者不懂粤语的审计员都可能判错。
+
+**专家的任务（Expert's task）**：这条请求需不需要受训的 Human Agent？
+
+| 角色                               | 做什么              | 注意                                          |
+| -------------------------------- | ---------------- | ------------------------------------------- |
+| **Qualified bilingual reviewer** | 判断请求的真实含义和应走的路由  | 检查**技能**（语言 + 政策）和**利益冲突**（例如是不是参与设计路由规则的人） |
+| **Audit lead**                   | **检查专家的理由**，记录分歧 | **保留审计责任**：用了专家不等于把结论外包给专家                  |
+
+结论句：**Record the team's skills and roles, define the expert's task and keep the audit lead responsible.**
+
+> **⚠️ 踩坑**
+>
+> - 专家的任务要**定义清楚**：只问「这条请求是否需要 Human Agent」，不是让专家去评价整个服务。
+> - 专家意见是证据的一部分，审计负责人要看理由；有分歧要记录，不能悄悄采纳一方。
+> - 专家如果和被审对象有关系（设计了路由规则、在客服团队工作），独立性有问题。
+
+---
+
+## 11. 🔴 先核实，再依赖（Slide 14）
+
+![Verify before you rely：批准的工具 → 授权的数据 → 原始来源 → 用合适的样本检查输出 → 复核人签字；检查失败就先不要依赖](images/page_14.png)
+
+*Verify before you rely：批准的工具 → 授权的数据 → 原始来源 → 用合适的样本检查输出 → 复核人签字；检查失败就先不要依赖（Slide 14）*
+
+审计员也会用工具（甚至 AI 工具）处理大量记录。工具的输出本身是一种**说法**，要核实才能当证据：
+
+| 步骤                                 | 意思                     |
+| ---------------------------------- | ---------------------- |
+| **Approved tool**                  | 用的是批准的工具               |
+| **Authorised data**                | 喂给它的是授权的数据（这里是假名化审计记录） |
+| **Original sources**               | 能回到原始来源（原始条款、原始日志）     |
+| **Check outputs**（Suitable sample） | 用合适的样本，把工具输出和原始来源对照    |
+| **Reviewer sign-off**              | 复核人签字                  |
+
+**If a check fails, do not rely on the output yet.** 任一检查不过，就先不用这个输出。
+
+> **🎯 Slide 14 BRAINSTORM · 我的解答**
+>
+> **这些记录能证明「翻译服务没存顾客文本」和「每条请求都只用了批准的工具」吗？** 不能。
+>
+> | 手上的东西                   | 为什么不够                                                                                         |
+> | ----------------------- | --------------------------------------------------------------------------------------------- |
+> | 工具输出「翻译服务不保留顾客文本」       | 工具只拿到**选出来的元数据**，不是全部请求记录，也看不到翻译服务那边的存储；这是工具的说法，没有对照原始来源                                      |
+> | 工具输出「所有请求都只用了批准的工具」     | 工具只看到被记录的请求；**没记录的个人工具使用**根本不在它的数据里（Slide 19「Outside this event list」），而 Slide 8 的访谈恰好说明有这种使用 |
+> | 模型供应商条款「不用顾客 prompt 训练」 | 是**模型**供应商的条款，说的是**训练**，不是**翻译服务**的**存储**——主体和事情都对不上                                          |
+>
+> **缺什么证据？** 翻译服务的合同 / 数据处理条款（保留和删除）；翻译服务的存储位置和保留期设置；删除记录（抽样）；工具输入的完整性证明（元数据覆盖了哪些请求、总数是否和 1,000 条对得上）；用原始记录抽样核对工具输出；关于个人工具使用的独立证据（网络发现）。
+
+---
+
+## 12. 🔴 规划一个聚焦的审计（Slide 15）
+
+![Plan a focused audit：顾客文本送去翻译 → 只存批准的系统 → 30 天后删除；存储期限和删除记录缺失](images/page_15.png)
+
+*Plan a focused audit：顾客文本送去翻译 → 只存批准的系统 → 30 天后删除；存储期限和删除记录缺失（Slide 15）*
+
+规划记录见 2.0 ⑧。把它拆成审计计划的四件事：
+
+| 要素                | Harbourleaf 翻译审计                                                      |
+| ----------------- | --------------------------------------------------------------------- |
+| **Aim（目标）**       | 顾客文本在翻译环节是否只存于批准的系统，并在 30 天后删除                                        |
+| **Scope（范围）**     | 翻译服务这一段：顾客文本的发送、存储、保留、删除；对应的负责人（Service Director、Customer Operations） |
+| **Criteria（标准）**  | 政策：只存批准的系统；30 天后删除                                                    |
+| **Authority（授权）** | 只能看假名化审计记录；**不能**看原始对话、员工个人工具账户；隐私评审附件要另外批准                           |
+
+> **🎯 Slide 15 BRAINSTORM · 我的解答**
+>
+> **1. 该测什么、覆盖服务的哪些部分？**  
+> 测「顾客文本 → 翻译服务 → 存储 → 删除」这一段：(a) 文本被送去了哪里（数据流、连接记录）；(b) 存在哪里、是否是批准的存储（存储设置）；(c) 保留多久（保留期设置）；(d) 到期是否真的删了（抽样删除记录）。还要把翻译服务**补进库存**作为发现。
+>
+> **2. 在访问授权内能查哪些证据？**  
+> 假名化审计记录里的：采购、连接、数据流记录；请求事件清单（1,000 条）的元数据；隐私评审**摘要**；向 Service Director / Customer Operations **索取**的配置和删除记录（如果它们以去标识的形式提供）。**不能**自己去看原始对话和员工个人账户——需要的话要**申请扩大授权**，否则在报告里写明限制。
+>
+> **3. 没有存储期限和删除记录，能下什么结论？**  
+> 只能说：翻译服务**在用**、**不在库存里**（有证据的发现）；「30 天删除」这条标准**证据不足（insufficient evidence）**，**无法确认符合**。不能说「符合」，也不能因为缺记录就说「不符合」——但「记录缺失」本身可以作为控制缺陷报告（没有记录就无法证明控制在运行）。
+
+下面这个小实验默认就是这一页的情形（第 9 节用的是 ICO 预设）：勾选拿到的证据，看「30 天删除」这个说法能支持到哪一层；打开「已取得额外访问批准」看哪些证据才能用上。
+
+*（网页版此处可以勾选拿到的证据、是否取得额外访问批准、是否发现例外，看支持到哪一层和 ISO 42001 的结果类别）*
+
+**ICO · 警方人脸识别（Slide 12）**：高级人员在使用前批准了所需的隐私风险评估（DPIA）
+
+| 证据                          | 支持的层面          | 访问  | 说明                    |
+| --------------------------- | -------------- | --- | --------------------- |
+| 书面规定：DPIA 需高级人员批准           | Design         | 授权内 | 只证明规则存在、针对这个风险        |
+| 审批流程 / 表单里有高级签批步骤，demo 能走通  | Implementation | 授权内 | 证明规则落地、可以用；不证明每次都用了   |
+| 员工访谈：「我们都会先批」               | 不直接证明          | 授权内 | 访谈是线索，要用记录印证；本身不证明执行  |
+| 抽样：每个 DPIA 有高级人员签名，日期早于首次使用 | Operation      | 授权内 | 这才是运行有效性的证据（要先定义抽样总体） |
+| 各警队提交的整改计划（action plans）    | 不直接证明          | 授权内 | 计划 ≠ 完成；报告只说会安排跟进审计   |
+
+只用授权内的证据：Met (within the tested scope)。设计、落地、运行三层都有证据。结论仍只覆盖抽样的总体和期间。
+
+**Harbourleaf · 翻译服务（Slides 14–15）**：送去翻译的顾客文本只存在批准的系统里，30 天后删除
+
+| 证据                                 | 支持的层面          | 访问    | 说明                                        |
+| ---------------------------------- | -------------- | ----- | ----------------------------------------- |
+| 采购、连接、数据流记录：翻译服务在用                 | 不直接证明          | 授权内   | 证明服务在范围内、库存漏了它；不证明存储合规                    |
+| 模型供应商条款：「不用顾客 prompt 训练」           | 不直接证明          | 授权内   | 是模型供应商的条款，说的是训练，不是翻译服务的存储或删除              |
+| 工具输出：「翻译服务不保留顾客文本」                 | 不直接证明          | 授权内   | 工具只拿到部分元数据，没对照原始来源核实前不能依赖                 |
+| 政策：只存批准的系统，30 天删除                  | Design         | 授权内   | 这是审计标准（criterion），也是设计层面的证据               |
+| 翻译服务的存储位置与保留期设置（Storage durations） | Implementation | 要另行批准 | 讲义说缺失；要向 Service Director 要（假设可在去标识记录里查看） |
+| 抽样的删除记录（deletion records）          | Operation      | 要另行批准 | 讲义说缺失；这是唯一能证明「真的删了」的证据                    |
+| 隐私评审摘要的附件                          | 不直接证明          | 要另行批准 | 附件需要另外的访问批准                               |
+| 原始对话记录 / 员工个人工具账户                  | 不直接证明          | 超出授权  | 超出审计授权：不能自己去查，要申请扩权或在报告里写明限制              |
+
+只用授权内的证据：Insufficient evidence。还缺 Implementation / Operation 层面的证据。没有证据 ≠ 不符合，也不能写成「符合」。
+
+---
+
+## 13. 🟡 Chapter 3B · Testing and sampling 概览（Slide 17）
+
+![3B Testing and sampling：Independent procedure · Sample selection · Know the limits](images/page_17.png)
+
+*3B Testing and sampling：Independent procedure · Sample selection · Know the limits（Slide 17）*
+
+| 课件原文                                                                | 中文                 | 对应本讲      |
+| ------------------------------------------------------------------- | ------------------ | --------- |
+| **Independent procedure** — Evaluate the claim and its evidence     | 独立程序：评估说法和它的证据     | 第 14、17 节 |
+| **Sample selection** — Event lists, representative samples and risk | 抽样：事件清单、有代表性的样本、风险 | 第 15–16 节 |
+| **Know the limits** — Repeated outcomes, errors and limits          | 知道局限：重复的结果、错误和局限   | 第 17–20 节 |
+
+---
+
+## 14. 🔴 为什么需要抽样（Slide 18）
+
+![Why sampling matters：定义好的总体（太多，无法全查）→ 有计划的样本 → 有边界的结论](images/page_18.png)
+
+*Why sampling matters：定义好的总体（太多，无法全查）→ 有计划的样本 → 有边界的结论（Slide 18）*
+
+| 步骤                     | 课件原文                                            | 中文                 |
+| ---------------------- | ----------------------------------------------- | ------------------ |
+| **Defined population** | Too many events for a full check                | 定义好的总体：事件太多，全查不现实  |
+| **Planned sample**     | Select and check events using a sampling design | 有计划的样本：按抽样设计选事件并检查 |
+| **Bounded conclusion** | State limits and uncertainty                    | 有边界的结论：说明局限和不确定性   |
+
+两条规则：
+
+- **No universal AI audit sample size.** 没有通用的 AI 审计样本量。
+- **Agree what counts as a failure before testing.** 测试前先约定什么算失败。
+
+结论句：*A sample supports a **defined claim**; its **size** and **selection** must match the **risk**.*（出处：**PCAOB AS 2315**——美国公众公司会计监督委员会关于审计抽样的准则。）
+
+**两个例子（Slide 18 弹窗）**：
+
+|      | Example 1 · Routine translations | Example 2 · Dispute routing  |
+| ---- | -------------------------------- | ---------------------------- |
+| 抽样设计 | **随机**抽 100 条翻译记录                | **定向挑选** 20 条争议记录            |
+| 约定标准 | 100 条里**至少 95 条**正确解释政策          | **每一条**被审的争议都要先到 Human Agent |
+| 结果   | **97 / 100**                     | **19 / 20**                  |
+| 判断   | **达到约定标准（met）**                  | **一个转交失败：not met**           |
+| 下一步  | 看那 3 个错误和抽样局限，再下结论               | 调查失败；**服务负责人修原因，审计再测**       |
+
+讲义的提醒：**样本结果取决于设计。定向检查不能估计整体失败率。**
+
+*（网页版此处可以改通过数，看结果变化）*
+
+| 例子                               | 抽样设计                                    | 约定标准                                                       | 结果                | 结论                                                |
+| -------------------------------- | --------------------------------------- | ---------------------------------------------------------- | ----------------- | ------------------------------------------------- |
+| Example 1 · Routine translations | Random sample · 100 translation records | ≥ 95 / 100 explain the policy correctly                    | 97 / 100 → Met    | 达到约定标准（97/100）。但还要看那 3 个错误是什么、抽样的局限，再下结论。         |
+| Example 2 · Dispute routing      | Targeted selection · 20 dispute records | Every reviewed dispute reaches a Human Agent before advice | 19 / 20 → Not met | 没达到：约定是「每一个都要」，1 个失败就是 not met。要调查原因，服务负责人修，审计再测。 |
+
+> **💡 为什么 97% 是 met 而 95% 是 not met**
+>
+> 数字高低不决定结论，**事先约定的标准**决定。翻译准确率的标准是「≥ 95/100」，所以 97 达标；争议路由的标准是「每一条」，因为漏一条就是一位顾客在需要人的时候没得到人，所以 19/20 不达标。这就是「先约定什么算失败」的意思——标准要按**伤害**定，而且要在看结果之前定，否则就会看着结果改标准。
+
+---
+
+## 15. 🔴 抽样前先定义总体（Slide 19）
+
+![Define the population before sampling：1,000 条请求事件，登记册和导出总数一致；清单之外的东西要写出来](images/page_19.png)
+
+*Define the population before sampling：1,000 条请求事件，登记册和导出总数一致；清单之外的东西要写出来（Slide 19）*
+
+**总体（population）**：要从中抽样、并让结论适用的那一整组事件。Harbourleaf：
+
+| 期间                | 英语  | 粤语  | 普通话 | 小计        |
+| ----------------- | --- | --- | --- | --------- |
+| 改前（Before change） | 360 | 120 | 120 | 600       |
+| 改后（After change）  | 240 | 80  | 80  | 400       |
+| **合计**            | 600 | 200 | 200 | **1,000** |
+
+**register and export totals match**：登记册（系统记录的请求数）和导出给审计的数据总数一致——这是**完整性检查**：如果导出少了几百条，从里面抽样的结论就不代表全部。
+
+**Outside this event list（清单之外）**：
+
+| 不在清单里的                           | 含义                                       |
+| -------------------------------- | ---------------------------------------- |
+| **Unrecorded personal-tool use** | 没被记录的个人工具使用：**不知道漏了多少**（Slide 8 的员工就是这种） |
+| **Synthetic tests**              | 合成测试：**设计出来的输入，不是真实事件**；结果要和真实事件分开报告     |
+
+结论句：**Define which events you will sample, check the record totals and name what the records leave out.** 定义要抽的事件、核对记录总数、说出记录漏掉了什么。
+
+> **🎯 考点**
+>
+> 从 1,000 条里抽样，结论最多适用于**这 1,000 条**。清单之外的个人工具使用、改后才出现的新语言组合、合成测试，都不在结论里——报告要写明。
+
+---
+
+## 16. 🔴 三种选样方法（Slide 20）
+
+![Three ways to select：Random（每条机会已知、不放回）· Stratified（每层里随机）· Judgmental（挑已知风险条件，另做合成测试）](images/page_20.png)
+
+*Three ways to select：Random（每条机会已知、不放回）· Stratified（每层里随机）· Judgmental（挑已知风险条件，另做合成测试）（Slide 20）*
+
+| 方法                            | 课件图下的说明                                                    | 弹窗里的例子            | 优点          | 局限                     |
+| ----------------------------- | ---------------------------------------------------------- | ----------------- | ----------- | ---------------------- |
+| **Random sampling（简单随机）**     | Known chance for each event · Draw without replacement     | 从一份完整的发票清单里随机抽    | 简单；可以估计整体比例 | 小样本可能**漏掉不常见的类别**      |
+| **Stratified sampling（分层随机）** | Random within each stratum · Account for selection chances | 先按业务单位分开，每个单位里随机抽 | **每一组都被覆盖** | 合并估计整体时要**按正确的选择权重加权** |
+| **Judgmental sampling（判断抽样）** | Select known risk conditions · Separate synthetic tests    | 故意挑金额异常大或异常的发票    | 针对已知风险      | 观察到的失败率**不能估计全部的比率**   |
+
+弹窗补充：图中圆圈表示抽中的记录，菱形表示刻意挑选的风险；图只示意选法，**不是建议的样本量**。**只有在设计和不确定性支持时，才估计总体比率。**
+
+**Mini case（Slide 20）**：Harbourleaf 的顾客福利请求有英语、粤语、普通话；审计覆盖**路由变更前后的 1,000 条请求**；要**比较各语言、两个期间的翻译准确率**。
+
+> **🎯 Slide 20 BRAINSTORM · 我的解答**
+>
+> **用分层随机抽样（stratified sampling）**，分 6 层：语言（3）× 期间（改前 / 改后）。
+>
+> - 目标是**比较**各语言和两个期间——简单随机下，英语占 60%，改后的粤语、普通话各只占 8%，小样本很可能每组只抽到一两条，无法比较（下面的小实验抽 30 或 60 条试试）。
+> - 每层里**随机**抽，结果在每层内可以推断；要报告整体准确率时，**按每层的大小加权**（改后粤语每条样本代表的请求数和改前英语不一样）。
+> - 例外 / 混合语言这类已知风险，另外用**判断抽样 + 合成测试**去找失败，结果**单独报告**，不混进比率。
+
+*（网页版此处可以选抽样方法和样本量、重新抽样；下表是样本量 60、第 1 次抽样的结果。各组真实错误率是假设，不是讲义数据）*
+
+| 组        | 总体  | 假设的真实错误率 |
+| -------- | --- | -------- |
+| 改前 · 英语  | 360 | 2%       |
+| 改前 · 粤语  | 120 | 5%       |
+| 改前 · 普通话 | 120 | 4%       |
+| 改后 · 英语  | 240 | 2%       |
+| 改后 · 粤语  | 80  | 15%      |
+| 改后 · 普通话 | 80  | 5%       |
+
+**Random sampling**：简单随机：1,000 条里每条被抽中的机会相同，不放回
+
+| 组        | 抽中 | 样本里的错误 | 权重   |
+| -------- | -- | ------ | ---- |
+| 改前 · 英语  | 17 | 0 / 17 | 16.7 |
+| 改前 · 粤语  | 7  | 0 / 7  | 16.7 |
+| 改前 · 普通话 | 6  | 0 / 6  | 16.7 |
+| 改后 · 英语  | 20 | 1 / 20 | 16.7 |
+| 改后 · 粤语  | 6  | 0 / 6  | 16.7 |
+| 改后 · 普通话 | 4  | 0 / 4  | 16.7 |
+
+直接合计 1.7% · 加权 1.2% · 真实整体（假设）3.9%。可以估计整体错误率；但 改前 · 粤语、改前 · 普通话、改后 · 粤语、改后 · 普通话 每组不到 10 条，组间比较很不可靠。
+
+**Stratified sampling**：分层随机：6 组（语言 × 改前 / 改后）每组各抽一样多，组内随机
+
+| 组        | 抽中 | 样本里的错误 | 权重   |
+| -------- | -- | ------ | ---- |
+| 改前 · 英语  | 10 | 0 / 10 | 36.0 |
+| 改前 · 粤语  | 10 | 0 / 10 | 12.0 |
+| 改前 · 普通话 | 10 | 0 / 10 | 12.0 |
+| 改后 · 英语  | 10 | 1 / 10 | 24.0 |
+| 改后 · 粤语  | 10 | 0 / 10 | 8.0  |
+| 改后 · 普通话 | 10 | 0 / 10 | 8.0  |
+
+直接合计 1.7% · 加权 2.4% · 真实整体（假设）3.9%。每组都有样本，可以比较语言和前后两期。估计整体比例时要按每组的权重（组大小 ÷ 组样本数）加权，不能把所有样本直接合起来算。
+
+**Judgmental sampling**：判断抽样：故意挑已知高风险的记录（改后粤语、混合语言、例外）
+
+| 组        | 抽中 | 样本里的错误 | 权重 |
+| -------- | -- | ------ | -- |
+| 改前 · 英语  | 0  | —      | —  |
+| 改前 · 粤语  | 0  | —      | —  |
+| 改前 · 普通话 | 0  | —      | —  |
+| 改后 · 英语  | 10 | 2 / 10 | —  |
+| 改后 · 粤语  | 50 | 8 / 50 | —  |
+| 改后 · 普通话 | 0  | —      | —  |
+
+直接合计 16.7% · 加权 算不了 · 真实整体（假设）3.9%。能有针对性地检查已知风险，但样本不是按已知机会抽的：观察到的错误率不能代表整体，不能用来估计服务整体的错误率。
+
+> **💡 小实验里要看的三件事**
+>
+> 1. **Random + 30**：好几组只抽到 1–3 条，甚至 0 条——没法比较语言。
+> 2. **Stratified**：每组一样多，但「直接合起来算」和「按组加权」不同；后者才是整体的估计（权重 = 组大小 ÷ 组样本数）。
+> 3. **Judgmental**：抽到的几乎都是改后粤语，样本错误率很高——但这是**故意挑的**，不能说「服务错误率是这么多」。  
+>    各组的「真实错误率」是我设的**假设**数字，只为了让你看到每种设计能不能估得准；讲义没给。
+
+*（网页版此处是点选练习：哪种抽样方法？（Slide 20）；下表是全部题目和答案）*
+
+| 情景                                           | 答案                            | 理由                                                                           |
+| -------------------------------------------- | ----------------------------- | ---------------------------------------------------------------------------- |
+| 从一份完整的发票清单里随机抽 50 张，每张被抽中的机会相同               | **Random sampling（简单随机）**     | Slide 20 弹窗的例子：每条记录有已知的、相同的被抽中机会                                             |
+| 故意挑金额特别大或异常的发票来检查                            | **Judgmental sampling（判断抽样）** | 针对已知风险有用；但观察到的失败率不能代表全部发票                                                    |
+| Harbourleaf：要比较三种语言、改前改后两期的翻译准确率，6 组每组各随机抽一些 | **Stratified sampling（分层随机）** | 每一组都要覆盖才能比较；估计整体比例时要按各组权重加权。这是我对 Slide 20 BRAINSTORM 的解答                     |
+| 专门挑「改后 + 粤语 + 例外申请」的记录，看必需的转人工有没有发生          | **Judgmental sampling（判断抽样）** | 已知的高风险条件，故意选。适合找失败，不能估计整体失败率                                                 |
+| 把发票按业务单位分开，每个单位里各随机抽一些                       | **Stratified sampling（分层随机）** | Slide 20 弹窗的例子：先分层，再在每层里随机                                                   |
+| 1,000 条里随机抽 30 条，结果改后的粤语、普通话都只抽到 1–2 条       | **Random sampling（简单随机）**     | 简单随机的缺点：小样本可能漏掉不常见的类别（Slide 20 弹窗）                                           |
+| 另外设计一批合成测试输入，覆盖边界条件（例外、混合语言、非工作时间转交）         | **Judgmental sampling（判断抽样）** | Slide 20：Separate synthetic tests——按已知风险条件设计，是判断选择；它们不在 1,000 条真实事件里，结果要分开报告 |
+
+---
+
+## 17. 🔴 测关键风险，并重复测（Slide 21）
+
+![Test key risks and repeat the test：覆盖计划（常规 + 罕见但严重的风险）；同一粤语例外请求跑 3 次：queue / advice / queue](images/page_21.png)
+
+*Test key risks and repeat the test：覆盖计划（常规 + 罕见但严重的风险）；同一粤语例外请求跑 3 次：queue / advice / queue（Slide 21）*
+
+**Non-determinism（非确定性）**：*the same request can give different outputs.* 同一个请求可能得到不同的输出。生成式 AI 在采样时有随机性（第 3 讲 temperature），加上 context 的细微差别，**一次通过不代表下次也通过**。
+
+**覆盖计划（Coverage plan）**：
+
+| 类别                         | 内容                                                                   |
+| -------------------------- | -------------------------------------------------------------------- |
+| **Routine cases**          | 常规解释                                                                 |
+| **Rare but serious risks** | **例外（Exception）· 账户错了（Wrong account）· 非工作时间转交（After-hours handoff）** |
+| 两类都要覆盖的维度                  | **语言 / 混合语言请求**；**路由变更前 / 后**                                        |
+
+**三次重复的结果**：路由变更后，**同样的模型 · 政策 · 路由 · 访问权限 · context**，同一条粤语例外请求：**Human Agent queue → Advice → Human Agent queue**。三次里一次违反政策。
+
+> **🎯 Slide 21 BRAINSTORM · 我的解答**
+>
+> **什么时候证据足够、可以停止测试？** 不是「跑到通过为止」，而是在**测试之前**约定好停止条件：
+>
+> - 覆盖计划里的每一类风险（每种语言 × 例外 / 争议 / 账户错误 / 非工作时间）都测过；
+> - 每个必需转交的用例**重复了约定的次数**，并且**全部**正确（政策是「每一个都要」）；
+> - 结果足以回答**审计的问题**（例如「改后的路由是否把每一条争议都转给人工」），并能说清楚剩下的不确定性。  
+>   一旦出现约定为「失败」的结果，就**已经可以下 not met 的结论**，不需要继续测「凑通过」。
+>
+> **如果必需的转交还是失败了，怎么办？**
+>
+> 1. 记录为 **not met**（失败的用例、条件、次数）；
+> 2. 交给 **Service Director** 找原因并修（审计不修）；
+> 3. 修好后**重新测**原来失败的用例（多次），并做**回归测试**看其他语言 / 路由有没有被改坏（第 4 讲）；
+> 4. 报告里写明：在修复验证之前，服务不满足「争议先到人工」的要求；**是否扩大开放由管理层决定**，但审计意见要说清这个风险。
+
+> **⚠️ 踩坑：「queue」不等于「处理完成」**
+>
+> 三次测试的结果只显示「到了 Human Agent 队列」或「给了建议」（Slide 25）。即使三次都进了队列，也**不能证明 Human Agent 处理完了**。要证明处理完成，需要队列记录里的接单人、处理时间、处理结果。
+
+---
+
+## 18. 🟡 比较训练结果和测试结果（Slide 22）
+
+![Compare training and test results：欠拟合（40% vs 42%）vs 过拟合（96% vs 60%）](images/page_22.png)
+
+*Compare training and test results：欠拟合（40% vs 42%）vs 过拟合（96% vs 60%）（Slide 22）*
+
+比较**同一个任务、同一个评分规则**下的正确率（%）：
+
+| 模式                    | 训练  | 留出测试（Held-out test） | 课件解读                              | 中文                      |
+| --------------------- | --- | ------------------- | --------------------------------- | ----------------------- |
+| **Underfitting（欠拟合）** | 40% | 42%                 | Too limited to learn the pattern  | 模型太简单，连训练数据的规律都学不会；两边都差 |
+| **Overfitting（过拟合）**  | 96% | 60%                 | Training detail does not transfer | 记住了训练数据的细节，换成新数据就不行；差距大 |
+
+结论句：**Good training results do not prove good performance on new data. Keep test data out of training and tuning.**
+
+**Holdout data（留出数据）**：*labelled test examples kept out of training and tuning.* 有标签、但**完全不参与训练和调参**的测试样本。
+
+> **🧠 和第 3 讲的连接**
+>
+> 第 3 讲回顾题：一个分类器在「改进过程中反复用过的 100 张工单」上得到 95/100——那 100 张已经参与了调参，相当于训练数据的一部分，这个分数不能当独立测试。审计员要问：**测试数据有没有被用来训练或调参？** 如果有，结果更接近「训练成绩」。
+
+下面借用 ISOM 5160 的小实验：用 0–9 次多项式拟合 10 个带噪声的点，看训练误差和测试误差怎么分开——次数太低是欠拟合，太高是过拟合。
+
+*（网页版此处可以拖动多项式次数，看曲线怎么从「太简单」变成「背答案」；下表是 10 个训练点、10 个测试点的均方误差）*
+
+| degree | 训练误差  | 测试误差  | 判断                |
+| ------ | ----- | ----- | ----------------- |
+| 0      | 1.112 | 1.042 | Underfitting 欠拟合  |
+| 1      | 0.551 | 0.347 | Underfitting 欠拟合  |
+| 2      | 0.551 | 0.350 | Underfitting 欠拟合  |
+| 3      | 0.073 | 0.069 | **刚好 (good fit)** |
+| 4      | 0.065 | 0.087 | **刚好 (good fit)** |
+| 5      | 0.055 | 0.107 | Overfitting 过拟合   |
+| 6      | 0.042 | 0.147 | Overfitting 过拟合   |
+| 7      | 0.032 | 0.156 | Overfitting 过拟合   |
+| 8      | 0.003 | 0.231 | Overfitting 过拟合   |
+| 9      | 0.000 | 0.174 | Overfitting 过拟合   |
+
+---
+
+## 19. 🔴 路由错了，风险不同：FN vs FP（Slide 23）
+
+![Wrong routes, different risks：粤语例外应转人工却得到 AI 建议；普通话常规应由 AI 回答却进了人工队列](images/page_23.png)
+
+*Wrong routes, different risks：粤语例外应转人工却得到 AI 建议；普通话常规应由 AI 回答却进了人工队列（Slide 23）*
+
+**Positive = 服务把请求送到 Human Agent**。把这个决定和**应该走的路由**（由合格的领域复核人设定）比较：
+
+|                     | 实际需要 Human Agent | 实际不需要         |
+| ------------------- | ---------------- | ------------- |
+| **服务升级了（Positive）** | **TP** 正确升级      | **FP** 不必要的升级 |
+| **服务没升级（Negative）** | **FN** 漏掉的升级     | **TN** 正确地不升级 |
+
+弹窗的读法：**True / False** 看服务的决定是否符合实际需要；实际需要由合格的复核人**独立地按政策**判断。**一个 TP 说明路由正确，不证明 Human Agent 完成了工作。** 这张图只定义四种结果，**不提供测得的错误率**；两条**刻意挑选**的个案检查**不能估计服务整体的比率**。
+
+> **🎯 Slide 23 UNDERSTANDING CHECK · 我的解答**
+>
+> **1. 哪个是 FN、哪个是 FP？**
+>
+> - **粤语例外**：应该去 Human Agent 队列，实际得到 AI 建议 → 该升级没升级 → **False negative**。
+> - **普通话常规**：应该由 AI 回答，实际进了 Human Agent 队列 → 不该升级却升级 → **False positive**。
+>
+> **2. 各自会造成什么伤害？**
+>
+> - **FN（漏转）**：顾客在需要受训人员判断的时候拿到了 AI 对个案的建议——可能被错误告知不符合资格、放弃申领、错过期限；违反政策；而且顾客不会知道自己本该得到人工。**更严重**。
+> - **FP（多转）**：顾客多等、队列变长、人工成本上升；人手被常规问题占用，反过来可能拖慢真正的例外（联系 Slide 24 的 61 分钟）。伤害主要是效率和体验。  
+>   所以测试要**优先找 FN**，标准也更严（每一条）；FP 可以按比例设一个可接受的上限。
+
+*（网页版此处可以先自己判断每一行再看答案，也可以改实际路由；下表是讲义情形的答案）*
+
+| 测试请求                          | 应该          | 实际                  | 结果     | 伤害 / 说明                                 |
+| ----------------------------- | ----------- | ------------------- | ------ | --------------------------------------- |
+| 粤语 · 例外申请（「我唔係要改資料…」）         | Human Agent | AI Assistant advice | **FN** | 顾客拿到 AI 对个案的建议，没有受训人员复核；可能被告知不符合资格或错过期限 |
+| 普通话 · 常规问题                    | AI 建议       | Human Agent queue   | **FP** | 不必要的转人工：排队变长、成本上升、顾客等更久，人手被占用           |
+| 英语 · 常规问题（问截止日期）              | AI 建议       | AI Assistant advice | **TN** | 路由正确；但内容可能仍错（pilot 里 40 条有 2 条截止日期错）    |
+| 英语 · 资格争议                     | Human Agent | Human Agent queue   | **TP** | 路由正确；仍要证明 Human Agent 真的处理完了            |
+| 同一粤语例外 · 第 1 次                | Human Agent | Human Agent queue   | **TP** | 这一次对了                                   |
+| 同一粤语例外 · 第 2 次                | Human Agent | AI Assistant advice | **FN** | 同样条件下第二次给了建议：非确定性让「一次通过」不能当成证据          |
+| 同一粤语例外 · 第 3 次                | Human Agent | Human Agent queue   | **TP** | 又对了；三次里一次失败，必需的转交不可靠                    |
+| 粤英夹杂 · 账户不是本人的（wrong account） | Human Agent | Human Agent queue   | **TP** | 路由正确；但进队列 ≠ 处理完成                        |
+
+合计：TP 4 · FP 1 · TN 1 · FN 2。政策要求「每一个例外 / 争议都先到 Human Agent」：有 2 个 FN，就是 not met——不需要算比例。这些是故意挑的案例，不能估计服务整体的错误率。
+
+*（网页版此处是点选练习：TP / FP / TN / FN？（Positive = 送到 Human Agent，Slide 23）；下表是全部题目和答案）*
+
+| 情景                                            | 答案             | 理由                                              |
+| --------------------------------------------- | -------------- | ----------------------------------------------- |
+| 粤语例外申请，复核人判定要 Human Agent；AI Assistant 直接给了建议 | **FN（该转，没转）**  | Slide 23 左边：漏掉的升级。伤害：顾客在没有受训人员复核的情况下拿到个案建议      |
+| 普通话常规问题，应由 AI 解释；结果被送进 Human Agent 队列         | **FP（不该转，转了）** | Slide 23 右边：不必要的升级。伤害：排队、成本、顾客多等                |
+| 英语资格争议，被送进 Human Agent 队列                     | **TP（该转，转了）**  | 正确升级。但只证明进了队列，不证明 Human Agent 处理完了              |
+| 英语常规问题（问截止日期），AI 直接解释                         | **TN（不该转，没转）** | 路由正确。内容对不对是另一项检查（pilot 里 2/40 截止日期错）            |
+| 同一个粤语例外请求第 2 次跑，AI 给了建议                       | **FN（该转，没转）**  | Slide 21：queue / advice / queue。同样条件下也会失败——非确定性 |
+| 一位顾客只是问积分怎么用，却被转到 Human Agent                 | **FP（不该转，转了）** | 不需要人工的请求被升级                                     |
+| 非工作时间的例外申请被送进 Human Agent 队列，但第二天早上才有人接       | **TP（该转，转了）**  | 路由判断本身是 TP；「进队列到被处理」的延迟是另一项检查（Slide 24 的等待时间）   |
+
+> **🧠 和第 3 讲 accuracy trap 的连接**
+>
+> 第 3 讲 Slide 12：990 合法 + 10 欺诈，「全部判合法」的模型准确率 99%，但一笔欺诈都没抓到。路由也一样：如果绝大多数请求是常规的，一个「从不转人工」的路由准确率看起来很高，但所有例外都是 FN。所以要分开看 FN 和 FP，不能只看总准确率。
+
+---
+
+## 20. 🟡 调查一个异常的结果（Slide 24）
+
+![Investigate an unusual result：三条例外请求到 Human Agent 队列的时间 4、6、61 分钟](images/page_24.png)
+
+*Investigate an unusual result：三条例外请求到 Human Agent 队列的时间 4、6、61 分钟（Slide 24）*
+
+**Outlier（异常值）**：*a value far from other comparable results.* 和其他可比结果相差很远的值。**在 AI 数据里，要分清真实的罕见情况和记录错误。**
+
+已知：请求和队列的时间戳是**关联的**；**时区一致**；**没有规定响应时限**。
+
+> **🎯 Slide 24 BRAINSTORM · 我的解答**
+>
+> **怎么核查 61 分钟？** 不要直接删掉，也不要直接当成「服务很慢」：
+>
+> 1. **回到原始记录**：这条请求的原始日志、队列系统里的入队时间，和导出数据对照，看是不是导出或转换出错（例如重复记录、时间戳取错字段）。
+> 2. **看时间点**：是不是**非工作时间**（Slide 21 的 after-hours handoff）或高峰期？对照排班表、同一时段的队列长度。
+> 3. **看路径**：这条请求是不是先被 AI 回答、后来顾客追问才转人工（那 61 分钟里包括了一次错误路由）？是不是经过了重试、翻译失败？
+> 4. **看同类**：同一时段、同一语言的其他请求是否也慢。
+>
+> **哪些记录能区分？**
+>
+> - 指向**真实延迟**：队列系统日志显示请求确实在 61 分钟时才入队；排班表显示当时无人值班；同时段其他请求也慢；系统事件日志（翻译服务超时、重试）。
+> - 指向**记录错误**：原始日志和导出时间不一致；同一请求有两条记录；时间戳字段用错（例如用了更新时间）；时钟不同步记录。  
+>   另外：讲义说**没有规定响应时限**，所以即使是真实延迟，也**不能写成违规**；可以报告为发现，并建议管理层设定时限。
+
+---
+
+## 21. 🔴 回到 Harbourleaf：什么改变了你的判断（Slide 25）
+
+![What changed your judgement?：回到 Harbourleaf，看完所有记录后重新定范围、选第一个测试、说出测试证明不了什么](images/page_25.png)
+
+*What changed your judgement?：回到 Harbourleaf，看完所有记录后重新定范围、选第一个测试、说出测试证明不了什么（Slide 25）*
+
+这一页把案例完整重列了一遍（见 2.0 ⑩），然后问三个问题。底部一句：**Limit audit conclusions to the tested scope and evidence; management decides on release.**
+
+> **🎯 Slide 25 BRAINSTORM · 我的解答**
+>
+> **1. 路由和翻译的记录怎样改变了你原来的审计范围？**
+>
+> - 原来（只看 Slide 5）可能把范围定成「AI 的解释是否准确」。
+> - **路由记录**（粤语例外漏转、三次一失败、FN / FP）→ 范围必须包括**改后每种语言的路由**和**转交是否完成**，而且这成为最高优先级。
+> - **翻译记录**（在用但不在库存、存储和删除记录缺失、员工个人工具）→ 范围扩大到**翻译服务的数据处理**和**库存完整性**；访问限制要写进计划（需要的话申请扩权）。
+> - 结果：从「模型」扩大到「整个服务」（Slide 6）。
+>
+> **2. 先做哪个测试，为什么不选另一个？**  
+> **先做改后、三种语言的争议 / 例外路由定向测试（判断抽样 + 合成用例），每个用例重复跑多次。** 选它而不是先做「三语翻译准确率分层抽样」，因为：路由失败的**伤害更大**（顾客得不到必需的人工）；**变更正好改了这里**；**已经有失败的迹象**；政策是「每一个都要」，**样本小也能得出 not met**，最快给管理层有用的信息。翻译准确率的分层抽样排第二，翻译数据处理在授权内同步取证。
+>
+> **3. 这个测试仍然证明不了什么？**
+>
+> - **Human Agent 是否完成了处理**（测试只看到进队列）；
+> - **服务整体的错误率**（刻意挑的用例不能估计比率）；
+> - 没测到的语言组合、措辞、时段（**非确定性**：多跑几次也只是降低、不是消除不确定性）；
+> - **翻译服务的存储和删除**是否合规（另一个测试的事）；
+> - 清单之外的使用（员工个人工具）；
+> - **服务是否应该扩大**——那是管理层的决定。
+
+---
+
+## 22. 🔴 总结：从服务范围到审计结论（Slides 26–27）
+
+![From service scope to audit conclusion：Scope · Evidence · Limits 五步](images/page_26.png)
+
+*From service scope to audit conclusion：Scope · Evidence · Limits 五步（Slide 26）*
+
+| 步骤                        | 课件原文                                                                           | 中文                    | Harbourleaf            |
+| ------------------------- | ------------------------------------------------------------------------------ | --------------------- | ---------------------- |
+| **01 Define the service** | Record its purpose, users, owners, data and dependencies                       | 记录用途、用户、负责人、数据、依赖     | 补上翻译服务和 Human Agent 队列 |
+| **02 Plan the audit**     | Set the aim, scope and rules. Confirm team skills and access rights            | 定目标、范围、规则；确认团队技能和访问权限 | 双语复核人；假名化记录的限制         |
+| **03 Test independently** | Compare expected and actual results. Check tool outputs against source records | 比较预期与实际；用原始记录核对工具输出   | 复核人定「应该」的路由；工具结论先核实    |
+| **04 Choose samples**     | Match samples to the claim. Check key risks and repeat tests                   | 样本要匹配说法；查关键风险、重复测试    | 分层比较三语；例外定向 + 重复       |
+| **05 State the limits**   | Explain what the evidence supports, what was not tested and who decides        | 说清证据支持什么、什么没测、谁来决定    | 不证明处理完成；不估计整体率；管理层决定   |
+
+**最后一句（Slide 27）**：**Define the scope. Test the claim. State the limits.** *Audit supports the decision. Management decides on release.*
+
+> **🎯 本讲最容易出的陷阱选项**
+>
+> - 「试点 95% 正确，所以可以扩大」——试点范围 ≠ 决定的范围。
+> - 「库存签过字，所以完整」——签字不证明完整。
+> - 「工具说没有保留文本」——工具输出没核实前不能依赖。
+> - 「没有删除记录 → 不符合」——是**证据不足**，不是不符合（但可以报告记录缺失）。
+> - 「判断抽样里 30% 失败 → 服务失败率 30%」——刻意挑的样本不能估计比率。
+> - 「三次里两次正确 → 大体合规」——政策是「每一个」，一次失败就是 not met；而且非确定性要求重复测。
+> - 「进了 Human Agent 队列 → 处理完成」——队列 ≠ 完成。
+> - 「61 分钟超时，违反政策」——没有规定时限；先查是不是记录错误。
+> - 「审计认为可以发布」——审计支持决定，**发布由管理层决定**。
+
+---
+
+## 🔴 综合缩写速查表
+
+| 缩写 / 术语                                 | 全称                                                         | 一句话                                                                              |
+| --------------------------------------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| **AAIA**                                | ISACA Advanced in AI Audit                                 | 本课程跟随的 AI 审计认证路线；本讲 = Domain 3 的 3A–3B                                           |
+| **AI inventory**                        | —                                                          | 集中、当前的 AI 系统 / agent / 模型 / 应用 / 供应商 / 用途清单，记录负责人、数据、连接、目的                       |
+| **Shadow AI**                           | —                                                          | 工作中未经组织批准或监督使用的 AI                                                               |
+| **MCP**                                 | Model Context Protocol                                     | 把 AI 应用连接到工具和数据的协议；MCP portal 可登记服务器并记录请求                                        |
+| **ISO/IEC 42001**                       | AI management system 标准（2023）                              | Annex A 检查清单 A.1–A.10；结果记 met / not met / insufficient evidence / not applicable |
+| **EDPB / SPE**                          | European Data Protection Board / Support Pool of Experts   | 端到端 AI 审计六步（不一定是 EDPB 官方立场）                                                      |
+| **ICO**                                 | Information Commissioner's Office                          | 英国数据保护监管机构；Slide 12 警方人脸识别审计                                                     |
+| **DPIA**                                | Data Protection Impact Assessment                          | 数据保护影响评估；Slide 12 的 privacy-risk assessment                                      |
+| **FRT**                                 | Facial recognition technology                              | 人脸识别技术                                                                           |
+| **Design / Implementation / Operation** | —                                                          | 规则对 · 规则在 · 一直照做；三个独立结论                                                          |
+| **Professional scepticism**             | —                                                          | 查证据、找缺口、主动找挑战说法的事实                                                               |
+| **PCAOB AS 2315**                       | Public Company Accounting Oversight Board · Audit Sampling | 审计抽样准则                                                                           |
+| **Population**                          | —                                                          | 抽样和结论所针对的整组事件；先核对总数、写出遗漏                                                         |
+| **Random / Stratified / Judgmental**    | —                                                          | 每条机会已知 · 分层后层内随机（要加权）· 刻意挑风险（不能估比率）                                              |
+| **Non-determinism**                     | —                                                          | 同一请求可能得到不同输出 → 重复测                                                               |
+| **Holdout data**                        | —                                                          | 不参与训练和调参的有标签测试样本                                                                 |
+| **Underfitting / Overfitting**          | —                                                          | 训练和测试都差 / 训练好测试差                                                                 |
+| **TP / FP / TN / FN**                   | True / False Positive / Negative                           | Positive = 送到 Human Agent；FN = 漏掉的升级                                             |
+| **Outlier**                             | —                                                          | 远离其他可比结果的值；先分清真实罕见还是记录错误                                                         |
+| **SEC**                                 | U.S. Securities and Exchange Commission                    | Community Bank 的母公司向它提交了重大事件报告                                                   |
+
+---
+
+## 模拟自测题（choose one best answer）
+
+先读案例记录，再答题。前 10 题用 Harbourleaf，之后是新情景和概念题。
+
+> **📌 练习用案例记录 · Kestrel Insurance 理赔助手（虚构，第 11–14 题用）**
+>
+> Kestrel Insurance 用一个 AI 助手回答理赔进度问题，只能解释，不能批准理赔。政策：**拒赔申诉（appeals）必须先到理赔专员**，再给个案建议。上月把模型换成新版本，政策和权限没变。供应商报告：新模型在训练集上 98% 正确。内部测试：在 200 条换模型前的英文常规问题上 190 条正确。审计期间共 5,000 条请求：英文 4,000、中文 1,000；其中申诉约 150 条。审计访问只有去标识的记录。
+
+**1. Harbourleaf 的管理层说：「试点 40 条里 38 条正确，服务可以扩大开放。」审计员最恰当的回应是：**
+
+- A. 38/40 = 95%，高于常见标准，支持扩大
+- B. 2 个错误说明服务失败，不能扩大
+- C. 试点只覆盖改前的英语常规请求；改后的路由、其他语言、例外和转交完成都没有证据，结论只限于测过的范围
+- D. 样本太小，应该把试点扩大到 400 条英语常规请求再决定
+
+> **答案：C**
+>
+> C：试点范围和要做的决定对不上（Slides 5、25）。A 外推了范围；B 把 2 个截止日期错误当成整体失败；D 增加的还是同一类请求，没碰最大风险。
+
+**2. Harbourleaf 签字的 AI 库存没有翻译服务。以下哪组证据最能证明翻译服务是服务的一部分？**
+
+- A. 采购记录、在用的连接端点、显示「文本 → 翻译 → 模型」的数据流记录
+- B. Service Director 签字确认库存完整
+- C. 工具输出：所有请求都只用了批准的工具
+- D. 员工问卷：大家都说只用批准的工具
+
+> **答案：A**
+>
+> Slide 8：三份独立记录互相印证 → confirmed dependency。B 签字不证明完整；C、D 是未核实的说法。
+
+**3. 一位员工在问卷里说只用批准的工具，在访谈里说把两条顾客咨询贴进了个人 AI 摘要工具。审计员下一步最合适的是：**
+
+- A. 直接认定该员工违反政策并报告
+- B. 以问卷为准，因为是书面记录
+- C. 登录员工的个人 AI 账户查看记录
+- D. 把访谈当作线索：确认内容是否属于顾客内容、工具是否在批准名单外，并用网络发现等证据评估这种用法有多普遍
+
+> **答案：D**
+>
+> Slide 8 BRAINSTORM（我的解答）。A 证据不足；B 问卷已被访谈挑战；C 超出审计授权（Slide 15：不包括个人工具账户）。
+
+**4. 审计工具输出「翻译服务不保留顾客文本」。工具只收到了部分请求的元数据。审计员应该：**
+
+- A. 接受输出，因为工具是批准的
+- B. 先不依赖这个输出：用原始来源和合适的样本核对，确认工具输入的完整性
+- C. 改用模型供应商的「不用 prompt 训练」条款作为证据
+- D. 因为工具不完整，直接判定翻译服务不符合
+
+> **答案：B**
+>
+> Slide 14：If a check fails, do not rely on the output yet。C 的条款主体和事情都不对；D 把证据不足当成不符合。
+
+**5. 政策要求翻译后的顾客文本 30 天后删除，但没有存储期限和删除记录。ISO 42001 检查清单上这一项应记为：**
+
+- A. Met，因为政策写明了 30 天删除
+- B. Not met，因为没有删除记录
+- C. Insufficient evidence，并把记录缺失作为发现报告
+- D. Not applicable，因为翻译服务不在库存里
+
+> **答案：C**
+>
+> Slides 10、15。只有 Design 的证据；没有证据 ≠ 不符合。D：服务在用，不在库存是另一个发现，不是不适用的理由。
+
+**6. 要比较 Harbourleaf 三种语言、改前改后两期的翻译准确率（1,000 条：改前 360/120/120，改后 240/80/80），最合适的抽样设计是：**
+
+- A. 分层随机抽样：按语言 × 期间分 6 层，每层随机抽，估计整体时按层加权
+- B. 简单随机抽 30 条
+- C. 只抽改后粤语的记录
+- D. 抽最近的 100 条请求
+
+> **答案：A**
+>
+> Slide 20 BRAINSTORM（我的解答）。B 小样本会漏掉小组；C 是判断抽样，不能比较；D 不是随机，也偏向改后。
+
+**7. 同一条粤语例外请求，在同样的模型、政策、路由、权限和 context 下跑 3 次，结果是 queue / advice / queue。最准确的结论是：**
+
+- A. 三次里两次正确，67% 合规，可以接受
+- B. 第二次是偶发，忽略即可
+- C. 只要再跑一次得到 queue，就可以算通过
+- D. 服务存在非确定性；必需的转交不可靠，按「每一个都要」的政策这是 not met，需要找原因、修复后重测
+
+> **答案：D**
+>
+> Slide 21。政策不是比例标准；「跑到通过为止」违反了先约定停止条件的原则。
+
+**8. 普通话常规问题被送进 Human Agent 队列（应由 AI 回答）。这是：**
+
+- A. False positive：不必要的升级，主要伤害是等待和成本
+- B. False negative：漏掉的升级
+- C. True positive：因为送到了人工，更安全
+- D. True negative：没有伤害顾客
+
+> **答案：A**
+>
+> Slide 23：Positive = 送到 Human Agent；不需要却升级 = FP。
+
+**9. 三条例外请求到队列的时间是 4、6、61 分钟；时间戳已关联、时区一致、没有规定响应时限。审计员最恰当的做法是：**
+
+- A. 删除 61 分钟这条，它是异常值
+- B. 报告服务违反了响应时限
+- C. 对照原始日志、队列记录、排班和同时段的其他请求，区分真实延迟和记录错误；即使是真实延迟也不能写成违规
+- D. 取三条的平均值 23.7 分钟作为服务的等待时间
+
+> **答案：C**
+>
+> Slide 24。A 丢掉了可能真实的罕见情况；B 没有标准；D 三条刻意挑的例外不能代表服务。
+
+**10. 审计结束时，关于是否把 Harbourleaf 的助手开放给更多顾客，以下哪项最符合本讲？**
+
+- A. 审计员应批准或拒绝扩大开放
+- B. 审计员说明证据支持什么、没测什么，以及发现的不符合；是否扩大由管理层决定
+- C. 只要审计没发现问题，服务就可以自动扩大
+- D. 合格的双语复核人决定是否扩大，因为他最懂语言
+
+> **答案：B**
+>
+> Slides 25、27：Audit supports the decision. Management decides on release。D：专家只回答定义好的专业问题，审计负责人保留审计责任。
+
+**11. Kestrel 的供应商报告新模型训练集正确率 98%。审计员最需要补充的是：**
+
+- A. 供应商对 98% 的书面保证
+- B. 在新模型的训练集上再跑一次
+- C. 让理赔专员确认 98% 合理
+- D. 用没参与训练和调参的留出数据，在相同任务和评分规则下测新模型
+
+> **答案：D**
+>
+> Slide 22：Good training results do not prove good performance on new data。
+
+**12. Kestrel 的 190/200 内部测试最多能支持什么结论？**
+
+- A. 换模型之前、英文常规问题的回答大体正确；不覆盖新模型、中文和申诉
+- B. 新模型 95% 正确
+- C. 服务在所有语言上可靠
+- D. 申诉的路由是正确的
+
+> **答案：A**
+>
+> 和 Harbourleaf 的试点同一个陷阱：测试范围（旧模型、英文、常规）≠ 要做的决定（新模型、全部）。
+
+**13. Kestrel 要检验「每一条申诉都先到理赔专员」。5,000 条里约 150 条是申诉。最合适的测试设计是：**
+
+- A. 从 5,000 条里简单随机抽 50 条，看其中的申诉
+- B. 只看供应商的路由测试报告
+- C. 识别并检查所有（或刻意挑选的）申诉请求，中英文都要，必要时重复跑合成申诉；任何一条漏转即为 not met
+- D. 随机抽 50 条英文请求
+
+> **答案：C**
+>
+> 政策是「每一条」，风险集中在申诉：判断选择 / 全查 + 两种语言 + 重复测。A 随机 50 条平均只会抽到 1–2 条申诉。
+
+**14. 审计 Kestrel 时，审计员想查看原始对话记录确认一条申诉的内容，但授权只有去标识记录。应该：**
+
+- A. 请 IT 同事私下导出原始记录
+- B. 申请扩大访问授权；拿不到就在报告里写明这部分没检查
+- C. 猜测申诉内容，在报告里写成已核实
+- D. 放弃整个审计
+
+> **答案：B**
+>
+> Slides 14–15：审计在访问授权内工作；超出授权的证据要申请，否则写明限制。
+
+**15. 关于 AI 库存，下列哪项正确？**
+
+- A. 只要有负责人签字，库存就是完整的
+- B. AI Gateway 能自动发现组织里所有的 AI 系统
+- C. 库存只需要记录模型名称和版本
+- D. 在采用、重大变更和退役时更新；用发现信号找出未登记的使用，负责人确认，审计检查
+
+> **答案：D**
+>
+> Slides 6–9。A 签字不证明完整；B 只看到经过网关的调用；C 要记录整个服务（用途、负责人、数据、连接、控制、供应商、依赖）。
+
+**16. ICO 发现：警队有书面规定要求高级人员批准 DPIA，流程也存在，但有些案例员工没有遵守。这说明：**
+
+- A. Design 和 Implementation 有证据，Operation 失败
+- B. Design 失败
+- C. 三层都失败
+- D. 提交了整改计划，所以问题已解决
+
+> **答案：A**
+>
+> Slide 12。D：报告只说会安排跟进审计，没说行动都已完成。
+
+**17. 审计计划里使用一位粤语专家判断请求是否需要人工。以下哪项最恰当？**
+
+- A. 专家的判断就是审计结论，审计负责人不需要再看
+- B. 专家可以同时负责评估整个服务是否应该扩大
+- C. 记录专家的技能和利益冲突，明确他的任务，审计负责人检查理由、记录分歧并保留审计责任
+- D. 只要专家会说粤语，不需要其他条件
+
+> **答案：C**
+>
+> Slide 13：Record the team's skills and roles, define the expert's task and keep the audit lead responsible。
+
+**18. 测试之前，下列哪项最需要先约定？**
+
+- A. 什么算失败、审计范围、证据来源、程序和判断标准
+- B. 希望得到的结论
+- C. 样本量必须是 100
+- D. 管理层是否会接受结果
+
+> **答案：A**
+>
+> Slides 10、18：Agree the scope, evidence, procedures and criteria before testing；没有通用样本量；先约定什么算失败。
+
+**19. 以下哪项最符合 EDPB 方法里「Bias tests」这一步？**
+
+- A. 收集系统用途、负责人和模型信息
+- B. 按语言比较必需转交的正确率，并调查差异
+- C. 写出发现、局限和建议
+- D. 画出数据准备、模型运行、人的决定的路径
+
+> **答案：B**
+>
+> Slide 11。A = Model card；C = Audit report；D = System map。
+
+**20. 判断抽样 40 条「改后 + 粤语 + 例外」请求，发现 12 条漏转。以下哪项结论最恰当？**
+
+- A. 服务整体漏转率是 30%
+- B. 样本太偏，结果无效，应忽略
+- C. 粤语以外的语言一定没有问题
+- D. 定向测试发现了系统性的漏转，政策要求未满足；但这个比例不能估计服务整体的漏转率
+
+> **答案：D**
+>
+> Slides 18、20：Targeted checks do not estimate an overall failure rate；但它们足以证明「not met」。
